@@ -10,4 +10,9 @@ class ApplicationTests {
     void contextLoads() {
     }
 
+    @Test
+    void failTest(){
+        throw new RuntimeException();
+    }
+
 }
