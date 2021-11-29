@@ -97,6 +97,6 @@ jacocoTestCoverageVerification {
 checkstyle {
     maxWarnings = 0
     configFile = file("${rootDir}/config/checkstyle/google-style.xml")
-    configProperties = ["suppressionFile" : "${rootDir}/config/checkstyle/google-style.xml`"]
-    toolVersion ="8.24"
+    configProperties = ["suppressionFile": "${rootDir}/config/checkstyle/google-style.xml`"]
+    toolVersion = "8.24"
 }
