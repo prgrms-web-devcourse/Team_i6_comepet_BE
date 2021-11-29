@@ -1,6 +1,5 @@
-## 종류
+## ISSUE 종류
 
-ISSUE 종류
 - [] Feature
 - [] Bug Fix
 - [] Refactoring
