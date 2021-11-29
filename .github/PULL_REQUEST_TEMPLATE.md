@@ -1,6 +1,5 @@
-## 종류
+## PR 종류
 
-PR 종류
 - [] Feature
 - [] Bug Fix
 - [] Refactoring
