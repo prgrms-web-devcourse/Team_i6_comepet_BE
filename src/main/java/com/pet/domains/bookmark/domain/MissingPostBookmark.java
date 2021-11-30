@@ -18,11 +18,11 @@ public class MissingPostBookmark {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "id", updatable = false)
     private Long id;
 
-    //유저
+    // TODO: 2021/12/01 유저
 
-    //실종/보호 게시글
+    // TODO: 2021/12/01 실종/보호 게시글
 
 }

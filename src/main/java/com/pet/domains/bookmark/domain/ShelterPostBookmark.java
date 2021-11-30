@@ -18,11 +18,11 @@ public class ShelterPostBookmark {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "id", updatable = false)
     private Long id;
 
-    //유저
+    // TODO: 2021/12/01 유저
 
-    //보호소 게시글
+    // TODO: 2021/12/01 보호소 게시글
 
 }

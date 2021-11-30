@@ -1,6 +1,6 @@
 package com.pet.domains.statistics.domain;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -19,22 +19,22 @@ public class PostStatistics {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "id", updatable = false)
     private Long id;
 
-    @Column(name = "missing", columnDefinition = "BIGINT", nullable = false)
+    @Column(name = "missing", columnDefinition = "BIGINT default 0", nullable = false)
     private long missing;
 
-    @Column(name = "detection", columnDefinition = "BIGINT", nullable = false)
+    @Column(name = "detection", columnDefinition = "BIGINT default 0", nullable = false)
     private long detection;
 
-    @Column(name = "protection", columnDefinition = "BIGINT", nullable = false)
+    @Column(name = "protection", columnDefinition = "BIGINT default 0", nullable = false)
     private long protection;
 
-    @Column(name = "completion", columnDefinition = "BIGINT", nullable = false)
+    @Column(name = "completion", columnDefinition = "BIGINT default 0", nullable = false)
     private long completion;
 
-    @Column(name = "date", columnDefinition = "DATE", nullable = false)
-    private LocalDateTime date;
+    @Column(name = "date", nullable = false)
+    private LocalDate date;
 
 }
