@@ -1,10 +1,10 @@
 ## ISSUE 종류
 
-- [] Feature
-- [] Bug Fix
-- [] Refactoring
-- [] Chore
-- [] Init
+- [ ] Feature
+- [ ] Bug Fix
+- [ ] Refactoring
+- [ ] Chore
+- [ ] Init
 
 ## 내용
 - 설명 :
