@@ -1,10 +1,10 @@
 ## PR 종류
 
-- [] Feature
-- [] Bug Fix
-- [] Refactoring
-- [] Chore
-- [] Init 
+- [ ] Feature
+- [ ] Bug Fix
+- [ ] Refactoring
+- [ ] Chore
+- [ ] Init 
 
 close #
 
