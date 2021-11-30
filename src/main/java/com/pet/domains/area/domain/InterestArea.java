@@ -23,6 +23,6 @@ public class InterestArea extends BaseEntity {
     private Long id;
 
     @Column(name = "selected", nullable = false, columnDefinition = "boolean default false")
-    private Boolean selected = false;
+    private boolean selected;
 
 }

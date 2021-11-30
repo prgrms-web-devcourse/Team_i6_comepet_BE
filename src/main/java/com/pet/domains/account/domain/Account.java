@@ -36,10 +36,10 @@ public class Account extends DeletableEntity {
     private String nickname;
 
     @Column(name = "notification", nullable = false, columnDefinition = "boolean default false")
-    private Boolean notification;
+    private boolean notification;
 
     @Column(name = "checked_area", nullable = false, columnDefinition = "boolean default false")
-    private Boolean checkedArea;
+    private boolean checkedArea;
 
     @Column(name = "image")
     private String image;

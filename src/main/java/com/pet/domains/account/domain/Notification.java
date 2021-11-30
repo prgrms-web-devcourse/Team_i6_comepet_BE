@@ -27,6 +27,6 @@ public class Notification extends DeletableEntity {
     private Long id;
 
     @Column(name = "checked", nullable = false, columnDefinition = "boolean default false")
-    private Boolean checked;
+    private boolean checked;
 
 }

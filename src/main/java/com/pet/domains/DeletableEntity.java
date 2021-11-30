@@ -9,6 +9,6 @@ import lombok.Getter;
 public abstract class DeletableEntity extends BaseEntity {
 
     @Column(name = "deleted", nullable = false, columnDefinition = "boolean default false")
-    private Boolean deleted = false;
+    private boolean deleted;
 
 }
