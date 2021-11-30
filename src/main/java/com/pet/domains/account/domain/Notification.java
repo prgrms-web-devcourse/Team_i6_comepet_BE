@@ -23,7 +23,7 @@ public class Notification extends DeletableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "id", updatable = false)
     private Long id;
 
     @Column(name = "checked", nullable = false, columnDefinition = "boolean default false")
