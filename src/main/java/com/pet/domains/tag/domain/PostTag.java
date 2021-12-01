@@ -1,6 +1,7 @@
-package com.pet.domains.post.domain;
+package com.pet.domains.tag.domain;
 
 import com.pet.domains.BaseEntity;
+import com.pet.domains.post.domain.MissingPost;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -18,24 +19,30 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "missing_post_image")
-public class MissingPostImage extends BaseEntity {
+@Table(name = "post_tag")
+public class PostTag extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false)
     private Long id;
 
-    @Column(name = "name", nullable = false)
-    private String name;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
         name = "missing_post_id",
         referencedColumnName = "id",
-        foreignKey = @ForeignKey(name = "fk_missing_to_missing_post_image"),
+        foreignKey = @ForeignKey(name = "fk_missing_post_to_post_tag"),
         nullable = false
     )
     private MissingPost missingPost;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+        name = "tag_id",
+        referencedColumnName = "id",
+        foreignKey = @ForeignKey(name = "fk_tag_to_post_tag"),
+        nullable = false
+    )
+    private Tag tag;
 
 }
