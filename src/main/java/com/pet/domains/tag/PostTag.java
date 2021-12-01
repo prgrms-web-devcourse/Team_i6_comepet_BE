@@ -18,7 +18,7 @@ public class PostTag {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false, scale = 2)
+    @Column(name = "id", updatable = false)
     private Long id;
 
 }
