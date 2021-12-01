@@ -1,11 +1,16 @@
 package com.pet.domains.account.domain;
 
 import com.pet.domains.DeletableEntity;
+import com.pet.domains.post.domain.MissingPost;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -28,5 +33,23 @@ public class Notification extends DeletableEntity {
 
     @Column(name = "checked", nullable = false, columnDefinition = "boolean default false")
     private boolean checked;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+        name = "account_id",
+        referencedColumnName = "id",
+        nullable = false,
+        foreignKey = @ForeignKey(name = "fk_notification_to_account")
+    )
+    private Account account;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+        name = "missing_post_id",
+        referencedColumnName = "id",
+        nullable = false,
+        foreignKey = @ForeignKey(name = "fk_notification_to_missing_post")
+    )
+    private MissingPost missingPost;
 
 }
