@@ -41,5 +41,4 @@ public class AnimalKind extends BaseEntity {
     )
     private Animal animal;
 
-
 }
