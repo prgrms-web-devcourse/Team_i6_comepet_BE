@@ -1,7 +1,7 @@
 package com.pet.domains.post.domain;
 
 import com.pet.domains.BaseEntity;
-import com.pet.domains.animal.AnimalKind;
+import com.pet.domains.animal.domain.AnimalKind;
 import com.pet.domains.area.domain.Town;
 import java.time.LocalDate;
 import javax.persistence.Column;
