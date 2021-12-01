@@ -1,23 +1,35 @@
 package com.pet.domains.post.domain;
 
+import com.pet.domains.DeletableEntity;
+import com.pet.domains.account.domain.Account;
+import com.pet.domains.animal.domain.AnimalKind;
+import com.pet.domains.area.domain.Town;
 import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLDelete(sql = "UPDATE missing_post SET deleted = true WHERE id=?")
+@Where(clause = "deleted = false")
 @Entity
 @Table(name = "missing_post")
-public class MissingPost {
+public class MissingPost extends DeletableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -61,5 +73,32 @@ public class MissingPost {
 
     @Column(name = "thumbnail")
     private String thumbnail;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+        name = "account_id",
+        referencedColumnName = "id",
+        foreignKey = @ForeignKey(name = "fk_account_id"),
+        nullable = false
+    )
+    private Account account;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+        name = "town_id",
+        referencedColumnName = "id",
+        foreignKey = @ForeignKey(name = "fk_town_id"),
+        nullable = false
+    )
+    private Town town;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+        name = "animal_kind_id",
+        referencedColumnName = "id",
+        foreignKey = @ForeignKey(name = "fk_animal_kind_to_missing_post"),
+        nullable = false
+    )
+    private AnimalKind animalKind;
 
 }
