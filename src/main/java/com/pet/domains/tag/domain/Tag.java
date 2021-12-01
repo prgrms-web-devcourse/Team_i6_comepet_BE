@@ -1,5 +1,6 @@
-package com.pet.domains.tag;
+package com.pet.domains.tag.domain;
 
+import com.pet.domains.BaseEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,7 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "tag")
-public class Tag {
+public class Tag extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
