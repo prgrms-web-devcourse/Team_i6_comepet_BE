@@ -75,29 +75,18 @@ public class MissingPost extends DeletableEntity {
     private String thumbnail;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(
-        name = "account_id",
-        referencedColumnName = "id",
-        foreignKey = @ForeignKey(name = "fk_account_id"),
-        nullable = false
-    )
+    @JoinColumn(name = "account_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_account_id"))
     private Account account;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(
-        name = "town_id",
-        referencedColumnName = "id",
-        foreignKey = @ForeignKey(name = "fk_town_id"),
-        nullable = false
-    )
+    @JoinColumn(name = "town_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_town_id"))
     private Town town;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
         name = "animal_kind_id",
         referencedColumnName = "id",
-        foreignKey = @ForeignKey(name = "fk_animal_kind_to_missing_post"),
-        nullable = false
+        foreignKey = @ForeignKey(name = "fk_animal_kind_to_missing_post")
     )
     private AnimalKind animalKind;
 

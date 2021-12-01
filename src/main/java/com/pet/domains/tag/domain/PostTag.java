@@ -31,8 +31,7 @@ public class PostTag extends BaseEntity {
     @JoinColumn(
         name = "missing_post_id",
         referencedColumnName = "id",
-        foreignKey = @ForeignKey(name = "fk_missing_post_to_post_tag"),
-        nullable = false
+        foreignKey = @ForeignKey(name = "fk_missing_post_to_post_tag")
     )
     private MissingPost missingPost;
 
@@ -40,8 +39,7 @@ public class PostTag extends BaseEntity {
     @JoinColumn(
         name = "tag_id",
         referencedColumnName = "id",
-        foreignKey = @ForeignKey(name = "fk_tag_to_post_tag"),
-        nullable = false
+        foreignKey = @ForeignKey(name = "fk_tag_to_post_tag")
     )
     private Tag tag;
 

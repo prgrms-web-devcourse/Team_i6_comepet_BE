@@ -36,8 +36,7 @@ public class AnimalKind extends BaseEntity {
     @JoinColumn(
         name = "animal_id",
         referencedColumnName = "id",
-        foreignKey = @ForeignKey(name = "fk_animal_to_animal_kind"),
-        nullable = false
+        foreignKey = @ForeignKey(name = "fk_animal_to_animal_kind")
     )
     private Animal animal;
 
