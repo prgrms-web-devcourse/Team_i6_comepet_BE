@@ -92,12 +92,14 @@ public class ShelterPost extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "town_id",
         referencedColumnName = "id",
+        nullable = false,
         foreignKey = @ForeignKey(name = "fk_town_to_shelter_post"))
     private Town town;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "animal_kind_id",
         referencedColumnName = "id",
+        nullable = false,
         foreignKey = @ForeignKey(name = "fk_animal_kind_to_shelter_post"))
     private AnimalKind animalKind;
 

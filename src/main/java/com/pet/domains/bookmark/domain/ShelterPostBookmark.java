@@ -31,12 +31,14 @@ public class ShelterPostBookmark extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id",
         referencedColumnName = "id",
+        nullable = false,
         foreignKey = @ForeignKey(name = "fk_account_to_shelter_book_mark"))
     private Account account;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "missing_post_id",
         referencedColumnName = "id",
+        nullable = false,
         foreignKey = @ForeignKey(name = "fk_missing_post_to_shelter_book_mark"))
     private ShelterPost shelterPost;
 
