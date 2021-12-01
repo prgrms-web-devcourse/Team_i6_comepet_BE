@@ -3,6 +3,7 @@ package com.pet.domains.tag;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.AccessLevel;
@@ -16,8 +17,8 @@ import lombok.NoArgsConstructor;
 public class PostTag {
 
     @Id
-    @GeneratedValue
-    @Column(name = "id", updatable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", updatable = false, scale = 2)
     private Long id;
 
 }

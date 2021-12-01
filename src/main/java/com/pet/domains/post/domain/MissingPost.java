@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.AccessLevel;
@@ -19,7 +20,7 @@ import lombok.NoArgsConstructor;
 public class MissingPost {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false)
     private Long id;
 
@@ -33,7 +34,7 @@ public class MissingPost {
     @Column(name = "date", nullable = false)
     private LocalDate date;
 
-    @Column(name = "age", columnDefinition = "SMALLINT")
+    @Column(name = "age", columnDefinition = "SMALLINT default 0", nullable = false)
     private int age;
 
     @Enumerated(EnumType.STRING)
@@ -49,13 +50,13 @@ public class MissingPost {
     @Column(name = "tel_number", length = 15, nullable = false)
     private String telNumber;
 
-    @Column(name = "view_count")
+    @Column(name = "view_count", columnDefinition = "BIGINT default 0", nullable = false)
     private long viewCount;
 
-    @Column(name = "bookmark_count")
+    @Column(name = "bookmark_count", columnDefinition = "BIGINT default 0", nullable = false)
     private long bookmarkCount;
 
-    @Column(name = "comment_count")
+    @Column(name = "comment_count", columnDefinition = "BIGINT default 0", nullable = false)
     private long commentCount;
 
     @Column(name = "thumbnail")
