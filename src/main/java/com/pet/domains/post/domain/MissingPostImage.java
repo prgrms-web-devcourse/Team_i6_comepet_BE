@@ -33,7 +33,8 @@ public class MissingPostImage extends BaseEntity {
     @JoinColumn(
         name = "missing_post_id",
         referencedColumnName = "id",
-        foreignKey = @ForeignKey(name = "fk_missing_to_missing_post_image")
+        foreignKey = @ForeignKey(name = "fk_missing_to_missing_post_image"),
+        nullable = false
     )
     private MissingPost missingPost;
 
