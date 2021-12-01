@@ -1,13 +1,20 @@
 package com.pet.domains.post.domain;
 
+import com.pet.domains.BaseEntity;
+import com.pet.domains.animal.AnimalKind;
+import com.pet.domains.area.domain.Town;
 import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -17,7 +24,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "shelter_post")
-public class ShelterPost {
+public class ShelterPost extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -82,8 +89,16 @@ public class ShelterPost {
     @Column(name = "notice_number", length = 30, nullable = false)
     private String noticeNumber;
 
-    // TODO: 2021/12/01 시군구
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "town_id",
+        referencedColumnName = "id",
+        foreignKey = @ForeignKey(name = "fk_town_to_shelter_post"))
+    private Town town;
 
-    // TODO: 2021/12/01 품종
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "animal_kind_id",
+        referencedColumnName = "id",
+        foreignKey = @ForeignKey(name = "fk_animal_kind_to_shelter_post"))
+    private AnimalKind animalKind;
 
 }
