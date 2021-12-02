@@ -1,5 +1,5 @@
 #!/bin/bash
-BUILD_JAR=$(ls /home/ubuntu/app/0.0.1.jar)
+BUILD_JAR=$(ls /home/ubuntu/app/compet-0.0.1.jar)
 DEPLOY_PATH=/home/ubuntu/app/
 JAR_NAME=$(basename $BUILD_JAR)
 echo "> build 파일명: $JAR_NAME" >> /home/ubuntu/app/log/deploy.log
