@@ -30,6 +30,14 @@ jobs:
       - name: Copy Jar
         run: cp ./build/libs/*.jar ./deploy
 
+      # Appspec 파일 복사
+      - name: Copy appspec
+        run: cp ./appspec.yml ./deploy
+
+      # Deploy Shell 파일 복사
+      - name: Copy deploy shell
+        run: cp ./deploy.sh ./deploy
+
       # 파일 압축
       - name: Make zip file
         run: zip -r ./compet.zip ./deploy
@@ -44,3 +52,10 @@ jobs:
 
       - name: Upload to S3
         run: aws s3 cp --region ap-northeast-2 --acl private ./compet.zip s3://compet-dev-deploy/compet/
+
+      - name: code deploy
+        run: aws deploy create-deployment --application-name compet-dev-deploy \
+          --deployment-config-name CodeDeployDefault.AllAtOnce \
+          --deployment-group-name compet-dev-deploy-group \
+          --file-exists-behavior OVERWRITE \
+          --s3-location bucket=compet-dev-deploy/compet,bundleType=zip,key=compet.zip
