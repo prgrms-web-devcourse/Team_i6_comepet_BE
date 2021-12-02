@@ -1,0 +1,18 @@
+version: 0.0
+os: linux
+files:
+  - source: /
+    destinaion: /home/ubuntu/app
+    overwrite: yes
+
+permissions:
+  - obejct: /home/ubuntu/app
+    owner: ubuntu
+    group: ubuntu
+    mode: 755
+
+hooks:
+  AfterInstall:
+    - locaion: deploy.sh
+      timeout: 300
+      runas: root
