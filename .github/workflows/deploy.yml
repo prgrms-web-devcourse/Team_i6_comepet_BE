@@ -30,6 +30,7 @@ jobs:
     if: ${{ github.event_name == 'push' }}
     runs-on: ubuntu-latest
     steps:
+      # 디렉토리 생성
       - name: Make Directory
         run: mkdir -p deploy
 
