@@ -1,4 +1,4 @@
-name: Build
+name: Sonar Build
 on:
   push:
     branches: [main, develop]
@@ -6,7 +6,7 @@ on:
     types: [opened, synchronize, reopened]
 jobs:
   build:
-    name: Build
+    name: sonar analysis
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

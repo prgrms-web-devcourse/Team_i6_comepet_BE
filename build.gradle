@@ -84,8 +84,8 @@ jacocoTestReport {
         html.enabled true
         html.destination file("$buildDir/jacocoHtml")
 
-        xml.enabled true
-        xml.destination file("$buildDir/jacoco.xml")
+//        xml.enabled true
+//        xml.destination file("$buildDir/jacoco.xml")
     }
     finalizedBy 'jacocoTestCoverageVerification'
 }
