@@ -2,9 +2,10 @@ name: Java CI/CD with Gradle
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
   pull_request:
-    branches: [ develop ]
+    types: [opened, synchronize, reopened]
+    branches: [develop]
 
 jobs:
   build:
