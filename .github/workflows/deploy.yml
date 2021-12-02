@@ -54,7 +54,8 @@ jobs:
         run: aws s3 cp --region ap-northeast-2 --acl private ./compet.zip s3://compet-dev-deploy/compet/
 
       - name: code deploy
-        run: aws deploy create-deployment --application-name compet-dev-deploy \
+        run: |
+          aws deploy create-deployment --application-name compet-dev-deploy \
           --deployment-config-name CodeDeployDefault.AllAtOnce \
           --deployment-group-name compet-dev-deploy-group \
           --file-exists-behavior OVERWRITE \
