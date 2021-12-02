@@ -2,7 +2,7 @@ version: 0.0
 os: linux
 files:
   - source: /
-    destinaion: /home/ubuntu/app
+    destinaion: /home/ubuntu/app/
     overwrite: yes
 
 permissions:
