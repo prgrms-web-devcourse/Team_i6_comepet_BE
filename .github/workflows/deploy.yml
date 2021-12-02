@@ -24,8 +24,8 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
 
-  ready-deploy:
-    name: ready for deploy
+  prepare-deployment:
+    name: prepare for deployment
     needs: build
     if: ${{ github.event_name == 'push' }}
     runs-on: ubuntu-latest
