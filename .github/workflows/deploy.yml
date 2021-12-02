@@ -1,9 +1,6 @@
 name: Java CD with Gradle
 
 on:
-  pull_request:
-    branches: [ develop ]
-    types: [ opened, synchronize, reopened ]
   push:
     branches: [ develop ]
 
