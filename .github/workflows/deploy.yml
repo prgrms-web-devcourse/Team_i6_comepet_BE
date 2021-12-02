@@ -53,7 +53,7 @@ jobs:
 
   deploy-dev:
     name: deploy dev
-    needs: ready-deploy
+    needs: prepare-deployment
     if: ${{ github.ref == 'refs/heads/develop' }}
     runs-on: ubuntu-latest
     steps:
