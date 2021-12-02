@@ -59,4 +59,4 @@ jobs:
           --deployment-config-name CodeDeployDefault.AllAtOnce \
           --deployment-group-name compet-dev-deploy-group \
           --file-exists-behavior OVERWRITE \
-          --s3-location bucket=compet-dev-deploy/compet,bundleType=zip,key=compet.zip
+          --s3-location bucket=compet-dev-deploy,bundleType=zip,key=compet/compet.zip
