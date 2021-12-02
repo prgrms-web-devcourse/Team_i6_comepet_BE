@@ -6,7 +6,7 @@ files:
     overwrite: yes
 
 permissions:
-  - obejct: /home/ubuntu/app
+  - object: /home/ubuntu/app
     owner: ubuntu
     group: ubuntu
     mode: 755
