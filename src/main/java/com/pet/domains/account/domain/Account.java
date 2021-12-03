@@ -1,11 +1,16 @@
 package com.pet.domains.account.domain;
 
 import com.pet.domains.DeletableEntity;
+import com.pet.domains.image.domain.Image;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -41,7 +46,12 @@ public class Account extends DeletableEntity {
     @Column(name = "checked_area", nullable = false, columnDefinition = "boolean default false")
     private boolean checkedArea;
 
-    @Column(name = "image")
-    private String image;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "image_id",
+        referencedColumnName = "id",
+        foreignKey = @ForeignKey(name = "image_to_account"),
+        nullable = false
+    )
+    private Image image;
 
 }

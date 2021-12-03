@@ -1,6 +1,7 @@
 package com.pet.domains.post.domain;
 
 import com.pet.domains.BaseEntity;
+import com.pet.domains.image.domain.Image;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -26,9 +28,6 @@ public class MissingPostImage extends BaseEntity {
     @Column(name = "id", updatable = false)
     private Long id;
 
-    @Column(name = "name", nullable = false)
-    private String name;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
         name = "missing_post_id",
@@ -37,5 +36,14 @@ public class MissingPostImage extends BaseEntity {
         nullable = false
     )
     private MissingPost missingPost;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+        name = "image_id",
+        referencedColumnName = "id",
+        foreignKey = @ForeignKey(name = "fk_image_to_missing_post_image"),
+        nullable = false
+    )
+    private Image image;
 
 }
