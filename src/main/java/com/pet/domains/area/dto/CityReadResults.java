@@ -19,11 +19,11 @@ public class CityReadResults {
     @Getter
     public static class City {
 
-        private Long id;
+        private final Long id;
 
-        private String name;
+        private final String name;
 
-        private List<Town> towns;
+        private final List<Town> towns;
 
         public City(Long id, String name, List<Town> towns) {
             this.id = id;
@@ -38,9 +38,9 @@ public class CityReadResults {
         @Getter
         public static class Town {
 
-            private Long id;
+            private final Long id;
 
-            private String name;
+            private final String name;
 
             public Town(Long id, String name) {
                 this.id = id;
