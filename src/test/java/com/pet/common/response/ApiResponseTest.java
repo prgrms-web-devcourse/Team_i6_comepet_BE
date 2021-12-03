@@ -11,10 +11,10 @@ class ApiResponseTest {
     @Test
     @DisplayName("ApiResponse 생성 테스트")
     void newApiResponse() {
-        ApiResponse<String> tester = ApiResponse.ok("Tester");
+        ApiResponse<String> testResponse = ApiResponse.ok("Test");
 
-        assertThat(tester.getData()).isEqualTo("Tester");
-        assertNotNull(tester.getServerDateTime());
+        assertThat(testResponse.getData()).isEqualTo("Test");
+        assertNotNull(testResponse.getServerDateTime());
     }
 
     @Test
