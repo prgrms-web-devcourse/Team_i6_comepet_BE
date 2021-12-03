@@ -4,6 +4,7 @@ import com.pet.common.response.ApiResponse;
 import com.pet.domains.area.dto.CityReadResults;
 import java.util.List;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/cities")
 public class CityController {
 
-    @GetMapping
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse<CityReadResults> getCities() {
         return ApiResponse.ok(CityReadResults.of(
