@@ -1,7 +1,7 @@
 package com.pet.domains.statistics.domain;
 
 import com.pet.domains.BaseEntity;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -36,6 +36,6 @@ public class PostStatistics extends BaseEntity {
     private long completion;
 
     @Column(name = "date", nullable = false)
-    private LocalDate date;
+    private LocalDateTime date;
 
 }
