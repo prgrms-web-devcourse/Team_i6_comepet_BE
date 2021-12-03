@@ -35,6 +35,7 @@ class CityControllerTest {
         // then
         resultActions
             .andDo(print())
+            .andExpect(status().isOk())
             .andDo(document("get-cities",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),

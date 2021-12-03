@@ -52,6 +52,7 @@ class AccountControllerTest {
         // then
         resultActions
             .andDo(print())
+            .andExpect(status().isCreated())
             .andDo(document("sign-up",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
@@ -85,6 +86,7 @@ class AccountControllerTest {
         // then
         resultActions
             .andDo(print())
+            .andExpect(status().isCreated())
             .andDo(document("login",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
