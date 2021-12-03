@@ -23,12 +23,12 @@ class AnimalControllerUnitTest {
     @Test
     @DisplayName("동물/품종 조회 성공 테스트")
     void getAnimalsTest() throws Exception {
-        //given
-        //when
+        // given
+        // when
         ResultActions resultActions = mockMvc.perform(get("/api/v1/animals"))
             .andDo(print());
 
-        //then
+        // then
         resultActions.andExpectAll(
             status().isOk(),
             jsonPath("data").exists(),
