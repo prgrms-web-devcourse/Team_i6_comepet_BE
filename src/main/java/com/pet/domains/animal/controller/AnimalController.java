@@ -4,6 +4,7 @@ import com.pet.common.response.ApiResponse;
 import com.pet.domains.animal.dto.response.AnimalReadResults;
 import java.util.List;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AnimalController {
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ApiResponse<AnimalReadResults> getAnimals() {
 
         return ApiResponse.ok(
