@@ -24,11 +24,8 @@ public class AccountController {
 
     private final JwtMockToken jwtMockToken;
 
-    @PostMapping(
-        path = "/sign-up",
-        consumes = MediaType.APPLICATION_JSON_VALUE,
-        produces = MediaType.APPLICATION_JSON_VALUE
-    )
+    @PostMapping(path = "/sign-up",
+        consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse<AccountCreateResult> getCities(@RequestBody AccountCreateParam accountCreateParam) {
         String email = accountCreateParam.getEmail();
@@ -37,7 +34,8 @@ public class AccountController {
         return ApiResponse.ok(AccountCreateResult.of(1L, jwtMockToken.mockToken()));
     }
 
-    @PostMapping("/login")
+    @PostMapping(path = "/login",
+        consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse<AccountLoginResult> login(@RequestBody AccountLonginParam accountLoginParam) {
         String email = accountLoginParam.getEmail();
