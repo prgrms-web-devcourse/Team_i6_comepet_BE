@@ -52,10 +52,8 @@ public class AccountController {
 
     @PostMapping(path = "/logout")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void logout(@RequestHeader(value = HttpHeaders.AUTHORIZATION) JwtMockToken jwtHeader) {
-        if (jwtHeader.isVerify()) {
-            log.info("success logout");
-        }
+    public void logout() {
+        log.info("who is logout");
     }
 
 }

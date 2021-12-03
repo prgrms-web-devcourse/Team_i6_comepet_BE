@@ -2,8 +2,6 @@ package com.pet.common.jwt;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 
 @Getter
 @NoArgsConstructor
@@ -18,11 +16,6 @@ public class JwtMockToken {
 
     public JwtMockToken(String header) {
         this.token = header;
-    }
-
-    public boolean isVerify() {
-        ObjectUtils.requireNonEmpty(token, "token is empty");
-        return StringUtils.equals(MOCK_TOKEN, token);
     }
 
 }

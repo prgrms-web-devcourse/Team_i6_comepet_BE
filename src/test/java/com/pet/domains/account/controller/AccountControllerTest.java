@@ -25,10 +25,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-@WebMvcTest(
-    value = AccountController.class,
-    includeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JwtMockToken.class)
-)
+@WebMvcTest(value = AccountController.class)
 @AutoConfigureRestDocs
 @DisplayName("회원 컨트롤러 테스트")
 class AccountControllerTest {
