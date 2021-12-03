@@ -35,7 +35,7 @@ public class PostStatistics extends BaseEntity {
     @Column(name = "completion", columnDefinition = "BIGINT default 0", nullable = false)
     private long completion;
 
-    @Column(name = "date", nullable = false)
+    @Column(name = "date", nullable = false, updatable = false, columnDefinition = "TIMESTAMP")
     private LocalDateTime date;
 
 }
