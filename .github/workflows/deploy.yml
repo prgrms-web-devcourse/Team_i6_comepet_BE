@@ -37,7 +37,7 @@ jobs:
 
       # Jar 파일 복사
       - name: Copy Jar
-        run: cp ./build/libs/*.jar ./deploy
+        run: cp ./build/libs/compet-0.0.1.jar ./deploy
 
       # Appspec 파일 복사
       - name: Copy appspec
