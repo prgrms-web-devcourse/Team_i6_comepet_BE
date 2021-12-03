@@ -38,7 +38,11 @@ public class MissingPostImage extends BaseEntity {
     private MissingPost missingPost;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "image_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_image_to_missing_post_image"))
+    @JoinColumn(name = "image_id",
+        referencedColumnName = "id",
+        foreignKey = @ForeignKey(name = "fk_image_to_missing_post_image"),
+        nullable = false
+    )
     private Image image;
 
 }

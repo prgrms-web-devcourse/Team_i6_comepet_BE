@@ -47,7 +47,11 @@ public class Account extends DeletableEntity {
     private boolean checkedArea;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "image_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "image_to_account"))
+    @JoinColumn(name = "image_id",
+        referencedColumnName = "id",
+        foreignKey = @ForeignKey(name = "image_to_account"),
+        nullable = false
+    )
     private Image image;
 
 }
