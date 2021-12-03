@@ -9,7 +9,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.pet.common.config.JwtMockToken;
+import com.pet.common.jwt.JwtMockToken;
 import com.pet.domains.account.dto.request.AccountCreateParam;
 import com.pet.domains.account.dto.request.AccountEmailParam;
 import com.pet.domains.account.dto.request.AccountLonginParam;
@@ -131,4 +131,24 @@ class AccountControllerTest {
             );
     }
 
+    @Test
+    @DisplayName("로그아웃 테스트")
+    void logoutTest() throws Exception {
+        // given
+        // when
+        ResultActions resultActions = mockMvc.perform(post("/api/v1/logout")
+            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN));
+
+        // then
+        resultActions
+            .andDo(print())
+            .andExpect(status().isNoContent())
+            .andDo(document("logout",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                requestHeaders(
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
+                ))
+            );
+    }
 }

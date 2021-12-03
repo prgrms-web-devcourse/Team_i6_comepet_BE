@@ -1,6 +1,6 @@
 package com.pet.domains.account.controller;
 
-import com.pet.common.config.JwtMockToken;
+import com.pet.common.jwt.JwtMockToken;
 import com.pet.common.response.ApiResponse;
 import com.pet.domains.account.dto.request.AccountCreateParam;
 import com.pet.domains.account.dto.request.AccountEmailParam;
@@ -9,11 +9,12 @@ import com.pet.domains.account.dto.response.AccountCreateResult;
 import com.pet.domains.account.dto.response.AccountLoginResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,8 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Slf4j
 public class AccountController {
-
-    private final JwtMockToken jwtMockToken;
 
     @PostMapping(path = "/verify-email", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -39,7 +38,7 @@ public class AccountController {
         String email = accountCreateParam.getEmail();
         String nickname = accountCreateParam.getNickname();
         log.info("sign up account info : {}, {}", email, nickname);
-        return ApiResponse.ok(AccountCreateResult.of(1L, jwtMockToken.mockToken()));
+        return ApiResponse.ok(AccountCreateResult.of(1L, JwtMockToken.MOCK_TOKEN));
     }
 
     @PostMapping(path = "/login",
@@ -48,7 +47,15 @@ public class AccountController {
     public ApiResponse<AccountLoginResult> login(@RequestBody AccountLonginParam accountLoginParam) {
         String email = accountLoginParam.getEmail();
         log.info("sign up account info : {}", email);
-        return ApiResponse.ok(AccountLoginResult.of(1L, jwtMockToken.mockToken()));
+        return ApiResponse.ok(AccountLoginResult.of(1L, JwtMockToken.MOCK_TOKEN));
+    }
+
+    @PostMapping(path = "/logout")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void logout(@RequestHeader(value = HttpHeaders.AUTHORIZATION) JwtMockToken jwtHeader) {
+        if (jwtHeader.isVerify()) {
+            log.info("success logout");
+        }
     }
 
 }
