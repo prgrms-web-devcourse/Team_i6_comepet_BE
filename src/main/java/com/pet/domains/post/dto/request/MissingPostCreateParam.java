@@ -1,6 +1,6 @@
 package com.pet.domains.post.dto.request;
 
-import com.pet.domains.post.dto.response.MissingPostReadResults.MissingPost.PostTag;
+import com.pet.domains.tag.domain.PostTag;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.Getter;
