@@ -1,13 +1,16 @@
-name: Java CD with Gradle
+name: Java CI/CD with Gradle
 
 on:
   push:
-    branches: [ develop ]
+    branches: [main, develop]
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [develop]
 
 jobs:
   build:
+    name: Build and Test
     runs-on: ubuntu-latest
-
     steps:
       # Gradle build
       - uses: actions/checkout@v2
@@ -22,6 +25,12 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
 
+  prepare-deployment:
+    name: prepare for deployment
+    needs: build
+    if: ${{ github.event_name == 'push' }}
+    runs-on: ubuntu-latest
+    steps:
       # 디렉토리 생성
       - name: Make Directory
         run: mkdir -p deploy
@@ -42,6 +51,12 @@ jobs:
       - name: Make zip file
         run: zip -r ./compet.zip ./deploy
 
+  deploy-dev:
+    name: deploy dev
+    needs: prepare-deployment
+    if: ${{ github.ref == 'refs/heads/develop' }}
+    runs-on: ubuntu-latest
+    steps:
       # AWS Credential
       - name: AWS Credential
         uses: aws-actions/configure-aws-credentials@v1
