@@ -3,6 +3,7 @@ package com.pet.domains.account.controller;
 import com.pet.common.config.JwtMockToken;
 import com.pet.common.response.ApiResponse;
 import com.pet.domains.account.dto.request.AccountCreateParam;
+import com.pet.domains.account.dto.request.AccountEmailParam;
 import com.pet.domains.account.dto.request.AccountLonginParam;
 import com.pet.domains.account.dto.response.AccountCreateResult;
 import com.pet.domains.account.dto.response.AccountLoginResult;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +25,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class AccountController {
 
     private final JwtMockToken jwtMockToken;
+
+    @PostMapping(path = "/verify-email", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void verifyEmail(@RequestBody AccountEmailParam accountEmailParam) {
+        log.info("verify email : {}", accountEmailParam.getEmail());
+    }
 
     @PostMapping(path = "/sign-up",
         consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

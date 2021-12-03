@@ -5,15 +5,11 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class AccountLonginParam {
+public class AccountEmailParam {
 
     private String email;
 
-    private String password;
-
-    public AccountLonginParam(String email, String password) {
+    public AccountEmailParam(String email) {
         this.email = email;
-        this.password = password;
     }
-
 }

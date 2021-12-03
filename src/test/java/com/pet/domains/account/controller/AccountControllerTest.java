@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pet.common.config.JwtMockToken;
 import com.pet.domains.account.dto.request.AccountCreateParam;
+import com.pet.domains.account.dto.request.AccountEmailParam;
 import com.pet.domains.account.dto.request.AccountLonginParam;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,6 +38,30 @@ class AccountControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Test
+    @DisplayName("이메일 인증 요청 테스트")
+    void emailVerifyTest() throws Exception {
+        // given
+        AccountEmailParam param = new AccountEmailParam("tester@email.com");
+        // when
+        ResultActions resultActions = mockMvc.perform(post("/api/v1/verify-email")
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(param)));
+
+        resultActions
+            .andDo(print())
+            .andExpect(status().isNoContent())
+            .andDo(document("verify-email",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                requestHeaders(
+                    headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE),
+                    headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE)
+                ))
+            );
+    }
 
     @Test
     @DisplayName("회원 가입 요청 성공 테스트")
