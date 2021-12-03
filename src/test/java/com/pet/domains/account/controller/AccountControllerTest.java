@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pet.common.config.JwtMockToken;
 import com.pet.domains.account.dto.request.AccountCreateParam;
+import com.pet.domains.account.dto.request.AccountLonginParam;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,29 @@ class AccountControllerTest {
         AccountCreateParam param = new AccountCreateParam("tester", "tester@email.com", "12345678a!");
         // when
         ResultActions resultActions = mockMvc.perform(post("/api/v1/sign-up")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(param)));
+
+        // then
+        resultActions
+            .andDo(print())
+            .andExpectAll(
+                status().isCreated(),
+                content().contentType(MediaType.APPLICATION_JSON),
+                jsonPath("data").exists(),
+                jsonPath("$.data.id").isNumber(),
+                jsonPath("$.data.token").isString(),
+                jsonPath("$.serverDateTime").isString()
+            );
+    }
+
+    @Test
+    @DisplayName("로그인 성공 테스트")
+    void loginTest() throws Exception {
+        // given
+        AccountLonginParam param = new AccountLonginParam("tester@email.com", "12345678a!");
+        // when
+        ResultActions resultActions = mockMvc.perform(post("/api/v1/login")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(param)));
 

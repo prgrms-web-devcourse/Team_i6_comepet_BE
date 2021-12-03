@@ -3,7 +3,9 @@ package com.pet.domains.account.controller;
 import com.pet.common.config.JwtMockToken;
 import com.pet.common.response.ApiResponse;
 import com.pet.domains.account.dto.request.AccountCreateParam;
+import com.pet.domains.account.dto.request.AccountLonginParam;
 import com.pet.domains.account.dto.response.AccountCreateResult;
+import com.pet.domains.account.dto.response.AccountLoginResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -33,6 +35,14 @@ public class AccountController {
         String nickname = accountCreateParam.getNickname();
         log.info("sign up account info : {}, {}", email, nickname);
         return ApiResponse.ok(AccountCreateResult.of(1L, jwtMockToken.mockToken()));
+    }
+
+    @PostMapping("/login")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ApiResponse<AccountLoginResult> login(@RequestBody AccountLonginParam accountLoginParam) {
+        String email = accountLoginParam.getEmail();
+        log.info("sign up account info : {}", email);
+        return ApiResponse.ok(AccountLoginResult.of(1L, jwtMockToken.mockToken()));
     }
 
 }
