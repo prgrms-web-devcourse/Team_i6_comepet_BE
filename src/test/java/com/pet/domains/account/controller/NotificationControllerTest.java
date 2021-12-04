@@ -1,6 +1,8 @@
 package com.pet.domains.account.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pet.common.jwt.JwtMockToken;
+import com.pet.domains.account.dto.request.NotificationUpdateParam;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +30,12 @@ class NotificationControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @Test
     @DisplayName("알림 조회 요청 테스트")
-    void getNotification() throws Exception {
+    void getNotificationTest() throws Exception {
         // given
         // when
         ResultActions resultActions = mockMvc.perform(get("/api/v1/notices")
@@ -64,7 +69,7 @@ class NotificationControllerTest {
 
     @Test
     @DisplayName("알림 삭제 요청 테스트")
-    void deleteNotification() throws Exception {
+    void deleteNotificationTest() throws Exception {
         // given
         // when
         ResultActions resultActions = mockMvc.perform(delete("/api/v1/notices/{noticeId}", 1L)
@@ -77,6 +82,34 @@ class NotificationControllerTest {
             .andDo(document("get-notification",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()))
+            );
+    }
+
+    @Test
+    @DisplayName("알림 상태 변경 요청 테스트")
+    void checkedNotificationTest() throws Exception {
+        // given
+        NotificationUpdateParam param = new NotificationUpdateParam(true);
+        // when
+        ResultActions resultActions = mockMvc.perform(patch("/api/v1/notices/{noticeId}", 1L)
+            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(param)));
+
+        // then
+        resultActions
+            .andDo(print())
+            .andExpect(status().isNoContent())
+            .andDo(document("get-notification",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                requestHeaders(
+                    headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE),
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
+                ),
+                requestFields(
+                    fieldWithPath("checked").type(BOOLEAN).description("읽음 여부")
+                ))
             );
     }
 

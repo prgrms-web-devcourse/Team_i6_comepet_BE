@@ -36,7 +36,7 @@ public class AccountBookmarkPostPageResults {
 
         private final Long id;
 
-        private final String AnimalKind;
+        private final String animalKind;
 
         private final SexType sexType;
 
@@ -53,7 +53,7 @@ public class AccountBookmarkPostPageResults {
             String thumbnail, int bookmarkCount
         ) {
             this.id = id;
-            AnimalKind = animalKind;
+            this.animalKind = animalKind;
             this.sexType = sexType;
             this.place = place;
             this.createdAt = createdAt;
