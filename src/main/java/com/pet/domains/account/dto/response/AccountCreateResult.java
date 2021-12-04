@@ -5,9 +5,9 @@ import lombok.Getter;
 @Getter
 public class AccountCreateResult {
 
-    private Long id;
+    private final Long id;
 
-    private String token;
+    private final String token;
 
     public AccountCreateResult(Long id, String token) {
         this.id = id;

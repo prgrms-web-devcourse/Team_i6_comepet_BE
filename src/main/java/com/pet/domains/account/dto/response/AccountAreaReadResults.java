@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 public class AccountAreaReadResults {
 
-    private List<AccountAreaReadResults.Area> areas;
+    private final List<AccountAreaReadResults.Area> areas;
 
     public AccountAreaReadResults(List<AccountAreaReadResults.Area> areas) {
         this.areas = areas;
