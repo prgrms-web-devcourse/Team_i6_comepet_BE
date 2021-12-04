@@ -19,15 +19,15 @@ public class AccountAreaReadResults {
     @Getter
     public static class Area {
 
-        private Long cityId;
+        private final Long cityId;
 
-        private String cityName;
+        private final String cityName;
 
-        private Long townId;
+        private final Long townId;
 
-        private String townName;
+        private final String townName;
 
-        private boolean defaultArea;
+        private final boolean defaultArea;
 
         public Area(Long cityId, String cityName, Long townId, String townName, boolean defaultArea) {
             this.cityId = cityId;
