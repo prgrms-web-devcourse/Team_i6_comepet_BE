@@ -14,7 +14,7 @@ public class GlobalExceptionHandler {
 
     /** this is mock exception for mock response */
     @ExceptionHandler(AuthenticationException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ErrorResponse handleAuthenticationException(AuthenticationException exception) {
         log.debug(exception.getMessage());
         return ErrorResponse.error(exception.getMessage());
