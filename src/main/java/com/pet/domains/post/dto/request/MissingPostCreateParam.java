@@ -1,6 +1,5 @@
 package com.pet.domains.post.dto.request;
 
-import com.pet.domains.tag.domain.PostTag;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.Getter;
@@ -34,11 +33,12 @@ public class MissingPostCreateParam {
 
     private String content;
 
-    private List<PostTag> postTags;
+    private List<MissingPostCreateParam.PostTag> postTags;
 
     public MissingPostCreateParam(
         String status, LocalDate date, Long cityId, Long townId, String detailAddress, String telNumber, Long animalId,
-        Long animalKindId, int age, String sex, String chipNumber, String content, List<PostTag> postTags
+        Long animalKindId, int age, String sex, String chipNumber, String content,
+        List<MissingPostCreateParam.PostTag> postTags
     ) {
         this.status = status;
         this.date = date;
@@ -53,6 +53,16 @@ public class MissingPostCreateParam {
         this.chipNumber = chipNumber;
         this.content = content;
         this.postTags = postTags;
+    }
+
+    @Getter
+    public static class PostTag {
+
+        private String name;
+
+        public PostTag(String name) {
+            this.name = name;
+        }
     }
 
 }
