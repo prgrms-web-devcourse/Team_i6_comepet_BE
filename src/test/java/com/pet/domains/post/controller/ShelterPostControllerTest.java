@@ -34,8 +34,8 @@ class ShelterPostControllerTest {
     private MockMvc mockMvc;
 
     @Test
-    @DisplayName("동물/품종 조회 성공 테스트")
-    void getAnimalsTest() throws Exception {
+    @DisplayName("보호소 게시글 리스트 조회 테스트")
+    void getShelterPostsTest() throws Exception {
         // given
         // when
         ResultActions resultActions = mockMvc.perform(get("/api/v1/shelter-posts")
@@ -66,6 +66,50 @@ class ShelterPostControllerTest {
                     fieldWithPath("data.totalElements").type(NUMBER).description("전체 결과 수"),
                     fieldWithPath("data.last").type(BOOLEAN).description("마지막 페이지 여부"),
                     fieldWithPath("data.size").type(NUMBER).description("페이지당 요청 수"),
+                    fieldWithPath("serverDateTime").type(STRING).description("서버 응답 시간")))
+            );
+    }
+
+    @Test
+    @DisplayName("보호소 게시글 단건 조회 테스트")
+    void getShelterPostTest() throws Exception {
+        // given
+        // when
+        ResultActions resultActions = mockMvc.perform(get("/api/v1/shelter-posts/{postId}", 1L)
+            .accept(MediaType.APPLICATION_JSON));
+
+        // then
+        resultActions.andExpect(status().isOk())
+            .andDo(document("get-shelter-post}",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                responseHeaders(
+                    headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
+                ),
+                responseFields(
+                    fieldWithPath("data").type(OBJECT).description("응답 데이터"),
+                    fieldWithPath("data.id").type(NUMBER).description("게시글 id"),
+                    fieldWithPath("data.age").type(NUMBER).description("시도 이름"),
+                    fieldWithPath("data.shelterPlace").type(STRING).description("시군구 이름"),
+                    fieldWithPath("data.shelterName").type(STRING).description("동물 나이"),
+                    fieldWithPath("data.shelterTelNumber").type(STRING).description("동물 사진"),
+                    fieldWithPath("data.color").type(STRING).description("동물 종류"),
+                    fieldWithPath("data.image").type(STRING).description("동물 품종"),
+                    fieldWithPath("data.foundDate").type(STRING).description("접수일"),
+                    fieldWithPath("data.foundPlace").type(STRING).description("보호 장소"),
+                    fieldWithPath("data.animal").type(STRING).description("북마크 여부"),
+                    fieldWithPath("data.animalKind").type(STRING).description("북마크 수"),
+                    fieldWithPath("data.neutered").type(STRING).description("전체 결과 수"),
+                    fieldWithPath("data.startDate").type(STRING).description("마지막 페이지 여부"),
+                    fieldWithPath("data.endDate").type(STRING).description("페이지당 요청 수"),
+                    fieldWithPath("data.noticeNumber").type(STRING).description("페이지당 요청 수"),
+                    fieldWithPath("data.managerTelNumber").type(STRING).description("페이지당 요청 수"),
+                    fieldWithPath("data.status").type(STRING).description("페이지당 요청 수"),
+                    fieldWithPath("data.sex").type(STRING).description("페이지당 요청 수"),
+                    fieldWithPath("data.feature").type(STRING).description("페이지당 요청 수"),
+                    fieldWithPath("data.weight").type(NUMBER).description("페이지당 요청 수"),
+                    fieldWithPath("data.isBookmark").type(BOOLEAN).description("페이지당 요청 수"),
+                    fieldWithPath("data.bookmarkCount").type(NUMBER).description("페이지당 요청 수"),
                     fieldWithPath("serverDateTime").type(STRING).description("서버 응답 시간")))
             );
     }

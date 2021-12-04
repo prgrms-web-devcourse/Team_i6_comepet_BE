@@ -38,7 +38,7 @@ public class ShelterPostPageResults {
 
         private final String town;
 
-        private final long age;
+        private final Long age;
 
         private final String image;
 
@@ -50,12 +50,12 @@ public class ShelterPostPageResults {
 
         private final String shelterPlace;
 
-        private final boolean isBookmark;
+        private final Boolean isBookmark;
 
-        private final long bookmarkCount;
+        private final Long bookmarkCount;
 
-        public ShelterPost(Long id, String city, String town, long age, String image, String animal,
-            String animalKind, LocalDate foundDate, String shelterPlace, boolean isBookmark, long bookmarkCount) {
+        public ShelterPost(Long id, String city, String town, Long age, String image, String animal,
+            String animalKind, LocalDate foundDate, String shelterPlace, Boolean isBookmark, Long bookmarkCount) {
             this.id = id;
             this.city = city;
             this.town = town;
@@ -69,8 +69,8 @@ public class ShelterPostPageResults {
             this.bookmarkCount = bookmarkCount;
         }
 
-        public static ShelterPost of(Long id, String city, String town, long age, String image, String animal,
-            String animalKind, LocalDate foundDate, String shelterPlace, boolean isBookmark, long bookmarkCount) {
+        public static ShelterPost of(Long id, String city, String town, Long age, String image, String animal,
+            String animalKind, LocalDate foundDate, String shelterPlace, Boolean isBookmark, Long bookmarkCount) {
             return new ShelterPost(id, city, town, age, image, animal, animalKind,
                 foundDate, shelterPlace, isBookmark, bookmarkCount);
         }
