@@ -1,5 +1,7 @@
 package com.pet.domains.post.dto.response;
 
+import com.pet.domains.post.domain.SexType;
+import com.pet.domains.post.domain.Status;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Getter;
@@ -28,11 +30,11 @@ public class MissingPostReadResults {
 
         private final String animalKind;
 
-        private final String status;
+        private final Status status;
 
         private final LocalDateTime createdAt;
 
-        private final String sex;
+        private final SexType sex;
 
         private final boolean isBookmark;
 
@@ -49,9 +51,9 @@ public class MissingPostReadResults {
         private final long size;
 
         public MissingPost(
-            Long id, String city, String town, String animalKind, String status, LocalDateTime createdAt, String sex,
-            boolean isBookmark, long bookmarkCount, String thumbnail, List<PostTag> postTag, long totalElements,
-            boolean last, long size
+            Long id, String city, String town, String animalKind, Status status, LocalDateTime createdAt,
+            SexType sex, boolean isBookmark, long bookmarkCount, String thumbnail, List<PostTag> postTag,
+            long totalElements, boolean last, long size
         ) {
             this.id = id;
             this.city = city;
@@ -70,9 +72,9 @@ public class MissingPostReadResults {
         }
 
         public static MissingPost of(
-            Long id, String city, String town, String animalKind, String status, LocalDateTime createdAt, String sex,
-            boolean isBookmark, long bookmarkCount, String thumbnail, List<PostTag> postTag, long totalElements,
-            boolean last, long size
+            Long id, String city, String town, String animalKind, Status status, LocalDateTime createdAt,
+            SexType sex, boolean isBookmark, long bookmarkCount, String thumbnail, List<PostTag> postTag,
+            long totalElements, boolean last, long size
         ) {
             return new MissingPost(
                 id, city, town, animalKind, status, createdAt, sex, isBookmark, bookmarkCount, thumbnail, postTag,
