@@ -12,5 +12,5 @@ public class AccountEmailParam {
     public AccountEmailParam(String email) {
         this.email = email;
     }
-    
+
 }
