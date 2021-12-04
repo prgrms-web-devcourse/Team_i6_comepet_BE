@@ -172,7 +172,7 @@ class AccountControllerTest {
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE),
                     headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE),
                     headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
-                    ),
+                ),
                 requestFields(
                     fieldWithPath("id").type(NUMBER).description("회원 id"),
                     fieldWithPath("nickname").type(STRING).description("닉네임")
@@ -210,5 +210,39 @@ class AccountControllerTest {
             );
     }
 
+    @Test
+    @DisplayName("회원의 관심 지역 조회 테스트")
+    void getAccountAreaTest() throws Exception {
+        // given
+        // wen
+        ResultActions resultActions = mockMvc.perform(get("/api/v1/me/areas")
+            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN));
+
+        // then
+        resultActions
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andDo(document("account-areas",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                requestHeaders(
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
+                ),
+                responseHeaders(
+                    headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
+                ),
+                responseFields(
+                    fieldWithPath("data").type(OBJECT).description("응답 데이터"),
+                    fieldWithPath("data.areas").type(ARRAY).description("시도"),
+                    fieldWithPath("data.areas[0].cityId").type(NUMBER).description("시도 id"),
+                    fieldWithPath("data.areas[0].cityName").type(STRING).description("시도 이름"),
+                    fieldWithPath("data.areas[0].townId").type(NUMBER).description("시군구 id"),
+                    fieldWithPath("data.areas[0].townName").type(STRING).description("시군구 이름"),
+                    fieldWithPath("data.areas[0].defaultArea").type(BOOLEAN).description("디폴트 지역 여부"),
+                    fieldWithPath("serverDateTime").type(STRING).description("서버 응답 시간")
+                ))
+            );
+
+    }
 
 }
