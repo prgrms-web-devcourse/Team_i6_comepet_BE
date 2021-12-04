@@ -8,11 +8,11 @@ public class AnimalReadResults {
 
     private final List<Animal> animals;
 
-    public AnimalReadResults(List<Animal> animals) {
+    public AnimalReadResults(List<AnimalReadResults.Animal> animals) {
         this.animals = animals;
     }
 
-    public static AnimalReadResults of(List<Animal> animals) {
+    public static AnimalReadResults of(List<AnimalReadResults.Animal> animals) {
         return new AnimalReadResults(animals);
     }
 
@@ -23,15 +23,15 @@ public class AnimalReadResults {
 
         private final String name;
 
-        private final List<AnimalKind> kinds;
+        private final List<Animal.AnimalKind> kinds;
 
-        public Animal(Long id, String name, List<AnimalKind> kinds) {
+        public Animal(Long id, String name, List<Animal.AnimalKind> kinds) {
             this.id = id;
             this.name = name;
             this.kinds = kinds;
         }
 
-        public static Animal of(Long id, String name, List<AnimalKind> kinds) {
+        public static Animal of(Long id, String name, List<Animal.AnimalKind> kinds) {
             return new Animal(id, name, kinds);
         }
 
