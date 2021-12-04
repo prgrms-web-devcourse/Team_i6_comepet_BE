@@ -2,6 +2,7 @@ package com.pet.domains.account.controller;
 
 import com.pet.common.jwt.JwtMockToken;
 import com.pet.common.response.ApiResponse;
+import com.pet.domains.account.dto.request.AccountAreaUpdateParam;
 import com.pet.domains.account.dto.request.AccountCreateParam;
 import com.pet.domains.account.dto.request.AccountEmailParam;
 import com.pet.domains.account.dto.request.AccountLonginParam;
@@ -18,6 +19,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -81,6 +83,12 @@ public class AccountController {
                 AccountAreaReadResults.Area.of(1L, "서울특별시", 2L, "강동구", false)
             )
         ));
+    }
+
+    @PutMapping(path = "me/areas", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateAccountArea(@RequestBody AccountAreaUpdateParam accountAreaUpdateParam) {
+        log.info("update account area, notification : {}", accountAreaUpdateParam.isNotification());
     }
 
 }

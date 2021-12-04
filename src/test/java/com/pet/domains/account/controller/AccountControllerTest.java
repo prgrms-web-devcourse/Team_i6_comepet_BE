@@ -10,11 +10,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pet.common.jwt.JwtMockToken;
+import com.pet.domains.account.dto.request.AccountAreaUpdateParam;
 import com.pet.domains.account.dto.request.AccountCreateParam;
 import com.pet.domains.account.dto.request.AccountEmailParam;
 import com.pet.domains.account.dto.request.AccountLonginParam;
 import com.pet.domains.account.dto.request.AccountPasswordParam;
 import com.pet.domains.account.dto.request.AccountUpdateParam;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -222,7 +224,7 @@ class AccountControllerTest {
         resultActions
             .andDo(print())
             .andExpect(status().isOk())
-            .andDo(document("account-areas",
+            .andDo(document("get-account-areas",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 requestHeaders(
@@ -243,6 +245,43 @@ class AccountControllerTest {
                 ))
             );
 
+    }
+
+    @Test
+    @DisplayName("관심 지역 설정 테스트")
+    void updateAccountAreaTest() throws Exception {
+        // given
+        AccountAreaUpdateParam param = new AccountAreaUpdateParam(
+            List.of(
+                AccountAreaUpdateParam.Area.of(1L, 1L, true),
+                AccountAreaUpdateParam.Area.of(1L, 2L, false)
+            ), true
+        );
+        // when
+        ResultActions resultActions = mockMvc.perform(put("/api/v1/me/areas")
+            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN)
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(param)));
+
+        // then
+        resultActions
+            .andDo(print())
+            .andExpect(status().isNoContent())
+            .andDo(document("update-account-areas",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                requestHeaders(
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
+                ),
+                requestFields(
+                    fieldWithPath("areas").type(ARRAY).description("시도"),
+                    fieldWithPath("areas[0].cityId").type(NUMBER).description("시도 id"),
+                    fieldWithPath("areas[0].townId").type(NUMBER).description("시군구 id"),
+                    fieldWithPath("areas[0].defaultArea").type(BOOLEAN).description("디폴트 지역 여부"),
+                    fieldWithPath("notification").type(BOOLEAN).description("알림 여부")
+                ))
+            );
     }
 
 }
