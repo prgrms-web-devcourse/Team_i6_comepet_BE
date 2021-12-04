@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-@RequestMapping("/api/v1/shelter-post")
+@RequestMapping("/api/v1/shelter-posts")
 @RestController
 public class ShelterPostController {
 
@@ -21,33 +21,32 @@ public class ShelterPostController {
     public ApiResponse<ShelterPostPageResults> getShelterPosts() {
         return ApiResponse.ok(
             ShelterPostPageResults.of(List.of(
-                ShelterPost.of(1L, "서울특별시", "도봉구", 2018, "https://../2021/11/20211189_s.jpg",
-                    "개", "리트리버", LocalDate.of(2021, 11, 25), "경상남도 진주시", false, 10),
-                ShelterPost.of(3L, "서울특별시", "구리시", 2018, "https://../2021/11/20211189_s.jpg",
+                ShelterPost.of(11L, "서울특별시", "도봉구", 2018, "https://../2021/11/20211189_s.jpg",
+                    "개", "리트리버", LocalDate.of(2021, 11, 25), "경상남도 진주시", true, 10),
+                ShelterPost.of(10L, "서울특별시", "구리시", 2018, "https://../2021/11/20211189_s.jpg",
                     "개", "믹스견", LocalDate.of(2021, 11, 21), "경상남도 진주시", false, 8),
-                ShelterPost.of(3L, "서울특별시", "구리시", 2018, "https://../2021/11/20211189_s.jpg",
-                    "개", "골든 리트리버", LocalDate.of(2021, 11, 19), "경상남도 진주시", false, 8),
-                ShelterPost.of(3L, "경기도", "구리시", 2018, "https://../2021/11/20211189_s.jpg",
+                ShelterPost.of(9L, "서울특별시", "구리시", 2018, "https://../2021/11/20211189_s.jpg",
+                    "개", "골든 리트리버", LocalDate.of(2021, 11, 19), "경상남도 진주시", true, 8),
+                ShelterPost.of(8L, "경기도", "구리시", 2018, "https://../2021/11/20211189_s.jpg",
                     "개", "삽살개", LocalDate.of(2021, 11, 14), "경상남도 진주시", false, 8),
-                ShelterPost.of(3L, "경기도", "구리시", 2018, "https://../2021/11/20211189_s.jpg",
-                    "고양이", "샴", LocalDate.of(2021, 11, 11), "경상남도 진주시", false, 8),
-                ShelterPost.of(3L, "경기도", "구리시", 2018, "https://../2021/11/20211189_s.jpg",
+                ShelterPost.of(7L, "경기도", "구리시", 2014, "https://../2021/11/20211189_s.jpg",
+                    "고양이", "샴", LocalDate.of(2021, 11, 11), "경상남도 진주시", true, 8),
+                ShelterPost.of(6L, "경기도", "구리시", 2013, "https://../2021/11/20211189_s.jpg",
                     "개", "리트리버", LocalDate.of(2021, 11, 3), "경상남도 진주시", false, 8),
-                ShelterPost.of(3L, "경기도", "구리시", 2018, "https://../2021/11/20211189_s.jpg",
-                    "고양이", "노르웨이숲", LocalDate.of(2021, 10, 21), "경상남도 진주시", false, 8),
-                ShelterPost.of(3L, "경기도", "구리시", 2018, "https://../2021/11/20211189_s.jpg",
-                    "개", "리트리버", LocalDate.of(2021, 10, 21), "경상남도 진주시", false, 8),
-                ShelterPost.of(3L, "경기도", "구리시", 2018, "https://../2021/11/20211189_s.jpg",
-                    "개", "리트리버", LocalDate.of(2021, 10, 14), "경상남도 진주시", false, 8),
-                ShelterPost.of(3L, "경기도", "구리시", 2018, "https://../2021/11/20211189_s.jpg",
-                    "개", "리트리버", LocalDate.of(2021, 10, 06), "경상남도 진주시", false, 8),
-                ShelterPost.of(3L, "경기도", "구리시", 2018, "https://../2021/11/20211189_s.jpg",
-                    "개", "리트리버", LocalDate.of(2021, 10, 3), "경상남도 진주시", false, 8)
+                ShelterPost.of(5L, "경기도", "구리시", 2018, "https://../2021/11/20211189_s.jpg",
+                    "고양이", "노르웨이숲", LocalDate.of(2021, 10, 21), "경상남도 진주시", true, 8),
+                ShelterPost.of(4L, "경기도", "구리시", 2020, "https://../2021/11/20211189_s.jpg",
+                    "개", "리트리버", LocalDate.of(2021, 10, 21), "경상남도 진주시", true, 8),
+                ShelterPost.of(3L, "경기도", "구리시", 2013, "https://../2021/11/20211189_s.jpg",
+                    "개", "리트리버", LocalDate.of(2021, 10, 14), "경상남도 진주시", true, 8),
+                ShelterPost.of(2L, "경기도", "구리시", 2015, "https://../2021/11/20211189_s.jpg",
+                    "개", "리트리버", LocalDate.of(2021, 10, 06), "경상남도 진주시", true, 8),
+                ShelterPost.of(1L, "경기도", "구리시", 2017, "https://../2021/11/20211189_s.jpg",
+                    "개", "리트리버", LocalDate.of(2021, 10, 3), "경상남도 진주시", true, 8)
                 ),
                 11,
                 true,
                 10
             ));
     }
-
 }

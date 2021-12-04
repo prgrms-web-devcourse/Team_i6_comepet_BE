@@ -1,5 +1,6 @@
 package com.pet.domains.post.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.Getter;
@@ -15,18 +16,20 @@ public class ShelterPostPageResults {
 
     private final long size;
 
-    public ShelterPostPageResults(List<ShelterPostPageResults.ShelterPost> shelters, long totalElements, boolean last, long size) {
+    public ShelterPostPageResults(List<ShelterPostPageResults.ShelterPost> shelters, long totalElements, boolean last,
+        long size) {
         this.shelters = shelters;
         this.totalElements = totalElements;
         this.last = last;
         this.size = size;
     }
 
-    public static ShelterPostPageResults of(List<ShelterPostPageResults.ShelterPost> shelters, long totalElements, boolean last, long size) {
+    public static ShelterPostPageResults of(List<ShelterPostPageResults.ShelterPost> shelters, long totalElements,
+        boolean last, long size) {
         return new ShelterPostPageResults(shelters, totalElements, last, size);
     }
 
-    @Getter
+    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
     public static class ShelterPost {
 
         private final Long id;
