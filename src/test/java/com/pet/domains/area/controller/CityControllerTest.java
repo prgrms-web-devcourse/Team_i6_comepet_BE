@@ -31,7 +31,9 @@ class CityControllerTest {
     void getCitiesTest() throws Exception {
         // given
         // when
-        ResultActions resultActions = mockMvc.perform(get("/api/v1/cities"));
+        ResultActions resultActions = mockMvc.perform(get("/api/v1/cities")
+            .accept(MediaType.APPLICATION_JSON));
+
         // then
         resultActions
             .andDo(print())
@@ -39,6 +41,9 @@ class CityControllerTest {
             .andDo(document("get-cities",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
+                requestHeaders(
+                    headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE)
+                ),
                 responseHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
                 ),

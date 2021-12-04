@@ -40,7 +40,6 @@ class NotificationControllerTest {
         // when
         ResultActions resultActions = mockMvc.perform(get("/api/v1/notices")
             .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN)
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
             .accept(MediaType.APPLICATION_JSON_VALUE));
 
         // then
@@ -52,7 +51,6 @@ class NotificationControllerTest {
                 preprocessResponse(prettyPrint()),
                 requestHeaders(
                     headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token"),
-                    headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE),
                     headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
                 responseFields(

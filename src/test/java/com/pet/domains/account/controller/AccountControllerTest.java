@@ -219,8 +219,7 @@ class AccountControllerTest {
         // given
         // when
         ResultActions resultActions = mockMvc.perform(get("/api/v1/me/areas")
-            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN)
-            .contentType(MediaType.APPLICATION_JSON));
+            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN));
 
         // then
         resultActions
@@ -230,8 +229,7 @@ class AccountControllerTest {
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 requestHeaders(
-                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token"),
-                    headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
                 ),
                 responseHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
@@ -295,8 +293,7 @@ class AccountControllerTest {
         // given
         // when
         ResultActions resultActions = mockMvc.perform(get("/api/v1/me/posts")
-            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN)
-            .contentType(MediaType.APPLICATION_JSON));
+            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN));
 
         // then
         resultActions
@@ -306,8 +303,7 @@ class AccountControllerTest {
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 requestHeaders(
-                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token"),
-                    headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
                 ),
                 responseHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
@@ -343,8 +339,7 @@ class AccountControllerTest {
         // given
         // when
         ResultActions resultActions = mockMvc.perform(get("/api/v1/me/bookmarks?status=missing")
-            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN)
-            .contentType(MediaType.APPLICATION_JSON));
+            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN));
 
         // then
         resultActions
@@ -354,8 +349,7 @@ class AccountControllerTest {
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 requestHeaders(
-                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token"),
-                    headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
                 ),
                 responseHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
@@ -389,8 +383,7 @@ class AccountControllerTest {
         // given
         // when
         ResultActions resultActions = mockMvc.perform(get("/api/v1/me/bookmarks?status=shelter")
-            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN)
-            .contentType(MediaType.APPLICATION_JSON));
+            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN));
 
         // then
         resultActions
@@ -400,8 +393,7 @@ class AccountControllerTest {
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 requestHeaders(
-                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token"),
-                    headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
                 ),
                 responseHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
