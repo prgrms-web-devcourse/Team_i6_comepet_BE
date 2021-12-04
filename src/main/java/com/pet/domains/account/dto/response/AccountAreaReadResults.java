@@ -6,13 +6,13 @@ import lombok.Getter;
 @Getter
 public class AccountAreaReadResults {
 
-    private List<Area> areas;
+    private List<AccountAreaReadResults.Area> areas;
 
-    public AccountAreaReadResults(List<Area> areas) {
+    public AccountAreaReadResults(List<AccountAreaReadResults.Area> areas) {
         this.areas = areas;
     }
 
-    public static AccountAreaReadResults of(List<Area> areas) {
+    public static AccountAreaReadResults of(List<AccountAreaReadResults.Area> areas) {
         return new AccountAreaReadResults(areas);
     }
 

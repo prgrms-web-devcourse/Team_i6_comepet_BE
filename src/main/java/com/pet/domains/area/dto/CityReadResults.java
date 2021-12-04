@@ -6,13 +6,13 @@ import lombok.Getter;
 @Getter
 public class CityReadResults {
 
-    private final List<City> cities;
+    private final List<CityReadResults.City> cities;
 
-    public CityReadResults(List<City> cities) {
+    public CityReadResults(List<CityReadResults.City> cities) {
         this.cities = cities;
     }
 
-    public static CityReadResults of(List<City> cities) {
+    public static CityReadResults of(List<CityReadResults.City> cities) {
         return new CityReadResults(cities);
     }
 
@@ -23,15 +23,15 @@ public class CityReadResults {
 
         private final String name;
 
-        private final List<Town> towns;
+        private final List<City.Town> towns;
 
-        public City(Long id, String name, List<Town> towns) {
+        public City(Long id, String name, List<City.Town> towns) {
             this.id = id;
             this.name = name;
             this.towns = towns;
         }
 
-        public static City of(Long id, String name, List<Town> towns) {
+        public static City of(Long id, String name, List<City.Town> towns) {
             return new City(id, name, towns);
         }
 
