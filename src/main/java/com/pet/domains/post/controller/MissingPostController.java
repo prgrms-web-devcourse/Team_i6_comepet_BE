@@ -31,10 +31,7 @@ public class MissingPostController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(
-        path = "/missing-posts",
-        produces = MediaType.APPLICATION_JSON_VALUE
-    )
+    @GetMapping(path = "/missing-posts", produces = MediaType.APPLICATION_JSON_VALUE)
     public ApiResponse<MissingPostReadResults> getMissingPosts() {
         return ApiResponse.ok(
             MissingPostReadResults.of(List.of(
