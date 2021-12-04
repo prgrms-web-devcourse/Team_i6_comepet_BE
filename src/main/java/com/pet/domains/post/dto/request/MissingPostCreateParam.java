@@ -55,6 +55,17 @@ public class MissingPostCreateParam {
         this.postTags = postTags;
     }
 
+    public static MissingPostCreateParam of(
+        String status, LocalDate date, Long cityId, Long townId, String detailAddress, String telNumber, Long animalId,
+        Long animalKindId, int age, String sex, String chipNumber, String content,
+        List<MissingPostCreateParam.PostTag> postTags
+    ) {
+        return new MissingPostCreateParam(
+            status, date, cityId, townId, detailAddress, telNumber, animalId, animalKindId, age, sex, chipNumber,
+            content, postTags
+        );
+    }
+
     @Getter
     public static class PostTag {
 
@@ -62,6 +73,10 @@ public class MissingPostCreateParam {
 
         public PostTag(String name) {
             this.name = name;
+        }
+
+        public static PostTag of(String name) {
+            return new PostTag(name);
         }
     }
 
