@@ -5,6 +5,7 @@ import com.pet.common.response.ApiResponse;
 import com.pet.domains.account.dto.request.AccountCreateParam;
 import com.pet.domains.account.dto.request.AccountEmailParam;
 import com.pet.domains.account.dto.request.AccountLonginParam;
+import com.pet.domains.account.dto.request.AccountPasswordParam;
 import com.pet.domains.account.dto.request.AccountUpdateParam;
 import com.pet.domains.account.dto.response.AccountCreateResult;
 import com.pet.domains.account.dto.response.AccountLoginResult;
@@ -62,6 +63,12 @@ public class AccountController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateAccount(@RequestBody AccountUpdateParam accountUpdateParam) {
         log.info("{} id account update nickname : {} ", accountUpdateParam.getId(), accountUpdateParam.getNickname());
+    }
+
+    @PatchMapping(path = "/change-password", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateAccountByPassword(@RequestBody AccountPasswordParam accountPasswordParam) {
+        log.info("success change password");
     }
 
 }
