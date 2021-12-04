@@ -11,12 +11,25 @@ public class MissingPostReadResults {
 
     private final List<MissingPostReadResults.MissingPost> missingPosts;
 
-    public MissingPostReadResults(List<MissingPostReadResults.MissingPost> missingPosts) {
+    private final long totalElements;
+
+    private final boolean last;
+
+    private final long size;
+
+    public MissingPostReadResults(
+        List<MissingPostReadResults.MissingPost> missingPosts, long totalElements, boolean last, long size
+    ) {
         this.missingPosts = missingPosts;
+        this.totalElements = totalElements;
+        this.last = last;
+        this.size = size;
     }
 
-    public static MissingPostReadResults of(List<MissingPostReadResults.MissingPost> missingPosts) {
-        return new MissingPostReadResults(missingPosts);
+    public static MissingPostReadResults of(
+        List<MissingPostReadResults.MissingPost> missingPosts, long totalElements, boolean last, long size
+    ) {
+        return new MissingPostReadResults(missingPosts, totalElements, last, size);
     }
 
     @Getter
@@ -36,24 +49,17 @@ public class MissingPostReadResults {
 
         private final SexType sex;
 
-        private final boolean isBookmark;
+        private final Boolean isBookmark;
 
         private final long bookmarkCount;
 
         private final String thumbnail;
 
-        private final List<PostTag> postTag;
-
-        private final long totalElements;
-
-        private final boolean last;
-
-        private final long size;
+        private final List<PostTag> postTags;
 
         public MissingPost(
             Long id, String city, String town, String animalKind, Status status, LocalDateTime createdAt,
-            SexType sex, boolean isBookmark, long bookmarkCount, String thumbnail, List<PostTag> postTag,
-            long totalElements, boolean last, long size
+            SexType sex, boolean isBookmark, long bookmarkCount, String thumbnail, List<PostTag> postTag
         ) {
             this.id = id;
             this.city = city;
@@ -65,20 +71,15 @@ public class MissingPostReadResults {
             this.isBookmark = isBookmark;
             this.bookmarkCount = bookmarkCount;
             this.thumbnail = thumbnail;
-            this.postTag = postTag;
-            this.totalElements = totalElements;
-            this.last = last;
-            this.size = size;
+            this.postTags = postTag;
         }
 
         public static MissingPost of(
             Long id, String city, String town, String animalKind, Status status, LocalDateTime createdAt,
-            SexType sex, boolean isBookmark, long bookmarkCount, String thumbnail, List<PostTag> postTag,
-            long totalElements, boolean last, long size
+            SexType sex, boolean isBookmark, long bookmarkCount, String thumbnail, List<PostTag> postTag
         ) {
             return new MissingPost(
-                id, city, town, animalKind, status, createdAt, sex, isBookmark, bookmarkCount, thumbnail, postTag,
-                totalElements, last, size
+                id, city, town, animalKind, status, createdAt, sex, isBookmark, bookmarkCount, thumbnail, postTag
             );
         }
 
