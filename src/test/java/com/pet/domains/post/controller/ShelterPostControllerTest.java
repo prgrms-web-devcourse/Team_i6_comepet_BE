@@ -3,7 +3,9 @@ package com.pet.domains.post.controller;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
@@ -14,6 +16,8 @@ import static org.springframework.restdocs.payload.JsonFieldType.OBJECT;
 import static org.springframework.restdocs.payload.JsonFieldType.STRING;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -83,6 +87,9 @@ class ShelterPostControllerTest {
             .andDo(document("get-shelter-post}",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
+                pathParameters(
+                    parameterWithName("postId").description("게시글 아이디")
+                ),
                 responseHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
@@ -111,6 +118,42 @@ class ShelterPostControllerTest {
                     fieldWithPath("data.isBookmark").type(BOOLEAN).description("북마크 여부"),
                     fieldWithPath("data.bookmarkCount").type(NUMBER).description("북마크 수"),
                     fieldWithPath("serverDateTime").type(STRING).description("서버 응답 시간")))
+            );
+    }
+
+    @Test
+    @DisplayName("보호소 게시글 북마크 생성 테스트")
+    void createShelterPostBookmarkTest() throws Exception {
+        // given
+        // when
+        ResultActions resultActions = mockMvc.perform(post("/api/v1/shelter-posts/{postId}/bookmark", 1L));
+
+        // then
+        resultActions.andExpect(status().isCreated())
+            .andDo(document("create-shelter-post-bookmark}",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                pathParameters(
+                    parameterWithName("postId").description("게시글 아이디")
+                ))
+            );
+    }
+
+    @Test
+    @DisplayName("보호소 게시글 북마크 삭제 테스트")
+    void deleteShelterPostBookmarkTest() throws Exception {
+        // given
+        // when
+        ResultActions resultActions = mockMvc.perform(delete("/api/v1/shelter-posts/{postId}/bookmark", 1L));
+
+        // then
+        resultActions.andExpect(status().isNoContent())
+            .andDo(document("delete-shelter-post-bookmark}",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                pathParameters(
+                    parameterWithName("postId").description("게시글 아이디")
+                ))
             );
     }
 }

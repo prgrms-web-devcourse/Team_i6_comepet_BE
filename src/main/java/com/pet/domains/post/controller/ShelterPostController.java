@@ -6,14 +6,18 @@ import com.pet.domains.post.dto.response.ShelterPostPageResults.ShelterPost;
 import com.pet.domains.post.dto.response.ShelterPostReadResult;
 import java.time.LocalDate;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RequestMapping("/api/v1/shelter-posts")
 @RestController
 public class ShelterPostController {
@@ -53,7 +57,7 @@ public class ShelterPostController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(path = "{postId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/{postId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ApiResponse<ShelterPostReadResult> getShelterPost(@PathVariable Long postId) {
         return ApiResponse.ok(
             ShelterPostReadResult.of(
@@ -62,5 +66,17 @@ public class ShelterPostController {
                 LocalDate.of(2021, 10, 1), LocalDate.of(2021, 12, 1), "경남-진주-2021-00624", "055-749-5645", "보호중", "F",
                 "순함", 7.2, true, 14L)
         );
+    }
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping(path = "/{postId}/bookmark")
+    public void createShelterPostBookmark(@PathVariable Long postId) {
+        log.info("북마크 생성 call for {}", postId);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping(path = "/{postId}/bookmark")
+    public void deleteShelterPostBookmark(@PathVariable Long postId) {
+        log.info("북마크 삭제 call for {}", postId);
     }
 }
