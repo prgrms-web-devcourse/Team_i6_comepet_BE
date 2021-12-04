@@ -26,8 +26,8 @@ import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(AnimalController.class)
 @AutoConfigureRestDocs
-@DisplayName("동물/품종 컨트롤러 테스트")
-class AnimalControllerUnitTest {
+@DisplayName("동물/품종 컨트롤러 docs 테스트")
+class AnimalControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
