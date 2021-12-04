@@ -62,5 +62,22 @@ class NotificationControllerTest {
             );
     }
 
+    @Test
+    @DisplayName("알림 삭제 요청 테스트")
+    void deleteNotification() throws Exception {
+        // given
+        // when
+        ResultActions resultActions = mockMvc.perform(delete("/api/v1/notices/{noticeId}", 1L)
+            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN));
+
+        // then
+        resultActions
+            .andDo(print())
+            .andExpect(status().isNoContent())
+            .andDo(document("get-notification",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()))
+            );
+    }
 
 }
