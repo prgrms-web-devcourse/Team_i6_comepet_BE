@@ -427,4 +427,20 @@ class AccountControllerTest {
 
     }
 
+    @Test
+    @DisplayName("회원 탈퇴 테스트")
+    void deleteAccount() throws Exception {
+        // given
+        // when
+        ResultActions resultActions = mockMvc.perform(delete("/api/v1/me"));
+        // then
+        resultActions
+            .andDo(print())
+            .andExpect(status().isNoContent())
+            .andDo(document("delete-account",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint())
+            ));
+    }
+
 }
