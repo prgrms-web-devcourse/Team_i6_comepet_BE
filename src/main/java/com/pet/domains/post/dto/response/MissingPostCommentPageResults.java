@@ -22,7 +22,8 @@ public class MissingPostCommentPageResults {
         this.size = size;
     }
 
-    public static MissingPostCommentPageResults of(List<Comment> comments, long totalElements, boolean last, long size) {
+    public static MissingPostCommentPageResults of(List<Comment> comments, long totalElements,
+        boolean last, long size) {
         return new MissingPostCommentPageResults(comments, totalElements, last, size);
     }
 
