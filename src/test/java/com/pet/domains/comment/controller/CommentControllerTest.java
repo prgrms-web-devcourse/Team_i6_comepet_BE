@@ -92,6 +92,9 @@ class CommentControllerTest {
                 pathParameters(
                     parameterWithName("commentId").description("댓글 아이디")
                 ),
+                requestFields(
+                    fieldWithPath("content").description("댓글 내용")
+                ),
                 responseHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
