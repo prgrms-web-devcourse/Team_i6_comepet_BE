@@ -11,7 +11,12 @@ import com.pet.domains.account.dto.request.AccountUpdateParam;
 import com.pet.domains.account.dto.response.AccountAreaReadResults;
 import com.pet.domains.account.dto.response.AccountCreateResult;
 import com.pet.domains.account.dto.response.AccountLoginResult;
+import com.pet.domains.account.dto.response.AccountMissingPostPageResults;
+import com.pet.domains.post.domain.SexType;
+import com.pet.domains.post.domain.Status;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.LongStream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -24,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import static java.util.stream.Collectors.*;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -85,10 +91,39 @@ public class AccountController {
         ));
     }
 
-    @PutMapping(path = "me/areas", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(path = "/me/areas", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateAccountArea(@RequestBody AccountAreaUpdateParam accountAreaUpdateParam) {
         log.info("update account area, notification : {}", accountAreaUpdateParam.isNotification());
+    }
+
+    @GetMapping(path = "/me/posts", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse<AccountMissingPostPageResults> getAccountPosts() {
+        return ApiResponse.ok(
+            AccountMissingPostPageResults.of(
+                    LongStream.range(1, 9)
+                        .mapToObj(index -> AccountMissingPostPageResults.Post.of(
+                            index,
+                            "서울특별시",
+                            "도봉구",
+                            "토이푸들",
+                            Status.DETECTION,
+                            LocalDate.of(2021, 11, 3),
+                            SexType.FEMALE,
+                            true,
+                            2,
+                            List.of(
+                                AccountMissingPostPageResults.Post.Tag.of(123L, "암컷"),
+                                AccountMissingPostPageResults.Post.Tag.of(431L, "5살"),
+                                AccountMissingPostPageResults.Post.Tag.of(256L, "4kg"),
+                                AccountMissingPostPageResults.Post.Tag.of(1246L, "사람 좋아함")
+                            ),
+                            "http://../../97fd3403-7343-497a-82fa-c41d26ccf0f8.png"
+                        ))
+                    .collect(toList()), 8, true, 1)
+        );
+
     }
 
 }
