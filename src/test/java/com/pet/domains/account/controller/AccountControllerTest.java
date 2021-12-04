@@ -154,7 +154,7 @@ class AccountControllerTest {
     void updateAccountTest() throws Exception {
         // given
         AccountUpdateParam param = new AccountUpdateParam(1L, "otherNickname");
-        // wen
+        // when
         ResultActions resultActions = mockMvc.perform(patch("/api/v1/me")
             .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN)
             .contentType(MediaType.APPLICATION_JSON)
@@ -185,7 +185,7 @@ class AccountControllerTest {
     void updatePasswordTest() throws Exception {
         // given
         AccountPasswordParam param = new AccountPasswordParam("otherPassword12!");
-        // wen
+        // when
         ResultActions resultActions = mockMvc.perform(patch("/api/v1/change-password")
             .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN)
             .contentType(MediaType.APPLICATION_JSON)
@@ -214,7 +214,7 @@ class AccountControllerTest {
     @DisplayName("회원의 관심 지역 조회 테스트")
     void getAccountAreaTest() throws Exception {
         // given
-        // wen
+        // when
         ResultActions resultActions = mockMvc.perform(get("/api/v1/me/areas")
             .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN));
 
