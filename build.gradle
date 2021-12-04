@@ -55,7 +55,7 @@ sonarqube {
         property "sonar.projectKey", "prgrms-web-devcourse_Team_i6_comepet_BE"
         property "sonar.organization", "prgrms-web-devcourse"
         property "sonar.host.url", "https://sonarcloud.io"
-//        property 'sonar.coverage.jacoco.xmlReportPaths', "$buildDir/jacoco.xml"
+        property 'sonar.coverage.jacoco.xmlReportPaths', "$buildDir/jacoco.xml"
     }
 }
 
@@ -84,8 +84,8 @@ jacocoTestReport {
         html.enabled true
         html.destination file("$buildDir/jacocoHtml")
 
-//        xml.enabled true
-//        xml.destination file("$buildDir/jacoco.xml")
+        xml.enabled true
+        xml.destination file("$buildDir/jacoco.xml")
     }
     finalizedBy 'jacocoTestCoverageVerification'
 }
