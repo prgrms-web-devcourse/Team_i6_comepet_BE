@@ -50,7 +50,7 @@ public class ShelterPostReadResult {
 
     private final Long bookmarkCount;
 
-    public ShelterPostReadResult(Long id, Long age, String shelterPlace, String shelterName,
+    private ShelterPostReadResult(Long id, Long age, String shelterPlace, String shelterName,
         String shelterTelNumber, String color, String image, LocalDate foundDate, String foundPlace,
         String animal, String animalKind, String neutered, LocalDate startDate, LocalDate endDate,
         String noticeNumber, String managerTelNumber, String status, String sex, String feature, Double weight,

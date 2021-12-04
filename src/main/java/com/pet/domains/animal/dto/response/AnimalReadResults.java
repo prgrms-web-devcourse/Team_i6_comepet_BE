@@ -8,7 +8,7 @@ public class AnimalReadResults {
 
     private final List<Animal> animals;
 
-    public AnimalReadResults(List<AnimalReadResults.Animal> animals) {
+    private AnimalReadResults(List<AnimalReadResults.Animal> animals) {
         this.animals = animals;
     }
 
@@ -25,7 +25,7 @@ public class AnimalReadResults {
 
         private final List<Animal.AnimalKind> kinds;
 
-        public Animal(Long id, String name, List<Animal.AnimalKind> kinds) {
+        private Animal(Long id, String name, List<Animal.AnimalKind> kinds) {
             this.id = id;
             this.name = name;
             this.kinds = kinds;
@@ -42,7 +42,7 @@ public class AnimalReadResults {
 
             private final String name;
 
-            public AnimalKind(Long id, String name) {
+            private AnimalKind(Long id, String name) {
                 this.id = id;
                 this.name = name;
             }

@@ -16,7 +16,7 @@ public class ShelterPostPageResults {
 
     private final long size;
 
-    public ShelterPostPageResults(List<ShelterPostPageResults.ShelterPost> shelters, long totalElements, boolean last,
+    private ShelterPostPageResults(List<ShelterPostPageResults.ShelterPost> shelters, long totalElements, boolean last,
         long size) {
         this.shelters = shelters;
         this.totalElements = totalElements;
@@ -54,7 +54,7 @@ public class ShelterPostPageResults {
 
         private final Long bookmarkCount;
 
-        public ShelterPost(Long id, String city, String town, Long age, String image, String animal,
+        private ShelterPost(Long id, String city, String town, Long age, String image, String animal,
             String animalKind, LocalDate foundDate, String shelterPlace, Boolean isBookmark, Long bookmarkCount) {
             this.id = id;
             this.city = city;
