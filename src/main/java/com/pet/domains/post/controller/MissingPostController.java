@@ -4,13 +4,16 @@ import com.pet.common.response.ApiResponse;
 import com.pet.domains.post.domain.SexType;
 import com.pet.domains.post.domain.Status;
 import com.pet.domains.post.dto.request.MissingPostCreateParam;
+import com.pet.domains.post.dto.response.MissingPostReadResult;
 import com.pet.domains.post.dto.response.MissingPostReadResults;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -117,6 +120,36 @@ public class MissingPostController {
             10,
             false,
             10
+            )
+        );
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(path = "/missing-posts/{postId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ApiResponse<MissingPostReadResult> getShelterPost(@PathVariable Long postId) {
+        return ApiResponse.ok(
+            MissingPostReadResult.of(1L,
+                MissingPostReadResult.User.of(1L, "짱구",
+                    "https://img.insight.co.kr/static/2021/01/10/700/img_20210110130830_kue82l80.webp"
+                ),
+                Status.DETECTION, LocalDate.now(), "경기도", "구리시", "주민센터 앞 골목 근처",
+                "01032430012", "개", "리트리버", 10, SexType.MALE,
+                "410123456789112",
+                List.of(
+                    MissingPostReadResult.Image.of(1L, "http://../../97fd3403-7343-497a-82fa-c41d26ccf0f8.png"),
+                    MissingPostReadResult.Image.of(2L, "http://../../97fd3403-7343-497a-82fa-c41d26ccf0f8.png")
+                ),
+                List.of(
+                    MissingPostReadResult.PostTag.of(1L, "해시태그"),
+                    MissingPostReadResult.PostTag.of(2L, "춘식이")
+                ),
+                "찾아주시면 반드시 사례하겠습니다. 연락주세요", 3, 1, true, 1,
+                List.of(
+                    MissingPostReadResult.Comment.of(1L,
+                        MissingPostReadResult.Comment.User.of(2L, "맹구",
+                            "http://../../97fd3403-7343-497a-82fa-c41d26ccf0f8.png"),
+                        "얼른 찾으시길 바래요 ㅠ", LocalDateTime.now())
+                ), LocalDateTime.now()
             )
         );
     }
