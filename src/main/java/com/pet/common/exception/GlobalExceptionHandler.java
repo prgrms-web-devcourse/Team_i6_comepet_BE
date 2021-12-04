@@ -20,4 +20,8 @@ public class GlobalExceptionHandler {
         return ErrorResponse.error(exception.getMessage());
     }
 
+    /**
+     * todo: exception, runtimeException, NPE, ILL, 400, 405, 415
+     */
+
 }

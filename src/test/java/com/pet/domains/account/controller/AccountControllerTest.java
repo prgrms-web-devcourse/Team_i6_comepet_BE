@@ -13,6 +13,7 @@ import com.pet.common.jwt.JwtMockToken;
 import com.pet.domains.account.dto.request.AccountCreateParam;
 import com.pet.domains.account.dto.request.AccountEmailParam;
 import com.pet.domains.account.dto.request.AccountLonginParam;
+import com.pet.domains.account.dto.request.AccountUpdateParam;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -146,4 +147,36 @@ class AccountControllerTest {
                 ))
             );
     }
+
+    @Test
+    @DisplayName("회원 정보 수정 테스트")
+    void updateAccountTest() throws Exception {
+        // given
+        AccountUpdateParam param = new AccountUpdateParam(1L, "otherNickname");
+        // wen
+        ResultActions resultActions = mockMvc.perform(patch("/api/v1/me")
+            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN)
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(param)));
+
+        // then
+        resultActions
+            .andDo(print())
+            .andExpect(status().isNoContent())
+            .andDo(document("update-account",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                requestHeaders(
+                    headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE),
+                    headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE),
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
+                    ),
+                requestFields(
+                    fieldWithPath("id").type(NUMBER).description("회원 id"),
+                    fieldWithPath("nickname").type(STRING).description("닉네임")
+                ))
+            );
+    }
+
 }
