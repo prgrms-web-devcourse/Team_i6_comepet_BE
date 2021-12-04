@@ -13,6 +13,7 @@ import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
 import static org.springframework.restdocs.payload.JsonFieldType.OBJECT;
 import static org.springframework.restdocs.payload.JsonFieldType.STRING;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
@@ -45,7 +46,7 @@ class CommentControllerTest {
     @DisplayName("댓글 생성 테스트")
     void createCommentTest() throws Exception {
         // given
-        CommentCreateParam param = CommentCreateParam.of(1L, "content");
+        CommentCreateParam param = CommentCreateParam.of(1L, "content", 13L);
 
         // when
         ResultActions resultActions = mockMvc.perform(post("/api/v1/comments")
@@ -57,6 +58,11 @@ class CommentControllerTest {
             .andDo(document("create-comment",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
+                requestFields(
+                    fieldWithPath("postId").description("실종 게시글 아이디"),
+                    fieldWithPath("content").description("댓글 내용"),
+                    fieldWithPath("parentCommentId").description("부모 댓글 아이디").optional()
+                ),
                 responseHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
