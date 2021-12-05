@@ -67,7 +67,7 @@ class MissingPostControllerTest {
         resultActions
             .andDo(print())
             .andExpect(status().isCreated())
-            .andDo(document("create-missingPost",
+            .andDo(document("create-missing-post",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 requestHeaders(
@@ -111,7 +111,7 @@ class MissingPostControllerTest {
         // then
         resultActions
             .andExpect(status().isOk())
-            .andDo(document("get-missingPosts",
+            .andDo(document("get-missing-posts",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 responseHeaders(
@@ -151,7 +151,7 @@ class MissingPostControllerTest {
         // then
         resultActions
             .andExpect(status().isOk())
-            .andDo(document("get-missingPost",
+            .andDo(document("get-missing-post",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 pathParameters(
@@ -212,7 +212,7 @@ class MissingPostControllerTest {
         // then
         resultActions
             .andExpect(status().isNoContent())
-            .andDo(document("delete-missingPost",
+            .andDo(document("delete-missing-post",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 pathParameters(
