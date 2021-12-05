@@ -156,7 +156,7 @@ public class MissingPostController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(path = "/{postId}")
-    public void deleteShelterPostBookmark(@PathVariable Long postId) {
+    public void deleteMissingPost(@PathVariable Long postId) {
         log.info("실종/보호 게시물 삭제 call for {}", postId);
     }
 
