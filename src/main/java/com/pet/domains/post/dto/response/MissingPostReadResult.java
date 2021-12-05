@@ -193,7 +193,9 @@ public class MissingPostReadResult {
             public static User of(Long id, String nickname, String image) {
                 return new User(id, nickname, image);
             }
+
         }
+
     }
 
 }

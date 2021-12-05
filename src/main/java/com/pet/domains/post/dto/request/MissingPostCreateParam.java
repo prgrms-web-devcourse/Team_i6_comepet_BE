@@ -79,6 +79,7 @@ public class MissingPostCreateParam {
         public static PostTag of(String name) {
             return new PostTag(name);
         }
+
     }
 
 }
