@@ -86,12 +86,12 @@ class MissingPostControllerTest {
                 requestFields(
                     fieldWithPath("status").type(STRING).description("게시글 상태"),
                     fieldWithPath("date").type(STRING).description("발견 날짜"),
-                    fieldWithPath("cityId").type(NUMBER).description("시도 Id"),
-                    fieldWithPath("townId").type(NUMBER).description("시군구 Id"),
+                    fieldWithPath("cityId").type(NUMBER).description("시도 id"),
+                    fieldWithPath("townId").type(NUMBER).description("시군구 id"),
                     fieldWithPath("detailAddress").type(STRING).description("상세 및 추가 주소").optional(),
                     fieldWithPath("telNumber").type(STRING).description("연락처"),
-                    fieldWithPath("animalId").type(NUMBER).description("동물 Id").optional(),
-                    fieldWithPath("animalKindId").type(NUMBER).description("품종 Id").optional(),
+                    fieldWithPath("animalId").type(NUMBER).description("동물 id").optional(),
+                    fieldWithPath("animalKindId").type(NUMBER).description("품종 id").optional(),
                     fieldWithPath("age").type(NUMBER).description("나이").optional(),
                     fieldWithPath("sex").type(STRING).description("성별"),
                     fieldWithPath("chipNumber").type(STRING).description("칩번호").optional(),
@@ -127,7 +127,7 @@ class MissingPostControllerTest {
                 responseFields(
                     fieldWithPath("data").type(OBJECT).description("응답 데이터"),
                     fieldWithPath("data.missingPosts").type(ARRAY).description("실종/보호 게시물 리스트"),
-                    fieldWithPath("data.missingPosts[].id").type(NUMBER).description("게시글 Id"),
+                    fieldWithPath("data.missingPosts[].id").type(NUMBER).description("게시글 id"),
                     fieldWithPath("data.missingPosts[].city").type(STRING).description("시도 이름"),
                     fieldWithPath("data.missingPosts[].town").type(STRING).description("시군구 이름"),
                     fieldWithPath("data.missingPosts[].animalKind").type(STRING).description("동물 품종"),
@@ -138,7 +138,7 @@ class MissingPostControllerTest {
                     fieldWithPath("data.missingPosts[].isBookmark").type(BOOLEAN).description("북마크 여부"),
                     fieldWithPath("data.missingPosts[].bookmarkCount").type(NUMBER).description("북마크 수"),
                     fieldWithPath("data.missingPosts[].postTags").type(ARRAY).description("해시태그 배열"),
-                    fieldWithPath("data.missingPosts[].postTags[].id").type(NUMBER).description("해시태그 Id"),
+                    fieldWithPath("data.missingPosts[].postTags[].id").type(NUMBER).description("해시태그 id"),
                     fieldWithPath("data.missingPosts[].postTags[].name").type(STRING).description("해시태그 내용"),
                     fieldWithPath("data.totalElements").type(NUMBER).description("전체 게시물 수"),
                     fieldWithPath("data.last").type(BOOLEAN).description("마지막 페이지 여부"),
@@ -162,16 +162,16 @@ class MissingPostControllerTest {
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 pathParameters(
-                    parameterWithName("postId").description("게시글 아이디")
+                    parameterWithName("postId").description("게시글 id")
                 ),
                 responseHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
                 responseFields(
                     fieldWithPath("data").type(OBJECT).description("응답 데이터"),
-                    fieldWithPath("data.id").type(NUMBER).description("게시글 Id"),
+                    fieldWithPath("data.id").type(NUMBER).description("게시글 id"),
                     fieldWithPath("data.user").type(OBJECT).description("게시글 작성자"),
-                    fieldWithPath("data.user.id").type(NUMBER).description("게시글 작성자 Id"),
+                    fieldWithPath("data.user.id").type(NUMBER).description("게시글 작성자 id"),
                     fieldWithPath("data.user.nickname").type(STRING).description("게시글 작성자 닉네임"),
                     fieldWithPath("data.user.image").type(STRING).description("게시글 작성자 프로필 url"),
                     fieldWithPath("data.status").type(STRING).description("게시글 상태"),
@@ -186,10 +186,10 @@ class MissingPostControllerTest {
                     fieldWithPath("data.sex").type(STRING).description("동물 성별"),
                     fieldWithPath("data.chipNumber").type(STRING).description("칩번호"),
                     fieldWithPath("data.postImages").type(ARRAY).description("이미지들"),
-                    fieldWithPath("data.postImages[].id").type(NUMBER).description("이미지 Id"),
+                    fieldWithPath("data.postImages[].id").type(NUMBER).description("이미지 id"),
                     fieldWithPath("data.postImages[].name").type(STRING).description("이미지 url"),
                     fieldWithPath("data.postTags").type(ARRAY).description("해시태그 배열"),
-                    fieldWithPath("data.postTags[].id").type(NUMBER).description("해시태그 Id"),
+                    fieldWithPath("data.postTags[].id").type(NUMBER).description("해시태그 id"),
                     fieldWithPath("data.postTags[].name").type(STRING).description("해시태그 값"),
                     fieldWithPath("data.content").type(STRING).description("게시글 내용"),
                     fieldWithPath("data.viewCount").type(NUMBER).description("조회수"),
@@ -197,9 +197,9 @@ class MissingPostControllerTest {
                     fieldWithPath("data.isBookmark").type(BOOLEAN).description("북마크 여부"),
                     fieldWithPath("data.commentCount").type(NUMBER).description("댓글 수"),
                     fieldWithPath("data.comments").type(ARRAY).description("댓글들"),
-                    fieldWithPath("data.comments[].id").type(NUMBER).description("댓글 Id"),
+                    fieldWithPath("data.comments[].id").type(NUMBER).description("댓글 id"),
                     fieldWithPath("data.comments[].user").type(OBJECT).description("댓글 작성자"),
-                    fieldWithPath("data.comments[].user.id").type(NUMBER).description("댓글 작성자 Id"),
+                    fieldWithPath("data.comments[].user.id").type(NUMBER).description("댓글 작성자 id"),
                     fieldWithPath("data.comments[].user.nickname").type(STRING).description("댓글 작성자 닉네임"),
                     fieldWithPath("data.comments[].user.image").type(STRING).description("댓글 작성자 프로필 url"),
                     fieldWithPath("data.comments[].content").type(STRING).description("댓글 내용"),
@@ -238,17 +238,17 @@ class MissingPostControllerTest {
                     headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
                 pathParameters(
-                    parameterWithName("postId").description("실종/보호 게시물 Id")
+                    parameterWithName("postId").description("실종/보호 게시물 id")
                 ),
                 requestFields(
                     fieldWithPath("status").type(STRING).description("실종/보호 게시물 상태"),
                     fieldWithPath("date").type(STRING).description("날짜"),
-                    fieldWithPath("city").type(NUMBER).description("시도 Id"),
-                    fieldWithPath("town").type(NUMBER).description("시군구 Id"),
+                    fieldWithPath("city").type(NUMBER).description("시도 id"),
+                    fieldWithPath("town").type(NUMBER).description("시군구 id"),
                     fieldWithPath("detailAddress").type(STRING).description("상세 및 추가 주소"),
                     fieldWithPath("telNumber").type(STRING).description("연락처"),
-                    fieldWithPath("animal").type(NUMBER).description("동물 종류 Id"),
-                    fieldWithPath("animalKind").type(NUMBER).description("품종 종류 Id"),
+                    fieldWithPath("animal").type(NUMBER).description("동물 종류 id"),
+                    fieldWithPath("animalKind").type(NUMBER).description("품종 종류 id"),
                     fieldWithPath("age").type(NUMBER).description("나이"),
                     fieldWithPath("sex").type(STRING).description("성별"),
                     fieldWithPath("chipNumber").type(STRING).description("칩번호"),
@@ -261,7 +261,7 @@ class MissingPostControllerTest {
                 ),
                 responseFields(
                     fieldWithPath("data").type(OBJECT).description("응답 데이터"),
-                    fieldWithPath("data.id").type(NUMBER).description("실종/보호 게시물 Id"),
+                    fieldWithPath("data.id").type(NUMBER).description("실종/보호 게시물 id"),
                     fieldWithPath("serverDateTime").type(STRING).description("서버 응답 시간")))
             );
 
@@ -281,7 +281,7 @@ class MissingPostControllerTest {
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 pathParameters(
-                    parameterWithName("postId").description("실종/보호 게시물 Id")
+                    parameterWithName("postId").description("실종/보호 게시물 id")
                 ))
             );
     }
@@ -300,7 +300,7 @@ class MissingPostControllerTest {
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 pathParameters(
-                    parameterWithName("postId").description("실종/보호 게시글 아이디")
+                    parameterWithName("postId").description("실종/보호 게시글 id")
                 ))
             );
     }
@@ -319,7 +319,7 @@ class MissingPostControllerTest {
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 pathParameters(
-                    parameterWithName("postId").description("실종/보호 게시글 아이디")
+                    parameterWithName("postId").description("실종/보호 게시글 id")
                 ))
             );
     }
