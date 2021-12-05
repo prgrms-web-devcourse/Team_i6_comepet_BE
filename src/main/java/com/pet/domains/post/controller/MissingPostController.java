@@ -23,21 +23,18 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/missing-posts")
 @RestController
 public class MissingPostController {
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping(
-        path = "/missing-posts",
-        consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE
-    )
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ApiResponse<Map<String, Long>> createMissingPost(@RequestBody MissingPostCreateParam param) {
         return ApiResponse.ok(Map.of("id", 1L));
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(path = "/missing-posts", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ApiResponse<MissingPostReadResults> getMissingPosts() {
         return ApiResponse.ok(
             MissingPostReadResults.of(List.of(
@@ -128,7 +125,7 @@ public class MissingPostController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(path = "/missing-posts/{postId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/{postId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ApiResponse<MissingPostReadResult> getShelterPost(@PathVariable Long postId) {
         return ApiResponse.ok(
             MissingPostReadResult.of(1L,
@@ -158,13 +155,13 @@ public class MissingPostController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping(path = "/missing-posts/{postId}")
+    @DeleteMapping(path = "/{postId}")
     public void deleteShelterPostBookmark(@PathVariable Long postId) {
         log.info("실종/보호 게시물 삭제 call for {}", postId);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping(path = "/missing-posts/{postId}/bookmark")
+    @PostMapping(path = "/{postId}/bookmark")
     public void createMissingPostBookmark(@PathVariable Long postId) {
         log.info("실종/보호 북마크 생성 call for {}", postId);
     }
