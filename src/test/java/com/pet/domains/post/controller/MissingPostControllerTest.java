@@ -240,4 +240,23 @@ class MissingPostControllerTest {
             );
     }
 
+    @Test
+    @DisplayName("실종/보호 게시글 북마크 삭제 테스트")
+    void deleteMissingPostBookmarkTest() throws Exception {
+        // given
+        // when
+        ResultActions resultActions = mockMvc.perform(delete("/api/v1/missing-posts/{postId}/bookmark", 1L));
+
+        // then
+        resultActions
+            .andExpect(status().isNoContent())
+            .andDo(document("delete-missing-post-bookmark}",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                pathParameters(
+                    parameterWithName("postId").description("실종/보호 게시글 아이디")
+                ))
+            );
+    }
+
 }

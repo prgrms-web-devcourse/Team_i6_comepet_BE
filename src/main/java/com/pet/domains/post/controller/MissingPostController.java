@@ -166,4 +166,10 @@ public class MissingPostController {
         log.info("실종/보호 북마크 생성 call for {}", postId);
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping(path = "/{postId}/bookmark")
+    public void deleteMissingPostBookmark(@PathVariable Long postId) {
+        log.info("실종/보호 북마크 삭제 call for {}", postId);
+    }
+
 }
