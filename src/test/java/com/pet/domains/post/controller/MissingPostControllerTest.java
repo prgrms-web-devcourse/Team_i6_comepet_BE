@@ -29,7 +29,6 @@ import com.pet.domains.post.domain.SexType;
 import com.pet.domains.post.domain.Status;
 import com.pet.domains.post.dto.request.MissingPostCreateParam;
 import com.pet.domains.post.dto.request.MissingPostUpdateParam;
-import com.pet.domains.post.dto.request.MissingPostUpdateParam.PostTag;
 import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -216,7 +215,7 @@ class MissingPostControllerTest {
             Status.DETECTION, LocalDate.now(), 1L, 1L, "주민센터 앞 골목 근처", "01034231111",
             1L, 1L, 10, SexType.MALE, "410123456789112",
             List.of(
-                PostTag.of("춘식이")
+                MissingPostUpdateParam.PostTag.of("춘식이")
             ), "찾아주시면 반드시 사례하겠습니다. 연락주세요."
         );
 
