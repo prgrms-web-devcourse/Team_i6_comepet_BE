@@ -13,6 +13,7 @@ import static org.springframework.restdocs.payload.JsonFieldType.STRING;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.pet.common.jwt.JwtMockToken;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,8 @@ class PostStatisticsControllerTest {
         // given
         // when
         ResultActions resultActions = mockMvc.perform(get("/api/v1/statistics")
-            .accept(MediaType.APPLICATION_JSON));
+            .accept(MediaType.APPLICATION_JSON)
+            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN));
 
         // then
         resultActions.andExpect(status().isOk())

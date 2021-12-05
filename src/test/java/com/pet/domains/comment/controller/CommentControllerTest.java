@@ -19,6 +19,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.paramete
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pet.common.jwt.JwtMockToken;
 import com.pet.domains.comment.dto.request.CommentCreateParam;
 import com.pet.domains.comment.dto.request.CommentUpdateParam;
 import org.junit.jupiter.api.DisplayName;
@@ -50,6 +51,7 @@ class CommentControllerTest {
 
         // when
         ResultActions resultActions = mockMvc.perform(post("/api/v1/comments")
+            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(param)));
 
@@ -81,6 +83,7 @@ class CommentControllerTest {
 
         // when
         ResultActions resultActions = mockMvc.perform(patch("/api/v1/comments/{commentId}", 1L)
+            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(param)));
 
@@ -110,7 +113,8 @@ class CommentControllerTest {
     void deleteCommentTest() throws Exception {
         // given
         // when
-        ResultActions resultActions = mockMvc.perform(delete("/api/v1/comments/{commentId}", 1L));
+        ResultActions resultActions = mockMvc.perform(delete("/api/v1/comments/{commentId}", 1L)
+            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN));
 
         // then
         resultActions.andExpect(status().isNoContent())
