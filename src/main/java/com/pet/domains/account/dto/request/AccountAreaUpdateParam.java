@@ -1,11 +1,12 @@
 package com.pet.domains.account.dto.request;
 
 import java.util.List;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AccountAreaUpdateParam {
 
     private List<AccountAreaUpdateParam.Area> areas;
@@ -15,10 +16,6 @@ public class AccountAreaUpdateParam {
     public AccountAreaUpdateParam(List<AccountAreaUpdateParam.Area> areas, boolean notification) {
         this.areas = areas;
         this.notification = notification;
-    }
-
-    public static AccountAreaUpdateParam of(List<AccountAreaUpdateParam.Area> areas, boolean notification) {
-        return new AccountAreaUpdateParam(areas, notification);
     }
 
     @Getter
