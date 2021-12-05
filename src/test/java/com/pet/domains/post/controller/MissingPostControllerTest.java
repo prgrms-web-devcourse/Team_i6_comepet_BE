@@ -4,6 +4,7 @@ import static org.springframework.restdocs.headers.HeaderDocumentation.headerWit
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
@@ -198,6 +199,25 @@ class MissingPostControllerTest {
                     fieldWithPath("data.comments[].createdAt").type(STRING).description("댓글 작성 날짜"),
                     fieldWithPath("data.createdAt").type(STRING).description("게시글 작성날짜"),
                     fieldWithPath("serverDateTime").type(STRING).description("서버 응답 시간")))
+            );
+    }
+
+    @Test
+    @DisplayName("실종/보호 게시물 삭제 테스트")
+    void deleteMissingPostTest() throws Exception {
+        // given
+        // when
+        ResultActions resultActions = mockMvc.perform(delete("/api/v1/missing-posts/{postId}", 1L));
+
+        // then
+        resultActions
+            .andExpect(status().isNoContent())
+            .andDo(document("delete-missingPost",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                pathParameters(
+                    parameterWithName("postId").description("실종/보호 게시물 Id")
+                ))
             );
     }
 
