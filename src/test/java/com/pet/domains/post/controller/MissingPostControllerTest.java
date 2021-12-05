@@ -7,6 +7,7 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
@@ -24,8 +25,13 @@ import static org.springframework.restdocs.request.RequestDocumentation.pathPara
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pet.domains.post.domain.SexType;
+import com.pet.domains.post.domain.Status;
 import com.pet.domains.post.dto.request.MissingPostCreateParam;
+import com.pet.domains.post.dto.request.MissingPostUpdateParam;
+import com.pet.domains.post.dto.request.MissingPostUpdateParam.PostTag;
 import java.time.LocalDate;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -200,6 +206,64 @@ class MissingPostControllerTest {
                     fieldWithPath("data.createdAt").type(STRING).description("게시글 작성날짜"),
                     fieldWithPath("serverDateTime").type(STRING).description("서버 응답 시간")))
             );
+    }
+
+    @Test
+    @DisplayName("실종/보호 게시물 수정 테스트")
+    void updateMissingPostTest() throws Exception {
+        //given
+        MissingPostUpdateParam param = MissingPostUpdateParam.of(
+            Status.DETECTION, LocalDate.now(), 1L, 1L, "주민센터 앞 골목 근처", "01034231111",
+            1L, 1L, 10, SexType.MALE, "410123456789112",
+            List.of(
+                PostTag.of("춘식이")
+            ), "찾아주시면 반드시 사례하겠습니다. 연락주세요."
+        );
+
+        //when
+        ResultActions resultActions = mockMvc.perform(put("/api/v1/missing-posts/{postId}", 1L)
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(param)));
+
+        //then
+        resultActions
+            .andExpect(status().isOk())
+            .andDo(document("update-missing-post",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                requestHeaders(
+                    headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE),
+                    headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE)
+                ),
+                pathParameters(
+                    parameterWithName("postId").description("실종/보호 게시물 Id")
+                ),
+                requestFields(
+                    fieldWithPath("status").type(STRING).description("실종/보호 게시물 상태"),
+                    fieldWithPath("date").type(STRING).description("날짜"),
+                    fieldWithPath("city").type(NUMBER).description("시도 Id"),
+                    fieldWithPath("town").type(NUMBER).description("시군구 Id"),
+                    fieldWithPath("detailAddress").type(STRING).description("상세 및 추가 주소"),
+                    fieldWithPath("telNumber").type(STRING).description("연락처"),
+                    fieldWithPath("animal").type(NUMBER).description("동물 종류 Id"),
+                    fieldWithPath("animalKind").type(NUMBER).description("품종 종류 Id"),
+                    fieldWithPath("age").type(NUMBER).description("나이"),
+                    fieldWithPath("sex").type(STRING).description("성별"),
+                    fieldWithPath("chipNumber").type(STRING).description("칩번호"),
+                    fieldWithPath("postTags").type(ARRAY).description("해시태그 배열"),
+                    fieldWithPath("postTags[0].name").type(STRING).description("해시태그 내용"),
+                    fieldWithPath("content").type(STRING).description("실종/보호 내용")
+                ),
+                responseHeaders(
+                    headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
+                ),
+                responseFields(
+                    fieldWithPath("data").type(OBJECT).description("응답 데이터"),
+                    fieldWithPath("data.id").type(NUMBER).description("실종/보호 게시물 Id"),
+                    fieldWithPath("serverDateTime").type(STRING).description("서버 응답 시간")))
+            );
+
     }
 
     @Test

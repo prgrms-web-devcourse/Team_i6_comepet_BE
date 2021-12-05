@@ -4,6 +4,7 @@ import com.pet.common.response.ApiResponse;
 import com.pet.domains.post.domain.SexType;
 import com.pet.domains.post.domain.Status;
 import com.pet.domains.post.dto.request.MissingPostCreateParam;
+import com.pet.domains.post.dto.request.MissingPostUpdateParam;
 import com.pet.domains.post.dto.response.MissingPostReadResult;
 import com.pet.domains.post.dto.response.MissingPostReadResults;
 import java.time.LocalDate;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -152,6 +154,18 @@ public class MissingPostController {
                 ), LocalDateTime.now()
             )
         );
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping(
+        path = "/{postId}",
+        consumes = MediaType.APPLICATION_JSON_VALUE,
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ApiResponse<Map<String, Long>> updateMissingPost(
+        @PathVariable Long postId, @RequestBody MissingPostUpdateParam missingPostUpdateParam
+    ) {
+        return ApiResponse.ok(Map.of("id", 1L));
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
