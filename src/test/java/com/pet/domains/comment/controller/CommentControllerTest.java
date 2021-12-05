@@ -1,6 +1,7 @@
 package com.pet.domains.comment.controller;
 
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
@@ -63,6 +64,9 @@ class CommentControllerTest {
             .andDo(document("create-comment",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
+                requestHeaders(
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
+                ),
                 requestFields(
                     fieldWithPath("postId").description("실종 게시글 아이디"),
                     fieldWithPath("content").description("댓글 내용"),
@@ -100,6 +104,9 @@ class CommentControllerTest {
                 pathParameters(
                     parameterWithName("commentId").description("댓글 아이디")
                 ),
+                requestHeaders(
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
+                ),
                 requestFields(
                     fieldWithPath("content").description("댓글 내용")
                 ),
@@ -130,6 +137,9 @@ class CommentControllerTest {
                 preprocessResponse(prettyPrint()),
                 pathParameters(
                     parameterWithName("commentId").description("댓글 아이디")
+                ),
+                requestHeaders(
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
                 ))
             );
     }

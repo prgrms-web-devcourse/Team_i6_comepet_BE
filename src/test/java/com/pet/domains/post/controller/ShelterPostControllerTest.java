@@ -1,6 +1,7 @@
 package com.pet.domains.post.controller;
 
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
@@ -55,6 +56,9 @@ class ShelterPostControllerTest {
             .andDo(document("get-shelter-posts",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
+                requestHeaders(
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
+                ),
                 responseHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
@@ -97,6 +101,9 @@ class ShelterPostControllerTest {
                 preprocessResponse(prettyPrint()),
                 pathParameters(
                     parameterWithName("postId").description("게시글 아이디")
+                ),
+                requestHeaders(
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
                 ),
                 responseHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
@@ -146,6 +153,9 @@ class ShelterPostControllerTest {
                 preprocessResponse(prettyPrint()),
                 pathParameters(
                     parameterWithName("postId").description("게시글 아이디")
+                ),
+                requestHeaders(
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
                 ))
             );
     }
@@ -167,6 +177,9 @@ class ShelterPostControllerTest {
                 preprocessResponse(prettyPrint()),
                 pathParameters(
                     parameterWithName("postId").description("게시글 아이디")
+                ),
+                requestHeaders(
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
                 ))
             );
     }
