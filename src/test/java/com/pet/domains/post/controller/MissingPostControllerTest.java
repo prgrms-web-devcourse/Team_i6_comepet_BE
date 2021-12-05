@@ -24,6 +24,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.pathPara
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pet.common.jwt.JwtMockToken;
 import com.pet.domains.post.domain.SexType;
 import com.pet.domains.post.domain.Status;
 import com.pet.domains.post.dto.request.MissingPostCreateParam;
@@ -65,6 +66,7 @@ class MissingPostControllerTest {
 
         //when
         ResultActions resultActions = mockMvc.perform(post("/api/v1/missing-posts")
+            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN)
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(param)));
@@ -77,6 +79,7 @@ class MissingPostControllerTest {
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 requestHeaders(
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token"),
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE),
                     headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
@@ -113,6 +116,7 @@ class MissingPostControllerTest {
         //given
         //when
         ResultActions resultActions = mockMvc.perform(get("/api/v1/missing-posts")
+            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN)
             .accept(MediaType.APPLICATION_JSON));
 
         // then
@@ -121,6 +125,9 @@ class MissingPostControllerTest {
             .andDo(document("get-missing-posts",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
+                requestHeaders(
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
+                ),
                 responseHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
@@ -153,6 +160,7 @@ class MissingPostControllerTest {
         //given
         //when
         ResultActions resultActions = mockMvc.perform(get("/api/v1/missing-posts/{postId}", 1L)
+            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN)
             .accept(MediaType.APPLICATION_JSON));
 
         // then
@@ -161,6 +169,9 @@ class MissingPostControllerTest {
             .andDo(document("get-missing-post",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
+                requestHeaders(
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
+                ),
                 pathParameters(
                     parameterWithName("postId").description("게시글 id")
                 ),
@@ -223,6 +234,7 @@ class MissingPostControllerTest {
 
         //when
         ResultActions resultActions = mockMvc.perform(put("/api/v1/missing-posts/{postId}", 1L)
+            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN)
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(param)));
@@ -234,6 +246,7 @@ class MissingPostControllerTest {
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 requestHeaders(
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token"),
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE),
                     headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
@@ -272,7 +285,8 @@ class MissingPostControllerTest {
     void deleteMissingPostTest() throws Exception {
         // given
         // when
-        ResultActions resultActions = mockMvc.perform(delete("/api/v1/missing-posts/{postId}", 1L));
+        ResultActions resultActions = mockMvc.perform(delete("/api/v1/missing-posts/{postId}", 1L)
+            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN));
 
         // then
         resultActions
@@ -280,6 +294,9 @@ class MissingPostControllerTest {
             .andDo(document("delete-missing-post",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
+                requestHeaders(
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
+                ),
                 pathParameters(
                     parameterWithName("postId").description("실종/보호 게시물 id")
                 ))
@@ -291,7 +308,8 @@ class MissingPostControllerTest {
     void createMissingPostBookmarkTest() throws Exception {
         // given
         // when
-        ResultActions resultActions = mockMvc.perform(post("/api/v1/missing-posts/{postId}/bookmark", 1L));
+        ResultActions resultActions = mockMvc.perform(post("/api/v1/missing-posts/{postId}/bookmark", 1L)
+            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN));
 
         // then
         resultActions
@@ -299,6 +317,9 @@ class MissingPostControllerTest {
             .andDo(document("create-missing-post-bookmark}",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
+                requestHeaders(
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
+                ),
                 pathParameters(
                     parameterWithName("postId").description("실종/보호 게시글 id")
                 ))
@@ -310,7 +331,8 @@ class MissingPostControllerTest {
     void deleteMissingPostBookmarkTest() throws Exception {
         // given
         // when
-        ResultActions resultActions = mockMvc.perform(delete("/api/v1/missing-posts/{postId}/bookmark", 1L));
+        ResultActions resultActions = mockMvc.perform(delete("/api/v1/missing-posts/{postId}/bookmark", 1L)
+            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN));
 
         // then
         resultActions
@@ -318,6 +340,9 @@ class MissingPostControllerTest {
             .andDo(document("delete-missing-post-bookmark}",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
+                requestHeaders(
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
+                ),
                 pathParameters(
                     parameterWithName("postId").description("실종/보호 게시글 id")
                 ))
