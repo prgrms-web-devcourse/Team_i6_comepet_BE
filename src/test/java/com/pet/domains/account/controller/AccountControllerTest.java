@@ -47,7 +47,6 @@ class AccountControllerTest {
         // when
         ResultActions resultActions = mockMvc.perform(post("/api/v1/verify-email")
             .contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(param)));
 
         resultActions
@@ -57,8 +56,7 @@ class AccountControllerTest {
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 requestHeaders(
-                    headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE),
-                    headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE)
+                    headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
                 ))
             );
     }
@@ -161,7 +159,6 @@ class AccountControllerTest {
         ResultActions resultActions = mockMvc.perform(patch("/api/v1/me")
             .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN)
             .contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(param)));
 
         // then
@@ -173,8 +170,7 @@ class AccountControllerTest {
                 preprocessResponse(prettyPrint()),
                 requestHeaders(
                     headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token"),
-                    headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE),
-                    headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE)
+                    headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
                 requestFields(
                     fieldWithPath("id").type(NUMBER).description("회원 id"),
@@ -192,7 +188,6 @@ class AccountControllerTest {
         ResultActions resultActions = mockMvc.perform(patch("/api/v1/change-password")
             .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN)
             .contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(param)));
 
         // then
@@ -204,7 +199,6 @@ class AccountControllerTest {
                 preprocessResponse(prettyPrint()),
                 requestHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE),
-                    headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE),
                     headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
                 ),
                 requestFields(
@@ -262,7 +256,6 @@ class AccountControllerTest {
         ResultActions resultActions = mockMvc.perform(put("/api/v1/me/areas")
             .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN)
             .contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(param)));
 
         // then
@@ -274,7 +267,6 @@ class AccountControllerTest {
                 preprocessResponse(prettyPrint()),
                 requestHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE),
-                    headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE),
                     headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
                 ),
                 requestFields(
