@@ -157,8 +157,7 @@ class ShelterPostControllerTest {
                     parameterWithName("postId").description("게시글 아이디")
                 ),
                 requestHeaders(
-                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token"),
-                    headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE)
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
                 ))
             );
     }
