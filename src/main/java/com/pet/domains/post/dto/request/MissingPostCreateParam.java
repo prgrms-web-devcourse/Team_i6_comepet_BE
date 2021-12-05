@@ -67,6 +67,7 @@ public class MissingPostCreateParam {
     }
 
     @Getter
+    @NoArgsConstructor
     public static class PostTag {
 
         private String name;

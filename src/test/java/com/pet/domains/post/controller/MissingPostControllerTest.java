@@ -13,7 +13,6 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.JsonFieldType.ARRAY;
 import static org.springframework.restdocs.payload.JsonFieldType.BOOLEAN;
-import static org.springframework.restdocs.payload.JsonFieldType.NULL;
 import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
 import static org.springframework.restdocs.payload.JsonFieldType.OBJECT;
 import static org.springframework.restdocs.payload.JsonFieldType.STRING;
@@ -59,7 +58,9 @@ class MissingPostControllerTest {
         MissingPostCreateParam param = MissingPostCreateParam.of(
             "DETECTION", LocalDate.now(), 1L, 1L, "주민센터 앞 골목 근처",
             "01012343323", 1L, 1L, 10, "MALE", "410123456789112",
-            "찾아주시면 사례하겠습니다.", null
+            "찾아주시면 사례하겠습니다.", List.of(
+                MissingPostCreateParam.PostTag.of("춘식이")
+            )
         );
 
         //when
@@ -95,7 +96,8 @@ class MissingPostControllerTest {
                     fieldWithPath("sex").type(STRING).description("성별"),
                     fieldWithPath("chipNumber").type(STRING).description("칩번호").optional(),
                     fieldWithPath("content").type(STRING).description("게시물 내용").optional(),
-                    fieldWithPath("postTags").type(NULL).description("게시글의 해시태그들").optional()
+                    fieldWithPath("postTags").type(ARRAY).description("게시글의 해시태그들").optional(),
+                    fieldWithPath("postTags[0].name").type(STRING).description("해시태그 내용").optional()
                 ),
                 responseFields(
                     fieldWithPath("data").type(OBJECT).description("응답 데이터").optional(),
