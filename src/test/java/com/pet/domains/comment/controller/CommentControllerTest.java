@@ -49,12 +49,16 @@ class CommentControllerTest {
     @DisplayName("댓글 생성 테스트")
     void createCommentTest() throws Exception {
         // given
-        CommentCreateParam param = CommentCreateParam.of(1L, "content", 13L);
+        CommentCreateParam param = CommentCreateParam.builder()
+            .postId(1L)
+            .content("content")
+            .parentCommentId(13L)
+            .build();
 
         // when
         ResultActions resultActions = mockMvc.perform(post("/api/v1/comments")
             .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN)
-            .contentType(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(objectMapper.writeValueAsString(param)));
 
         // then
@@ -65,7 +69,8 @@ class CommentControllerTest {
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 requestHeaders(
-                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token"),
+                    headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
                 requestFields(
                     fieldWithPath("postId").description("실종 게시글 아이디"),
@@ -91,7 +96,7 @@ class CommentControllerTest {
         // when
         ResultActions resultActions = mockMvc.perform(patch("/api/v1/comments/{commentId}", 1L)
             .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN)
-            .contentType(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(objectMapper.writeValueAsString(param)));
 
         // then
@@ -105,7 +110,8 @@ class CommentControllerTest {
                     parameterWithName("commentId").description("댓글 아이디")
                 ),
                 requestHeaders(
-                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token"),
+                    headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
                 requestFields(
                     fieldWithPath("content").description("댓글 내용")

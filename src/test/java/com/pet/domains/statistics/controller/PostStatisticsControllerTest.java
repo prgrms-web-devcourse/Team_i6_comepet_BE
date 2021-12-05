@@ -40,18 +40,19 @@ class PostStatisticsControllerTest {
         // given
         // when
         ResultActions resultActions = mockMvc.perform(get("/api/v1/statistics")
-            .accept(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON_VALUE)
             .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN));
 
         // then
         resultActions
             .andDo(print())
             .andExpect(status().isOk())
-            .andDo(document("get-post-statistics}",
+            .andDo(document("get-post-statistics",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 requestHeaders(
-                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token"),
+                    headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
                 responseHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)

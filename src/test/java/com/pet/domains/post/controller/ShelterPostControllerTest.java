@@ -46,7 +46,7 @@ class ShelterPostControllerTest {
         // given
         // when
         ResultActions resultActions = mockMvc.perform(get("/api/v1/shelter-posts")
-            .accept(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON_VALUE)
             .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN));
 
         // then
@@ -57,7 +57,8 @@ class ShelterPostControllerTest {
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 requestHeaders(
-                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token"),
+                    headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
                 responseHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
@@ -89,21 +90,22 @@ class ShelterPostControllerTest {
         // given
         // when
         ResultActions resultActions = mockMvc.perform(get("/api/v1/shelter-posts/{postId}", 1L)
-            .accept(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON_VALUE)
             .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN));
 
         // then
         resultActions
             .andDo(print())
             .andExpect(status().isOk())
-            .andDo(document("get-shelter-post}",
+            .andDo(document("get-shelter-post",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 pathParameters(
                     parameterWithName("postId").description("게시글 아이디")
                 ),
                 requestHeaders(
-                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token"),
+                    headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
                 responseHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
@@ -148,14 +150,15 @@ class ShelterPostControllerTest {
         resultActions
             .andDo(print())
             .andExpect(status().isCreated())
-            .andDo(document("create-shelter-post-bookmark}",
+            .andDo(document("create-shelter-post-bookmark",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 pathParameters(
                     parameterWithName("postId").description("게시글 아이디")
                 ),
                 requestHeaders(
-                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token"),
+                    headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE)
                 ))
             );
     }
@@ -172,7 +175,7 @@ class ShelterPostControllerTest {
         resultActions
             .andDo(print())
             .andExpect(status().isNoContent())
-            .andDo(document("delete-shelter-post-bookmark}",
+            .andDo(document("delete-shelter-post-bookmark",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 pathParameters(

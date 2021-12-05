@@ -1,6 +1,7 @@
 package com.pet.domains.comment.dto.request;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -14,17 +15,10 @@ public class CommentCreateParam {
 
     private Long parentCommentId;
 
+    @Builder
     private CommentCreateParam(Long postId, String content, Long parentCommentId) {
         this.postId = postId;
         this.content = content;
         this.parentCommentId = parentCommentId;
-    }
-
-    public static CommentCreateParam of(Long postId, String content, Long parentCommentId) {
-        return new CommentCreateParam(postId, content, parentCommentId);
-    }
-
-    public static CommentCreateParam of(Long postId, String content) {
-        return new CommentCreateParam(postId, content, null);
     }
 }
