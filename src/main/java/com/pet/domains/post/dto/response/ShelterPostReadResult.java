@@ -1,9 +1,10 @@
 package com.pet.domains.post.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDate;
+import lombok.Getter;
 
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+@Getter
 public class ShelterPostReadResult {
 
     private final Long id;
@@ -87,5 +88,10 @@ public class ShelterPostReadResult {
         return new ShelterPostReadResult(id, age, shelterPlace, shelterName, shelterTelNumber, color, image, foundDate,
             foundPlace, animal, animalKind, neutered, startDate, endDate, noticeNumber, managerTelNumber, status, sex,
             feature, weight, isBookmark, bookmarkCount);
+    }
+
+    @JsonProperty("isBookmark")
+    public Boolean getBookmark() {
+        return isBookmark;
     }
 }

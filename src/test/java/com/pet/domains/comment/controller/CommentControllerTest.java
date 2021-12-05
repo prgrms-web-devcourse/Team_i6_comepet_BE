@@ -17,6 +17,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.requestF
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pet.common.jwt.JwtMockToken;
@@ -56,7 +57,9 @@ class CommentControllerTest {
             .content(objectMapper.writeValueAsString(param)));
 
         // then
-        resultActions.andExpect(status().isCreated())
+        resultActions
+            .andDo(print())
+            .andExpect(status().isCreated())
             .andDo(document("create-comment",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
@@ -88,7 +91,9 @@ class CommentControllerTest {
             .content(objectMapper.writeValueAsString(param)));
 
         // then
-        resultActions.andExpect(status().isOk())
+        resultActions
+            .andDo(print())
+            .andExpect(status().isOk())
             .andDo(document("update-comment",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
@@ -117,7 +122,9 @@ class CommentControllerTest {
             .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN));
 
         // then
-        resultActions.andExpect(status().isNoContent())
+        resultActions
+            .andDo(print())
+            .andExpect(status().isNoContent())
             .andDo(document("delete-comment",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),

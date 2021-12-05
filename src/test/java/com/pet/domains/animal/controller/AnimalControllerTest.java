@@ -13,6 +13,7 @@ import static org.springframework.restdocs.payload.JsonFieldType.OBJECT;
 import static org.springframework.restdocs.payload.JsonFieldType.STRING;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -41,7 +42,9 @@ class AnimalControllerTest {
             .accept(MediaType.APPLICATION_JSON));
 
         // then
-        resultActions.andExpect(status().isOk())
+        resultActions
+            .andDo(print())
+            .andExpect(status().isOk())
             .andDo(document("get-animals",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),

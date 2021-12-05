@@ -16,6 +16,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import com.pet.common.jwt.JwtMockToken;
 import org.junit.jupiter.api.DisplayName;
@@ -46,7 +47,9 @@ class MissingPostsControllerTest {
             .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN));
 
         // then
-        resultActions.andExpect(status().isOk())
+        resultActions
+            .andDo(print())
+            .andExpect(status().isOk())
             .andDo(document("get-missing-posts-comments",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
@@ -72,5 +75,4 @@ class MissingPostsControllerTest {
                     fieldWithPath("serverDateTime").type(STRING).description("서버 응답 시간")))
             );
     }
-
 }
