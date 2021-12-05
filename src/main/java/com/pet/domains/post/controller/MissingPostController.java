@@ -163,4 +163,10 @@ public class MissingPostController {
         log.info("실종/보호 게시물 삭제 call for {}", postId);
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping(path = "/missing-posts/{postId}/bookmark")
+    public void createMissingPostBookmark(@PathVariable Long postId) {
+        log.info("실종/보호 북마크 생성 call for {}", postId);
+    }
+
 }
