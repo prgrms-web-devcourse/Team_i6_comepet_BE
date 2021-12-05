@@ -33,9 +33,6 @@ public class AccountAreaUpdateParam {
             this.defaultArea = defaultArea;
         }
 
-        public static AccountAreaUpdateParam.Area of(Long cityId, Long townId, boolean defaultArea) {
-            return new AccountAreaUpdateParam.Area(cityId, townId, defaultArea);
-        }
     }
 
 }

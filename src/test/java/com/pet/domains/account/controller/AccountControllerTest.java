@@ -254,8 +254,8 @@ class AccountControllerTest {
         // given
         AccountAreaUpdateParam param = new AccountAreaUpdateParam(
             List.of(
-                AccountAreaUpdateParam.Area.of(1L, 1L, true),
-                AccountAreaUpdateParam.Area.of(1L, 2L, false)
+                new AccountAreaUpdateParam.Area(1L, 1L, true),
+                new AccountAreaUpdateParam.Area(1L, 2L, false)
             ), true
         );
         // when
