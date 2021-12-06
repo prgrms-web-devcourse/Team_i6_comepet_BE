@@ -1,6 +1,8 @@
 HELP.md
 .gradle
 build/
+BOOT-INF/
+**/src/main/resources/static/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
