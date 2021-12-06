@@ -1,8 +1,7 @@
-package com.pet.domains.bookmark.domain;
+package com.pet.domains.post.domain;
 
 import com.pet.domains.BaseEntity;
 import com.pet.domains.account.domain.Account;
-import com.pet.domains.post.domain.MissingPost;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
