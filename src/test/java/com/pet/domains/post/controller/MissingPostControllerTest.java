@@ -241,6 +241,7 @@ class MissingPostControllerTest {
 
         //then
         resultActions
+            .andDo(print())
             .andExpect(status().isOk())
             .andDo(document("update-missing-post",
                 preprocessRequest(prettyPrint()),
