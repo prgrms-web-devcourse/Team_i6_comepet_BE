@@ -7,6 +7,7 @@ import com.pet.domains.account.controller.NotificationController;
 import com.pet.domains.animal.controller.AnimalController;
 import com.pet.domains.area.controller.CityController;
 import com.pet.domains.comment.controller.CommentController;
+import com.pet.domains.docs.controller.CommonDocumentationController;
 import com.pet.domains.post.controller.MissingPostController;
 import com.pet.domains.post.controller.ShelterPostController;
 import com.pet.domains.statistics.controller.PostStatisticsController;
@@ -16,7 +17,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(value = {
-//    CommonDocumentationController.class,
+    CommonDocumentationController.class,
     AccountController.class,
     NotificationController.class,
     AnimalController.class,
