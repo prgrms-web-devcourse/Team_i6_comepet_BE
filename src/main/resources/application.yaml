@@ -12,3 +12,4 @@ server:
     encoding:
       force: true
       charset: UTF-8
+  port: 26134
