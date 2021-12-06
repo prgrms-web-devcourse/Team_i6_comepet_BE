@@ -1,9 +1,10 @@
-package com.pet.domains.area.controller;
+package com.pet.domains.animal.controller;
 
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
@@ -13,7 +14,6 @@ import static org.springframework.restdocs.payload.JsonFieldType.OBJECT;
 import static org.springframework.restdocs.payload.JsonFieldType.STRING;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import org.junit.jupiter.api.DisplayName;
@@ -26,27 +26,27 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-@WebMvcTest(value = CityController.class)
+@WebMvcTest(value = AnimalController.class)
 @AutoConfigureRestDocs
-@DisplayName("시도/시군구 컨트롤러 테스트")
-class CityControllerTest {
+@DisplayName("동물/품종 컨트롤러 docs 테스트")
+class AnimalControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @Test
-    @DisplayName("시도/시군구 조회 성공 테스트")
-    void getCitiesTest() throws Exception {
+    @DisplayName("동물/품종 조회 성공 테스트")
+    void getAnimalsTest() throws Exception {
         // given
         // when
-        ResultActions resultActions = mockMvc.perform(get("/api/v1/cities")
-            .accept(MediaType.APPLICATION_JSON));
+        ResultActions resultActions = mockMvc.perform(get("/api/v1/animals")
+            .accept(MediaType.APPLICATION_JSON_VALUE));
 
         // then
         resultActions
             .andDo(print())
             .andExpect(status().isOk())
-            .andDo(document("get-cities",
+            .andDo(document("get-animals",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 requestHeaders(
@@ -57,14 +57,13 @@ class CityControllerTest {
                 ),
                 responseFields(
                     fieldWithPath("data").type(OBJECT).description("응답 데이터"),
-                    fieldWithPath("data.cities").type(ARRAY).description("시도"),
-                    fieldWithPath("data.cities[0].id").type(NUMBER).description("시도 id"),
-                    fieldWithPath("data.cities[0].name").type(STRING).description("시도 이름"),
-                    fieldWithPath("data.cities[0].towns").type(ARRAY).description("시도 id"),
-                    fieldWithPath("data.cities[0].towns[0].id").type(NUMBER).description("시도 id"),
-                    fieldWithPath("data.cities[0].towns[0].name").type(STRING).description("시도 id"),
+                    fieldWithPath("data.animals").type(ARRAY).description("동물"),
+                    fieldWithPath("data.animals[0].id").type(NUMBER).description("동물 id"),
+                    fieldWithPath("data.animals[0].name").type(STRING).description("동물 이름"),
+                    fieldWithPath("data.animals[0].kinds").type(ARRAY).description("품종 id"),
+                    fieldWithPath("data.animals[0].kinds[0].id").type(NUMBER).description("품종 id"),
+                    fieldWithPath("data.animals[0].kinds[0].name").type(STRING).description("품종 id"),
                     fieldWithPath("serverDateTime").type(STRING).description("서버 응답 시간")))
             );
     }
-
 }
