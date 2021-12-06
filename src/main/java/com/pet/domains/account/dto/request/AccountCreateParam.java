@@ -1,10 +1,11 @@
 package com.pet.domains.account.dto.request;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AccountCreateParam {
 
     private String nickname;

@@ -7,3 +7,9 @@ spring:
     hibernate:
       ddl-auto: create-drop
     open-in-view: false
+server:
+  servlet:
+    encoding:
+      force: true
+      charset: UTF-8
+  port: 26134

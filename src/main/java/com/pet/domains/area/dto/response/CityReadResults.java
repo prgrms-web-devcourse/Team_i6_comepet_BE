@@ -1,4 +1,4 @@
-package com.pet.domains.area.dto;
+package com.pet.domains.area.dto.response;
 
 import java.util.List;
 import lombok.Getter;

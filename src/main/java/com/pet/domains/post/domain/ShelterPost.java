@@ -83,7 +83,7 @@ public class ShelterPost extends BaseEntity {
     @Column(name = "feature", length = 200, nullable = false)
     private String feature;
 
-    @Column(name = "weight", columnDefinition = "DOUBLE default 0.0", nullable = false)
+    @Column(name = "weight", columnDefinition = "DOUBLE default 0", nullable = false)
     private Double weight;
 
     @Column(name = "notice_number", length = 30, nullable = false)
