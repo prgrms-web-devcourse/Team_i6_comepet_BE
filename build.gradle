@@ -85,6 +85,7 @@ asciidoctor.doFirst {
 
 bootJar {
     dependsOn asciidoctor
+    mkdir "BOOT-INF/classes/static/docs"
     copy {
         from "${asciidoctor.outputDir}"
         into "BOOT-INF/classes/static/docs"
