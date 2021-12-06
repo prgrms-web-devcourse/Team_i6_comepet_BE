@@ -34,19 +34,19 @@ public class NotificationController {
                     "고양이가 멍멍",
                     "http://../../97fd3403-7343-497a-82fa-c41d26ccf0f8.png",
                     513L,
-                    Status.DETECTION.getMeaning()
+                    Status.DETECTION.name()
                 ),
                 NotificationReadResults.Notification.of(
                     "야옹이가 멍멍",
                     "http://../../97fd3403-7343-497a-82fa-c41d26ccf0f8.png",
                     234L,
-                    Status.DETECTION.getMeaning()
+                    Status.DETECTION.name()
                 ),
                 NotificationReadResults.Notification.of(
                     "나홀로 집사",
                     "http://../../97fd3403-7343-497a-82fa-c41d26ccf0f8.png",
                     1231L,
-                    Status.DETECTION.getMeaning()
+                    Status.DETECTION.name()
                 )
             )
         ));
