@@ -30,7 +30,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-@WebMvcTest(MissingPostsController.class)
+@WebMvcTest(value = MissingPostsController.class)
 @AutoConfigureRestDocs
 @DisplayName("실종 게시글 컨트롤러 docs 테스트")
 class MissingPostsControllerTest {

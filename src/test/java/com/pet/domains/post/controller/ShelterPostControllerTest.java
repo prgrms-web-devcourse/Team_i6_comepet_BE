@@ -32,7 +32,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-@WebMvcTest(ShelterPostController.class)
+@WebMvcTest(value = ShelterPostController.class)
 @AutoConfigureRestDocs
 @DisplayName("보호소 동물 게시글 컨트롤러 docs 테스트")
 class ShelterPostControllerTest {
