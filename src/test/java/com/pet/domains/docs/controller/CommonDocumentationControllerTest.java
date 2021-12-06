@@ -2,6 +2,7 @@ package com.pet.domains.docs.controller;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.payload.JsonFieldType.OBJECT;
 import static org.springframework.restdocs.payload.JsonFieldType.STRING;
 import static org.springframework.restdocs.payload.PayloadDocumentation.beneathPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
@@ -44,18 +45,20 @@ class CommonDocumentationControllerTest extends BaseDocumentationTest {
             .andDo(document("common",
                 customResponseFields("custom-response", null,
                     attributes(key("title").value("공통응답")),
-                    subsectionWithPath("data").description("데이터"),
+                    subsectionWithPath("data").type(OBJECT).description("데이터"),
                     fieldWithPath("serverDateTime").type(STRING).description("서버 시간")
                 ),
                 customResponseFields("custom-response", beneathPath("data.sexTypes").withSubsectionId("sexTypes"),
                     attributes(key("title").value("성별")),
                     enumConvertFieldDescriptor(results.getSexTypes())
                 ),
-                customResponseFields("custom-response", beneathPath("data.shelterSexTypes").withSubsectionId("shelterSexTypes"),
+                customResponseFields("custom-response",
+                    beneathPath("data.shelterSexTypes").withSubsectionId("shelterSexTypes"),
                     attributes(key("title").value("보호소 동물 성별")),
                     enumConvertFieldDescriptor(results.getShelterSexTypes())
                 ),
-                customResponseFields("custom-response", beneathPath("data.neuteredTypes").withSubsectionId("neuteredTypes"),
+                customResponseFields("custom-response",
+                    beneathPath("data.neuteredTypes").withSubsectionId("neuteredTypes"),
                     attributes(key("title").value("중성화 여부")),
                     enumConvertFieldDescriptor(results.getNeuteredTypes())
                 ),
@@ -69,7 +72,7 @@ class CommonDocumentationControllerTest extends BaseDocumentationTest {
     private static FieldDescriptor[] enumConvertFieldDescriptor(Map<String, String> enumValues) {
 
         return enumValues.entrySet().stream()
-            .map(x -> fieldWithPath(x.getKey()).description(x.getValue()))
+            .map(x -> fieldWithPath(x.getKey()).type(STRING).description(x.getValue()))
             .toArray(FieldDescriptor[]::new);
     }
 
