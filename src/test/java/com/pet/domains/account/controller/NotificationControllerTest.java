@@ -57,7 +57,7 @@ class NotificationControllerTest extends BaseDocumentationTest {
                     fieldWithPath("data.notifications[0].nickname").type(STRING).description("유저 닉네임"),
                     fieldWithPath("data.notifications[0].image").type(STRING).description("유저 프로필 사진"),
                     fieldWithPath("data.notifications[0].postId").type(NUMBER).description("실종/보호 게시물 id"),
-                    fieldWithPath("data.notifications[0].status").type(STRING).description("실종/보호 게시물 상태"),
+                    fieldWithPath("data.notifications[0].status").type(STRING).description("<<status,게시물 상태>>"),
                     fieldWithPath("serverDateTime").type(STRING).description("서버 응답 시간")
                 ))
             );
