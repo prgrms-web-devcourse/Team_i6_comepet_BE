@@ -31,6 +31,7 @@ import com.pet.domains.post.dto.request.MissingPostCreateParam;
 import com.pet.domains.post.dto.request.MissingPostUpdateParam;
 import java.time.LocalDate;
 import java.util.List;
+import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,7 +62,8 @@ class MissingPostControllerTest {
             "01012343323", 1L, 1L, 10, "MALE", "410123456789112",
             "찾아주시면 사례하겠습니다.", List.of(
                 MissingPostCreateParam.PostTag.of("춘식이")
-            )
+            ),
+            Lists.emptyList()
         );
 
         //when
@@ -100,8 +102,9 @@ class MissingPostControllerTest {
                     fieldWithPath("chipNumber").type(STRING).description("칩번호").optional(),
                     fieldWithPath("content").type(STRING).description("게시물 내용").optional(),
                     fieldWithPath("postTags").type(ARRAY).description("게시글의 해시태그들").optional(),
-                    fieldWithPath("postTags[0].name").type(STRING).description("해시태그 내용").optional()
-                ),
+                    fieldWithPath("postTags[0].name").type(STRING).description("해시태그 내용").optional(),
+                    fieldWithPath("files").type(ARRAY).description("게시글의 이미들").optional()
+                    ),
                 responseFields(
                     fieldWithPath("data").type(OBJECT).description("응답 데이터").optional(),
                     fieldWithPath("data.id").type(NUMBER).description("회원 id"),
@@ -229,7 +232,9 @@ class MissingPostControllerTest {
             1L, 1L, 10, SexType.MALE, "410123456789112",
             List.of(
                 MissingPostUpdateParam.PostTag.of("춘식이")
-            ), "찾아주시면 반드시 사례하겠습니다. 연락주세요."
+            ),
+            "찾아주시면 반드시 사례하겠습니다. 연락주세요.",
+            Lists.emptyList()
         );
 
         //when
@@ -268,7 +273,8 @@ class MissingPostControllerTest {
                     fieldWithPath("chipNumber").type(STRING).description("칩번호"),
                     fieldWithPath("postTags").type(ARRAY).description("해시태그 배열"),
                     fieldWithPath("postTags[0].name").type(STRING).description("해시태그 내용"),
-                    fieldWithPath("content").type(STRING).description("실종/보호 내용")
+                    fieldWithPath("content").type(STRING).description("실종/보호 내용"),
+                    fieldWithPath("files").type(ARRAY).description("이미지 게시글들")
                 ),
                 responseHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
