@@ -1,0 +1,20 @@
+ifndef::snippets[]
+:snippets: ./build/generated-snippets
+endif::[]
+= API Document
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 3
+:sectlinks:
+
+= 컴펫
+
+== 동물/품종 API Ver.1
+
+=== 동물 리스트 조회
+.Request
+include::{snippets}/get-animals/http-request.adoc[]
+.Response
+include::{snippets}/get-animals/http-response.adoc[]

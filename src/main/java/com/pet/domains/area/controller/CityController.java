@@ -1,7 +1,7 @@
 package com.pet.domains.area.controller;
 
 import com.pet.common.response.ApiResponse;
-import com.pet.domains.area.dto.CityReadResults;
+import com.pet.domains.area.dto.response.CityReadResults;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
