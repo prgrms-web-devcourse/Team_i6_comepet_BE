@@ -13,3 +13,9 @@ server:
       force: true
       charset: UTF-8
   port: 26134
+
+compet:
+  key:
+    api:
+      name: shelter
+      key: ${SHELTER_API_KEY}
