@@ -5,12 +5,15 @@ import com.pet.domains.post.domain.SexType;
 import com.pet.domains.post.domain.Status;
 import com.pet.domains.post.dto.request.MissingPostCreateParam;
 import com.pet.domains.post.dto.request.MissingPostUpdateParam;
+import com.pet.domains.post.dto.response.MissingPostCommentPageResults;
 import com.pet.domains.post.dto.response.MissingPostReadResult;
 import com.pet.domains.post.dto.response.MissingPostReadResults;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.LongStream;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -118,10 +121,10 @@ public class MissingPostController {
                         MissingPostReadResults.MissingPost.PostTag.of(4L, "고구마 사줄까?")
                     )
                 )
-            ),
-            10,
-            false,
-            10
+                ),
+                10,
+                false,
+                10
             )
         );
     }
@@ -186,4 +189,18 @@ public class MissingPostController {
         log.info("실종/보호 북마크 삭제 call for {}", postId);
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(path = "/{postId}/comments", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ApiResponse<MissingPostCommentPageResults> getMissingPostComments(@PathVariable Long postId) {
+        return ApiResponse.ok(MissingPostCommentPageResults.of(LongStream.rangeClosed(1, 10)
+            .mapToObj(iter -> MissingPostCommentPageResults.Comment.of(
+                iter,
+                "꼭 찾길 바래요. #" + iter,
+                LocalDateTime.now(),
+                MissingPostCommentPageResults.Comment.User.of(
+                    iter, "고양이집사#" + iter, "https://../2021/11/20211189_s.jpg")
+                )
+            ).collect(Collectors.toList()), 24, false, 10
+        ));
+    }
 }
