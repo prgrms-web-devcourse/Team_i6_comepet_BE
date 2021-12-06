@@ -6,12 +6,12 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class AccountPasswordParam {
+public class NotificationUpdateParam {
 
-    private String password;
+    private boolean checked;
 
-    public AccountPasswordParam(String password) {
-        this.password = password;
+    public NotificationUpdateParam(boolean checked) {
+        this.checked = checked;
     }
 
 }
