@@ -17,13 +17,13 @@ public class WebMvcConfig implements WebMvcConfigurer {
             .addPathPatterns("/api/v1/**");
     }
 
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry
-            .addResourceHandler("/static/**")
-            .addResourceLocations("classpath:/static/")
-            .setCachePeriod(10);
-    }
+//    @Override
+//    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+//        registry
+//            .addResourceHandler("/static/**")
+//            .addResourceLocations("classpath:/static/")
+//            .setCachePeriod(10);
+//    }
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
