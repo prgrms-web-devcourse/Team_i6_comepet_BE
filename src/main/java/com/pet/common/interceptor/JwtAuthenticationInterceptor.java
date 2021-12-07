@@ -10,9 +10,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 @Slf4j
-public class JwtAuthenticationInterceptor implements HandlerInterceptor {
+public class JwtAuthenticationInterceptor {
 
-    @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
         throws Exception {
         String token = request.getHeader(HttpHeaders.AUTHORIZATION);
