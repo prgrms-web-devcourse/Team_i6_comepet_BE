@@ -80,11 +80,7 @@ class AccountControllerTest {
     @DisplayName("회원 가입 요청 성공 테스트")
     void signUpTest() throws Exception {
         // given
-        AccountCreateParam param = AccountCreateParam.builder()
-            .nickname("tester")
-            .email("tester@email.com")
-            .password("12345678a!")
-            .build();
+        AccountCreateParam param = new AccountCreateParam("test", "test@gmail.com", "1234!", null);
         // when
         ResultActions resultActions = mockMvc.perform(post("/api/v1/sign-up")
             .contentType(MediaType.APPLICATION_JSON)
@@ -179,9 +175,7 @@ class AccountControllerTest {
     @DisplayName("회원 정보 수정 테스트")
     void updateAccountTest() throws Exception {
         // given
-        AccountUpdateParam param = AccountUpdateParam.builder()
-            .nickname("tester")
-            .build();
+        AccountUpdateParam param = new AccountUpdateParam("updateNickname", null);
         // when
         ResultActions resultActions = mockMvc.perform(patch("/api/v1/me")
             .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN)
