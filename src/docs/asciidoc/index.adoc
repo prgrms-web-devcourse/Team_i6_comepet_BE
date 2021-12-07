@@ -10,7 +10,7 @@ endif::[]
 :sectlinks:
 
 [[overview]]
-= 개요 ver2
+= 개요
 
 [[overview-http-verbs]]
 == HTTP 동사
