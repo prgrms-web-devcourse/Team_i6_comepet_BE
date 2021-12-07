@@ -95,6 +95,9 @@ asciidoctor.doFirst {
 
 bootJar {
     dependsOn asciidoctor
+}
+
+bootJar.doFirst {
     copy {
         from "${asciidoctor.outputDir}"
         into 'src/main/resources/static/docs'
