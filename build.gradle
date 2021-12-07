@@ -83,21 +83,21 @@ asciidoctor {
     dependsOn test
 }
 
-asciidoctor.doFirst {
-    delete file('src/main/resources/static/docs')
-}
-
-task copyDocument(type: Copy) {
-    dependsOn asciidoctor
-    from file("build/docs/asciidoc")
-    into file("src/main/resources/static/docs")
-}
+//asciidoctor.doFirst {
+//    delete file('src/main/resources/static/docs')
+//}
+//
+//task copyDocument(type: Copy) {
+//    dependsOn asciidoctor
+//    from file("build/docs/asciidoc")
+//    into file("src/main/resources/static/docs")
+//}
 
 bootJar {
     dependsOn asciidoctor
     copy {
         from "${asciidoctor.outputDir}"
-        into "BOOT-INF/classes/static/docs"
+        into 'src/main/resources/static/docs'
     }
 }
 
@@ -134,6 +134,6 @@ checkstyle {
     toolVersion = "8.24"
 }
 
-build {
-    dependsOn copyDocument
-}
+//build {
+//    dependsOn copyDocument
+//}
