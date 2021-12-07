@@ -84,16 +84,6 @@ asciidoctor {
     dependsOn test
 }
 
-//asciidoctor.doFirst {
-//    delete file('src/main/resources/static/docs')
-//}
-//
-//task copyDocument(type: Copy) {
-//    dependsOn asciidoctor
-//    from file("build/docs/asciidoc")
-//    into file("src/main/resources/static/docs")
-//}
-
 bootJar {
     dependsOn asciidoctor
     from("${asciidoctor.outputDir}") {
@@ -133,7 +123,3 @@ checkstyle {
     configProperties = ["suppressionFile": "${rootDir}/config/checkstyle/google-style.xml`"]
     toolVersion = "8.24"
 }
-
-//build {
-//    dependsOn copyDocument
-//}
