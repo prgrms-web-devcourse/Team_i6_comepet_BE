@@ -103,11 +103,11 @@ class MissingPostControllerTest {
                     fieldWithPath("content").type(STRING).description("게시물 내용").optional(),
                     fieldWithPath("postTags").type(ARRAY).description("게시글의 해시태그들").optional(),
                     fieldWithPath("postTags[0].name").type(STRING).description("해시태그 내용").optional(),
-                    fieldWithPath("files").type(ARRAY).description("게시글의 이미들").optional()
+                    fieldWithPath("files").type(ARRAY).description("게시글의 이미지들").optional()
                     ),
                 responseFields(
                     fieldWithPath("data").type(OBJECT).description("응답 데이터").optional(),
-                    fieldWithPath("data.id").type(NUMBER).description("회원 id"),
+                    fieldWithPath("data.id").type(NUMBER).description("게시글 id"),
                     fieldWithPath("serverDateTime").type(STRING).description("서버 응답 시간")
                 )
             ));
@@ -274,7 +274,7 @@ class MissingPostControllerTest {
                     fieldWithPath("postTags").type(ARRAY).description("해시태그 배열"),
                     fieldWithPath("postTags[0].name").type(STRING).description("해시태그 내용"),
                     fieldWithPath("content").type(STRING).description("실종/보호 내용"),
-                    fieldWithPath("files").type(ARRAY).description("이미지 게시글들")
+                    fieldWithPath("files").type(ARRAY).description("게시글의 이미지들")
                 ),
                 responseHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
