@@ -83,9 +83,9 @@ asciidoctor {
     dependsOn test
 }
 
-asciidoctor.doFirst {
-    delete file('src/main/resources/static/docs')
-}
+//asciidoctor.doFirst {
+//    delete file('src/main/resources/static/docs')
+//}
 //
 //task copyDocument(type: Copy) {
 //    dependsOn asciidoctor
@@ -95,12 +95,9 @@ asciidoctor.doFirst {
 
 bootJar {
     dependsOn asciidoctor
-}
-
-bootJar.doFirst {
     copy {
         from "${asciidoctor.outputDir}"
-        into 'src/main/resources/static/docs'
+        into 'static/docs'
     }
 }
 
