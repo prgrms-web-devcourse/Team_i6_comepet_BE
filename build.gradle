@@ -79,6 +79,7 @@ test {
 }
 
 asciidoctor {
+    configurations 'asciidoctorExtensions'
     inputs.dir snippetsDir
     dependsOn test
 }
