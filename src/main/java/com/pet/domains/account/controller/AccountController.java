@@ -1,5 +1,6 @@
 package com.pet.domains.account.controller;
 
+import static java.util.stream.Collectors.toList;
 import com.pet.common.jwt.JwtMockToken;
 import com.pet.common.response.ApiResponse;
 import com.pet.domains.account.dto.request.AccountAreaUpdateParam;
@@ -9,10 +10,10 @@ import com.pet.domains.account.dto.request.AccountLonginParam;
 import com.pet.domains.account.dto.request.AccountPasswordParam;
 import com.pet.domains.account.dto.request.AccountUpdateParam;
 import com.pet.domains.account.dto.response.AccountAreaReadResults;
+import com.pet.domains.account.dto.response.AccountBookmarkPostPageResults;
 import com.pet.domains.account.dto.response.AccountCreateResult;
 import com.pet.domains.account.dto.response.AccountLoginResult;
 import com.pet.domains.account.dto.response.AccountMissingPostPageResults;
-import com.pet.domains.account.dto.response.AccountBookmarkPostPageResults;
 import com.pet.domains.post.domain.SexType;
 import com.pet.domains.post.domain.Status;
 import java.time.LocalDate;
@@ -32,7 +33,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import static java.util.stream.Collectors.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -52,7 +53,12 @@ public class AccountController {
     public ApiResponse<AccountCreateResult> getCities(@RequestBody AccountCreateParam accountCreateParam) {
         String email = accountCreateParam.getEmail();
         String nickname = accountCreateParam.getNickname();
-        log.info("sign up account info : {}, {}", email, nickname);
+        MultipartFile profile = accountCreateParam.getFile();
+        if (profile != null) {
+            log.info("sign up account info : {}, {}, {}", email, nickname, profile.getName());
+        } else {
+            log.info("sign up account info : {}, {}", email, nickname);
+        }
         return ApiResponse.ok(AccountCreateResult.of(1L, JwtMockToken.MOCK_TOKEN));
     }
 
@@ -74,7 +80,17 @@ public class AccountController {
     @PatchMapping(path = "/me", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateAccount(@RequestBody AccountUpdateParam accountUpdateParam) {
-        log.info("{} id account update nickname : {} ", accountUpdateParam.getId(), accountUpdateParam.getNickname());
+        MultipartFile profile = accountUpdateParam.getFile();
+        if (profile != null) {
+            log.info("account update nickname : {} or profile : {} ",
+                accountUpdateParam.getNickname(),
+                accountUpdateParam.getFile().getName()
+            );
+        } else {
+            log.info("account update nickname : {}",
+                accountUpdateParam.getNickname()
+            );
+        }
     }
 
     @PatchMapping(path = "/change-password", consumes = MediaType.APPLICATION_JSON_VALUE)

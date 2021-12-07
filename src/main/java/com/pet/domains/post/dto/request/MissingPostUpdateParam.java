@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @NoArgsConstructor
@@ -37,10 +38,11 @@ public class MissingPostUpdateParam {
 
     private String content;
 
-    public MissingPostUpdateParam(
-        Status status, LocalDate date, Long city, Long town, String detailAddress, String telNumber, Long animal,
-        Long animalKind, int age, SexType sex, String chipNumber, List<PostTag> postTags, String content
-    ) {
+    private List<MultipartFile> files;
+
+    public MissingPostUpdateParam(Status status, LocalDate date, Long city, Long town, String detailAddress,
+        String telNumber, Long animal, Long animalKind, int age, SexType sex, String chipNumber,
+        List<PostTag> postTags, String content, List<MultipartFile> files) {
         this.status = status;
         this.date = date;
         this.city = city;
@@ -54,15 +56,17 @@ public class MissingPostUpdateParam {
         this.chipNumber = chipNumber;
         this.postTags = postTags;
         this.content = content;
+        this.files = files;
     }
 
     public static MissingPostUpdateParam of(
         Status status, LocalDate date, Long city, Long town, String detailAddress, String telNumber, Long animal,
-        Long animalKind, int age, SexType sex, String chipNumber, List<PostTag> postTags, String content
+        Long animalKind, int age, SexType sex, String chipNumber, List<PostTag> postTags, String content,
+        List<MultipartFile> files
     ) {
         return new MissingPostUpdateParam(
             status, date, city, town, detailAddress, telNumber, animal, animalKind, age, sex, chipNumber, postTags,
-            content
+            content, files
         );
     }
 

@@ -3,18 +3,19 @@ package com.pet.domains.account.dto.request;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AccountUpdateParam {
 
-    private Long id;
-
     private String nickname;
 
-    public AccountUpdateParam(Long id, String name) {
-        this.id = id;
-        this.nickname = name;
-    }
+    private MultipartFile file;
 
+    public AccountUpdateParam(String nickname, MultipartFile file) {
+        this.nickname = nickname;
+        this.file = file;
+    }
 }
+
