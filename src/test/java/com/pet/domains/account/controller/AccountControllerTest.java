@@ -68,7 +68,7 @@ class AccountControllerTest extends BaseDocumentationTest {
     @DisplayName("회원 가입 요청 성공 테스트")
     void signUpTest() throws Exception {
         // given
-        AccountCreateParam param = new AccountCreateParam("tester", "tester@email.com", "12345678a!");
+        AccountCreateParam param = new AccountCreateParam("test", "test@gmail.com", "1234!", null);
         // when
         ResultActions resultActions = mockMvc.perform(post("/api/v1/sign-up")
             .contentType(MediaType.APPLICATION_JSON)
@@ -85,6 +85,12 @@ class AccountControllerTest extends BaseDocumentationTest {
                 requestHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE),
                     headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE)
+                ),
+                requestFields(
+                    fieldWithPath("nickname").type(STRING).description("닉네임"),
+                    fieldWithPath("email").type(STRING).description("이메일"),
+                    fieldWithPath("password").type(STRING).description("비밀번호"),
+                    fieldWithPath("file").type(OBJECT).description("프로필 이미지").optional()
                 ),
                 responseHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
@@ -157,7 +163,7 @@ class AccountControllerTest extends BaseDocumentationTest {
     @DisplayName("회원 정보 수정 테스트")
     void updateAccountTest() throws Exception {
         // given
-        AccountUpdateParam param = new AccountUpdateParam(1L, "otherNickname");
+        AccountUpdateParam param = new AccountUpdateParam("updateNickname", null);
         // when
         ResultActions resultActions = mockMvc.perform(patch("/api/v1/me")
             .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN)
@@ -310,9 +316,9 @@ class AccountControllerTest extends BaseDocumentationTest {
                     fieldWithPath("data.posts[0].city").type(STRING).description("시도 이름"),
                     fieldWithPath("data.posts[0].town").type(STRING).description("시군구 이름"),
                     fieldWithPath("data.posts[0].animalKind").type(STRING).description("품종"),
-                    fieldWithPath("data.posts[0].status").type(STRING).description("<<status,게시물 상태>>"),
+                    fieldWithPath("data.posts[0].status").type(STRING).description("게시물 상태"),
                     fieldWithPath("data.posts[0].date").type(STRING).description("게시물 등록 날짜"),
-                    fieldWithPath("data.posts[0].sex").type(STRING).description("<<sexType,동물 성별>>"),
+                    fieldWithPath("data.posts[0].sex").type(STRING).description("성별"),
                     fieldWithPath("data.posts[0].isBookmark").type(BOOLEAN).description("북마크 여부"),
                     fieldWithPath("data.posts[0].bookmarkCount").type(NUMBER).description("북마크 수"),
                     fieldWithPath("data.posts[0].postTags").type(ARRAY).description("게시물 태그"),
