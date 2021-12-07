@@ -17,7 +17,7 @@ else
 fi
 
 source ~/.env
-ENVS = $(printenv)
+ENVS=$(printenv)
 echo "> 환경변수 :$ENVS" >> /home/ubuntu/app/deploy.log
 
 DEPLOY_JAR=$DEPLOY_PATH$JAR_NAME
