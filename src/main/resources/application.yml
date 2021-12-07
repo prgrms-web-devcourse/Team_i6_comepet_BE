@@ -7,6 +7,10 @@ spring:
     hibernate:
       ddl-auto: create-drop
     open-in-view: false
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
 server:
   servlet:
     encoding:
@@ -19,3 +23,24 @@ compet:
     api:
       name: shelter
       key: ${SHELTER_API_KEY}
+
+cloud:
+  aws:
+    s3:
+      bucket: compet-dev-image
+    region:
+      auto: false
+      static: ap-northeast-2
+    stack:
+      auto: false
+    credentials:
+      accessKey: ${S3_ACCESS_KEY:empty}
+      secretKey: ${S3_SECRET_KEY:empty}
+      instance-profile: true
+
+logging:
+  level:
+    com:
+      amazonaws:
+        util:
+          EC2MetadataUtils: error
