@@ -1,16 +1,18 @@
 package com.pet.common.response;
 
 import java.time.LocalDateTime;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 
-//@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 public class ApiResponse<T> {
 
-    private final T data;
+    private T data;
 
-    private final LocalDateTime serverDateTime;
+    private LocalDateTime serverDateTime;
 
     public ApiResponse(final T data) {
         ObjectUtils.requireNonEmpty(data, "data must be not null");

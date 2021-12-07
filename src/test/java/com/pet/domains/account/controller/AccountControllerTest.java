@@ -96,7 +96,7 @@ class AccountControllerTest extends BaseDocumentationTest {
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
                 responseFields(
-                    fieldWithPath("data").type(OBJECT).description("응답 데이터").optional(),
+                    fieldWithPath("data").type(OBJECT).description("응답 데이터"),
                     fieldWithPath("data.id").type(NUMBER).description("회원 id"),
                     fieldWithPath("data.token").type(STRING).description("토큰"),
                     fieldWithPath("serverDateTime").type(STRING).description("서버 응답 시간")
@@ -130,7 +130,7 @@ class AccountControllerTest extends BaseDocumentationTest {
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
                 responseFields(
-                    fieldWithPath("data").type(OBJECT).description("응답 데이터").optional(),
+                    fieldWithPath("data").type(OBJECT).description("응답 데이터"),
                     fieldWithPath("data.id").type(NUMBER).description("회원 id"),
                     fieldWithPath("data.token").type(STRING).description("토큰"),
                     fieldWithPath("serverDateTime").type(STRING).description("서버 응답 시간")
@@ -182,8 +182,8 @@ class AccountControllerTest extends BaseDocumentationTest {
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
                 requestFields(
-                    fieldWithPath("id").type(NUMBER).description("회원 id"),
-                    fieldWithPath("nickname").type(STRING).description("닉네임")
+                    fieldWithPath("nickname").type(STRING).description("닉네임").optional(),
+                    fieldWithPath("file").type(STRING).description("프로필 이미지").optional()
                 ))
             );
     }
