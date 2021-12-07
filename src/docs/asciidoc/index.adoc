@@ -6,15 +6,517 @@ endif::[]
 :icons: font
 :source-highlighter: highlightjs
 :toc: left
-:toclevels: 3
+:toclevels: 4
 :sectlinks:
 
-= 컴펫
+[[overview]]
+= 개요
 
-== 동물/품종 API Ver.1
+[[overview-http-verbs]]
+== HTTP 동사
 
-=== 동물 리스트 조회
-.Request
+본 REST API에서 사용하는 HTTP 동사(verbs)는 가능한한 표준 HTTP와 REST 규약을 따릅니다.
+
+|===
+| 동사 | 용례
+
+| `GET`
+| 리소스를 가져올 때 사용
+
+| `POST`
+| 새 리소스를 만들 때 사용
+
+| `PUT`
+| 기존 리소스를 수정할 때 사용
+
+| `PATCH`
+| 기존 리소스의 일부를 수정할 때 사용
+
+| `DELETE`
+| 기존 리소스를 삭제할 떄 사용
+|===
+
+[[overview-http-status-codes]]
+== HTTP 상태 코드
+
+본 REST API에서 사용하는 HTTP 상태 코드는 가능한한 표준 HTTP와 REST 규약을 따릅니다.
+
+|===
+| 상태 코드 | 용례
+
+| `200 OK`
+| 요청을 성공적으로 처리함
+
+| `400 Bad Request`
+| 잘못된 요청을 보낸 경우. 응답 본문에 오류에 대한 정보가 담겨있다.
+
+| `401 Unauthorized`
+| Authorization 헤더에 토큰 값이 없거나, 유효하지 않은 경우
+
+|===
+
+== 공통 사항
+
+include::{snippets}/common/custom-response-fields.adoc[]
+
+[[status]]
+include::{snippets}/common/custom-response-fields-status.adoc[]
+
+[[sexType]]
+include::{snippets}/common/custom-response-fields-sexTypes.adoc[]
+
+[[shelterSexType]]
+include::{snippets}/common/custom-response-fields-shelterSexTypes.adoc[]
+
+[[neuteredType]]
+include::{snippets}/common/custom-response-fields-neuteredTypes.adoc[]
+
+
+== 회원
+.API Ver.1
+
+=== 이메일 인증
+
+==== CURL request
+include::{snippets}/verify-email/curl-request.adoc[]
+
+==== Http Request
+include::{snippets}/verify-email/http-request.adoc[]
+
+==== Http Response
+include::{snippets}/verify-email/http-response.adoc[]
+
+
+=== 회원가입
+
+==== CURL request
+include::{snippets}/sign-up/curl-request.adoc[]
+
+==== Http Request
+include::{snippets}/sign-up/http-request.adoc[]
+
+==== Http Response
+include::{snippets}/sign-up/http-response.adoc[]
+
+==== Response fields
+include::{snippets}/sign-up/response-fields.adoc[]
+
+=== 로그인
+
+==== CURL request
+include::{snippets}/login/curl-request.adoc[]
+
+==== Http Request
+include::{snippets}/login/http-request.adoc[]
+
+==== Http Response
+include::{snippets}/login/http-response.adoc[]
+
+==== Response fields
+include::{snippets}/login/response-fields.adoc[]
+
+=== 로그아웃
+
+==== CURL request
+include::{snippets}/logout/curl-request.adoc[]
+
+==== Http Request
+include::{snippets}/logout/http-request.adoc[]
+
+==== Http Response
+include::{snippets}/logout/http-response.adoc[]
+
+=== 비밀번호 변경
+
+==== CURL request
+include::{snippets}/update-password/curl-request.adoc[]
+
+==== Http Request
+include::{snippets}/update-password/http-request.adoc[]
+
+==== Request fields
+include::{snippets}/update-password/request-fields.adoc[]
+
+==== Http Response
+include::{snippets}/update-password/http-response.adoc[]
+
+=== 회원정보 변경
+
+==== CURL request
+include::{snippets}/update-account/curl-request.adoc[]
+
+==== Http Request
+include::{snippets}/update-account/http-request.adoc[]
+
+==== Request fields
+include::{snippets}/update-account/request-fields.adoc[]
+
+==== Http Response
+include::{snippets}/update-account/http-response.adoc[]
+
+=== 회원의 관심지역 조회
+
+==== CURL request
+include::{snippets}/get-account-areas/curl-request.adoc[]
+
+==== Http Request
+include::{snippets}/get-account-areas/http-request.adoc[]
+
+==== Http Response
+include::{snippets}/get-account-areas/http-response.adoc[]
+
+==== Response fields
+include::{snippets}/get-account-areas/response-fields.adoc[]
+
+=== 회원의 관심지역 수정
+
+==== CURL request
+include::{snippets}/update-account-areas/curl-request.adoc[]
+
+==== Http Request
+include::{snippets}/update-account-areas/http-request.adoc[]
+
+==== Request fields
+include::{snippets}/update-account-areas/request-fields.adoc[]
+
+==== Http Response
+include::{snippets}/update-account-areas/http-response.adoc[]
+
+=== 회원의 작성 게시글 목록 조회
+
+==== CURL request
+include::{snippets}/get-account-missing-posts/curl-request.adoc[]
+
+==== Http Request
+include::{snippets}/get-account-missing-posts/http-request.adoc[]
+
+==== Http Response
+include::{snippets}/get-account-missing-posts/http-response.adoc[]
+
+==== Response fields
+include::{snippets}/get-account-missing-posts/response-fields.adoc[]
+
+=== 회원의 실종/보호 관심 게시글 목록 조회
+
+==== CURL request
+include::{snippets}/get-account-missing-bookmark-posts/curl-request.adoc[]
+
+==== Http Request
+include::{snippets}/get-account-missing-bookmark-posts/http-request.adoc[]
+
+==== Http Response
+include::{snippets}/get-account-missing-bookmark-posts/http-response.adoc[]
+
+==== Response fields
+include::{snippets}/get-account-missing-bookmark-posts/response-fields.adoc[]
+
+=== 회원 탈퇴
+
+==== CURL request
+include::{snippets}/delete-account/curl-request.adoc[]
+
+==== Http Request
+include::{snippets}/delete-account/http-request.adoc[]
+
+==== Http Response
+include::{snippets}/delete-account/http-response.adoc[]
+
+== 알림
+
+=== 알림 목록 조회
+
+==== CURL request
+include::{snippets}/get-notifications/curl-request.adoc[]
+
+==== Http Request
+include::{snippets}/get-notifications/http-request.adoc[]
+
+==== Http Response
+include::{snippets}/get-notifications/http-response.adoc[]
+
+==== Response fields
+include::{snippets}/get-notifications/response-fields.adoc[]
+
+=== 알림 읽음 처리(클릭)
+
+==== CURL request
+include::{snippets}/update-notification/curl-request.adoc[]
+
+==== Http Request
+include::{snippets}/update-notification/http-request.adoc[]
+
+==== Request fields
+include::{snippets}/update-notification/request-fields.adoc[]
+
+==== Http Response
+include::{snippets}/update-notification/http-response.adoc[]
+
+=== 알림 삭제 처리
+
+==== CURL request
+include::{snippets}/delete-notification/curl-request.adoc[]
+
+==== Http Request
+include::{snippets}/delete-notification/http-request.adoc[]
+
+==== Http Response
+include::{snippets}/delete-notification/http-response.adoc[]
+
+
+== 동물/품종
+
+=== 품종 조회
+
+==== CURL request
+include::{snippets}/get-animals/curl-request.adoc[]
+
+==== Http Request
 include::{snippets}/get-animals/http-request.adoc[]
-.Response
+
+==== Http Response
 include::{snippets}/get-animals/http-response.adoc[]
+
+==== Response fields
+include::{snippets}/get-animals/response-fields.adoc[]
+
+== 시도/시군구
+
+=== 시군구 조회
+
+==== CURL request
+include::{snippets}/get-cities/curl-request.adoc[]
+
+==== Http Request
+include::{snippets}/get-cities/http-request.adoc[]
+
+==== Http Response
+include::{snippets}/get-cities/http-response.adoc[]
+
+==== Response fields
+include::{snippets}/get-cities/response-fields.adoc[]
+
+== 실종/보호 게시글
+
+=== 게시글 목록 조회
+
+==== CURL request
+include::{snippets}/get-missing-posts/curl-request.adoc[]
+
+==== Http Request
+include::{snippets}/get-missing-posts/http-request.adoc[]
+
+==== Http Response
+include::{snippets}/get-missing-posts/http-response.adoc[]
+
+==== Response fields
+include::{snippets}/get-missing-posts/response-fields.adoc[]
+
+=== 게시글 단건 조회
+
+==== CURL request
+include::{snippets}/get-missing-post/curl-request.adoc[]
+
+==== Http Request
+include::{snippets}/get-missing-post/http-request.adoc[]
+
+==== Http Response
+include::{snippets}/get-missing-post/http-response.adoc[]
+
+==== Response fields
+include::{snippets}/get-missing-post/response-fields.adoc[]
+
+=== 게시글 작성
+
+==== CURL request
+include::{snippets}/create-missing-post/curl-request.adoc[]
+
+==== Http Request
+include::{snippets}/create-missing-post/http-request.adoc[]
+
+==== Request fields
+include::{snippets}/create-missing-post/request-fields.adoc[]
+
+==== Http Response
+include::{snippets}/create-missing-post/http-response.adoc[]
+
+==== Response fields
+include::{snippets}/create-missing-post/response-fields.adoc[]
+
+=== 게시글 수정
+
+==== CURL request
+include::{snippets}/update-missing-post/curl-request.adoc[]
+
+==== Http Request
+include::{snippets}/update-missing-post/http-request.adoc[]
+
+==== Request fields
+include::{snippets}/update-missing-post/request-fields.adoc[]
+
+==== Http Response
+include::{snippets}/update-missing-post/http-response.adoc[]
+
+==== Response fields
+include::{snippets}/update-missing-post/response-fields.adoc[]
+
+=== 게시글 삭제
+
+==== CURL request
+include::{snippets}/delete-missing-post/curl-request.adoc[]
+
+==== Http Request
+include::{snippets}/delete-missing-post/http-request.adoc[]
+
+==== Http Response
+include::{snippets}/delete-missing-post/http-response.adoc[]
+
+=== 해당 게시글의 댓글 목록 조회
+
+==== CURL request
+include::{snippets}/get-missing-posts-comments/curl-request.adoc[]
+
+==== Http Request
+include::{snippets}/get-missing-posts-comments/http-request.adoc[]
+
+==== Http Response
+include::{snippets}/get-missing-posts-comments/http-response.adoc[]
+
+==== Response fields
+include::{snippets}/get-missing-posts-comments/response-fields.adoc[]
+
+=== 관심 게시글 설정
+
+==== CURL request
+include::{snippets}/create-missing-post-bookmark/curl-request.adoc[]
+
+==== Http Request
+include::{snippets}/create-missing-post-bookmark/http-request.adoc[]
+
+==== Http Response
+include::{snippets}/create-missing-post-bookmark/http-response.adoc[]
+
+=== 관심 게시글 해제
+
+==== CURL request
+include::{snippets}/delete-missing-post-bookmark/curl-request.adoc[]
+
+==== Http Request
+include::{snippets}/delete-missing-post-bookmark/http-request.adoc[]
+
+==== Http Response
+include::{snippets}/delete-missing-post-bookmark/http-response.adoc[]
+
+== 보호소 동물 게시글
+
+=== 게시글 목록 조회
+
+==== CURL request
+include::{snippets}/get-shelter-posts/curl-request.adoc[]
+
+==== Http Request
+include::{snippets}/get-shelter-posts/http-request.adoc[]
+
+==== Http Response
+include::{snippets}/get-shelter-posts/http-response.adoc[]
+
+==== Response fields
+include::{snippets}/get-shelter-posts/response-fields.adoc[]
+
+=== 게시글 단건 조회
+
+==== CURL request
+include::{snippets}/get-shelter-post/curl-request.adoc[]
+
+==== Http Request
+include::{snippets}/get-shelter-post/http-request.adoc[]
+
+==== Http Response
+include::{snippets}/get-shelter-post/http-response.adoc[]
+
+==== Response fields
+include::{snippets}/get-shelter-post/response-fields.adoc[]
+
+=== 관심 게시글 설정
+
+==== CURL request
+include::{snippets}/create-shelter-post-bookmark/curl-request.adoc[]
+
+==== Http Request
+include::{snippets}/create-shelter-post-bookmark/http-request.adoc[]
+
+==== Http Response
+include::{snippets}/create-shelter-post-bookmark/http-response.adoc[]
+
+=== 관심 게시글 해제
+
+==== CURL request
+include::{snippets}/delete-shelter-post-bookmark/curl-request.adoc[]
+
+==== Http Request
+include::{snippets}/delete-shelter-post-bookmark/http-request.adoc[]
+
+==== Http Response
+include::{snippets}/delete-shelter-post-bookmark/http-response.adoc[]
+
+== 댓글
+
+=== 댓글 작성
+
+==== CURL request
+include::{snippets}/create-comment/curl-request.adoc[]
+
+==== Http Request
+include::{snippets}/create-comment/http-request.adoc[]
+
+==== Request fields
+include::{snippets}/create-comment/request-fields.adoc[]
+
+==== Http Response
+include::{snippets}/create-comment/http-response.adoc[]
+
+==== Response fields
+include::{snippets}/create-comment/response-fields.adoc[]
+
+=== 댓글 수정
+
+==== CURL request
+include::{snippets}/update-comment/curl-request.adoc[]
+
+==== Http Request
+include::{snippets}/update-comment/http-request.adoc[]
+
+==== Request fields
+include::{snippets}/update-comment/request-fields.adoc[]
+
+==== Http Response
+include::{snippets}/update-comment/http-response.adoc[]
+
+==== Response fields
+include::{snippets}/update-comment/response-fields.adoc[]
+
+=== 댓글 삭제
+
+==== CURL request
+include::{snippets}/delete-comment/curl-request.adoc[]
+
+==== Http Request
+include::{snippets}/delete-comment/http-request.adoc[]
+
+==== Http Response
+include::{snippets}/delete-comment/http-response.adoc[]
+
+== 통계
+
+=== 게시글 통계 조회
+
+==== CURL request
+include::{snippets}/get-post-statistics/curl-request.adoc[]
+
+==== Http Request
+include::{snippets}/get-post-statistics/http-request.adoc[]
+
+==== Http Response
+include::{snippets}/get-post-statistics/http-response.adoc[]
+
+==== Response fields
+include::{snippets}/get-post-statistics/response-fields.adoc[]

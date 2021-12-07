@@ -22,23 +22,15 @@ import static org.springframework.restdocs.request.RequestDocumentation.pathPara
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import com.pet.common.jwt.JwtMockToken;
+import com.pet.domains.docs.BaseDocumentationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-@WebMvcTest(value = ShelterPostController.class)
-@AutoConfigureRestDocs
-@DisplayName("보호소 동물 게시글 컨트롤러 docs 테스트")
-class ShelterPostControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
+@DisplayName("보호소 동물 게시글 컨트롤러 테스트")
+class ShelterPostControllerTest extends BaseDocumentationTest {
 
     @Test
     @DisplayName("보호소 게시글 리스트 조회 테스트")
@@ -123,13 +115,13 @@ class ShelterPostControllerTest {
                     fieldWithPath("data.foundPlace").type(STRING).description("발견 장소"),
                     fieldWithPath("data.animal").type(STRING).description("동물 종류"),
                     fieldWithPath("data.animalKind").type(STRING).description("동물 품종"),
-                    fieldWithPath("data.neutered").type(STRING).description("중성화 여부"),
+                    fieldWithPath("data.neutered").type(STRING).description("<<neuteredType,중성화 여부>>"),
                     fieldWithPath("data.startDate").type(STRING).description("공고 시작일"),
                     fieldWithPath("data.endDate").type(STRING).description("공고 마감일"),
                     fieldWithPath("data.noticeNumber").type(STRING).description("공고 번호"),
                     fieldWithPath("data.managerTelNumber").type(STRING).description("담당자 연락처"),
                     fieldWithPath("data.status").type(STRING).description("공고 상태"),
-                    fieldWithPath("data.sex").type(STRING).description("동물 성별"),
+                    fieldWithPath("data.sex").type(STRING).description("<<shelterSexType,동물 성별>>"),
                     fieldWithPath("data.feature").type(STRING).description("동물 특징"),
                     fieldWithPath("data.weight").type(NUMBER).description("동물 체중"),
                     fieldWithPath("data.isBookmark").type(BOOLEAN).description("북마크 여부"),

@@ -24,7 +24,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pet.common.jwt.JwtMockToken;
 import com.pet.domains.account.dto.request.AccountAreaUpdateParam;
 import com.pet.domains.account.dto.request.AccountCreateParam;
@@ -32,27 +31,16 @@ import com.pet.domains.account.dto.request.AccountEmailParam;
 import com.pet.domains.account.dto.request.AccountLonginParam;
 import com.pet.domains.account.dto.request.AccountPasswordParam;
 import com.pet.domains.account.dto.request.AccountUpdateParam;
+import com.pet.domains.docs.BaseDocumentationTest;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-@WebMvcTest(value = AccountController.class)
-@AutoConfigureRestDocs
 @DisplayName("회원 컨트롤러 테스트")
-class AccountControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
+class AccountControllerTest extends BaseDocumentationTest {
 
     @Test
     @DisplayName("이메일 인증 요청 테스트")
@@ -108,7 +96,7 @@ class AccountControllerTest {
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
                 responseFields(
-                    fieldWithPath("data").type(OBJECT).description("응답 데이터").optional(),
+                    fieldWithPath("data").type(OBJECT).description("응답 데이터"),
                     fieldWithPath("data.id").type(NUMBER).description("회원 id"),
                     fieldWithPath("data.token").type(STRING).description("토큰"),
                     fieldWithPath("serverDateTime").type(STRING).description("서버 응답 시간")
@@ -142,7 +130,7 @@ class AccountControllerTest {
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
                 responseFields(
-                    fieldWithPath("data").type(OBJECT).description("응답 데이터").optional(),
+                    fieldWithPath("data").type(OBJECT).description("응답 데이터"),
                     fieldWithPath("data.id").type(NUMBER).description("회원 id"),
                     fieldWithPath("data.token").type(STRING).description("토큰"),
                     fieldWithPath("serverDateTime").type(STRING).description("서버 응답 시간")
@@ -194,8 +182,8 @@ class AccountControllerTest {
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
                 requestFields(
-                    fieldWithPath("nickname").type(STRING).description("닉네임"),
-                    fieldWithPath("file").type(OBJECT).description("프로필 이미지").optional()
+                    fieldWithPath("nickname").type(STRING).description("닉네임").optional(),
+                    fieldWithPath("file").type(STRING).description("프로필 이미지").optional()
                 ))
             );
     }

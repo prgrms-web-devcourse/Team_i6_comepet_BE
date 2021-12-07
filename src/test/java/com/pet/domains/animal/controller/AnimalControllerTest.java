@@ -16,23 +16,15 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.pet.domains.docs.BaseDocumentationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-@WebMvcTest(value = AnimalController.class)
-@AutoConfigureRestDocs
 @DisplayName("동물/품종 컨트롤러 docs 테스트")
-class AnimalControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
+class AnimalControllerTest extends BaseDocumentationTest {
 
     @Test
     @DisplayName("동물/품종 조회 성공 테스트")

@@ -16,23 +16,15 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import com.pet.common.jwt.JwtMockToken;
+import com.pet.domains.docs.BaseDocumentationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-@WebMvcTest(value = PostStatisticsController.class)
-@AutoConfigureRestDocs
-@DisplayName("통계 컨트롤러 docs 테스트")
-class PostStatisticsControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
+@DisplayName("통계 컨트롤러 테스트")
+class PostStatisticsControllerTest extends BaseDocumentationTest {
 
     @Test
     @DisplayName("게시글 통계 데이터 조회 테스트")
