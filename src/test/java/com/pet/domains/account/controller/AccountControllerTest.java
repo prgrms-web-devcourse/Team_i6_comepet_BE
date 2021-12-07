@@ -1,15 +1,29 @@
 package com.pet.domains.account.controller;
 
-import static org.springframework.restdocs.headers.HeaderDocumentation.*;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.restdocs.payload.JsonFieldType.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
+import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.JsonFieldType.ARRAY;
+import static org.springframework.restdocs.payload.JsonFieldType.BOOLEAN;
+import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
+import static org.springframework.restdocs.payload.JsonFieldType.OBJECT;
+import static org.springframework.restdocs.payload.JsonFieldType.STRING;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import com.pet.common.jwt.JwtMockToken;
 import com.pet.domains.account.dto.request.AccountAreaUpdateParam;
 import com.pet.domains.account.dto.request.AccountCreateParam;
@@ -17,27 +31,16 @@ import com.pet.domains.account.dto.request.AccountEmailParam;
 import com.pet.domains.account.dto.request.AccountLonginParam;
 import com.pet.domains.account.dto.request.AccountPasswordParam;
 import com.pet.domains.account.dto.request.AccountUpdateParam;
+import com.pet.domains.docs.BaseDocumentationTest;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-@WebMvcTest(value = AccountController.class)
-@AutoConfigureRestDocs
 @DisplayName("회원 컨트롤러 테스트")
-class AccountControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
+class AccountControllerTest extends BaseDocumentationTest {
 
     @Test
     @DisplayName("이메일 인증 요청 테스트")
@@ -65,7 +68,7 @@ class AccountControllerTest {
     @DisplayName("회원 가입 요청 성공 테스트")
     void signUpTest() throws Exception {
         // given
-        AccountCreateParam param = new AccountCreateParam("tester", "tester@email.com", "12345678a!");
+        AccountCreateParam param = new AccountCreateParam("test", "test@gmail.com", "1234!", null);
         // when
         ResultActions resultActions = mockMvc.perform(post("/api/v1/sign-up")
             .contentType(MediaType.APPLICATION_JSON)
@@ -83,11 +86,17 @@ class AccountControllerTest {
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE),
                     headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
+                requestFields(
+                    fieldWithPath("nickname").type(STRING).description("닉네임"),
+                    fieldWithPath("email").type(STRING).description("이메일"),
+                    fieldWithPath("password").type(STRING).description("비밀번호"),
+                    fieldWithPath("file").type(OBJECT).description("프로필 이미지").optional()
+                ),
                 responseHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
                 responseFields(
-                    fieldWithPath("data").type(OBJECT).description("응답 데이터").optional(),
+                    fieldWithPath("data").type(OBJECT).description("응답 데이터"),
                     fieldWithPath("data.id").type(NUMBER).description("회원 id"),
                     fieldWithPath("data.token").type(STRING).description("토큰"),
                     fieldWithPath("serverDateTime").type(STRING).description("서버 응답 시간")
@@ -121,7 +130,7 @@ class AccountControllerTest {
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
                 responseFields(
-                    fieldWithPath("data").type(OBJECT).description("응답 데이터").optional(),
+                    fieldWithPath("data").type(OBJECT).description("응답 데이터"),
                     fieldWithPath("data.id").type(NUMBER).description("회원 id"),
                     fieldWithPath("data.token").type(STRING).description("토큰"),
                     fieldWithPath("serverDateTime").type(STRING).description("서버 응답 시간")
@@ -154,7 +163,7 @@ class AccountControllerTest {
     @DisplayName("회원 정보 수정 테스트")
     void updateAccountTest() throws Exception {
         // given
-        AccountUpdateParam param = new AccountUpdateParam(1L, "otherNickname");
+        AccountUpdateParam param = new AccountUpdateParam("updateNickname", null);
         // when
         ResultActions resultActions = mockMvc.perform(patch("/api/v1/me")
             .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN)
@@ -173,8 +182,8 @@ class AccountControllerTest {
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
                 requestFields(
-                    fieldWithPath("id").type(NUMBER).description("회원 id"),
-                    fieldWithPath("nickname").type(STRING).description("닉네임")
+                    fieldWithPath("nickname").type(STRING).description("닉네임").optional(),
+                    fieldWithPath("file").type(STRING).description("프로필 이미지").optional()
                 ))
             );
     }

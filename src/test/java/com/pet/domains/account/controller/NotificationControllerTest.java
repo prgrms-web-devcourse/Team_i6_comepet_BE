@@ -1,37 +1,35 @@
 package com.pet.domains.account.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.JsonFieldType.ARRAY;
+import static org.springframework.restdocs.payload.JsonFieldType.BOOLEAN;
+import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
+import static org.springframework.restdocs.payload.JsonFieldType.OBJECT;
+import static org.springframework.restdocs.payload.JsonFieldType.STRING;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import com.pet.common.jwt.JwtMockToken;
 import com.pet.domains.account.dto.request.NotificationUpdateParam;
+import com.pet.domains.docs.BaseDocumentationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.restdocs.headers.HeaderDocumentation.*;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.restdocs.payload.JsonFieldType.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(value = NotificationController.class)
-@AutoConfigureRestDocs
 @DisplayName("알림 컨트롤러 테스트")
-class NotificationControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
+class NotificationControllerTest extends BaseDocumentationTest {
 
     @Test
     @DisplayName("알림 조회 요청 테스트")
@@ -46,7 +44,7 @@ class NotificationControllerTest {
         resultActions
             .andDo(print())
             .andExpect(status().isOk())
-            .andDo(document("get-notification",
+            .andDo(document("get-notifications",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 requestHeaders(
@@ -59,7 +57,7 @@ class NotificationControllerTest {
                     fieldWithPath("data.notifications[0].nickname").type(STRING).description("유저 닉네임"),
                     fieldWithPath("data.notifications[0].image").type(STRING).description("유저 프로필 사진"),
                     fieldWithPath("data.notifications[0].postId").type(NUMBER).description("실종/보호 게시물 id"),
-                    fieldWithPath("data.notifications[0].status").type(STRING).description("실종/보호 게시물 상태"),
+                    fieldWithPath("data.notifications[0].status").type(STRING).description("<<status,게시물 상태>>"),
                     fieldWithPath("serverDateTime").type(STRING).description("서버 응답 시간")
                 ))
             );
@@ -77,7 +75,7 @@ class NotificationControllerTest {
         resultActions
             .andDo(print())
             .andExpect(status().isNoContent())
-            .andDo(document("get-notification",
+            .andDo(document("delete-notification",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()))
             );
@@ -98,7 +96,7 @@ class NotificationControllerTest {
         resultActions
             .andDo(print())
             .andExpect(status().isNoContent())
-            .andDo(document("get-notification",
+            .andDo(document("update-notification",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 requestHeaders(

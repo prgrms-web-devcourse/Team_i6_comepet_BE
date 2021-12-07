@@ -1,11 +1,8 @@
 package com.pet.domains.account.controller;
 
-import com.pet.common.jwt.Jwt;
-import com.pet.common.jwt.JwtAuthentication;
-import com.pet.common.jwt.JwtAuthenticationToken;
+import static java.util.stream.Collectors.toList;
 import com.pet.common.jwt.JwtMockToken;
 import com.pet.common.response.ApiResponse;
-import com.pet.domains.account.domain.Account;
 import com.pet.domains.account.dto.request.AccountAreaUpdateParam;
 import com.pet.domains.account.dto.request.AccountCreateParam;
 import com.pet.domains.account.dto.request.AccountEmailParam;
@@ -13,11 +10,10 @@ import com.pet.domains.account.dto.request.AccountLonginParam;
 import com.pet.domains.account.dto.request.AccountPasswordParam;
 import com.pet.domains.account.dto.request.AccountUpdateParam;
 import com.pet.domains.account.dto.response.AccountAreaReadResults;
+import com.pet.domains.account.dto.response.AccountBookmarkPostPageResults;
 import com.pet.domains.account.dto.response.AccountCreateResult;
 import com.pet.domains.account.dto.response.AccountLoginResult;
 import com.pet.domains.account.dto.response.AccountMissingPostPageResults;
-import com.pet.domains.account.dto.response.AccountBookmarkPostPageResults;
-import com.pet.domains.account.service.AccountService;
 import com.pet.domains.post.domain.SexType;
 import com.pet.domains.post.domain.Status;
 import java.time.LocalDate;
@@ -27,8 +23,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -39,7 +33,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import static java.util.stream.Collectors.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -47,38 +41,34 @@ import static java.util.stream.Collectors.*;
 @Slf4j
 public class AccountController {
 
-    private final AccountService accountService;
-
     @PostMapping(path = "/verify-email", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void verifyEmail(@RequestBody AccountEmailParam accountEmailParam) {
         log.info("verify email : {}", accountEmailParam.getEmail());
     }
 
-    @PostMapping(
-        path = "/sign-up",
-        consumes = MediaType.APPLICATION_JSON_VALUE,
-        produces = MediaType.APPLICATION_JSON_VALUE
-    )
+    @PostMapping(path = "/sign-up",
+        consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse<AccountCreateResult> getCities(@RequestBody AccountCreateParam accountCreateParam) {
         String email = accountCreateParam.getEmail();
         String nickname = accountCreateParam.getNickname();
-        log.info("sign up account info : {}, {}", email, nickname);
+        MultipartFile profile = accountCreateParam.getFile();
+        if (profile != null) {
+            log.info("sign up account info : {}, {}, {}", email, nickname, profile.getName());
+        } else {
+            log.info("sign up account info : {}, {}", email, nickname);
+        }
         return ApiResponse.ok(AccountCreateResult.of(1L, JwtMockToken.MOCK_TOKEN));
     }
 
-    @PostMapping(
-        path = "/login",
-        consumes = MediaType.APPLICATION_JSON_VALUE,
-        produces = MediaType.APPLICATION_JSON_VALUE
-    )
+    @PostMapping(path = "/login",
+        consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<AccountLoginResult> login(@RequestBody AccountLonginParam param) {
-        Authentication resultToken = accountService.createAuthentication(param.getEmail(), param.getPassword());
-        JwtAuthentication authentication = (JwtAuthentication) resultToken.getPrincipal();
-        Account account = (Account) resultToken.getDetails();
-        return ApiResponse.ok(AccountLoginResult.of(account.getId(), authentication.token));
+    public ApiResponse<AccountLoginResult> login(@RequestBody AccountLonginParam accountLoginParam) {
+        String email = accountLoginParam.getEmail();
+        log.info("sign up account info : {}", email);
+        return ApiResponse.ok(AccountLoginResult.of(1L, JwtMockToken.MOCK_TOKEN));
     }
 
     @PostMapping(path = "/logout")
@@ -90,7 +80,17 @@ public class AccountController {
     @PatchMapping(path = "/me", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateAccount(@RequestBody AccountUpdateParam accountUpdateParam) {
-        log.info("{} id account update nickname : {} ", accountUpdateParam.getId(), accountUpdateParam.getNickname());
+        MultipartFile profile = accountUpdateParam.getFile();
+        if (profile != null) {
+            log.info("account update nickname : {} or profile : {} ",
+                accountUpdateParam.getNickname(),
+                accountUpdateParam.getFile().getName()
+            );
+        } else {
+            log.info("account update nickname : {}",
+                accountUpdateParam.getNickname()
+            );
+        }
     }
 
     @PatchMapping(path = "/change-password", consumes = MediaType.APPLICATION_JSON_VALUE)

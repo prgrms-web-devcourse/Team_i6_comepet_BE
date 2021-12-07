@@ -35,15 +35,17 @@ jobs:
         run: cp ./appspec.yml ./deploy
 
       # Deploy Shell 파일 복사
-      - name: Copy deploy shell
-        run: cp ./deploy.sh ./deploy
+      - name: Dev Copy deploy shell
+        if: ${{ github.ref == 'refs/heads/develop' }}
+        run: cp ./deploy-dev.sh ./deploy/deploy.sh
 
       # 파일 압축
       - name: Make zip file
         run: zip -r ./compet.zip ./deploy
 
       # AWS Credential
-      - name: AWS Credential
+      - name: Dev AWS Credential
+        if: ${{ github.ref == 'refs/heads/develop' }}
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
