@@ -1,15 +1,15 @@
-package com.pet.common.config;
+package com.pet.common.property;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
+import org.springframework.boot.context.properties.ConstructorBinding;
 
-@Component
+@ConstructorBinding
 @ConfigurationProperties(prefix = "jwt")
 @Getter
-@Setter
-public class JwtConfig {
+@AllArgsConstructor
+public class JwtProperty {
 
     private String header;
 

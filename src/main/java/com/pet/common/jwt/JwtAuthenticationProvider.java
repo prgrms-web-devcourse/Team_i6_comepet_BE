@@ -45,16 +45,16 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
     private JwtAuthenticationToken createJwtAuthenticationToken(String principal, String credentials) {
         Account account = accountService.login(principal, credentials);
         List<GrantedAuthority> authorities = account.getGroup().getAuthorities();
-        String token = getToken(account.getNickname(), authorities);
+        String token = getToken(account.getId(), authorities);
         JwtAuthenticationToken authenticated = new JwtAuthenticationToken(
-            new JwtAuthentication(token, account.getNickname()), null, authorities
+            new JwtAuthentication(token, account.getId()), null, authorities
         );
         authenticated.setDetails(account);
         return authenticated;
     }
 
-    private String getToken(String username, List<GrantedAuthority> authorities) {
-        return jwt.sign(Jwt.Claims.from(username, getRoles(authorities)));
+    private String getToken(Long accountId, List<GrantedAuthority> authorities) {
+        return jwt.sign(Jwt.Claims.from(accountId, getRoles(authorities)));
     }
 
     private String[] getRoles(List<GrantedAuthority> authorities) {

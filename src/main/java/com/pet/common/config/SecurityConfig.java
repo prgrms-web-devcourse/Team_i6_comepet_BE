@@ -3,6 +3,7 @@ package com.pet.common.config;
 import com.pet.common.jwt.Jwt;
 import com.pet.common.jwt.JwtAuthenticationFilter;
 import com.pet.common.jwt.JwtAuthenticationProvider;
+import com.pet.common.property.JwtProperty;
 import com.pet.domains.account.service.AccountService;
 import java.io.IOException;
 import java.util.Objects;
@@ -21,6 +22,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.context.SecurityContextPersistenceFilter;
@@ -32,8 +35,42 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String ACCESS_DINED = "ACCESS_DENIED";
 
-    private final JwtConfig jwtConfig;
+    private final JwtProperty jwtProperty;
 
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public Jwt jwt() {
+        return new Jwt(
+            jwtProperty.getIssuer(),
+            jwtProperty.getClientSecret(),
+            jwtProperty.getExpirySeconds()
+        );
+    }
+
+    @Bean
+    public JwtAuthenticationProvider jwtAuthenticationProvider(AccountService accountService, Jwt jwt) {
+        return new JwtAuthenticationProvider(jwt, accountService);
+    }
+
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+
+    @Autowired
+    public void configureAuthentication(AuthenticationManagerBuilder builder, JwtAuthenticationProvider authenticationProvider) {
+        builder.authenticationProvider(authenticationProvider);
+    }
+
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+        Jwt jwt = getApplicationContext().getBean(Jwt.class);
+        return new JwtAuthenticationFilter(jwt);
+    }
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
@@ -74,35 +111,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
             .addFilterAfter(jwtAuthenticationFilter(), SecurityContextPersistenceFilter.class)
         ;
-    }
-
-    @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
-
-    @Bean
-    public JwtAuthenticationProvider jwtAuthenticationProvider(AccountService accountService, Jwt jwt) {
-        return new JwtAuthenticationProvider(jwt, accountService);
-    }
-
-    @Autowired
-    public void configureAuthentication(AuthenticationManagerBuilder builder, JwtAuthenticationProvider provider) {
-        builder.authenticationProvider(provider);
-    }
-
-    public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter(jwtConfig.getHeader(), jwt());
-    }
-
-    @Bean
-    public Jwt jwt() {
-        return new Jwt(
-            jwtConfig.getIssuer(),
-            jwtConfig.getClientSecret(),
-            jwtConfig.getExpirySeconds()
-        );
     }
 
     @Bean

@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -18,6 +19,8 @@ import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,7 +33,6 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 
     private static final int EMPTY = 0;
 
-    private final String headerKey;
     private final Jwt jwt;
 
     @Override
@@ -40,7 +42,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         HttpServletResponse servletResponse = (HttpServletResponse)response;
 
         if (isNull(SecurityContextHolder.getContext().getAuthentication())) {
-            String token = getToken(servletRequest);
+            String token = getToken(servletRequest.getHeader(HttpHeaders.AUTHORIZATION));
             if (nonNull(token)) {
                 initAuthenticationToJwtAuthentication(servletRequest, token);
             }
@@ -51,17 +53,25 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         chain.doFilter(servletRequest, servletResponse);
     }
 
+    private String getToken(String token) {
+        if (isNotEmpty(token) || StringUtils.startsWith(token, "Bearer")) {
+            log.debug("Jwt authorization api detected: {}", token);
+            return URLDecoder.decode(token.substring("Bearer ".length()), StandardCharsets.UTF_8);
+        }
+        return null;
+    }
+
     private void initAuthenticationToJwtAuthentication(HttpServletRequest request, String token) {
         try {
             Jwt.Claims claims = verify(token);
             log.debug("Jwt parse result: {}", claims);
 
-            String username = claims.getUsername();
+            Long accountId = claims.getAccountId();
             List<GrantedAuthority> authorities = getAuthorities(claims);
 
-            if (isNotEmpty(username) && authorities.size() > EMPTY) {
+            if (Objects.nonNull(accountId) && authorities.size() > EMPTY) {
                 SecurityContextHolder.getContext()
-                    .setAuthentication(createJwtAuthenticationToken(request, token, username, authorities));
+                    .setAuthentication(createJwtAuthenticationToken(request, token, accountId, authorities));
             }
         } catch (Exception exception) {
             log.warn("Jwt processing failed: {}", exception.getMessage());
@@ -69,10 +79,10 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
     }
 
     private JwtAuthenticationToken createJwtAuthenticationToken(
-        HttpServletRequest request, String token, String username, List<GrantedAuthority> authorities
+        HttpServletRequest request, String token, Long accountId, List<GrantedAuthority> authorities
     ) {
         JwtAuthenticationToken authentication = new JwtAuthenticationToken(
-            new JwtAuthentication(token, username),
+            new JwtAuthentication(token, accountId),
             null,
             authorities
         );
@@ -80,16 +90,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         return authentication;
     }
 
-    private String getToken(HttpServletRequest request) {
-        String token = request.getHeader(headerKey);
-        if (isNotEmpty(token)) {
-            log.debug("Jwt authorization api detected: {}", token);
-            return URLDecoder.decode(token, StandardCharsets.UTF_8);
-        }
-        return null;
-    }
-
-    private Jwt.Claims verify(String token) {
+    private Jwt.Claims verify(final String token) {
         return jwt.verify(token);
     }
 
