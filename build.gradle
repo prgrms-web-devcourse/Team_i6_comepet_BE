@@ -14,6 +14,7 @@ version = '0.0.1'
 sourceCompatibility = '14'
 
 configurations {
+    asciidoctorExtensions
     compileOnly {
         extendsFrom annotationProcessor
     }
@@ -43,6 +44,7 @@ dependencies {
     runtimeOnly 'mysql:mysql-connector-java'
 
     annotationProcessor 'org.projectlombok:lombok'
+    asciidoctorExtensions 'org.springframework.restdocs:spring-restdocs-asciidoctor'
 
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
@@ -85,16 +87,17 @@ asciidoctor.doFirst {
     delete file('src/main/resources/static/docs')
 }
 
-task copyDocument(type: Copy) {
-    dependsOn asciidoctor
-    from file("build/docs/asciidoc")
-    into file("src/main/resources/static/docs")
-}
+//task copyDocument(type: Copy) {
+//    dependsOn asciidoctor
+//    from file("build/docs/asciidoc")
+//    into file("src/main/resources/static/docs")
+//}
 
 bootJar {
     dependsOn asciidoctor
-    from ("${asciidoctor.outputDir}") {
-        into "static/docs"
+    copy {
+        from "${asciidoctor.outputDir}"
+        into 'src/main/resources/static/docs'
     }
 }
 
@@ -130,7 +133,7 @@ checkstyle {
     configProperties = ["suppressionFile": "${rootDir}/config/checkstyle/google-style.xml`"]
     toolVersion = "8.24"
 }
-
-build {
-    dependsOn copyDocument
-}
+//
+//build {
+//    dependsOn copyDocument
+//}
