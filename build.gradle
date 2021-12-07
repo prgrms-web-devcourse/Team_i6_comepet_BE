@@ -88,8 +88,8 @@ asciidoctor.doFirst {
 bootJar {
     dependsOn asciidoctor
     copy {
-        from "build/docs/asciidoc"
-        into 'BOOT-INF/classes/static/docs'
+        from "${asciidoctor.outputDir}"
+        into "BOOT-INF/classes/static/docs"
     }
 }
 
