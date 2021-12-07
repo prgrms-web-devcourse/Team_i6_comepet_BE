@@ -1,6 +1,9 @@
 name: Java CD with Gradle
 
 on:
+  pull_request:
+    branches: [ develop ]
+    types: [opened, synchronize, reopened]
   push:
     branches: [ develop ]
 
@@ -35,7 +38,7 @@ jobs:
         run: cp ./appspec.yml ./deploy
 
       # Deploy Shell 파일 복사
-      - name: Copy deploy shell
+      - name: Dev Copy deploy shell
         if: ${{ github.ref == 'refs/heads/develop' }}
         run: cp ./deploy-dev.sh ./deploy/deploy.sh
 
