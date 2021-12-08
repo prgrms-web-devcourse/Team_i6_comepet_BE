@@ -74,7 +74,7 @@ public class AccountController {
     @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse<AccountLoginResult> login(@RequestBody AccountLonginParam accountLoginParam) {
         String email = accountLoginParam.getEmail();
-        log.info("sign up account info : {}", email);
+        log.info("login account email : {}", email);
         JwtAuthentication authentication = accountService.createAuthentication(email, accountLoginParam.getPassword());
         return ApiResponse.ok(AccountLoginResult.of(authentication.getAccountId(), authentication.getToken()));
     }

@@ -38,11 +38,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final JwtProperty jwtProperty;
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
     public Jwt jwt() {
         return new Jwt(
             jwtProperty.getIssuer(),
@@ -82,38 +77,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .anyRequest().permitAll()
             .and()
 
-            .formLogin()
-            .disable()
-
-            .cors()
-            .disable()
-
-            .csrf()
-            .disable()
-
-            .headers()
-            .disable()
-
-            .httpBasic()
-            .disable()
-
-            .rememberMe()
-            .disable()
-
-            .logout()
-            .disable()
+            .formLogin().disable()
+            .csrf().disable()
+            .cors().and()
+            .headers().disable()
+            .httpBasic().disable()
+            .rememberMe().disable()
+            .logout().disable()
 
             .sessionManagement()
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and()
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 
             .exceptionHandling()
-            .accessDeniedHandler(accessDeniedHandler())
-            .and()
+            .accessDeniedHandler(accessDeniedHandler()).and()
 
             .exceptionHandling()
-            .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
-            .and()
+            .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)).and()
 
             .addFilterAfter(jwtAuthenticationFilter(), SecurityContextPersistenceFilter.class);
     }
@@ -138,6 +117,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         response.getWriter().write(ACCESS_DINED);
         response.getWriter().flush();
         response.getWriter().close();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
 }

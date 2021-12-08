@@ -25,7 +25,7 @@ public class InitDataConfig implements ApplicationRunner {
         Permission permission = new Permission("ROLE_USER");
         Account tester = new Account(
             "test-user@email.com",
-            "$2a$10$B32L76wyCEGqG/UVKPYk9uqZHCWb7k4ci98VTQ7l.dCEib/kzpKGe",             // user123
+            "$2a$10$21Pd/Fr9GAN9Js6FmvahmuBMEZo73FSBUpDPXl2lTIyLWSqnQoaqi",             // user123
             "tester",
             true,
             true,
@@ -35,7 +35,6 @@ public class InitDataConfig implements ApplicationRunner {
 
         groupPermissionRepository.save(new GroupPermission(group, permission));
         accountRepository.save(tester);
-
     }
 
 }

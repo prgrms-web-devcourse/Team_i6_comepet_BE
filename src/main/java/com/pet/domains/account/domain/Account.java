@@ -77,4 +77,8 @@ public class Account extends DeletableEntity {
         this.group = group;
     }
 
+    public boolean isMatchPassword(PasswordEncoder passwordEncoder, String password) {
+        return passwordEncoder.matches(password, this.password);
+    }
+
 }

@@ -19,13 +19,13 @@ public class AccountService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
-    public Account login(String principal, String credentials) {
-        Validate.notBlank(principal, "principal must be provided.");
-        Validate.notBlank(credentials, "credentials must be provided.");
+    public Account login(String email, String password) {
+        Validate.notBlank(email, "email must be provided.");
+        Validate.notBlank(password, "password must be provided.");
 
-        Account account = accountRepository.findByEmail(principal)
-            .orElseThrow(() -> new UsernameNotFoundException("Could not found user for " + principal));
-        Validate.isTrue(!passwordEncoder.matches(credentials, credentials), "Bad credential");
+        Account account = accountRepository.findByEmail(email)
+            .orElseThrow(() -> new UsernameNotFoundException("Could not found user for " + email));
+        Validate.isTrue(account.isMatchPassword(passwordEncoder, password), "Bad credential");
         return account;
     }
 
