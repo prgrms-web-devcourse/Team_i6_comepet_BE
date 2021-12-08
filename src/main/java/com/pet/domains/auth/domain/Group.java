@@ -19,7 +19,7 @@ import static java.util.stream.Collectors.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "groups")
+@Table(name = "user_group")
 public class Group {
 
     @Id
