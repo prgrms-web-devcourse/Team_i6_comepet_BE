@@ -71,6 +71,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         Jwt jwt = getApplicationContext().getBean(Jwt.class);
         return new JwtAuthenticationFilter(jwt);
     }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http

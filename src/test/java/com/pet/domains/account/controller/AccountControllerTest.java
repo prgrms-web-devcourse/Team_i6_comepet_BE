@@ -17,6 +17,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.requestF
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -37,12 +38,15 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithAnonymousUser;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.ResultActions;
 
 @DisplayName("회원 컨트롤러 테스트")
 class AccountControllerTest extends BaseDocumentationTest {
 
     @Test
+    @WithAnonymousUser
     @DisplayName("이메일 인증 요청 테스트")
     void emailVerifyTest() throws Exception {
         // given
@@ -50,6 +54,7 @@ class AccountControllerTest extends BaseDocumentationTest {
         // when
         ResultActions resultActions = mockMvc.perform(post("/api/v1/verify-email")
             .contentType(MediaType.APPLICATION_JSON)
+            // .with(csrf())
             .content(objectMapper.writeValueAsString(param)));
 
         resultActions
