@@ -107,7 +107,7 @@ class MissingPostControllerTest extends BaseDocumentationTest {
         //given
         //when
         ResultActions resultActions = mockMvc.perform(get("/api/v1/missing-posts")
-            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN)
+            .header(HttpHeaders.AUTHORIZATION)
             .accept(MediaType.APPLICATION_JSON));
 
         // then
@@ -351,7 +351,7 @@ class MissingPostControllerTest extends BaseDocumentationTest {
         // when
         ResultActions resultActions = mockMvc.perform(get("/api/v1/missing-posts/{postId}/comments", 1L)
             .accept(MediaType.APPLICATION_JSON_VALUE)
-            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN));
+            .header(HttpHeaders.AUTHORIZATION));
 
         // then
         resultActions
