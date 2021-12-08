@@ -87,19 +87,19 @@ public final class Jwt {
             return map;
         }
 
-        long iat() {
+        private long iat() {
             return issuedAt != null ? issuedAt.getTime() : -1;
         }
 
-        long exp() {
+        private long exp() {
             return expiration != null ? expiration.getTime() : -1;
         }
 
-        void eraseIat() {
+        private void eraseIat() {
             issuedAt = null;
         }
 
-        void eraseExp() {
+        private void eraseExp() {
             expiration = null;
         }
     }
