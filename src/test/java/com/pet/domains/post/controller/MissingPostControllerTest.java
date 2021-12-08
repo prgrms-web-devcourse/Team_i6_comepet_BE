@@ -117,7 +117,7 @@ class MissingPostControllerTest extends BaseDocumentationTest {
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 requestHeaders(
-                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
+                    headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
                 responseHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
@@ -160,11 +160,11 @@ class MissingPostControllerTest extends BaseDocumentationTest {
             .andDo(document("get-missing-post",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
-                requestHeaders(
-                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
-                ),
                 pathParameters(
                     parameterWithName("postId").description("게시글 id")
+                ),
+                requestHeaders(
+                    headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
                 responseHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
@@ -364,7 +364,6 @@ class MissingPostControllerTest extends BaseDocumentationTest {
                     parameterWithName("postId").description("실종 게시글 아이디")
                 ),
                 requestHeaders(
-                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token"),
                     headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
                 responseHeaders(
