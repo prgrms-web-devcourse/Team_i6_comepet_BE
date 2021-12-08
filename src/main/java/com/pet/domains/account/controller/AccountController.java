@@ -81,8 +81,7 @@ public class AccountController {
 
     @PostMapping(path = "/logout")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void logout(@AuthenticationPrincipal JwtAuthentication jwtAuthentication) {
-        // System.out.println(jwtAuthentication.getAccountId());
+    public void logout() {
         log.info("account id '{}' is logout", 1L);
     }
 
