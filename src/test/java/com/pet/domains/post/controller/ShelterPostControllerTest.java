@@ -38,8 +38,7 @@ class ShelterPostControllerTest extends BaseDocumentationTest {
         // given
         // when
         ResultActions resultActions = mockMvc.perform(get("/api/v1/shelter-posts")
-            .accept(MediaType.APPLICATION_JSON_VALUE)
-            .header(HttpHeaders.AUTHORIZATION));
+            .accept(MediaType.APPLICATION_JSON_VALUE));
 
         // then
         resultActions
@@ -81,8 +80,7 @@ class ShelterPostControllerTest extends BaseDocumentationTest {
         // given
         // when
         ResultActions resultActions = mockMvc.perform(get("/api/v1/shelter-posts/{postId}", 1L)
-            .accept(MediaType.APPLICATION_JSON_VALUE)
-            .header(HttpHeaders.AUTHORIZATION));
+            .accept(MediaType.APPLICATION_JSON_VALUE));
 
         // then
         resultActions

@@ -107,7 +107,6 @@ class MissingPostControllerTest extends BaseDocumentationTest {
         //given
         //when
         ResultActions resultActions = mockMvc.perform(get("/api/v1/missing-posts")
-            .header(HttpHeaders.AUTHORIZATION)
             .accept(MediaType.APPLICATION_JSON));
 
         // then
@@ -151,7 +150,6 @@ class MissingPostControllerTest extends BaseDocumentationTest {
         //given
         //when
         ResultActions resultActions = mockMvc.perform(get("/api/v1/missing-posts/{postId}", 1L)
-            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN)
             .accept(MediaType.APPLICATION_JSON));
 
         // then
@@ -162,9 +160,6 @@ class MissingPostControllerTest extends BaseDocumentationTest {
                 preprocessResponse(prettyPrint()),
                 pathParameters(
                     parameterWithName("postId").description("게시글 id")
-                ),
-                requestHeaders(
-                    headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
                 responseHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
@@ -351,7 +346,7 @@ class MissingPostControllerTest extends BaseDocumentationTest {
         // when
         ResultActions resultActions = mockMvc.perform(get("/api/v1/missing-posts/{postId}/comments", 1L)
             .accept(MediaType.APPLICATION_JSON_VALUE)
-            .header(HttpHeaders.AUTHORIZATION));
+            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN));
 
         // then
         resultActions
