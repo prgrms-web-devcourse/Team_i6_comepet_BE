@@ -1,11 +1,13 @@
 package com.pet.common.jwt;
 
+import lombok.Getter;
 import org.apache.commons.lang3.Validate;
 
+@Getter
 public class JwtAuthentication {
 
-    public final String token;
-    public final Long accountId;
+    private final String token;
+    private final Long accountId;
 
     public JwtAuthentication(String token, Long accountId) {
         Validate.notBlank(token, "token must be provided.");

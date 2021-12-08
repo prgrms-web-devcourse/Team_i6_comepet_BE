@@ -75,16 +75,14 @@ public class AccountController {
     public ApiResponse<AccountLoginResult> login(@RequestBody AccountLonginParam accountLoginParam) {
         String email = accountLoginParam.getEmail();
         log.info("sign up account info : {}", email);
-        Authentication resultToken = accountService.createAuthentication(email, accountLoginParam.getPassword());
-        JwtAuthentication authentication = (JwtAuthentication) resultToken.getPrincipal();
-        Account user = (Account)resultToken.getDetails();
-        return ApiResponse.ok(AccountLoginResult.of(user.getId(), authentication.token));
+        JwtAuthentication authentication = accountService.createAuthentication(email, accountLoginParam.getPassword());
+        return ApiResponse.ok(AccountLoginResult.of(authentication.getAccountId(), authentication.getToken()));
     }
 
     @PostMapping(path = "/logout")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void logout(@AuthenticationPrincipal JwtAuthentication authentication) {
-        log.info("account id '{}' is logout", authentication.accountId.toString());
+    public void logout() {
+        log.info("account id '{}' is logout", 1L);
     }
 
     @PatchMapping(path = "/me", consumes = MediaType.APPLICATION_JSON_VALUE)

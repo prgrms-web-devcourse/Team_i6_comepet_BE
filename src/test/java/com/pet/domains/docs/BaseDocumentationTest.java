@@ -2,10 +2,6 @@ package com.pet.domains.docs;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pet.common.config.SecurityConfig;
-import com.pet.common.config.WebMvcConfig;
-import com.pet.common.jwt.Jwt;
-import com.pet.common.jwt.JwtAuthentication;
-import com.pet.common.jwt.JwtAuthenticationProvider;
 import com.pet.common.property.JwtProperty;
 import com.pet.domains.account.controller.AccountController;
 import com.pet.domains.account.controller.NotificationController;
@@ -25,8 +21,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(value = {
@@ -40,17 +34,11 @@ import org.springframework.test.web.servlet.MockMvc;
     ShelterPostController.class,
     PostStatisticsController.class
 }, includeFilters = {
-    // @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class),
-    // @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = WebMvcConfig.class),
-    // @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = Jwt.class),
-    // @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class),
+    @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class)
 }
 )
-// @ContextConfiguration(classes = SecurityConfig.class)
 @AutoConfigureRestDocs
-@TestPropertySource(properties = {"jwt"})
 @EnableConfigurationProperties(value = JwtProperty.class)
-@Import(SecurityConfig.class)
 public abstract class BaseDocumentationTest {
 
     @Autowired
@@ -58,5 +46,8 @@ public abstract class BaseDocumentationTest {
 
     @Autowired
     protected ObjectMapper objectMapper;
+
+    @MockBean
+    protected AccountService accountService;
 
 }

@@ -43,8 +43,8 @@ logging:
         util:
           EC2MetadataUtils: error
 
-#jwt:
-#  header: authorization
-#  issuer: compet
-#  client-secret: N4VZuLd3A47Y6lhISWAl4XTS6nB4GFncraNDdAUq+uA=
-#  expiry-seconds: 6000
+jwt:
+  header: authorization
+  issuer: compet
+  client-secret: N4VZuLd3A47Y6lhISWAl4XTS6nB4GFncraNDdAUq+uA=
+  expiry-seconds: 6000
