@@ -33,7 +33,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 @RequiredArgsConstructor
 @Slf4j
-public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String ACCESS_DINED = "ACCESS_DENIED";
 
@@ -135,11 +135,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
         response.getWriter().write(ACCESS_DINED);
         response.getWriter().flush();
         response.getWriter().close();
-    }
-
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**");
     }
 
     @Bean
