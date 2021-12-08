@@ -7,7 +7,10 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface AccountRepository extends JpaRepository<Account, Long> {
 
-    @Query("select a from Account a join fetch a.group g left join fetch g.permissions gp join fetch gp.permission where a.email = :email")
+    @Query("select a "
+        + "from Account a"
+        + "    join fetch a.group g left join fetch g.permissions gp join fetch gp.permission "
+        + "where a.email = :email")
     Optional<Account> findByEmail(String email);
 
 }

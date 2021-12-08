@@ -32,11 +32,10 @@ import org.springframework.test.web.servlet.MockMvc;
     CommentController.class,
     MissingPostController.class,
     ShelterPostController.class,
-    PostStatisticsController.class
-}, includeFilters = {
-    @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class)
-}
-)
+    PostStatisticsController.class},
+    includeFilters = {
+        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class)
+    })
 @AutoConfigureRestDocs
 @EnableConfigurationProperties(value = JwtProperty.class)
 public abstract class BaseDocumentationTest {

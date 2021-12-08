@@ -95,7 +95,8 @@ class AccountControllerTest extends BaseDocumentationTest {
     @Test
     @WithAnonymousUser
     @DisplayName("로그인 성공 테스트")
-    void loginTest() throws Exception {// given
+    void loginTest() throws Exception {
+        // given
         AccountLonginParam param = new AccountLonginParam("tester@email.com", "12345678a!");
 
         given(accountService.createAuthentication(param.getEmail(), param.getPassword()))

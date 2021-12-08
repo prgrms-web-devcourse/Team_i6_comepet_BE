@@ -58,17 +58,17 @@ public final class Jwt {
         private Date issuedAt;
         private Date expiration;
 
-        public Claims(DecodedJWT decodedJWT) {
-            Claim accountId = decodedJWT.getClaim(ACCOUNT_ID);
+        public Claims(DecodedJWT decodedJwt) {
+            Claim accountId = decodedJwt.getClaim(ACCOUNT_ID);
             if (!accountId.isNull()) {
                 this.accountId = accountId.asLong();
             }
-            Claim roles = decodedJWT.getClaim(ROLES);
+            Claim roles = decodedJwt.getClaim(ROLES);
             if (!roles.isNull()) {
                 this.roles = roles.asArray(String.class);
             }
-            this.issuedAt = decodedJWT.getIssuedAt();
-            this.expiration = decodedJWT.getExpiresAt();
+            this.issuedAt = decodedJwt.getIssuedAt();
+            this.expiration = decodedJwt.getExpiresAt();
         }
 
         public static Claims from(Long accountId, String[] roles) {

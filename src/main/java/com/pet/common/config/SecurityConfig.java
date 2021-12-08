@@ -63,7 +63,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Autowired
-    public void configureAuthentication(AuthenticationManagerBuilder builder, JwtAuthenticationProvider authenticationProvider) {
+    public void configureAuthentication(
+        AuthenticationManagerBuilder builder, JwtAuthenticationProvider authenticationProvider
+    ) {
         builder.authenticationProvider(authenticationProvider);
     }
 
@@ -113,8 +115,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
             .and()
 
-            .addFilterAfter(jwtAuthenticationFilter(), SecurityContextPersistenceFilter.class)
-        ;
+            .addFilterAfter(jwtAuthenticationFilter(), SecurityContextPersistenceFilter.class);
     }
 
     @Bean
