@@ -77,38 +77,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .anyRequest().permitAll()
             .and()
 
-            .formLogin()
-            .disable()
-
-            .cors()
-            .disable()
-
-            .csrf()
-            .disable()
-
-            .headers()
-            .disable()
-
-            .httpBasic()
-            .disable()
-
-            .rememberMe()
-            .disable()
-
-            .logout()
-            .disable()
+            .formLogin().disable()
+            .csrf().disable()
+            .headers().disable()
+            .httpBasic().disable()
+            .rememberMe().disable()
+            .logout().disable()
 
             .sessionManagement()
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and()
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 
             .exceptionHandling()
-            .accessDeniedHandler(accessDeniedHandler())
-            .and()
+            .accessDeniedHandler(accessDeniedHandler()).and()
 
             .exceptionHandling()
-            .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
-            .and()
+            .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)).and()
 
             .addFilterAfter(jwtAuthenticationFilter(), SecurityContextPersistenceFilter.class);
     }
