@@ -2,6 +2,9 @@ package com.pet.domains.docs;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pet.common.config.SecurityConfig;
+import com.pet.common.config.WebMvcConfig;
+import com.pet.common.jwt.JwtAuthentication;
+import com.pet.common.jwt.JwtAuthenticationFilter;
 import com.pet.common.property.JwtProperty;
 import com.pet.domains.account.controller.AccountController;
 import com.pet.domains.account.controller.NotificationController;
@@ -21,6 +24,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(value = {
@@ -34,7 +38,8 @@ import org.springframework.test.web.servlet.MockMvc;
     ShelterPostController.class,
     PostStatisticsController.class},
     includeFilters = {
-        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class)
+        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class),
+        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = WebMvcConfig.class)
     })
 @AutoConfigureRestDocs
 @EnableConfigurationProperties(value = JwtProperty.class)
@@ -48,5 +53,9 @@ public abstract class BaseDocumentationTest {
 
     @MockBean
     protected AccountService accountService;
+
+    protected JwtAuthentication getAuthenticationToken() {
+        return (JwtAuthentication)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
 
 }

@@ -13,9 +13,17 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     /** this is mock exception for mock response */
-    @ExceptionHandler(AuthenticationException.class)
+    @ExceptionHandler({AuthenticationException.class})
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ErrorResponse handleAuthenticationException(AuthenticationException exception) {
+        log.debug(exception.getMessage());
+        return ErrorResponse.error(exception.getMessage());
+    }
+
+    /** this is mock exception for mock response */
+    @ExceptionHandler({com.pet.common.exception.AuthenticationException.class})
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorResponse handleCustomAuthenticationException(Exception exception) {
         log.debug(exception.getMessage());
         return ErrorResponse.error(exception.getMessage());
     }
@@ -23,5 +31,6 @@ public class GlobalExceptionHandler {
     /**
      * todo: exception, runtimeException, NPE, ILL, 400, 405, 415
      */
+
 
 }

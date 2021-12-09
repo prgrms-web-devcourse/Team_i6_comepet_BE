@@ -5,6 +5,7 @@ import com.pet.common.jwt.JwtAuthentication;
 import com.pet.common.jwt.JwtMockToken;
 import com.pet.common.response.ApiResponse;
 import com.pet.domains.account.domain.Account;
+import com.pet.domains.account.domain.LoginAccount;
 import com.pet.domains.account.dto.request.AccountAreaUpdateParam;
 import com.pet.domains.account.dto.request.AccountCreateParam;
 import com.pet.domains.account.dto.request.AccountEmailParam;
@@ -81,8 +82,8 @@ public class AccountController {
 
     @PostMapping(path = "/logout")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void logout() {
-        log.info("account id '{}' is logout", 1L);
+    public void logout(@LoginAccount Account account) {
+        log.info("account id '{}' is logout", account.getId());
     }
 
     @PatchMapping(path = "/me", consumes = MediaType.APPLICATION_JSON_VALUE)
