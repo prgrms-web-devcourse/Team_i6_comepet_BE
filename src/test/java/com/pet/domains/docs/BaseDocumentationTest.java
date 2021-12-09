@@ -4,11 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pet.common.config.SecurityConfig;
 import com.pet.common.config.WebMvcConfig;
 import com.pet.common.jwt.JwtAuthentication;
-import com.pet.common.jwt.JwtAuthenticationFilter;
 import com.pet.common.property.JwtProperty;
 import com.pet.domains.account.controller.AccountController;
 import com.pet.domains.account.controller.NotificationController;
 import com.pet.domains.account.service.AccountService;
+import com.pet.domains.auth.service.AuthenticationService;
 import com.pet.domains.animal.controller.AnimalController;
 import com.pet.domains.area.controller.CityController;
 import com.pet.domains.comment.controller.CommentController;
@@ -23,7 +23,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.context.annotation.Import;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -53,6 +52,9 @@ public abstract class BaseDocumentationTest {
 
     @MockBean
     protected AccountService accountService;
+
+    @MockBean
+    protected AuthenticationService authenticationService;
 
     protected JwtAuthentication getAuthenticationToken() {
         return (JwtAuthentication)SecurityContextHolder.getContext().getAuthentication().getPrincipal();

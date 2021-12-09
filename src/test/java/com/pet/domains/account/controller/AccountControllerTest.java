@@ -100,7 +100,7 @@ class AccountControllerTest extends BaseDocumentationTest {
         // given
         AccountLonginParam param = new AccountLonginParam("tester@email.com", "12345678a!");
 
-        given(accountService.createAuthentication(param.getEmail(), param.getPassword()))
+        given(authenticationService.authenticate(param.getEmail(), param.getPassword()))
             .willReturn(new JwtAuthentication("mock-token", 1L));
 
         // when
