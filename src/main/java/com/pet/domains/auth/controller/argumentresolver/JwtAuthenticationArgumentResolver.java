@@ -1,6 +1,6 @@
 package com.pet.domains.auth.controller.argumentresolver;
 
-import com.pet.common.exception.AuthenticationException;
+import com.pet.common.exception.ExceptionMessage;
 import com.pet.common.jwt.JwtAuthentication;
 import com.pet.domains.account.domain.LoginAccount;
 import com.pet.domains.account.service.AccountService;
@@ -28,21 +28,26 @@ public class JwtAuthenticationArgumentResolver implements HandlerMethodArgumentR
     @Override
     public Object resolveArgument(
         MethodParameter parameter, ModelAndViewContainer mavContainer,
-        NativeWebRequest webRequest, WebDataBinderFactory binderFactory
-    ) throws Exception {
-        Long accountId = getJwtAuthentication().getAccountId();
-        return accountService.checkLoginAccountById(accountId);
+        NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+        return accountService.checkLoginAccountById(getJwtAuthentication().getAccountId());
     }
 
     private JwtAuthentication getJwtAuthentication() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return validateAuthenticationByGetJwtAuthentication(SecurityContextHolder.getContext().getAuthentication());
+    }
+
+    private JwtAuthentication validateAuthenticationByGetJwtAuthentication(Authentication authentication) {
         if (Objects.nonNull(authentication)) {
-            if (authentication instanceof AnonymousAuthenticationToken) {
-                throw new AuthenticationException("잘못된 인증 요청입니다.");
-            }
+            validateAnonymousAuthentication(authentication);
             return (JwtAuthentication)authentication.getPrincipal();
         }
-        throw new AuthenticationException("잘못된 인증 요청입니다.");
+        throw ExceptionMessage.INVALID_JWT.getException();
+    }
+
+    private void validateAnonymousAuthentication(Authentication authentication) {
+        if (authentication instanceof AnonymousAuthenticationToken) {
+            throw ExceptionMessage.INVALID_JWT.getException();
+        }
     }
 
 }

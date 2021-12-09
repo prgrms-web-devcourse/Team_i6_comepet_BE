@@ -74,6 +74,8 @@ public class AccountController {
         consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse<AccountLoginResult> login(@RequestBody AccountLonginParam accountLoginParam) {
+        // todo: 서버에서 확인하고 삭제할 것
+        log.info("request password : {} ", accountLoginParam.getPassword());
         String email = accountLoginParam.getEmail();
         log.info("login account email : {}", email);
         JwtAuthentication authentication = authenticationService.authenticate(email, accountLoginParam.getPassword());
