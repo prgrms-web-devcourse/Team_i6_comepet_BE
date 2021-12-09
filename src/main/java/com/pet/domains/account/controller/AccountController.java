@@ -83,8 +83,7 @@ public class AccountController {
     @PostMapping(path = "/logout")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void logout(@LoginAccount Account account) {
-        System.out.println(account.getId());
-        log.info("account id '{}' is logout", 1L);
+        log.info("account id '{}' is logout", account.getId());
     }
 
     @PatchMapping(path = "/me", consumes = MediaType.APPLICATION_JSON_VALUE)
