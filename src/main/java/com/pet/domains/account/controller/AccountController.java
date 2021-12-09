@@ -1,8 +1,10 @@
 package com.pet.domains.account.controller;
 
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.*;
+import com.pet.common.jwt.JwtAuthentication;
 import com.pet.common.jwt.JwtMockToken;
 import com.pet.common.response.ApiResponse;
+import com.pet.domains.account.domain.Account;
 import com.pet.domains.account.dto.request.AccountAreaUpdateParam;
 import com.pet.domains.account.dto.request.AccountCreateParam;
 import com.pet.domains.account.dto.request.AccountEmailParam;
@@ -14,6 +16,7 @@ import com.pet.domains.account.dto.response.AccountBookmarkPostPageResults;
 import com.pet.domains.account.dto.response.AccountCreateResult;
 import com.pet.domains.account.dto.response.AccountLoginResult;
 import com.pet.domains.account.dto.response.AccountMissingPostPageResults;
+import com.pet.domains.account.service.AccountService;
 import com.pet.domains.post.domain.SexType;
 import com.pet.domains.post.domain.Status;
 import java.time.LocalDate;
@@ -23,6 +26,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -40,6 +45,8 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 @Slf4j
 public class AccountController {
+
+    private final AccountService accountService;
 
     @PostMapping(path = "/verify-email", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -67,14 +74,15 @@ public class AccountController {
     @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse<AccountLoginResult> login(@RequestBody AccountLonginParam accountLoginParam) {
         String email = accountLoginParam.getEmail();
-        log.info("sign up account info : {}", email);
-        return ApiResponse.ok(AccountLoginResult.of(1L, JwtMockToken.MOCK_TOKEN));
+        log.info("login account email : {}", email);
+        JwtAuthentication authentication = accountService.createAuthentication(email, accountLoginParam.getPassword());
+        return ApiResponse.ok(AccountLoginResult.of(authentication.getAccountId(), authentication.getToken()));
     }
 
     @PostMapping(path = "/logout")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void logout() {
-        log.info("who is logout");
+        log.info("account id '{}' is logout", 1L);
     }
 
     @PatchMapping(path = "/me", consumes = MediaType.APPLICATION_JSON_VALUE)

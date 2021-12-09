@@ -1,23 +1,18 @@
 package com.pet.common.config;
 
-import com.pet.common.interceptor.JwtAuthenticationInterceptor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry
-            .addInterceptor(new JwtAuthenticationInterceptor())
-            .addPathPatterns("/api/v1/**");
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+            .allowedOrigins("http://localhost:3000")
+            .allowedHeaders(HttpHeaders.AUTHORIZATION);
     }
 
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/api/**").allowedOrigins("*");
-    }
 }
