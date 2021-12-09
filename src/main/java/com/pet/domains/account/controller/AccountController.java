@@ -18,6 +18,7 @@ import com.pet.domains.account.dto.response.AccountCreateResult;
 import com.pet.domains.account.dto.response.AccountLoginResult;
 import com.pet.domains.account.dto.response.AccountMissingPostPageResults;
 import com.pet.domains.account.service.AccountService;
+import com.pet.domains.auth.service.AuthenticationService;
 import com.pet.domains.post.domain.SexType;
 import com.pet.domains.post.domain.Status;
 import java.time.LocalDate;
@@ -27,8 +28,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -48,6 +47,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class AccountController {
 
     private final AccountService accountService;
+    private final AuthenticationService authenticationService;
 
     @PostMapping(path = "/verify-email", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -76,7 +76,7 @@ public class AccountController {
     public ApiResponse<AccountLoginResult> login(@RequestBody AccountLonginParam accountLoginParam) {
         String email = accountLoginParam.getEmail();
         log.info("login account email : {}", email);
-        JwtAuthentication authentication = accountService.createAuthentication(email, accountLoginParam.getPassword());
+        JwtAuthentication authentication = authenticationService.authenticate(email, accountLoginParam.getPassword());
         return ApiResponse.ok(AccountLoginResult.of(authentication.getAccountId(), authentication.getToken()));
     }
 
