@@ -8,7 +8,7 @@ import com.pet.domains.account.domain.Account;
 import com.pet.domains.account.domain.LoginAccount;
 import com.pet.domains.account.dto.request.AccountAreaUpdateParam;
 import com.pet.domains.account.dto.request.AccountCreateParam;
-import com.pet.domains.account.dto.request.AccountEmailParam;
+import com.pet.domains.account.dto.request.AccountEmailCheck;
 import com.pet.domains.account.dto.request.AccountLonginParam;
 import com.pet.domains.account.dto.request.AccountPasswordParam;
 import com.pet.domains.account.dto.request.AccountUpdateParam;
@@ -24,6 +24,7 @@ import com.pet.domains.post.domain.Status;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.LongStream;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -51,8 +52,8 @@ public class AccountController {
 
     @PostMapping(path = "/verify-email", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void verifyEmail(@RequestBody AccountEmailParam accountEmailParam) {
-        log.info("verify email : {}", accountEmailParam.getEmail());
+    public void verifyEmail(@RequestBody @Valid AccountEmailCheck accountEmailCheck) {
+        accountService.checkDuplicationEmail(accountEmailCheck.getEmail());
     }
 
     @PostMapping(path = "/sign-up",

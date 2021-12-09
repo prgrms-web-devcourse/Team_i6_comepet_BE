@@ -15,7 +15,7 @@ import com.pet.common.jwt.JwtMockToken;
 import com.pet.domains.account.WithAccount;
 import com.pet.domains.account.dto.request.AccountAreaUpdateParam;
 import com.pet.domains.account.dto.request.AccountCreateParam;
-import com.pet.domains.account.dto.request.AccountEmailParam;
+import com.pet.domains.account.dto.request.AccountEmailCheck;
 import com.pet.domains.account.dto.request.AccountLonginParam;
 import com.pet.domains.account.dto.request.AccountPasswordParam;
 import com.pet.domains.account.dto.request.AccountUpdateParam;
@@ -32,10 +32,10 @@ import org.springframework.test.web.servlet.ResultActions;
 class AccountControllerTest extends BaseDocumentationTest {
 
     @Test
-    @DisplayName("이메일 인증 요청 테스트")
+    @DisplayName("이메일 중복 요청 성공 테스트")
     void emailVerifyTest() throws Exception {
         // given
-        AccountEmailParam param = new AccountEmailParam("tester@email.com");
+        AccountEmailCheck param = new AccountEmailCheck("tester@email.com");
         // when
         ResultActions resultActions = mockMvc.perform(post("/api/v1/verify-email")
             .contentType(MediaType.APPLICATION_JSON)

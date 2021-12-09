@@ -5,7 +5,6 @@ import com.pet.domains.account.domain.Account;
 import com.pet.domains.account.repository.AccountRepository;
 import java.text.MessageFormat;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.Validate;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -13,11 +12,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class AccountService {
 
     private final AccountRepository accountRepository;
 
     private final PasswordEncoder passwordEncoder;
+
+    public void checkDuplicationEmail(String email) {
+        if (accountRepository.existsByEmail(email)) {
+            throw ExceptionMessage.DUPLICATION_EMAIL.getException();
+        }
+    }
 
     public Account login(String email, String password) {
         Account account = accountRepository.findByEmail(email)
@@ -42,5 +48,4 @@ public class AccountService {
         }
         throw ExceptionMessage.INVALID_LOGIN.getException();
     }
-
 }

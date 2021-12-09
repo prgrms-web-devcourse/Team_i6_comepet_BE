@@ -1,7 +1,6 @@
 package com.pet.domains.account.controller;
 
 import com.pet.common.response.ApiResponse;
-import com.pet.domains.account.dto.request.AccountEmailParam;
 import com.pet.domains.account.dto.request.NotificationUpdateParam;
 import com.pet.domains.account.dto.response.NotificationReadResults;
 import com.pet.domains.post.domain.Status;

@@ -16,6 +16,7 @@ public enum ExceptionMessage {
 
     // 회원
     NOT_FOUND_ACCOUNT(new BadRequestException("해당하는 유저를 찾을 수 없습니다.")),
+    DUPLICATION_EMAIL(new BadRequestException("이메일이 중복됩니다.")),
 
     // 동물
 
