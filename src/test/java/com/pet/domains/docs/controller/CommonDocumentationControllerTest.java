@@ -53,11 +53,6 @@ class CommonDocumentationControllerTest extends BaseDocumentationTest {
                     enumConvertFieldDescriptor(results.getSexTypes())
                 ),
                 customResponseFields("custom-response",
-                    beneathPath("data.shelterSexTypes").withSubsectionId("shelterSexTypes"),
-                    attributes(key("title").value("보호소 동물 성별")),
-                    enumConvertFieldDescriptor(results.getShelterSexTypes())
-                ),
-                customResponseFields("custom-response",
                     beneathPath("data.neuteredTypes").withSubsectionId("neuteredTypes"),
                     attributes(key("title").value("중성화 여부")),
                     enumConvertFieldDescriptor(results.getNeuteredTypes())
