@@ -55,6 +55,9 @@ public class ShelterPost extends BaseEntity {
     @Column(name = "image", nullable = false)
     private String image;
 
+    @Column(name = "thumbnail", nullable = false)
+    private String thumbnail;
+
     @Column(name = "found_date", nullable = false)
     private LocalDate foundDate;
 
@@ -78,7 +81,7 @@ public class ShelterPost extends BaseEntity {
     private String postStatus;
 
     @Column(name = "sex", length = 10, nullable = false)
-    private ShelterSexType sex;
+    private SexType sex;
 
     @Column(name = "feature", length = 200, nullable = false)
     private String feature;
@@ -103,4 +106,32 @@ public class ShelterPost extends BaseEntity {
         foreignKey = @ForeignKey(name = "fk_animal_kind_to_shelter_post"))
     private AnimalKind animalKind;
 
+    public ShelterPost(int age, String shelterPlace, String shelterName, String shelterTelNumber, String manager,
+        String color, String desertionNumber, String image, String thumbnail, LocalDate foundDate,
+        String foundPlace, NeuteredType neutered, LocalDate startDate, LocalDate endDate, String managerTelNumber,
+        String postStatus, SexType sex, String feature, Double weight, String noticeNumber,
+        Town town, AnimalKind animalKind) {
+        this.age = age;
+        this.shelterPlace = shelterPlace;
+        this.shelterName = shelterName;
+        this.shelterTelNumber = shelterTelNumber;
+        this.manager = manager;
+        this.color = color;
+        this.desertionNumber = desertionNumber;
+        this.image = image;
+        this.thumbnail = thumbnail;
+        this.foundDate = foundDate;
+        this.foundPlace = foundPlace;
+        this.neutered = neutered;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.managerTelNumber = managerTelNumber;
+        this.postStatus = postStatus;
+        this.sex = sex;
+        this.feature = feature;
+        this.weight = weight;
+        this.noticeNumber = noticeNumber;
+        this.town = town;
+        this.animalKind = animalKind;
+    }
 }

@@ -6,7 +6,6 @@ import com.pet.domains.EnumType;
 import com.pet.domains.docs.dto.CommonDocumentationResults;
 import com.pet.domains.post.domain.NeuteredType;
 import com.pet.domains.post.domain.SexType;
-import com.pet.domains.post.domain.ShelterSexType;
 import com.pet.domains.post.domain.Status;
 import java.util.Arrays;
 import java.util.Map;
@@ -24,14 +23,12 @@ public class CommonDocumentationController {
     public ApiResponse<CommonDocumentationResults> findAll() {
 
         Map<String, String> sexTypes = getDocs(SexType.values());
-        Map<String, String> shelterSexTypes = getDocs(ShelterSexType.values());
         Map<String, String> neuteredTypes = getDocs(NeuteredType.values());
         Map<String, String> status = getDocs(Status.values());
 
         return ApiResponse.ok(
             CommonDocumentationResults.builder()
                 .sexTypes(sexTypes)
-                .shelterSexTypes(shelterSexTypes)
                 .neuteredTypes(neuteredTypes)
                 .status(status)
                 .build()

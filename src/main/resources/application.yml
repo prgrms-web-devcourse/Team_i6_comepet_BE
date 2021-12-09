@@ -18,11 +18,12 @@ server:
       charset: UTF-8
   port: 26134
 
-compet:
-  key:
-    api:
-      name: shelter
-      key: ${SHELTER_API_KEY}
+shelter:
+  name: abandoned animals api
+  description: You can refer to abandoned animal data.
+  api:
+    url: http://openapi.animal.go.kr/openapi/service/rest/abandonmentPublicSrvc
+    key: ${SHELTER_API_KEY}
 
 cloud:
   aws:

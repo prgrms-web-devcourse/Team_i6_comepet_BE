@@ -53,11 +53,6 @@ class CommonDocumentationControllerTest extends BaseDocumentationTest {
                     enumConvertFieldDescriptor(results.getSexTypes())
                 ),
                 customResponseFields("custom-response",
-                    beneathPath("data.shelterSexTypes").withSubsectionId("shelterSexTypes"),
-                    attributes(key("title").value("보호소 동물 성별")),
-                    enumConvertFieldDescriptor(results.getShelterSexTypes())
-                ),
-                customResponseFields("custom-response",
                     beneathPath("data.neuteredTypes").withSubsectionId("neuteredTypes"),
                     attributes(key("title").value("중성화 여부")),
                     enumConvertFieldDescriptor(results.getNeuteredTypes())
@@ -72,7 +67,7 @@ class CommonDocumentationControllerTest extends BaseDocumentationTest {
     private static FieldDescriptor[] enumConvertFieldDescriptor(Map<String, String> enumValues) {
 
         return enumValues.entrySet().stream()
-            .map(x -> fieldWithPath(x.getKey()).type(STRING).description(x.getValue()))
+            .map(value -> fieldWithPath(value.getKey()).type(STRING).description(value.getValue()))
             .toArray(FieldDescriptor[]::new);
     }
 
