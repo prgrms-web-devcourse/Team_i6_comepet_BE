@@ -20,15 +20,10 @@ public class AccountService {
     private final PasswordEncoder passwordEncoder;
 
     public Account login(String email, String password) {
-        Validate.notBlank(email, "email must be provided.");
-        Validate.notBlank(password, "password must be provided.");
-
         Account account = accountRepository.findByEmail(email)
             .orElseThrow(ExceptionMessage.NOT_FOUND_ACCOUNT::getException);
-        Validate.isTrue(account.isMatchPassword(passwordEncoder, password), "Bad credential");
-        return account;
+        return checkPassword(password, account);
     }
-
 
     public Account checkLoginAccountById(Long accountId) {
         return accountRepository.findById(accountId).orElseThrow(
@@ -40,4 +35,12 @@ public class AccountService {
     public void signUp(String email, String password) {
         accountRepository.save(new Account(email, passwordEncoder.encode(password)));
     }
+
+    private Account checkPassword(String password, Account account) {
+        if (account.isMatchPassword(passwordEncoder, password)) {
+            return account;
+        }
+        throw ExceptionMessage.INVALID_LOGIN.getException();
+    }
+
 }
