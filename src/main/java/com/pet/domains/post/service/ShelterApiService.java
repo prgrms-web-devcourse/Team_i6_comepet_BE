@@ -19,6 +19,8 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 @Service
 public class ShelterApiService {
 
+    private static final String SHELTER_POSH_PATH = "/abandonmentPublic";
+
     private final ShelterProperties shelterProperties;
 
     private final WebClient.Builder webClientBuilder;
@@ -42,7 +44,7 @@ public class ShelterApiService {
         WebClient webClient = webClientBuilder.uriBuilderFactory(factory).baseUrl(api.getUrl()).build();
         webClient.get()
             .uri(uriBuilder -> uriBuilder
-                .path("/abandonmentPublic")
+                .path(SHELTER_POSH_PATH)
                 .queryParam("serviceKey", api.getKey())
                 .queryParam("bgnde", from)
                 .queryParam("endde", to)
