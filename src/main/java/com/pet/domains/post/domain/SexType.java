@@ -14,7 +14,7 @@ public enum SexType implements EnumType {
     UNKNOWN("모름", "Q");
 
     private static final Map<String, SexType> sexTypeByAbbr = Stream.of(SexType.values())
-        .collect(Collectors.toUnmodifiableMap(SexType::getAbbreviation, x -> x));
+        .collect(Collectors.toUnmodifiableMap(SexType::getAbbreviation, value -> value));
 
 
     private final String text;

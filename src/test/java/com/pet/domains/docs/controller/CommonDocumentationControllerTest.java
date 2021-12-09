@@ -72,7 +72,7 @@ class CommonDocumentationControllerTest extends BaseDocumentationTest {
     private static FieldDescriptor[] enumConvertFieldDescriptor(Map<String, String> enumValues) {
 
         return enumValues.entrySet().stream()
-            .map(x -> fieldWithPath(x.getKey()).type(STRING).description(x.getValue()))
+            .map(value -> fieldWithPath(value.getKey()).type(STRING).description(value.getValue()))
             .toArray(FieldDescriptor[]::new);
     }
 
