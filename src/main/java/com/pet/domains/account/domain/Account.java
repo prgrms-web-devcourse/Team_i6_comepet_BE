@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
@@ -27,6 +28,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Where(clause = "deleted = false")
 @Entity
 @Table(name = "account")
+@AllArgsConstructor
 public class Account extends DeletableEntity {
 
     @Id
@@ -75,6 +77,11 @@ public class Account extends DeletableEntity {
         this.signStatus = signStatus;
         this.image = image;
         this.group = group;
+    }
+
+    public Account(String email, String password) {
+        this.email = email;
+        this.password = password;
     }
 
     public boolean isMatchPassword(PasswordEncoder passwordEncoder, String password) {

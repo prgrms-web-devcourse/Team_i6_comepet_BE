@@ -12,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import com.pet.common.jwt.JwtAuthentication;
 import com.pet.common.jwt.JwtMockToken;
+import com.pet.domains.account.WithAccount;
 import com.pet.domains.account.dto.request.AccountAreaUpdateParam;
 import com.pet.domains.account.dto.request.AccountCreateParam;
 import com.pet.domains.account.dto.request.AccountEmailParam;
@@ -132,12 +133,13 @@ class AccountControllerTest extends BaseDocumentationTest {
     }
 
     @Test
+    @WithAccount
     @DisplayName("로그아웃 테스트")
     void logoutTest() throws Exception {
         // given
         // when
         ResultActions resultActions = mockMvc.perform(post("/api/v1/logout")
-            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN));
+            .header(HttpHeaders.AUTHORIZATION, getAuthenticationToken()));
 
         // then
         resultActions
