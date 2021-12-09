@@ -1,5 +1,6 @@
 package com.pet.domains.account.service;
 
+import com.pet.common.exception.ExceptionMessage;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.account.repository.AccountRepository;
 import java.text.MessageFormat;
@@ -23,7 +24,7 @@ public class AccountService {
         Validate.notBlank(password, "password must be provided.");
 
         Account account = accountRepository.findByEmail(email)
-            .orElseThrow(() -> new UsernameNotFoundException("Could not found user for " + email));
+            .orElseThrow(ExceptionMessage.NOT_FOUND_ACCOUNT::getException);
         Validate.isTrue(account.isMatchPassword(passwordEncoder, password), "Bad credential");
         return account;
     }
