@@ -1,26 +1,18 @@
 package com.pet.domains.account;
 
+import static org.mockito.BDDMockito.*;
 import com.pet.common.jwt.JwtAuthenticationProvider;
 import com.pet.common.jwt.JwtAuthenticationToken;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.account.domain.SignStatus;
-import com.pet.domains.account.repository.AccountRepository;
 import com.pet.domains.account.service.AccountService;
 import com.pet.domains.auth.domain.Group;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithSecurityContextFactory;
-import org.springframework.security.web.authentication.AuthenticationFilter;
-import static org.mockito.BDDMockito.*;
 
 @RequiredArgsConstructor
 public class WithAccountSecurityContextFactory implements WithSecurityContextFactory<WithAccount> {
@@ -41,8 +33,6 @@ public class WithAccountSecurityContextFactory implements WithSecurityContextFac
         given(accountService.login(email, password)).willReturn(account);
         given(accountService.checkLoginAccountById(anyLong())).willReturn(account);
         given(group.getAuthorities()).willReturn(List.of((GrantedAuthority)() -> ROLE_USER));
-
-        accountService.signUp(email, password);
 
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         context.setAuthentication(provider.authenticate(new JwtAuthenticationToken(email, password)));
