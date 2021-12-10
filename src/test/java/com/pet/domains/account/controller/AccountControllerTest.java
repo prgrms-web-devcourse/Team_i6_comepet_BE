@@ -34,10 +34,10 @@ import org.springframework.test.web.servlet.ResultActions;
 class AccountControllerTest extends BaseDocumentationTest {
 
     @Test
-    @DisplayName("이메일 중복 요청 성공 테스트")
+    @DisplayName("이메일 인증 요청 성공 테스트")
     void emailVerifyTest() throws Exception {
         // given
-        AccountEmailParam param = new AccountEmailParam("tester@email.com");
+        AccountEmailCheck param = new AccountEmailCheck("tester@email.com", "131231231234123");
         // when
         ResultActions resultActions = mockMvc.perform(post("/api/v1/verify-email")
             .contentType(MediaType.APPLICATION_JSON)
