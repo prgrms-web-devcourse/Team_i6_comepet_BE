@@ -5,8 +5,12 @@ import com.pet.domains.animal.dto.request.AnimalKindCreateParams;
 import com.pet.domains.animal.dto.response.AnimalKindApiPageResults;
 import com.pet.domains.animal.service.AnimalKindService;
 import com.pet.domains.area.dto.request.CityCreateParams;
+import com.pet.domains.area.dto.request.CityCreateParams.City;
+import com.pet.domains.area.dto.request.TownCreateParams;
 import com.pet.domains.area.dto.response.CityApiPageResults;
+import com.pet.domains.area.dto.response.TownApiPageResults;
 import com.pet.domains.area.service.CityService;
+import com.pet.domains.area.service.TownService;
 import com.pet.domains.post.dto.request.ShelterPostCreateParams;
 import com.pet.domains.post.dto.response.ShelterApiPageResult;
 import java.time.LocalDate;
@@ -52,6 +56,8 @@ public class ShelterApiService {
 
     private final CityService cityService;
 
+    private final TownService townService;
+
     private WebClient webClient;
 
     @PostConstruct
@@ -91,12 +97,12 @@ public class ShelterApiService {
         return shelterPostCreateParams;
     }
 
-    public void saveAnimalKinds() {
-        Map<String, AnimalKindCreateParams> createParams = getAnimalKindCreateParams();
+    public void saveAllAnimalKinds() {
+        Map<String, AnimalKindCreateParams> createParams = getAllAnimalKindCreateParams();
         createParams.forEach(animalKindService::createAnimalKinds);
     }
 
-    public Map<String, AnimalKindCreateParams> getAnimalKindCreateParams() {
+    public Map<String, AnimalKindCreateParams> getAllAnimalKindCreateParams() {
         return animalKindCodes.stream()
             .collect(Collectors.toMap(
                 kindCode -> kindCode,
@@ -118,8 +124,9 @@ public class ShelterApiService {
     }
 
     // 매년, 12/11 02시, dev rds에 migrate 후 삭제
-    @Scheduled(cron = "0 0 2 11 12 ?")
-    public void saveCities() {
+    @Scheduled(cron = "0 0 4 11 12 ?")
+    public void saveAllCities() {
+        log.info("saveAllCities() cron task start");
         CityCreateParams createParams = getCityCreateParams();
         cityService.createCites(createParams);
     }
@@ -139,6 +146,43 @@ public class ShelterApiService {
             .accept(MediaType.APPLICATION_XML)
             .retrieve()
             .bodyToMono(CityApiPageResults.class)
+            .block();
+    }
+
+    // 매년, 12/11 02시, dev rds에 migrate 후 삭제
+    @Scheduled(cron = "0 0 4 11 12 ?")
+    public void saveAllTowns() {
+        log.info("saveAllTowns() cron task start");
+        Map<String, TownCreateParams> createParams = getAllTownCreateParams();
+        createParams.forEach(townService::createTowns);
+    }
+
+    public Map<String, TownCreateParams> getAllTownCreateParams() {
+        return getCityCodes().stream()
+            .collect(Collectors.toMap(
+                cityCode -> cityCode,
+                cityCode -> getTownApiPageResults(cityCode).getBodyItems())
+            );
+    }
+
+    public List<String> getCityCodes() {
+        CityCreateParams bodyItems = getCityApiPageResults().getBodyItems();
+        return bodyItems.getCities().stream()
+            .map(City::getCode)
+            .collect(Collectors.toList());
+    }
+
+    public TownApiPageResults getTownApiPageResults(String cityCode) {
+
+        return webClient.get()
+            .uri(uriBuilder -> uriBuilder
+                .path(TOWN_PATH)
+                .queryParam("serviceKey", getApiKey())
+                .queryParam("upr_cd", cityCode)
+                .build())
+            .accept(MediaType.APPLICATION_XML)
+            .retrieve()
+            .bodyToMono(TownApiPageResults.class)
             .block();
     }
 
