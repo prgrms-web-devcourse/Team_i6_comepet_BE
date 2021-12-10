@@ -26,16 +26,12 @@ public class AnimalKindService {
     private final AnimalRepository animalRepository;
 
     public void createAnimalKinds(String animalCode, AnimalKindCreateParams animalKindCreateParams) {
-
-        Animal foundAnimal = animalRepository.findByCode(animalCode)
-            .orElseThrow(ExceptionMessage.NOT_FOUND_ANIMAL::getException);
-
         Set<AnimalKind> transactionChunk = new HashSet<>();
         animalKindCreateParams.getAnimalKinds().forEach(animalKindCreateParam -> {
                 transactionChunk.add(AnimalKind.builder()
                     .name(animalKindCreateParam.getName())
                     .code(animalKindCreateParam.getCode())
-                    .animal(foundAnimal)
+                    .animal(getAnimalByCode(animalCode))
                     .build()
                 );
                 if (transactionChunk.size() == TRANSACTION_CHUNK_LIMIT) {
@@ -50,17 +46,23 @@ public class AnimalKindService {
 
     @Transactional
     public AnimalKind getOrCreateByAnimalKind(Long animalId, String animalKindName) {
-
-        Animal foundAnimal = animalRepository.findById(animalId)
-            .orElseThrow(ExceptionMessage.NOT_FOUND_ANIMAL::getException);
-
         return animalKindRepository.findByName(animalKindName)
             .orElseGet(() -> animalKindRepository.save(
                 AnimalKind.builder()
-                    .animal(foundAnimal)
+                    .animal(getAnimalById(animalId))
                     .name(animalKindName)
                     .build()
             ));
+    }
+
+    private Animal getAnimalByCode(String animalCode) {
+        return animalRepository.findByCode(animalCode)
+            .orElseThrow(ExceptionMessage.NOT_FOUND_ANIMAL::getException);
+    }
+
+    private Animal getAnimalById(Long animalId) {
+        return animalRepository.findById(animalId)
+            .orElseThrow(ExceptionMessage.NOT_FOUND_ANIMAL::getException);
     }
 
 }
