@@ -2,10 +2,13 @@ package com.pet.domains.account.service;
 
 import com.pet.common.exception.ExceptionMessage;
 import com.pet.domains.account.domain.Account;
+import com.pet.domains.account.domain.SignEmail;
 import com.pet.domains.account.repository.AccountRepository;
-import java.text.MessageFormat;
+import com.pet.domains.account.repository.SignEmailRepository;
+import com.pet.infra.EmailMessage;
+import com.pet.infra.MailSender;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,10 +22,19 @@ public class AccountService {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final MailSender mailSender;
+
+    private final SignEmailRepository signEmailRepository;
+
+    @Transactional
     public void checkDuplicationEmail(String email) {
         if (accountRepository.existsByEmail(email)) {
             throw ExceptionMessage.DUPLICATION_EMAIL.getException();
         }
+
+        String verifyKey = UUID.randomUUID().toString();
+        mailSender.send(new EmailMessage(email, verifyKey));
+        signEmailRepository.save(new SignEmail(email, verifyKey));
     }
 
     public Account login(String email, String password) {
@@ -33,7 +45,7 @@ public class AccountService {
 
     public Account checkLoginAccountById(Long accountId) {
         return accountRepository.findById(accountId).orElseThrow(
-            () -> new UsernameNotFoundException(MessageFormat.format("유저를 찾지 못 했습니다.{0}", accountId))
+            ExceptionMessage.NOT_FOUND_ACCOUNT::getException
         );
     }
 

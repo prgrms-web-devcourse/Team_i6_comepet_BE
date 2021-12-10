@@ -7,7 +7,7 @@ import com.pet.common.response.ApiResponse;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.account.domain.LoginAccount;
 import com.pet.domains.account.dto.request.AccountAreaUpdateParam;
-import com.pet.domains.account.dto.request.AccountCreateParam;
+import com.pet.domains.account.dto.request.AccountSignUpParam;
 import com.pet.domains.account.dto.request.AccountEmailCheck;
 import com.pet.domains.account.dto.request.AccountLonginParam;
 import com.pet.domains.account.dto.request.AccountPasswordParam;
@@ -48,6 +48,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class AccountController {
 
     private final AccountService accountService;
+
     private final AuthenticationService authenticationService;
 
     @PostMapping(path = "/verify-email", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -59,15 +60,9 @@ public class AccountController {
     @PostMapping(path = "/sign-up",
         consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<AccountCreateResult> getCities(@RequestBody AccountCreateParam accountCreateParam) {
-        String email = accountCreateParam.getEmail();
-        String nickname = accountCreateParam.getNickname();
-        MultipartFile profile = accountCreateParam.getFile();
-        if (profile != null) {
-            log.info("sign up account info : {}, {}, {}", email, nickname, profile.getName());
-        } else {
-            log.info("sign up account info : {}, {}", email, nickname);
-        }
+    public ApiResponse<AccountCreateResult> signUp(@RequestBody @Valid AccountSignUpParam accountSignUpParam) {
+        String email = accountSignUpParam.getEmail();
+        String nickname = accountSignUpParam.getNickname();
         return ApiResponse.ok(AccountCreateResult.of(1L, JwtMockToken.MOCK_TOKEN));
     }
 

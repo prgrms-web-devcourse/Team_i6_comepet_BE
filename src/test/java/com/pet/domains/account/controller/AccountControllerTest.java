@@ -14,7 +14,7 @@ import com.pet.common.jwt.JwtAuthentication;
 import com.pet.common.jwt.JwtMockToken;
 import com.pet.domains.account.WithAccount;
 import com.pet.domains.account.dto.request.AccountAreaUpdateParam;
-import com.pet.domains.account.dto.request.AccountCreateParam;
+import com.pet.domains.account.dto.request.AccountSignUpParam;
 import com.pet.domains.account.dto.request.AccountEmailCheck;
 import com.pet.domains.account.dto.request.AccountLonginParam;
 import com.pet.domains.account.dto.request.AccountPasswordParam;
@@ -57,7 +57,7 @@ class AccountControllerTest extends BaseDocumentationTest {
     @DisplayName("회원 가입 요청 성공 테스트")
     void signUpTest() throws Exception {
         // given
-        AccountCreateParam param = new AccountCreateParam("test", "test@gmail.com", "1234!", null);
+        AccountSignUpParam param = new AccountSignUpParam("test", "test@gmail.com", "1234!");
         // when
         ResultActions resultActions = mockMvc.perform(post("/api/v1/sign-up")
             .contentType(MediaType.APPLICATION_JSON)
