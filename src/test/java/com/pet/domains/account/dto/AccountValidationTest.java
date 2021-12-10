@@ -1,6 +1,7 @@
 package com.pet.domains.account.dto;
 
 import com.pet.domains.account.dto.request.AccountEmailCheck;
+import com.pet.domains.account.dto.request.AccountEmailParam;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.validation.ConstraintViolation;
@@ -26,16 +27,16 @@ public class AccountValidationTest {
     @Test
     @DisplayName("이메일 정상 입력 테스트")
     void checkEmailTest() {
-        AccountEmailCheck emailCheck = new AccountEmailCheck("test@test.com");
-        Set<ConstraintViolation<AccountEmailCheck>> validations = validator.validate(emailCheck);
+        AccountEmailParam emailCheck = new AccountEmailParam("test@test.com");
+        Set<ConstraintViolation<AccountEmailParam>> validations = validator.validate(emailCheck);
         assertThat(validations).hasSize(0);
     }
 
     @Test
     @DisplayName("이메일 비정상 입력 테스트 - test@test")
     void checkEmailFailNotContainsDotTest() {
-        AccountEmailCheck emailCheck = new AccountEmailCheck("test@test");
-        Set<ConstraintViolation<AccountEmailCheck>> validations = validator.validate(emailCheck);
+        AccountEmailParam emailCheck = new AccountEmailParam("test@test");
+        Set<ConstraintViolation<AccountEmailParam>> validations = validator.validate(emailCheck);
         assertThat(validations).hasSize(1);
 
         assertThat(validations.stream()
@@ -46,8 +47,8 @@ public class AccountValidationTest {
     @Test
     @DisplayName("이메일 비정상 입력 테스트 - test.com")
     void checkEmailFailNotContainsAtTest() {
-        AccountEmailCheck emailCheck = new AccountEmailCheck("test@test");
-        Set<ConstraintViolation<AccountEmailCheck>> validations = validator.validate(emailCheck);
+        AccountEmailParam emailCheck = new AccountEmailParam("test@test");
+        Set<ConstraintViolation<AccountEmailParam>> validations = validator.validate(emailCheck);
         assertThat(validations).hasSize(1);
 
         assertThat(validations.stream()

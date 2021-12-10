@@ -24,10 +24,16 @@ public class AccountSignUpParam {
         message = "올바른 비밀번호 형식이 아닙니다.")
     private String password;
 
-    public AccountSignUpParam(String nickname, String email, String password) {
+    @NotBlank(message = "올바른 비밀번호 형식이 아닙니다.")
+    @Pattern(
+        regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[~!@#$%^&*()+|=])[A-Za-z\\d~!@#$%^&*()+|=]{8,20}$",
+        message = "올바른 비밀번호 형식이 아닙니다.")
+    private String passwordCheck;
+
+    public AccountSignUpParam(String nickname, String email, String password, String passwordCheck) {
         this.nickname = nickname;
         this.email = email;
         this.password = password;
+        this.passwordCheck = passwordCheck;
     }
-
 }

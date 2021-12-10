@@ -7,6 +7,7 @@ import com.pet.common.response.ApiResponse;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.account.domain.LoginAccount;
 import com.pet.domains.account.dto.request.AccountAreaUpdateParam;
+import com.pet.domains.account.dto.request.AccountEmailParam;
 import com.pet.domains.account.dto.request.AccountSignUpParam;
 import com.pet.domains.account.dto.request.AccountEmailCheck;
 import com.pet.domains.account.dto.request.AccountLonginParam;
@@ -51,19 +52,24 @@ public class AccountController {
 
     private final AuthenticationService authenticationService;
 
+    @PostMapping(path = "/send-email", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void sendEmail(@RequestBody @Valid AccountEmailParam accountEmailParam) {
+        accountService.sendEmail(accountEmailParam.getEmail());
+    }
+
     @PostMapping(path = "/verify-email", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void verifyEmail(@RequestBody @Valid AccountEmailCheck accountEmailCheck) {
-        accountService.checkDuplicationEmail(accountEmailCheck.getEmail());
+        accountService.verifyEmail(accountEmailCheck.getEmail(), accountEmailCheck.getKey());
     }
 
     @PostMapping(path = "/sign-up",
         consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse<AccountCreateResult> signUp(@RequestBody @Valid AccountSignUpParam accountSignUpParam) {
-        String email = accountSignUpParam.getEmail();
-        String nickname = accountSignUpParam.getNickname();
-        return ApiResponse.ok(AccountCreateResult.of(1L, JwtMockToken.MOCK_TOKEN));
+        Long id = accountService.signUp(accountSignUpParam);
+        return ApiResponse.ok(AccountCreateResult.of(id, JwtMockToken.MOCK_TOKEN));
     }
 
     @PostMapping(path = "/login",

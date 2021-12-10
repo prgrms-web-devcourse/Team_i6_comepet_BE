@@ -14,8 +14,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
@@ -67,6 +70,7 @@ public class Account extends DeletableEntity {
     )
     private Group group;
 
+    @Builder
     public Account(String email, String password, String nickname, boolean notification, boolean checkedArea,
         SignStatus signStatus, Image image, Group group) {
         this.email = email;
@@ -77,11 +81,6 @@ public class Account extends DeletableEntity {
         this.signStatus = signStatus;
         this.image = image;
         this.group = group;
-    }
-
-    public Account(String email, String password) {
-        this.email = email;
-        this.password = password;
     }
 
     public boolean isMatchPassword(PasswordEncoder passwordEncoder, String password) {
