@@ -40,6 +40,8 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 public class MissingPostController {
 
+    private static final String RETURN_KEY = "id";
+
     private final ImageService imageService;
     private final MissingPostService missingPostService;
 
@@ -59,7 +61,8 @@ public class MissingPostController {
 
         // TODO: 2021/12/10 게시물 등록 안에서 알림전송까지 해야한다.
 
-        return ApiResponse.ok(Map.of("id", missingPostService.createMissingPost(missingPostCreateParam, imageFiles)));
+        return ApiResponse.ok(
+            Map.of(RETURN_KEY, missingPostService.createMissingPost(missingPostCreateParam, imageFiles)));
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -197,7 +200,7 @@ public class MissingPostController {
         images.stream().map(MultipartFile::getName).forEach(stringJoiner::add);
 
         log.info("post image size: {}, names: {} ", images.size(), stringJoiner);
-        return ApiResponse.ok(Map.of("id", 1L));
+        return ApiResponse.ok(Map.of(RETURN_KEY, 1L));
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
