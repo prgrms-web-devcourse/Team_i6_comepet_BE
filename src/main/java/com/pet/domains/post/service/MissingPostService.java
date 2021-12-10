@@ -48,9 +48,6 @@ public class MissingPostService {
         Town town = townRepository.findById(missingPostCreateParam.getTownId())
             .orElseThrow(ExceptionMessage.NOT_FOUND_TOWN::getException);
 
-        //3. 태그 등록
-        //있으면 카운트 + 1
-        //없으면 새로 넣어주기
         List<Tag> tags = new ArrayList<>();
         if (!CollectionUtils.isEmpty(missingPostCreateParam.getTags())) {
             tags =
@@ -61,25 +58,20 @@ public class MissingPostService {
                     .collect(Collectors.toList());
         }
 
-        //썸네일
         String thumbnail = null;
         if (!imageFiles.isEmpty()) {
             thumbnail = imageFiles.get(0).getName();
         }
 
-        //4. 게시물 등록
         MissingPost createMissingPost = missingPostRepository.save(
             MissingPostMapper.INSTANCE.toEntity(missingPostCreateParam, town, animalKind, thumbnail));
 
-        //5. 포스트 태그 등록
-        //tags 활용해서 postTag 등록
         if (!CollectionUtils.isEmpty(tags)) {
             for (Tag tag : tags) {
                 postTagService.createPostTag(tag, createMissingPost);
             }
         }
 
-        //6. PostImage 등록
         if (!CollectionUtils.isEmpty(imageFiles)) {
             imageFiles.stream().map(image -> PostImage.builder()
                 .missingPost(createMissingPost)
