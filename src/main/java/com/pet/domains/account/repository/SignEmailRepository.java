@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface SignEmailRepository extends JpaRepository<SignEmail, Long> {
 
-    Optional<SignEmail> findByEmailAndKey(String email, String key);
+    Optional<SignEmail> findByEmailAndVerifyKey(String email, String verifyKey);
 
     Optional<SignEmail> findByEmailAndIsCheckedTrue(String email);
 

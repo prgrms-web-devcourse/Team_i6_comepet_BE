@@ -45,7 +45,7 @@ public class AccountService {
 
     @Transactional
     public void verifyEmail(String email, String key) {
-        SignEmail signEmail = signEmailRepository.findByEmailAndKey(email, key)
+        SignEmail signEmail = signEmailRepository.findByEmailAndVerifyKey(email, key)
             .filter(findSignEmail -> findSignEmail.isVerifyTime(LocalDateTime.now()))
             .orElseThrow(ExceptionMessage.INVALID_MAIL_KEY::getException);
         signEmail.successVerified();
