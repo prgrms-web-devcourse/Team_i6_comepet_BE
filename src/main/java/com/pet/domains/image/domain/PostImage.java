@@ -1,6 +1,5 @@
-package com.pet.domains.tag.domain;
+package com.pet.domains.image.domain;
 
-import com.pet.domains.BaseEntity;
 import com.pet.domains.post.domain.MissingPost;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -20,8 +20,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "post_tag")
-public class PostTag extends BaseEntity {
+@Table(name = "post_image")
+public class PostImage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,24 +32,24 @@ public class PostTag extends BaseEntity {
     @JoinColumn(
         name = "missing_post_id",
         referencedColumnName = "id",
-        foreignKey = @ForeignKey(name = "fk_missing_post_to_post_tag"),
+        foreignKey = @ForeignKey(name = "fk_missing_post_to_post_image"),
         nullable = false
     )
     private MissingPost missingPost;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(
-        name = "tag_id",
+        name = "image_id",
         referencedColumnName = "id",
-        foreignKey = @ForeignKey(name = "fk_tag_to_post_tag"),
+        foreignKey = @ForeignKey(name = "fk_image_to_post_image"),
         nullable = false
     )
-    private Tag tag;
+    private Image image;
 
     @Builder
-    public PostTag(MissingPost missingPost, Tag tag) {
+    public PostImage(MissingPost missingPost, Image image) {
         this.missingPost = missingPost;
-        this.tag = tag;
+        this.image = image;
     }
 
 }

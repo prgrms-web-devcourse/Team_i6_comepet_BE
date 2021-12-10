@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -41,4 +42,10 @@ public class Town extends BaseEntity {
     )
     private City city;
 
+    @Builder
+    public Town(String code, String name, City city) {
+        this.code = code;
+        this.name = name;
+        this.city = city;
+    }
 }

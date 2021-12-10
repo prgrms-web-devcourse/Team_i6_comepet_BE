@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -24,4 +25,8 @@ public class Image {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Builder
+    public Image(String name) {
+        this.name = name;
+    }
 }
