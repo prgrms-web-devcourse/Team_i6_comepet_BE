@@ -13,10 +13,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import lombok.Getter;
-import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 
-@ToString
 @Getter
 @XmlRootElement(name = "items")
 @XmlAccessorType(XmlAccessType.NONE)
@@ -25,7 +23,6 @@ public class ShelterPostCreateParams {
     @XmlElement(name = "item")
     private List<ShelterPostCreateParams.ShelterPost> shelterPosts;
 
-    @ToString
     @Getter
     @XmlRootElement(name = "item")
     @XmlAccessorType(XmlAccessType.NONE)
