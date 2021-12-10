@@ -14,10 +14,7 @@ import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
 
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@DataJpaTest(includeFilters = @Filter(
-    type = FilterType.ASSIGNABLE_TYPE,
-    classes = JpaAuditingConfig.class
-))
+@DataJpaTest(includeFilters = @Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JpaAuditingConfig.class))
 class AnimalKindRepositoryTest {
 
     @Autowired
