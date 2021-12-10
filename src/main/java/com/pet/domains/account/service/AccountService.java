@@ -2,10 +2,12 @@ package com.pet.domains.account.service;
 
 import com.pet.common.exception.ExceptionMessage;
 import com.pet.domains.account.domain.Account;
+import com.pet.domains.account.domain.AccountGroup;
 import com.pet.domains.account.domain.SignEmail;
 import com.pet.domains.account.dto.request.AccountSignUpParam;
 import com.pet.domains.account.repository.AccountRepository;
 import com.pet.domains.account.repository.SignEmailRepository;
+import com.pet.domains.auth.repository.GroupRepository;
 import com.pet.infra.EmailMessage;
 import com.pet.infra.MailSender;
 import java.time.LocalDateTime;
@@ -28,6 +30,8 @@ public class AccountService {
     private final MailSender mailSender;
 
     private final SignEmailRepository signEmailRepository;
+
+    private final GroupRepository groupRepository;
 
     @Transactional
     public void sendEmail(String email) {
@@ -62,17 +66,14 @@ public class AccountService {
     @Transactional
     public Long signUp(AccountSignUpParam param) {
         compareWithPassword(param);
-        return signEmailRepository.findByEmailAndIsCheckedTrue(param.getEmail())
-            .map(signEmail -> {
-                signEmailRepository.deleteById(signEmail.getId());
-                return accountRepository.save(Account.builder()
-                .email(param.getEmail())
-                .password(passwordEncoder.encode(param.getPassword()))
-                .nickname(param.getNickname())
-                .build()).getId();
-
-            })
-            .orElseThrow(ExceptionMessage.INVALID_SIGN_UP::getException);
+        verifyEmailAndDelete(param.getEmail());
+        return accountRepository.save(Account.builder()
+            .email(param.getEmail())
+            .password(passwordEncoder.encode(param.getPassword()))
+            .nickname(param.getNickname())
+            .group(groupRepository.findByName(AccountGroup.USER_GROUP.name())
+                .orElseThrow(ExceptionMessage.NOT_FOUND_GROUP::getException))
+            .build()).getId();
     }
 
     private Account checkPassword(String password, Account account) {
@@ -86,6 +87,11 @@ public class AccountService {
         if (!StringUtils.equals(param.getPassword(), param.getPasswordCheck())) {
             throw ExceptionMessage.INVALID_SIGN_UP.getException();
         }
+    }
+
+    private void verifyEmailAndDelete(String email) {
+        signEmailRepository.deleteById(signEmailRepository.findByEmailAndIsCheckedTrue(email)
+            .orElseThrow(ExceptionMessage.INVALID_SIGN_UP::getException).getId());
     }
 
 }

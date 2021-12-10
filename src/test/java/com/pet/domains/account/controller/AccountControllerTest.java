@@ -7,6 +7,7 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -60,6 +61,10 @@ class AccountControllerTest extends BaseDocumentationTest {
         // given
         AccountSignUpParam param = new AccountSignUpParam(
             "test", "test@gmail.com", "1234123a!", "1234123a!");
+
+        given(authenticationService.authenticate(param.getEmail(), param.getPassword()))
+            .willReturn(new JwtAuthentication("mock-token", 1L));
+
         // when
         ResultActions resultActions = mockMvc.perform(post("/api/v1/sign-up")
             .contentType(MediaType.APPLICATION_JSON)

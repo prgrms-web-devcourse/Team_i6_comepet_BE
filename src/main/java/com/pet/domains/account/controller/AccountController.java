@@ -69,7 +69,8 @@ public class AccountController {
     @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse<AccountCreateResult> signUp(@RequestBody @Valid AccountSignUpParam accountSignUpParam) {
         Long id = accountService.signUp(accountSignUpParam);
-        return ApiResponse.ok(AccountCreateResult.of(id, JwtMockToken.MOCK_TOKEN));
+        return ApiResponse.ok(AccountCreateResult.of(id, authenticationService.authenticate(
+            accountSignUpParam.getEmail(), accountSignUpParam.getPassword()).getToken()));
     }
 
     @PostMapping(path = "/login",
