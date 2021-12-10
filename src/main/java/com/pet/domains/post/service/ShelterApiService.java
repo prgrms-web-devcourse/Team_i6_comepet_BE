@@ -4,6 +4,9 @@ import com.pet.common.property.ShelterProperties;
 import com.pet.domains.animal.dto.request.AnimalKindCreateParams;
 import com.pet.domains.animal.dto.response.AnimalKindApiPageResults;
 import com.pet.domains.animal.service.AnimalKindService;
+import com.pet.domains.area.dto.request.CityCreateParams;
+import com.pet.domains.area.dto.response.CityApiPageResults;
+import com.pet.domains.area.service.CityService;
 import com.pet.domains.post.dto.request.ShelterPostCreateParams;
 import com.pet.domains.post.dto.response.ShelterApiPageResult;
 import java.time.LocalDate;
@@ -18,6 +21,7 @@ import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClient.RequestHeadersSpec;
@@ -32,13 +36,21 @@ public class ShelterApiService {
 
     private static final String ANIMAL_KIND_PATH = "/kind";
 
+    private static final String CITY_PATH = "/sido";
+
+    private static final String TOWN_PATH = "/sigungu";
+
     private static final List<String> animalKindCodes = List.of("417000", "422400", "429900");
+
+    private static final int NUM_OF_ROWS = 100;
 
     private final ShelterProperties shelterProperties;
 
     private final WebClient.Builder webClientBuilder;
 
     private final AnimalKindService animalKindService;
+
+    private final CityService cityService;
 
     private WebClient webClient;
 
@@ -85,7 +97,6 @@ public class ShelterApiService {
     }
 
     public Map<String, AnimalKindCreateParams> getAnimalKindCreateParams() {
-
         return animalKindCodes.stream()
             .collect(Collectors.toMap(
                 kindCode -> kindCode,
@@ -103,6 +114,31 @@ public class ShelterApiService {
             .accept(MediaType.APPLICATION_XML)
             .retrieve()
             .bodyToMono(AnimalKindApiPageResults.class)
+            .block();
+    }
+
+    // 매년, 12/11 02시, dev rds에 migrate 후 삭제
+    @Scheduled(cron = "0 0 2 11 12 ?")
+    public void saveCities() {
+        CityCreateParams createParams = getCityCreateParams();
+        cityService.createCites(createParams);
+    }
+
+    public CityCreateParams getCityCreateParams() {
+        return getCityApiPageResults().getBodyItems();
+    }
+
+
+    public CityApiPageResults getCityApiPageResults() {
+        return webClient.get()
+            .uri(uriBuilder -> uriBuilder
+                .path(CITY_PATH)
+                .queryParam("serviceKey", getApiKey())
+                .queryParam("numOfRows", NUM_OF_ROWS)
+                .build())
+            .accept(MediaType.APPLICATION_XML)
+            .retrieve()
+            .bodyToMono(CityApiPageResults.class)
             .block();
     }
 
