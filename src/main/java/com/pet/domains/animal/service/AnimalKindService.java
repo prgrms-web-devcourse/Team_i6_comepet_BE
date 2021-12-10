@@ -27,11 +27,12 @@ public class AnimalKindService {
 
     public void createAnimalKinds(String animalCode, AnimalKindCreateParams animalKindCreateParams) {
         Set<AnimalKind> transactionChunk = new HashSet<>();
+        Animal animal = getAnimalByCode(animalCode);
         animalKindCreateParams.getAnimalKinds().forEach(animalKindCreateParam -> {
                 transactionChunk.add(AnimalKind.builder()
                     .name(animalKindCreateParam.getName())
                     .code(animalKindCreateParam.getCode())
-                    .animal(getAnimalByCode(animalCode))
+                    .animal(animal)
                     .build()
                 );
                 if (transactionChunk.size() == TRANSACTION_CHUNK_LIMIT) {

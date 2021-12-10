@@ -24,9 +24,10 @@ public class TownService {
     private final TownRepository townRepository;
 
     public void createTowns(String cityCode, TownCreateParams townCreateParams) {
+        City city = getCityByCode(cityCode);
         List<Town> towns = townCreateParams.getTowns().stream()
             .map(townCreateParam -> Town.builder()
-                .city(getCityByCode(cityCode))
+                .city(city)
                 .name(townCreateParam.getName())
                 .code(townCreateParam.getCode())
                 .build())

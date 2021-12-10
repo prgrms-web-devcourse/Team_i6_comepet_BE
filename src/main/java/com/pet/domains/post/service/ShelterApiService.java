@@ -17,9 +17,11 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -123,8 +125,8 @@ public class ShelterApiService {
             .block();
     }
 
-    // 매년, 12/11 02시, dev rds에 migrate 후 삭제
-    @Scheduled(cron = "0 0 4 11 12 ?")
+    // 매년, 12/11 06시, dev rds에 migrate 후 삭제
+    @Scheduled(cron = "0 0 6 11 12 ?")
     public void saveAllCities() {
         log.info("saveAllCities() cron task start");
         CityCreateParams createParams = getCityCreateParams();
@@ -149,8 +151,8 @@ public class ShelterApiService {
             .block();
     }
 
-    // 매년, 12/11 02시, dev rds에 migrate 후 삭제
-    @Scheduled(cron = "0 0 4 11 12 ?")
+    // 매년, 12/11 06시 10, dev rds에 migrate 후 삭제
+    @Scheduled(cron = "0 10 6 11 12 ?")
     public void saveAllTowns() {
         log.info("saveAllTowns() cron task start");
         Map<String, TownCreateParams> createParams = getAllTownCreateParams();
@@ -158,22 +160,24 @@ public class ShelterApiService {
     }
 
     public Map<String, TownCreateParams> getAllTownCreateParams() {
-        return getCityCodes().stream()
-            .collect(Collectors.toMap(
-                cityCode -> cityCode,
-                cityCode -> getTownApiPageResults(cityCode).getBodyItems())
-            );
+        Map<String, TownCreateParams> paramsMap = new HashMap<>();
+        getCityCodes().forEach(cityCode -> {
+            TownCreateParams createParams = getTownApiPageResults(cityCode).getBodyItems();
+            if (createParams.getTowns() != null) {
+                paramsMap.put(cityCode, createParams);
+            }
+        });
+        return paramsMap;
     }
 
-    public List<String> getCityCodes() {
+    public Set<String> getCityCodes() {
         CityCreateParams bodyItems = getCityApiPageResults().getBodyItems();
         return bodyItems.getCities().stream()
             .map(City::getCode)
-            .collect(Collectors.toList());
+            .collect(Collectors.toSet());
     }
 
     public TownApiPageResults getTownApiPageResults(String cityCode) {
-
         return webClient.get()
             .uri(uriBuilder -> uriBuilder
                 .path(TOWN_PATH)
