@@ -8,6 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -28,4 +29,9 @@ public class City extends BaseEntity {
     @Column(name = "name", nullable = false, length = 200)
     private String name;
 
+    @Builder
+    public City(String code, String name) {
+        this.code = code;
+        this.name = name;
+    }
 }
