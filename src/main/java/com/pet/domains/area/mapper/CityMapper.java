@@ -8,6 +8,6 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface CityMapper {
 
-    City toCity(CityCreateParams.City cityCreateParam);
+    City toEntity(CityCreateParams.City cityCreateParam);
 
 }

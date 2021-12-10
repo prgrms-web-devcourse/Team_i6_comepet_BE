@@ -22,7 +22,7 @@ public class CityService {
     @Transactional
     public void createCites(CityCreateParams cityCreateParams) {
         List<City> cities = cityCreateParams.getCities().stream()
-            .map(cityMapper::toCity)
+            .map(cityMapper::toEntity)
             .collect(Collectors.toList());
         cityRepository.saveAll(cities);
     }
