@@ -40,7 +40,6 @@ public class ShelterApiService {
 
     private final AnimalKindService animalKindService;
 
-
     private WebClient webClient;
 
     @PostConstruct
