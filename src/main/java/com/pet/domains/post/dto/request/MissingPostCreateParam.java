@@ -23,7 +23,7 @@ public class MissingPostCreateParam {
 
     private Long animalId;
 
-    private Long animalKindId;
+    private String animalKindName;
 
     private int age;
 
@@ -36,7 +36,7 @@ public class MissingPostCreateParam {
     private List<MissingPostCreateParam.Tag> tags;
 
     public MissingPostCreateParam(String status, LocalDate date, Long cityId, Long townId, String detailAddress,
-        String telNumber, Long animalId, Long animalKindId, int age, String sex, String chipNumber,
+        String telNumber, Long animalId, String animalKindName, int age, String sex, String chipNumber,
         String content, List<Tag> tags) {
         this.status = status;
         this.date = date;
@@ -45,7 +45,7 @@ public class MissingPostCreateParam {
         this.detailAddress = detailAddress;
         this.telNumber = telNumber;
         this.animalId = animalId;
-        this.animalKindId = animalKindId;
+        this.animalKindName = animalKindName;
         this.age = age;
         this.sex = sex;
         this.chipNumber = chipNumber;
@@ -55,11 +55,11 @@ public class MissingPostCreateParam {
 
     public static MissingPostCreateParam of(
         String status, LocalDate date, Long cityId, Long townId, String detailAddress,
-        String telNumber, Long animalId, Long animalKindId, int age, String sex, String chipNumber,
+        String telNumber, Long animalId, String animalKindName, int age, String sex, String chipNumber,
         String content, List<Tag> tags
     ) {
         return new MissingPostCreateParam(
-            status, date, cityId, townId, detailAddress, telNumber, animalId, animalKindId, age, sex, chipNumber,
+            status, date, cityId, townId, detailAddress, telNumber, animalId, animalKindName, age, sex, chipNumber,
             content, tags
         );
     }
