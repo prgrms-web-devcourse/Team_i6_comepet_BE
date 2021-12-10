@@ -25,4 +25,12 @@ public class ShelterProperties {
         private final String key;
     }
 
+    public String getUrl() {
+        return api.getUrl();
+    }
+
+    public String getKey() {
+        return api.getKey();
+    }
+
 }

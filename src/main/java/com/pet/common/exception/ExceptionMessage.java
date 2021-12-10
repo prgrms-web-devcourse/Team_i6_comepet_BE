@@ -18,6 +18,8 @@ public enum ExceptionMessage {
     NOT_FOUND_ACCOUNT(new BadRequestException("해당하는 유저를 찾을 수 없습니다.")),
 
     // 동물
+    NOT_FOUND_ANIMAL(new BadRequestException("해당하는 동물 종류를 찾을 수 없습니다.")),
+
 
     // 지역
 

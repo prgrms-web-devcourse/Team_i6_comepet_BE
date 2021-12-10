@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -29,7 +30,7 @@ public class AnimalKind extends BaseEntity {
     @Column(name = "name", length = 50, nullable = false)
     private String name;
 
-    @Column(name = "code", length = 6, nullable = false)
+    @Column(name = "code", length = 6)
     private String code;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -41,4 +42,10 @@ public class AnimalKind extends BaseEntity {
     )
     private Animal animal;
 
+    @Builder
+    public AnimalKind(String name, String code, Animal animal) {
+        this.name = name;
+        this.code = code;
+        this.animal = animal;
+    }
 }
