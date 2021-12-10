@@ -8,6 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -27,4 +28,9 @@ public class Animal extends BaseEntity {
     @Column(name = "code", length = 30, nullable = false)
     private String code;
 
+    @Builder
+    public Animal(String name, String code) {
+        this.name = name;
+        this.code = code;
+    }
 }

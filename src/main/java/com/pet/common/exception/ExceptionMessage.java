@@ -21,6 +21,8 @@ public enum ExceptionMessage {
     INVALID_MAIL_KEY(new BadRequestException("잘못된 이메일 인증번호입니다.")),
 
     // 동물
+    NOT_FOUND_ANIMAL(new BadRequestException("해당하는 동물 종류를 찾을 수 없습니다.")),
+
 
     // 지역
 

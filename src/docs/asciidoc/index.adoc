@@ -65,9 +65,6 @@ include::{snippets}/common/custom-response-fields-status.adoc[]
 [[sexType]]
 include::{snippets}/common/custom-response-fields-sexTypes.adoc[]
 
-[[shelterSexType]]
-include::{snippets}/common/custom-response-fields-shelterSexTypes.adoc[]
-
 [[neuteredType]]
 include::{snippets}/common/custom-response-fields-neuteredTypes.adoc[]
 

@@ -33,5 +33,4 @@ public class ShelterApiPageResult {
         @XmlElement(name = "items")
         private ShelterPostCreateParams items;
     }
-
 }
