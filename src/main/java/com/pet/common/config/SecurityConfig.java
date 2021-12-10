@@ -65,8 +65,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        Jwt jwt = getApplicationContext().getBean(Jwt.class);
-        return new JwtAuthenticationFilter(jwt);
+        return new JwtAuthenticationFilter(jwt());
     }
 
     @Override
@@ -102,7 +101,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return (request, response, exception) -> {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             Object principal = isNotNullPrincipal(authentication);
-            log.warn("{} is denied", principal, exception);
+            if (authentication == null) {
+                log.warn("권한이 없습니다. {}", principal);
+            }
             generateResponse(response);
         };
     }

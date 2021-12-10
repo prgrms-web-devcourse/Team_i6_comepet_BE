@@ -16,6 +16,10 @@ public enum ExceptionMessage {
 
     // 회원
     NOT_FOUND_ACCOUNT(new BadRequestException("해당하는 유저를 찾을 수 없습니다.")),
+    DUPLICATION_EMAIL(new BadRequestException("이메일이 중복됩니다.")),
+    INVALID_SIGN_UP(new BadRequestException("잘못된 회원가입 입력값입니다.")),
+    INVALID_MAIL_KEY(new BadRequestException("잘못된 이메일 인증번호입니다.")),
+    FAIL_TO_EMAIL(new BadRequestException("이메일 전송에 실패했습니다.")),
 
     // 동물
     NOT_FOUND_ANIMAL(new BadRequestException("해당하는 동물 종류를 찾을 수 없습니다.")),
@@ -27,7 +31,8 @@ public enum ExceptionMessage {
     SHOULD_LOGIN(new AuthenticationException("로그인이 필요합니다.")),
     INVALID_LOGIN(new AuthenticationException("로그인에 실패했습니다.")),
     INVALID_JWT(new AuthenticationException("유효하지 않은 토큰입니다.")),
-    INVALID_JWT_EXPIRY(new AuthenticationException("토큰이 만료되었습니다."));
+    INVALID_JWT_EXPIRY(new AuthenticationException("토큰이 만료되었습니다.")),
+    NOT_FOUND_GROUP(new AuthenticationException("존재하지 않는 그룹입니다."));
     // 댓글
 
     // 이미지

@@ -7,6 +7,7 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -14,8 +15,9 @@ import com.pet.common.jwt.JwtAuthentication;
 import com.pet.common.jwt.JwtMockToken;
 import com.pet.domains.account.WithAccount;
 import com.pet.domains.account.dto.request.AccountAreaUpdateParam;
-import com.pet.domains.account.dto.request.AccountCreateParam;
 import com.pet.domains.account.dto.request.AccountEmailParam;
+import com.pet.domains.account.dto.request.AccountSignUpParam;
+import com.pet.domains.account.dto.request.AccountEmailCheck;
 import com.pet.domains.account.dto.request.AccountLonginParam;
 import com.pet.domains.account.dto.request.AccountPasswordParam;
 import com.pet.domains.account.dto.request.AccountUpdateParam;
@@ -32,10 +34,10 @@ import org.springframework.test.web.servlet.ResultActions;
 class AccountControllerTest extends BaseDocumentationTest {
 
     @Test
-    @DisplayName("이메일 인증 요청 테스트")
+    @DisplayName("이메일 인증 요청 성공 테스트")
     void emailVerifyTest() throws Exception {
         // given
-        AccountEmailParam param = new AccountEmailParam("tester@email.com");
+        AccountEmailCheck param = new AccountEmailCheck("tester@email.com", "131231231234123");
         // when
         ResultActions resultActions = mockMvc.perform(post("/api/v1/verify-email")
             .contentType(MediaType.APPLICATION_JSON)
@@ -57,7 +59,12 @@ class AccountControllerTest extends BaseDocumentationTest {
     @DisplayName("회원 가입 요청 성공 테스트")
     void signUpTest() throws Exception {
         // given
-        AccountCreateParam param = new AccountCreateParam("test", "test@gmail.com", "1234!", null);
+        AccountSignUpParam param = new AccountSignUpParam(
+            "test", "test@gmail.com", "1234123a!", "1234123a!");
+
+        given(authenticationService.authenticate(param.getEmail(), param.getPassword()))
+            .willReturn(new JwtAuthentication("mock-token", 1L));
+
         // when
         ResultActions resultActions = mockMvc.perform(post("/api/v1/sign-up")
             .contentType(MediaType.APPLICATION_JSON)
@@ -79,6 +86,7 @@ class AccountControllerTest extends BaseDocumentationTest {
                     fieldWithPath("nickname").type(STRING).description("닉네임"),
                     fieldWithPath("email").type(STRING).description("이메일"),
                     fieldWithPath("password").type(STRING).description("비밀번호"),
+                    fieldWithPath("passwordCheck").type(STRING).description("비밀번호 확인"),
                     fieldWithPath("file").type(OBJECT).description("프로필 이미지").optional()
                 ),
                 responseHeaders(

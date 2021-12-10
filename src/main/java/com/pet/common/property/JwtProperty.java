@@ -1,22 +1,22 @@
 package com.pet.common.property;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 
 @ConstructorBinding
 @ConfigurationProperties(prefix = "jwt")
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class JwtProperty {
 
-    private String header;
+    private final String header;
 
-    private String issuer;
+    private final String issuer;
 
-    private String clientSecret;
+    private final String clientSecret;
 
-    private int expirySeconds;
+    private final int expirySeconds;
 
 }
