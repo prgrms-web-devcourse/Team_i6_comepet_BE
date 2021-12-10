@@ -118,7 +118,7 @@ public class ShelterApiService {
     }
 
     // 매년, 12/11 02시, dev rds에 migrate 후 삭제
-    @Scheduled(cron = "0 0 2 11 12 ? *")
+    @Scheduled(cron = "0 0 2 11 12 ?")
     public void saveCities() {
         CityCreateParams createParams = getCityCreateParams();
         cityService.createCites(createParams);
