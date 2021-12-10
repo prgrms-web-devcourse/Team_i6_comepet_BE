@@ -1,5 +1,6 @@
 package com.pet.infra;
 
+import com.pet.common.exception.ExceptionMessage;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,8 @@ public class HtmlMailSender implements MailSender {
 
             log.info("이메일을 정상적으로 전송했습니다.: {}", emailMessage.getTo());
         } catch (MessagingException e) {
-            log.error("메일 전송에 실패했습니다.");
+            log.warn("메일 전송에 실패했습니다.");
+            throw ExceptionMessage.FAIL_TO_EMAIL.getException();
         }
     }
 
