@@ -18,6 +18,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
@@ -101,4 +102,26 @@ public class MissingPost extends DeletableEntity {
     )
     private AnimalKind animalKind;
 
+    @Builder
+    public MissingPost(Long id, Status status, String detailAddress, LocalDate date, int age,
+        SexType sexType, String chipNumber, String content, String telNumber, long viewCount, long bookmarkCount,
+        long commentCount, String thumbnail, Account account, Town town,
+        AnimalKind animalKind) {
+        this.id = id;
+        this.status = status;
+        this.detailAddress = detailAddress;
+        this.date = date;
+        this.age = age;
+        this.sexType = sexType;
+        this.chipNumber = chipNumber;
+        this.content = content;
+        this.telNumber = telNumber;
+        this.viewCount = viewCount;
+        this.bookmarkCount = bookmarkCount;
+        this.commentCount = commentCount;
+        this.thumbnail = thumbnail;
+        this.account = account;
+        this.town = town;
+        this.animalKind = animalKind;
+    }
 }

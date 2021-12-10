@@ -1,6 +1,8 @@
 package com.pet.domains.post.controller;
 
 import com.pet.common.response.ApiResponse;
+import com.pet.domains.image.domain.Image;
+import com.pet.domains.image.service.ImageService;
 import com.pet.domains.post.domain.SexType;
 import com.pet.domains.post.domain.Status;
 import com.pet.domains.post.dto.request.MissingPostCreateParam;
@@ -8,13 +10,15 @@ import com.pet.domains.post.dto.request.MissingPostUpdateParam;
 import com.pet.domains.post.dto.response.MissingPostCommentPageResults;
 import com.pet.domains.post.dto.response.MissingPostReadResult;
 import com.pet.domains.post.dto.response.MissingPostReadResults;
+import com.pet.domains.post.service.MissingPostService;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
-import java.util.StringJoiner;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,26 +29,37 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
+@RequiredArgsConstructor
 @RequestMapping("/api/v1/missing-posts")
 @RestController
 public class MissingPostController {
 
+    private final ImageService imageService;
+    private final MissingPostService missingPostService;
+
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ApiResponse<Map<String, Long>> createMissingPost(
-        @RequestBody MissingPostCreateParam missingPostCreateParam
+        @RequestPart MissingPostCreateParam missingPostCreateParam,
+        @RequestPart List<MultipartFile> files
     ) {
-        List<MultipartFile> images = missingPostCreateParam.getFiles();
         StringJoiner stringJoiner = new StringJoiner(",", "[", "]");
-        images.stream().map(MultipartFile::getName).forEach(stringJoiner::add);
+        files.stream().map(MultipartFile::getName).forEach(stringJoiner::add);
+        log.info("post image size: {}, names: {} ", files.size(), stringJoiner);
 
-        log.info("post image size: {}, names: {} ", images.size(), stringJoiner);
-        return ApiResponse.ok(Map.of("id", 1L));
+        List<Image> imageFiles = files.stream()
+            .map(imageService::createImage)
+            .collect(Collectors.toList());
+
+        // TODO: 2021/12/10 게시물 등록 안에서 알림전송까지 해야한다.
+
+        return ApiResponse.ok(Map.of("id", missingPostService.createMissingPost(missingPostCreateParam, imageFiles)));
     }
 
     @ResponseStatus(HttpStatus.OK)
