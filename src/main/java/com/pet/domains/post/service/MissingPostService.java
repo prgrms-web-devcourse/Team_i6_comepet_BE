@@ -1,7 +1,8 @@
 package com.pet.domains.post.service;
 
+import com.pet.common.exception.ExceptionMessage;
 import com.pet.domains.animal.domain.AnimalKind;
-import com.pet.domains.animal.repository.AnimalKindRepository;
+import com.pet.domains.animal.service.AnimalKindService;
 import com.pet.domains.area.domain.Town;
 import com.pet.domains.area.repository.TownRepository;
 import com.pet.domains.image.domain.Image;
@@ -14,7 +15,6 @@ import com.pet.domains.post.repository.MissingPostRepository;
 import com.pet.domains.tag.domain.Tag;
 import com.pet.domains.tag.service.PostTagService;
 import com.pet.domains.tag.service.TagService;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -31,7 +31,7 @@ public class MissingPostService {
 
     private final MissingPostRepository missingPostRepository;
 
-    private final AnimalKindRepository animalKindRepository;
+    private final AnimalKindService animalKindService;
 
     private final TownRepository townRepository;
 
@@ -43,13 +43,10 @@ public class MissingPostService {
 
     @Transactional
     public Long createMissingPost(MissingPostCreateParam missingPostCreateParam, List<Image> imageFiles) {
-        // TODO: 2021/12/10 품종은 String으로 받아올 것임 : 케빈이 만든 메서드 활용
-        AnimalKind animalKind = animalKindRepository.findById(missingPostCreateParam.getAnimalKindId())
-            .orElseThrow(() -> new RuntimeException(
-                MessageFormat.format("해당 {0}키의 품종을 찾을 수 없습니다.", missingPostCreateParam.getAnimalKindId())));
+        AnimalKind animalKind = animalKindService.getOrCreateByAnimalKind(missingPostCreateParam.getAnimalId(),
+            missingPostCreateParam.getAnimalKindName());
         Town town = townRepository.findById(missingPostCreateParam.getTownId())
-            .orElseThrow(() -> new RuntimeException(
-                MessageFormat.format("해당 {0}키의 시군구를 찾을 수 없습니다.", missingPostCreateParam.getTownId())));
+            .orElseThrow(ExceptionMessage.NOT_FOUND_TOWN::getException);
 
         //3. 태그 등록
         //있으면 카운트 + 1
@@ -59,7 +56,7 @@ public class MissingPostService {
             tags =
                 missingPostCreateParam.getTags()
                     .stream()
-                    .map(tag -> tagService.getOrCreateByAnimalKind(tag.getName()))
+                    .map(tag -> tagService.getOrCreateByTagName(tag.getName()))
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());
         }

@@ -14,7 +14,7 @@ public class TagService {
 
     private final TagRepository tagRepository;
 
-    public Tag getOrCreateByAnimalKind(String tagName) {
+    public Tag getOrCreateByTagName(String tagName) {
         Optional<Tag> tag = tagRepository.findTagByName(tagName);
 
         if (tag.isPresent()) {
