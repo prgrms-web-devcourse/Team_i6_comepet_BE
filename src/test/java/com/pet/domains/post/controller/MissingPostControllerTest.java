@@ -28,6 +28,7 @@ import com.pet.domains.docs.BaseDocumentationTest;
 import com.pet.domains.post.domain.SexType;
 import com.pet.domains.post.domain.Status;
 import com.pet.domains.post.dto.request.MissingPostCreateParam;
+import com.pet.domains.post.dto.request.MissingPostCreateParam.Tag;
 import com.pet.domains.post.dto.request.MissingPostUpdateParam;
 import java.time.LocalDate;
 import java.util.List;
@@ -47,11 +48,10 @@ class MissingPostControllerTest extends BaseDocumentationTest {
         //given
         MissingPostCreateParam param = MissingPostCreateParam.of(
             "DETECTION", LocalDate.now(), 1L, 1L, "주민센터 앞 골목 근처",
-            "01012343323", 1L, 1L, 10, "MALE", "410123456789112",
+            "01012343323", 1L, "푸들", 10, "MALE", "410123456789112",
             "찾아주시면 사례하겠습니다.", List.of(
-                MissingPostCreateParam.PostTag.of("춘식이")
-            ),
-            Lists.emptyList()
+                Tag.of("춘식이")
+            )
         );
 
         //when
@@ -89,10 +89,9 @@ class MissingPostControllerTest extends BaseDocumentationTest {
                     fieldWithPath("sex").type(STRING).description("<<sexType,동물 성별>>"),
                     fieldWithPath("chipNumber").type(STRING).description("칩번호").optional(),
                     fieldWithPath("content").type(STRING).description("게시물 내용").optional(),
-                    fieldWithPath("postTags").type(ARRAY).description("게시글의 해시태그들").optional(),
-                    fieldWithPath("postTags[0].name").type(STRING).description("해시태그 내용").optional(),
-                    fieldWithPath("files").type(ARRAY).description("게시글의 이미지들").optional()
-                    ),
+                    fieldWithPath("tags").type(ARRAY).description("게시글의 해시태그들").optional(),
+                    fieldWithPath("tags[0].name").type(STRING).description("해시태그 내용").optional()
+                ),
                 responseFields(
                     fieldWithPath("data").type(OBJECT).description("응답 데이터").optional(),
                     fieldWithPath("data.id").type(NUMBER).description("게시글 id"),
