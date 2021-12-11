@@ -82,7 +82,7 @@ public class ShelterPostCreateParams {
         private String managerTelNumber;
 
         @XmlElement(name = "orgNm")
-        private String orgNm;
+        private String address;
 
         @XmlElement(name = "popfile")
         private String image;
@@ -101,11 +101,18 @@ public class ShelterPostCreateParams {
         @XmlElement(name = "weight")
         private Double weight;
 
+        public String getAnimalKindNameFromKindCd() {
+            // format: [{동물}] {품종}, ex) [고양이] 한국 고양이
+            System.out.println(kindCd);
+            int whileSpaceIdx = StringUtils.indexOf(kindCd, " ");
+            return StringUtils.substring(kindCd, whileSpaceIdx + 1).strip();
+        }
 
         public static class AgeAdapter extends XmlAdapter<String, Long> {
 
             @Override
             public Long unmarshal(String value) {
+                // format: {년도}(년생), ex) 2021(년생)
                 String extractedAge = StringUtils.substringBefore(value, "(");
                 return Long.valueOf(extractedAge);
             }
@@ -160,6 +167,7 @@ public class ShelterPostCreateParams {
 
             @Override
             public Double unmarshal(String value) {
+                // format: {몸무게}(kg), ex) 20.00(kg)
                 String extractedWeight = StringUtils.substringBefore(value, "(");
                 return Double.valueOf(extractedWeight);
             }

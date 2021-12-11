@@ -2,7 +2,6 @@ package com.pet.domains.post.domain;
 
 import com.pet.domains.BaseEntity;
 import com.pet.domains.animal.domain.AnimalKind;
-import com.pet.domains.area.domain.Town;
 import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -33,6 +33,9 @@ public class ShelterPost extends BaseEntity {
 
     @Column(name = "age", columnDefinition = "SMALLINT default 0", nullable = false)
     private int age;
+
+    @Column(name = "address", length = 50, nullable = false)
+    private String address;
 
     @Column(name = "shelter_place", length = 200, nullable = false)
     private String shelterPlace;
@@ -92,12 +95,8 @@ public class ShelterPost extends BaseEntity {
     @Column(name = "notice_number", length = 30, nullable = false)
     private String noticeNumber;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "town_id",
-        referencedColumnName = "id",
-        nullable = false,
-        foreignKey = @ForeignKey(name = "fk_town_to_shelter_post"))
-    private Town town;
+    @Column(name = "bookmark_count", columnDefinition = "BIGINT default 0", nullable = false)
+    private long bookmarkCount;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "animal_kind_id",
@@ -106,12 +105,14 @@ public class ShelterPost extends BaseEntity {
         foreignKey = @ForeignKey(name = "fk_animal_kind_to_shelter_post"))
     private AnimalKind animalKind;
 
-    public ShelterPost(int age, String shelterPlace, String shelterName, String shelterTelNumber, String manager,
-        String color, String desertionNumber, String image, String thumbnail, LocalDate foundDate,
+    @Builder
+    public ShelterPost(int age, String address, String shelterPlace, String shelterName, String shelterTelNumber,
+        String manager, String color, String desertionNumber, String image, String thumbnail, LocalDate foundDate,
         String foundPlace, NeuteredType neutered, LocalDate startDate, LocalDate endDate, String managerTelNumber,
-        String postStatus, SexType sex, String feature, Double weight, String noticeNumber,
-        Town town, AnimalKind animalKind) {
+        String postStatus, SexType sex, String feature, Double weight, String noticeNumber, long bookmarkCount,
+        AnimalKind animalKind) {
         this.age = age;
+        this.address = address;
         this.shelterPlace = shelterPlace;
         this.shelterName = shelterName;
         this.shelterTelNumber = shelterTelNumber;
@@ -131,7 +132,7 @@ public class ShelterPost extends BaseEntity {
         this.feature = feature;
         this.weight = weight;
         this.noticeNumber = noticeNumber;
-        this.town = town;
+        this.bookmarkCount = bookmarkCount;
         this.animalKind = animalKind;
     }
 }
