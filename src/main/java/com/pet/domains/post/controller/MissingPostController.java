@@ -46,10 +46,10 @@ public class MissingPostController {
     private final MissingPostService missingPostService;
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ApiResponse<Map<String, Long>> createMissingPost(
-        @RequestPart MissingPostCreateParam missingPostCreateParam,
-        @RequestPart List<MultipartFile> files
+        @RequestPart(required = false) List<MultipartFile> files,
+        @RequestPart("param") MissingPostCreateParam missingPostCreateParam
     ) {
         StringJoiner stringJoiner = new StringJoiner(",", "[", "]");
         files.stream().map(MultipartFile::getName).forEach(stringJoiner::add);
@@ -63,6 +63,8 @@ public class MissingPostController {
 
         return ApiResponse.ok(
             Map.of(RETURN_KEY, missingPostService.createMissingPost(missingPostCreateParam, imageFiles)));
+//        return ApiResponse.ok(
+//            Map.of(RETURN_KEY, 1L));
     }
 
     @ResponseStatus(HttpStatus.OK)
