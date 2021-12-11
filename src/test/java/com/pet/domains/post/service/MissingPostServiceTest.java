@@ -27,7 +27,6 @@ import com.pet.domains.tag.service.PostTagService;
 import com.pet.domains.tag.service.TagService;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -103,7 +102,6 @@ class MissingPostServiceTest {
             .code("001")
             .name("노원구")
             .build();
-        townRepository.save(town);
 
         tag = Tag.builder()
             .name("웰시코기")
@@ -161,7 +159,7 @@ class MissingPostServiceTest {
             )
         );
         given(animalKindService.getOrCreateByAnimalKind(any(), any())).willReturn(animalKind);
-        given(townRepository.findById(any())).willReturn(Optional.ofNullable(town));
+        given(townRepository.getById(any())).willReturn(town);
         given(tagService.getOrCreateByTagName(any())).willReturn(tag);
         doNothing().when(postTagService).createPostTag(any(), any());
         given(postImageRepository.save(any())).willReturn(postImage);
@@ -174,7 +172,7 @@ class MissingPostServiceTest {
         assertThat(getMissingPostId).isEqualTo(1L);
 
         verify(animalKindService).getOrCreateByAnimalKind(any(), any());
-        verify(townRepository).findById(any());
+        verify(townRepository).getById(any());
         verify(tagService).getOrCreateByTagName(any());
         verify(postTagService).createPostTag(any(), any());
         verify(postImageRepository).save(any());

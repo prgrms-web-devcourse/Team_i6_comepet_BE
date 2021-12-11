@@ -1,6 +1,5 @@
 package com.pet.domains.post.service;
 
-import com.pet.common.exception.ExceptionMessage;
 import com.pet.domains.animal.domain.AnimalKind;
 import com.pet.domains.animal.service.AnimalKindService;
 import com.pet.domains.area.domain.Town;
@@ -45,8 +44,7 @@ public class MissingPostService {
     public Long createMissingPost(MissingPostCreateParam missingPostCreateParam, List<Image> imageFiles) {
         AnimalKind animalKind = animalKindService.getOrCreateByAnimalKind(missingPostCreateParam.getAnimalId(),
             missingPostCreateParam.getAnimalKindName());
-        Town town = townRepository.findById(missingPostCreateParam.getTownId())
-            .orElseThrow(ExceptionMessage.NOT_FOUND_TOWN::getException);
+        Town town = townRepository.getById(missingPostCreateParam.getTownId());
 
         List<Tag> tags = new ArrayList<>();
         if (!CollectionUtils.isEmpty(missingPostCreateParam.getTags())) {
