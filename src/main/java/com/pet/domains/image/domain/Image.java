@@ -24,4 +24,7 @@ public class Image {
     @Column(name = "name", nullable = false)
     private String name;
 
+    public Image(String name) {
+        this.name = name;
+    }
 }

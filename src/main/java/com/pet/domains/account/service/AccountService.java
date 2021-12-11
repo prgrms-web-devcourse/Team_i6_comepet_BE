@@ -7,20 +7,28 @@ import com.pet.domains.account.domain.SignEmail;
 import com.pet.domains.account.dto.request.AccountSignUpParam;
 import com.pet.domains.account.repository.AccountRepository;
 import com.pet.domains.account.repository.SignEmailRepository;
+import com.pet.domains.auth.domain.Group;
+import com.pet.domains.auth.oauth2.Oauth2User;
+import com.pet.domains.auth.oauth2.ProviderType;
 import com.pet.domains.auth.repository.GroupRepository;
+import com.pet.domains.image.domain.Image;
 import com.pet.infra.EmailMessage;
 import com.pet.infra.MailSender;
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class AccountService {
 
     private final AccountRepository accountRepository;
@@ -92,6 +100,31 @@ public class AccountService {
     private void verifyEmailAndDelete(String email) {
         signEmailRepository.deleteById(signEmailRepository.findByEmailAndIsCheckedTrue(email)
             .orElseThrow(ExceptionMessage.INVALID_SIGN_UP::getException).getId());
+    }
+
+    @Transactional
+    public Account joinOath2User(OAuth2User oAuth2User, String provider) {
+        Map<String, Object> attributes = oAuth2User.getAttributes();
+        Oauth2User oauth2User = ProviderType.findProvider(provider);
+        if (provider.equals(ProviderType.NAVER.getType())) {
+            attributes = (Map<String, Object>)attributes.get("response");
+        }
+        if (provider.equals(ProviderType.KAKAO.getType())) {
+            attributes = (Map<String, Object>)attributes.get("properties");
+        }
+        String email = oauth2User.getEmail(attributes);
+        return findByEmail(provider, attributes, oauth2User, email);
+    }
+
+    private Account findByEmail(String provider, Map<String, Object> attributes, Oauth2User oauth2User, String email) {
+        return accountRepository.findByEmail(email)
+            .orElseGet(() -> {
+                String nickname = oauth2User.getNickname(attributes);
+                String profileImage = oauth2User.getProfileImage(attributes);
+                Group group = groupRepository.findByName(AccountGroup.USER_GROUP.name())
+                    .orElseThrow(ExceptionMessage.NOT_FOUND_GROUP::getException);
+                return accountRepository.save(new Account(nickname, email, provider, new Image(profileImage), group));
+            });
     }
 
 }
