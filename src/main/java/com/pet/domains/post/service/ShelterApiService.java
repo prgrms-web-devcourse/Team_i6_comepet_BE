@@ -75,7 +75,7 @@ public class ShelterApiService {
             .build();
     }
 
-    @Scheduled(cron = "0 0 4 * * *")
+    @Scheduled(cron = "0 0 5 * * *")
     public void shelterPostDailyCronJob() {
         LocalDateTime now = LocalDateTime.now();
         log.info("shelterPostDailyCronJob() start at {}, ", now);
