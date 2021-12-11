@@ -99,7 +99,7 @@ public class ShelterApiService {
 
     public void saveAllShelterApiRemainingPageResults(String date, List<Long> pageNumbersForRequest) {
         log.info("saveAllShelterApiRemainingPageResults() start");
-        getShelterApiRemainingPageResults("20211210", "20211211", pageNumbersForRequest)
+        getShelterApiRemainingPageResults(date, date, pageNumbersForRequest)
             .subscribe(response -> {
                 shelterService.bulkCreateShelterPosts(response.getBodyItems());
                 log.info("Get shelter post api async");
