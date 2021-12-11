@@ -93,17 +93,17 @@ public class ShelterApiService {
     }
 
     public long insertShelterPostFromFirstPageResults(ShelterApiPageResult result) {
-        log.info("insert ShelterApi FirstPage Results");
+        log.info("보호소 동물 게시글 api 첫번째 페이지 응답 데이터 테이블에 삽입 시작");
         shelterService.bulkCreateShelterPosts(Objects.requireNonNull(result, "보호소 게시글 api 응답이 널입니다.").getBodyItems());
         return result.getBody().getTotalCount();
     }
 
     public void insertShelterPostFromRemainingPageResults(String start, String end, List<Long> pageNumbersForRequest) {
-        log.info("saveAllShelterApiRemainingPageResults() start");
+        log.info("보호소 동물 게시글 api 나머지 페이지들의 응답 데이터 테이블에 삽입 시작");
         getShelterApiRemainingPageResults(start, end, pageNumbersForRequest)
             .subscribe(response -> {
                 shelterService.bulkCreateShelterPosts(response.getBodyItems());
-                log.info("Get shelter post api async");
+                log.info("Get shelter post api response async");
             });
     }
 
