@@ -51,7 +51,9 @@ public class InitDataConfig implements ApplicationRunner {
 
         groupPermissionRepository.save(new GroupPermission(group, permission));
         accountRepository.save(tester);
+    }
 
+    public void runShelterPostSchedulerTask() throws InterruptedException {
         String sql = "INSERT INTO animal(created_at, updated_at, code, name)"
             + " VALUES (NOW(), NOW(), '417000','개'),"
             + "       (NOW(), NOW(), '422400','고양이'),"
