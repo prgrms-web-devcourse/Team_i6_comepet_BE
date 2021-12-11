@@ -20,7 +20,7 @@ public class Application {
     }
 
     @PostConstruct
-    public void started(){
+    public void started() {
         TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
         log.info("server time: {}", LocalDateTime.now());
     }
