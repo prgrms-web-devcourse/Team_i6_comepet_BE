@@ -82,22 +82,23 @@ public class ShelterApiService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         String yesterday = now.minusDays(1).format(formatter);
 
-        saveShelterApiFirstPageResults(yesterday, yesterday);
-    }
-
-    public void saveShelterApiFirstPageResults(String start, String end) {
-        log.info("saveShelterApiFirstPageResults() start");
-        ShelterApiPageResult result = getShelterApiPageResults(start, end, 1)
+        ShelterApiPageResult firstPageResult = getShelterApiPageResults(yesterday, yesterday, 1)
             .block();
-        shelterService.bulkCreateShelterPosts(Objects.requireNonNull(result, "보호소 게시글 api 응답이 널입니다.").getBodyItems());
-        long lastPageNumber = getLastPageNumber(result.getBody().getTotalCount());
-        List<Long> pageNumbersForRequest = LongStream.rangeClosed(2, lastPageNumber)
+        long totalCount = insertShelterPostFromFirstPageResults(firstPageResult);
+
+        List<Long> remainingPageNums = LongStream.rangeClosed(2, getLastPageNumber(totalCount))
             .boxed()
             .collect(Collectors.toList());
-        saveAllShelterApiRemainingPageResults(start, end, pageNumbersForRequest);
+        insertShelterPostFromRemainingPageResults(yesterday, yesterday, remainingPageNums);
     }
 
-    public void saveAllShelterApiRemainingPageResults(String start, String end, List<Long> pageNumbersForRequest) {
+    public long insertShelterPostFromFirstPageResults(ShelterApiPageResult result) {
+        log.info("insert ShelterApi FirstPage Results");
+        shelterService.bulkCreateShelterPosts(Objects.requireNonNull(result, "보호소 게시글 api 응답이 널입니다.").getBodyItems());
+        return result.getBody().getTotalCount();
+    }
+
+    public void insertShelterPostFromRemainingPageResults(String start, String end, List<Long> pageNumbersForRequest) {
         log.info("saveAllShelterApiRemainingPageResults() start");
         getShelterApiRemainingPageResults(start, end, pageNumbersForRequest)
             .subscribe(response -> {
