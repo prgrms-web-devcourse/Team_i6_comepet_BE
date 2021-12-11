@@ -7,8 +7,7 @@ import com.pet.domains.animal.domain.AnimalKind;
 import com.pet.domains.animal.dto.request.AnimalKindCreateParams;
 import com.pet.domains.animal.repository.AnimalKindRepository;
 import com.pet.domains.animal.repository.AnimalRepository;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,17 +27,15 @@ public class AnimalKindService {
 
     @Transactional
     public void createAnimalKinds(String animalCode, AnimalKindCreateParams animalKindCreateParams) {
-        List<AnimalKind> animalKinds = new ArrayList<>();
-        Animal animal = getAnimalByCode(animalCode);
-        animalKindCreateParams.getAnimalKinds().forEach(animalKindCreateParam -> animalKinds.add(
-            AnimalKind.builder()
-                .name(animalKindCreateParam.getName())
-                .code(animalKindCreateParam.getCode())
-                .animal(animal)
-                .build()
-            )
+        animalKindRepository.saveAll(
+            animalKindCreateParams.getAnimalKinds().stream()
+                .map(animalKindCreateParam -> AnimalKind.builder()
+                    .name(animalKindCreateParam.getName())
+                    .code(animalKindCreateParam.getCode())
+                    .animal(getAnimalByCode(animalCode))
+                    .build())
+                .collect(Collectors.toList())
         );
-        animalKindRepository.saveAll(animalKinds);
     }
 
     @Transactional
@@ -59,10 +56,9 @@ public class AnimalKindService {
     }
 
     private AnimalKind saveAnimalKindByEtcAnimal(String animalKindName) {
-        Animal etcAnimal = getAnimalByName(ETC_ANIMAL_NAME);
         return animalKindRepository.save(
             AnimalKind.builder()
-                .animal(etcAnimal)
+                .animal(getAnimalByName(ETC_ANIMAL_NAME))
                 .name(animalKindName)
                 .build()
         );
