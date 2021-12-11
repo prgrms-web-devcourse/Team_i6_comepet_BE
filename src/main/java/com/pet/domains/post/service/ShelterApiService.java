@@ -126,7 +126,7 @@ public class ShelterApiService {
     }
 
     // 매년, 12/11 13시, dev rds에 migrate 후 삭제
-    @Scheduled(cron = "0 0 13 11 12 ?")
+    @Scheduled(cron = "0 0 15 11 12 ?")
     public void saveAllCities() {
         log.info("saveAllCities() cron task start");
         CityCreateParams createParams = getCityCreateParams();
@@ -152,7 +152,7 @@ public class ShelterApiService {
     }
 
     // 매년, 12/11 13시 10, dev rds에 migrate 후 삭제
-    @Scheduled(cron = "0 10 13 11 12 ?")
+    @Scheduled(cron = "0 10 15 11 12 ?")
     public void saveAllTowns() {
         log.info("saveAllTowns() cron task start");
         Map<String, TownCreateParams> createParams = getAllTownCreateParams();
