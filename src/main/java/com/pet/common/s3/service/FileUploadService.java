@@ -6,11 +6,11 @@ import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
-@Service
+@Component
 public class FileUploadService {
 
     private final UploadService uploadService;

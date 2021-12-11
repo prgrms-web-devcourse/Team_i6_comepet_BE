@@ -10,7 +10,6 @@ import com.pet.domains.post.dto.request.MissingPostUpdateParam;
 import com.pet.domains.post.dto.response.MissingPostCommentPageResults;
 import com.pet.domains.post.dto.response.MissingPostReadResult;
 import com.pet.domains.post.dto.response.MissingPostReadResults;
-import com.pet.domains.post.service.MissingPostService;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -43,7 +42,7 @@ public class MissingPostController {
     private static final String RETURN_KEY = "id";
 
     private final ImageService imageService;
-    private final MissingPostService missingPostService;
+//    private final MissingPostService missingPostService;
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -51,9 +50,9 @@ public class MissingPostController {
         @RequestPart(required = false) List<MultipartFile> files,
         @RequestPart("param") MissingPostCreateParam missingPostCreateParam
     ) {
-        StringJoiner stringJoiner = new StringJoiner(",", "[", "]");
-        files.stream().map(MultipartFile::getName).forEach(stringJoiner::add);
-        log.info("post image size: {}, names: {} ", files.size(), stringJoiner);
+//        StringJoiner stringJoiner = new StringJoiner(",", "[", "]");
+//        files.stream().map(MultipartFile::getName).forEach(stringJoiner::add);
+//        log.info("post image size: {}, names: {} ", files.size(), stringJoiner);
 
         List<Image> imageFiles = files.stream()
             .map(imageService::createImage)
@@ -61,10 +60,10 @@ public class MissingPostController {
 
         // TODO: 2021/12/10 게시물 등록 안에서 알림전송까지 해야한다.
 
-        return ApiResponse.ok(
-            Map.of(RETURN_KEY, missingPostService.createMissingPost(missingPostCreateParam, imageFiles)));
 //        return ApiResponse.ok(
-//            Map.of(RETURN_KEY, 1L));
+//            Map.of(RETURN_KEY, missingPostService.createMissingPost(missingPostCreateParam, imageFiles)));
+        return ApiResponse.ok(
+            Map.of(RETURN_KEY, 1L));
     }
 
     @ResponseStatus(HttpStatus.OK)
