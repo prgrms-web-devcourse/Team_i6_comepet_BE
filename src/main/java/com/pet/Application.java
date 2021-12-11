@@ -23,7 +23,6 @@ public class Application {
     public void started(){
         TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
         log.info("server time: {}", LocalDateTime.now());
-
     }
 
 }
