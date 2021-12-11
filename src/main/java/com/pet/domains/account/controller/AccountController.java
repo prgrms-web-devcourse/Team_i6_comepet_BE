@@ -7,8 +7,9 @@ import com.pet.common.response.ApiResponse;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.account.domain.LoginAccount;
 import com.pet.domains.account.dto.request.AccountAreaUpdateParam;
-import com.pet.domains.account.dto.request.AccountCreateParam;
 import com.pet.domains.account.dto.request.AccountEmailParam;
+import com.pet.domains.account.dto.request.AccountSignUpParam;
+import com.pet.domains.account.dto.request.AccountEmailCheck;
 import com.pet.domains.account.dto.request.AccountLonginParam;
 import com.pet.domains.account.dto.request.AccountPasswordParam;
 import com.pet.domains.account.dto.request.AccountUpdateParam;
@@ -24,6 +25,7 @@ import com.pet.domains.post.domain.Status;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.LongStream;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -47,27 +49,28 @@ import org.springframework.web.multipart.MultipartFile;
 public class AccountController {
 
     private final AccountService accountService;
+
     private final AuthenticationService authenticationService;
+
+    @PostMapping(path = "/send-email", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void sendEmail(@RequestBody @Valid AccountEmailParam accountEmailParam) {
+        accountService.sendEmail(accountEmailParam.getEmail());
+    }
 
     @PostMapping(path = "/verify-email", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void verifyEmail(@RequestBody AccountEmailParam accountEmailParam) {
-        log.info("verify email : {}", accountEmailParam.getEmail());
+    public void verifyEmail(@RequestBody @Valid AccountEmailCheck accountEmailCheck) {
+        accountService.verifyEmail(accountEmailCheck.getEmail(), accountEmailCheck.getKey());
     }
 
     @PostMapping(path = "/sign-up",
         consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<AccountCreateResult> getCities(@RequestBody AccountCreateParam accountCreateParam) {
-        String email = accountCreateParam.getEmail();
-        String nickname = accountCreateParam.getNickname();
-        MultipartFile profile = accountCreateParam.getFile();
-        if (profile != null) {
-            log.info("sign up account info : {}, {}, {}", email, nickname, profile.getName());
-        } else {
-            log.info("sign up account info : {}, {}", email, nickname);
-        }
-        return ApiResponse.ok(AccountCreateResult.of(1L, JwtMockToken.MOCK_TOKEN));
+    public ApiResponse<AccountCreateResult> signUp(@RequestBody @Valid AccountSignUpParam accountSignUpParam) {
+        Long id = accountService.signUp(accountSignUpParam);
+        return ApiResponse.ok(AccountCreateResult.of(id, authenticationService.authenticate(
+            accountSignUpParam.getEmail(), accountSignUpParam.getPassword()).getToken()));
     }
 
     @PostMapping(path = "/login",
