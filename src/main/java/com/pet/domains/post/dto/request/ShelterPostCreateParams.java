@@ -103,7 +103,6 @@ public class ShelterPostCreateParams {
 
         public String getAnimalKindNameFromKindCd() {
             // format: [{동물}] {품종}, ex) [고양이] 한국 고양이
-            System.out.println(kindCd);
             int whileSpaceIdx = StringUtils.indexOf(kindCd, " ");
             return StringUtils.substring(kindCd, whileSpaceIdx + 1).strip();
         }
