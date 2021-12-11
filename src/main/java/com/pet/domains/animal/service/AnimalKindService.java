@@ -42,7 +42,7 @@ public class AnimalKindService {
     }
 
     @Transactional
-    public AnimalKind getOrCreateByAnimalKind(Long animalId, String animalKindName) {
+    public AnimalKind getOrCreateAnimalKind(Long animalId, String animalKindName) {
         return animalKindRepository.findByName(animalKindName)
             .orElseGet(() -> animalKindRepository.save(
                 AnimalKind.builder()
@@ -53,7 +53,7 @@ public class AnimalKindService {
     }
 
     @Transactional
-    public AnimalKind getOrCreateByAnimalKindWithEtcAnimal(String animalKindName) {
+    public AnimalKind getOrCreateAnimalKindByEtcAnimal(String animalKindName) {
         return animalKindRepository.findByName(animalKindName)
             .orElseGet(() -> saveAnimalKindByEtcAnimal(animalKindName));
     }

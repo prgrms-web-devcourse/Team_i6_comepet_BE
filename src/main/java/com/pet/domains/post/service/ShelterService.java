@@ -39,6 +39,6 @@ public class ShelterService {
 
     private AnimalKind getAnimalKind(String animalKindName) {
         log.info("animalKindName: {}", animalKindName);
-        return animalKindService.getOrCreateByAnimalKindWithEtcAnimal(animalKindName);
+        return animalKindService.getOrCreateAnimalKindByEtcAnimal(animalKindName);
     }
 }
