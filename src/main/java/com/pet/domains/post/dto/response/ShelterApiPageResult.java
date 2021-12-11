@@ -1,6 +1,7 @@
 package com.pet.domains.post.dto.response;
 
 import com.pet.domains.post.dto.request.ShelterPostCreateParams;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -32,5 +33,10 @@ public class ShelterApiPageResult {
 
         @XmlElement(name = "items")
         private ShelterPostCreateParams items;
+    }
+
+    public ShelterPostCreateParams getBodyItems() {
+        Objects.requireNonNull(body, "보호소 동물 조회 api 응답 바디가 널입니다.");
+        return body.getItems();
     }
 }

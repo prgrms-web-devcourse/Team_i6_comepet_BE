@@ -25,7 +25,7 @@ class AnimalRepositoryTest {
 
     @Test
     @DisplayName("코드로 Animal 조회 테스트")
-    void findAnimalByNameTest() {
+    void findAnimalByCodeTest() {
         // given
         Animal animal = Animal.builder()
             .code("1234")
@@ -35,6 +35,23 @@ class AnimalRepositoryTest {
 
         // when
         Animal foundAnimal = animalRepository.findByCode("1234").get();
+
+        // then
+        assertThat(foundAnimal.getId()).isEqualTo(animal.getId());
+    }
+
+    @Test
+    @DisplayName("이름로 Animal 조회 테스트")
+    void findAnimalByNameTest() {
+        // given
+        Animal animal = Animal.builder()
+            .code("1234")
+            .name("testAnimal")
+            .build();
+        entityManager.persist(animal);
+
+        // when
+        Animal foundAnimal = animalRepository.findByName("testAnimal").get();
 
         // then
         assertThat(foundAnimal.getId()).isEqualTo(animal.getId());

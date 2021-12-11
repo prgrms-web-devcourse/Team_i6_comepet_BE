@@ -11,18 +11,16 @@ import com.pet.domains.area.dto.response.CityApiPageResults;
 import com.pet.domains.area.dto.response.TownApiPageResults;
 import com.pet.domains.area.service.CityService;
 import com.pet.domains.area.service.TownService;
-import com.pet.domains.post.dto.request.ShelterPostCreateParams;
 import com.pet.domains.post.dto.response.ShelterApiPageResult;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.LongStream;
 import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,8 +28,9 @@ import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClient.RequestHeadersSpec;
 import org.springframework.web.util.DefaultUriBuilderFactory;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -48,11 +47,13 @@ public class ShelterApiService {
 
     private static final List<String> animalKindCodes = List.of("417000", "422400", "429900");
 
-    private static final int NUM_OF_ROWS = 100;
+    private static final long NUM_OF_ROWS = 100;
 
     private final ShelterProperties shelterProperties;
 
     private final WebClient.Builder webClientBuilder;
+
+    private final ShelterService shelterService;
 
     private final AnimalKindService animalKindService;
 
@@ -62,41 +63,74 @@ public class ShelterApiService {
 
     private WebClient webClient;
 
+
     @PostConstruct
     public void initWebClient() {
-        DefaultUriBuilderFactory factory = new DefaultUriBuilderFactory(getBaseUrl());
+        String baseUrl = shelterProperties.getUrl();
+        DefaultUriBuilderFactory factory = new DefaultUriBuilderFactory(baseUrl);
         factory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.VALUES_ONLY);
-        this.webClient = webClientBuilder.uriBuilderFactory(factory).baseUrl(getBaseUrl()).build();
+        webClient = webClientBuilder
+            .uriBuilderFactory(factory)
+            .baseUrl(baseUrl)
+            .build();
     }
 
-    public List<ShelterPostCreateParams> getShelterApiPageResultsBySync(LocalDate candidateForStart) {
-        LocalDate yesterday = LocalDate.now().minusDays(1);
-        LocalDate start = Optional.ofNullable(candidateForStart).orElseGet(() -> yesterday);
-        if (start.isAfter(yesterday)) {
-            return Collections.emptyList();
-        }
-
+    @Scheduled(cron = "0 0 5 * * *")
+    public void shelterPostDailyCronJob() {
+        LocalDateTime now = LocalDateTime.now();
+        log.info("shelterPostDailyCronJob() start at {}, ", now);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-        String from = start.format(formatter);
-        String to = yesterday.format(formatter);
+        String yesterday = now.minusDays(1).format(formatter);
 
-        List<ShelterPostCreateParams> shelterPostCreateParams = new ArrayList<>();
-        RequestHeadersSpec<?> requestHeadersSpec = webClient.get()
+        ShelterApiPageResult firstPageResult = getShelterApiPageResults(yesterday, yesterday, 1)
+            .block();
+        long totalCount = insertShelterPostFromFirstPageResults(firstPageResult);
+
+        List<Long> remainingPageNums = LongStream.rangeClosed(2, getLastPageNumber(totalCount))
+            .boxed()
+            .collect(Collectors.toList());
+        insertShelterPostFromRemainingPageResults(yesterday, yesterday, remainingPageNums);
+    }
+
+    public long insertShelterPostFromFirstPageResults(ShelterApiPageResult result) {
+        log.info("보호소 동물 게시글 api 첫번째 페이지 응답 데이터 테이블에 삽입 시작");
+        shelterService.bulkCreateShelterPosts(Objects.requireNonNull(result, "보호소 게시글 api 응답이 널입니다.").getBodyItems());
+        return result.getBody().getTotalCount();
+    }
+
+    public void insertShelterPostFromRemainingPageResults(String start, String end, List<Long> pageNumbersForRequest) {
+        log.info("보호소 동물 게시글 api 나머지 페이지들의 응답 데이터 테이블에 삽입 시작");
+        getShelterApiRemainingPageResults(start, end, pageNumbersForRequest)
+            .subscribe(response -> {
+                shelterService.bulkCreateShelterPosts(response.getBodyItems());
+                log.info("Get shelter post api response async");
+            });
+    }
+
+    public Flux<ShelterApiPageResult> getShelterApiRemainingPageResults(String start, String end,
+        List<Long> pageNumbers) {
+        return Flux.fromIterable(pageNumbers)
+            .flatMap(pageNumber -> getShelterApiPageResults(start, end, pageNumber))
+            .doOnComplete(() -> log.info("created ShelterApiPageResult flux "));
+    }
+
+    public Mono<ShelterApiPageResult> getShelterApiPageResults(
+        String start,
+        String end,
+        long pageNumber
+    ) {
+        return webClient.get()
             .uri(uriBuilder -> uriBuilder
                 .path(SHELTER_POST_PATH)
-                .queryParam("serviceKey", getApiKey())
-                .queryParam("bgnde", from)
-                .queryParam("endde", to)
+                .queryParam("serviceKey", shelterProperties.getKey())
+                .queryParam("bgnde", start)
+                .queryParam("endde", end)
+                .queryParam("numOfRows", NUM_OF_ROWS)
+                .queryParam("pageNo", pageNumber)
                 .build())
-            .accept(MediaType.APPLICATION_XML);
-
-        requestHeadersSpec.retrieve()
-            .bodyToMono(ShelterApiPageResult.class)
-            .block();
-
-        // TODO 모든 페이지 call해서 가져오기
-
-        return shelterPostCreateParams;
+            .accept(MediaType.APPLICATION_XML)
+            .retrieve()
+            .bodyToMono(ShelterApiPageResult.class);
     }
 
     public void saveAllAnimalKinds() {
@@ -116,7 +150,7 @@ public class ShelterApiService {
         return webClient.get()
             .uri(uriBuilder -> uriBuilder
                 .path(ANIMAL_KIND_PATH)
-                .queryParam("serviceKey", getApiKey())
+                .queryParam("serviceKey", shelterProperties.getKey())
                 .queryParam("up_kind_cd", kind)
                 .build())
             .accept(MediaType.APPLICATION_XML)
@@ -125,8 +159,6 @@ public class ShelterApiService {
             .block();
     }
 
-    // 매년, 12/11 13시, dev rds에 migrate 후 삭제
-    @Scheduled(cron = "0 40 13 11 12 ?")
     public void saveAllCities() {
         log.info("saveAllCities() cron task start");
         CityCreateParams createParams = getCityCreateParams();
@@ -137,12 +169,11 @@ public class ShelterApiService {
         return getCityApiPageResults().getBodyItems();
     }
 
-
     public CityApiPageResults getCityApiPageResults() {
         return webClient.get()
             .uri(uriBuilder -> uriBuilder
                 .path(CITY_PATH)
-                .queryParam("serviceKey", getApiKey())
+                .queryParam("serviceKey", shelterProperties.getKey())
                 .queryParam("numOfRows", NUM_OF_ROWS)
                 .build())
             .accept(MediaType.APPLICATION_XML)
@@ -151,8 +182,6 @@ public class ShelterApiService {
             .block();
     }
 
-    // 매년, 12/11 13시 10, dev rds에 migrate 후 삭제
-    @Scheduled(cron = "0 50 13 11 12 ?")
     public void saveAllTowns() {
         log.info("saveAllTowns() cron task start");
         Map<String, TownCreateParams> createParams = getAllTownCreateParams();
@@ -181,7 +210,7 @@ public class ShelterApiService {
         return webClient.get()
             .uri(uriBuilder -> uriBuilder
                 .path(TOWN_PATH)
-                .queryParam("serviceKey", getApiKey())
+                .queryParam("serviceKey", shelterProperties.getKey())
                 .queryParam("upr_cd", cityCode)
                 .build())
             .accept(MediaType.APPLICATION_XML)
@@ -190,11 +219,15 @@ public class ShelterApiService {
             .block();
     }
 
-    private String getBaseUrl() {
-        return shelterProperties.getUrl();
+    private long getLastPageNumber(long totalCount) {
+        long lastPageNumber = (totalCount / NUM_OF_ROWS);
+        if (hasRemainder(totalCount)) {
+            lastPageNumber++;
+        }
+        return lastPageNumber;
     }
 
-    private String getApiKey() {
-        return shelterProperties.getKey();
+    private boolean hasRemainder(long divided) {
+        return (divided % NUM_OF_ROWS) != 0;
     }
 }

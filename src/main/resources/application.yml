@@ -11,7 +11,7 @@ spring:
         dialect: org.hibernate.dialect.MySQL5InnoDBDialect
         format_sql: true
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     open-in-view: false
   servlet:
     multipart:
