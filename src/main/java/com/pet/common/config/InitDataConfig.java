@@ -53,20 +53,16 @@ public class InitDataConfig implements ApplicationRunner {
         accountRepository.save(tester);
     }
 
-    public void runShelterPostSchedulerTask() throws InterruptedException {
+    public void runShelterPostSchedulerTask() {
         String sql = "INSERT INTO animal(created_at, updated_at, code, name)"
             + " VALUES (NOW(), NOW(), '417000','개'),"
             + "       (NOW(), NOW(), '422400','고양이'),"
             + "       (NOW(), NOW(), '429900','기타');";
         jdbcTemplate.execute(sql);
 
-        log.info("sleep start..");
-        Thread.sleep(5000);
-
         log.info("saveAllAnimalKinds start..");
         shelterApiService.saveAllAnimalKinds();
 
-        Thread.sleep(5000);
         log.info("saveAllCities start..");
         shelterApiService.saveAllCities();
 
@@ -74,11 +70,9 @@ public class InitDataConfig implements ApplicationRunner {
             + " SELECT NOW(), NOW(), '0000000', '전체', id FROM city WHERE code = '5690000';";
         jdbcTemplate.execute(sql2);
 
-        Thread.sleep(5000);
         log.info("saveAllTowns start..");
         shelterApiService.saveAllTowns();
 
-        Thread.sleep(5000);
         log.info("shelterPostDailyCronJob start..");
         shelterApiService.shelterPostDailyCronJob();
     }
