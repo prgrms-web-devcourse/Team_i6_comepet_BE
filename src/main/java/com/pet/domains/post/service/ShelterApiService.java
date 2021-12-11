@@ -87,8 +87,6 @@ public class ShelterApiService {
 
     public void saveShelterApiFirstPageResults(String start, String end) {
         log.info("saveShelterApiFirstPageResults() start");
-
-
         ShelterApiPageResult result = getShelterApiPageResults(start, end, 1)
             .block();
         shelterService.bulkCreateShelterPosts(Objects.requireNonNull(result, "보호소 게시글 api 응답이 널입니다.").getBodyItems());
