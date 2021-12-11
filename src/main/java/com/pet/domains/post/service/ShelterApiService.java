@@ -12,7 +12,6 @@ import com.pet.domains.area.dto.response.TownApiPageResults;
 import com.pet.domains.area.service.CityService;
 import com.pet.domains.area.service.TownService;
 import com.pet.domains.post.dto.response.ShelterApiPageResult;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -78,28 +77,31 @@ public class ShelterApiService {
 
     @Scheduled(cron = "0 0 4 * * *")
     public void shelterPostDailyCronJob() {
-        log.info("shelterPostDailyCronJob() start at {}, ", LocalDateTime.now());
-        saveShelterApiFirstPageResults();
+        LocalDateTime now = LocalDateTime.now();
+        log.info("shelterPostDailyCronJob() start at {}, ", now);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        String yesterday = now.minusDays(1).format(formatter);
+
+        saveShelterApiFirstPageResults(yesterday, yesterday);
     }
 
-    public void saveShelterApiFirstPageResults() {
+    public void saveShelterApiFirstPageResults(String start, String end) {
         log.info("saveShelterApiFirstPageResults() start");
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-        String yesterday = LocalDate.now().minusDays(1).format(formatter);
 
-        ShelterApiPageResult result = getShelterApiPageResults(yesterday, yesterday, 1)
+
+        ShelterApiPageResult result = getShelterApiPageResults(start, end, 1)
             .block();
         shelterService.bulkCreateShelterPosts(Objects.requireNonNull(result, "보호소 게시글 api 응답이 널입니다.").getBodyItems());
         long lastPageNumber = getLastPageNumber(result.getBody().getTotalCount());
         List<Long> pageNumbersForRequest = LongStream.rangeClosed(2, lastPageNumber)
             .boxed()
             .collect(Collectors.toList());
-        saveAllShelterApiRemainingPageResults(yesterday, pageNumbersForRequest);
+        saveAllShelterApiRemainingPageResults(start, end, pageNumbersForRequest);
     }
 
-    public void saveAllShelterApiRemainingPageResults(String date, List<Long> pageNumbersForRequest) {
+    public void saveAllShelterApiRemainingPageResults(String start, String end, List<Long> pageNumbersForRequest) {
         log.info("saveAllShelterApiRemainingPageResults() start");
-        getShelterApiRemainingPageResults(date, date, pageNumbersForRequest)
+        getShelterApiRemainingPageResults(start, end, pageNumbersForRequest)
             .subscribe(response -> {
                 shelterService.bulkCreateShelterPosts(response.getBodyItems());
                 log.info("Get shelter post api async");
