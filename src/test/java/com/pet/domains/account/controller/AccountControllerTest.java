@@ -7,7 +7,6 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
-import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -15,11 +14,9 @@ import com.pet.common.jwt.JwtAuthentication;
 import com.pet.common.jwt.JwtMockToken;
 import com.pet.domains.account.WithAccount;
 import com.pet.domains.account.dto.request.AccountAreaUpdateParam;
-import com.pet.domains.account.dto.request.AccountEmailParam;
 import com.pet.domains.account.dto.request.AccountSignUpParam;
 import com.pet.domains.account.dto.request.AccountEmailCheck;
 import com.pet.domains.account.dto.request.AccountLonginParam;
-import com.pet.domains.account.dto.request.AccountPasswordParam;
 import com.pet.domains.account.dto.request.AccountUpdateParam;
 import com.pet.domains.docs.BaseDocumentationTest;
 import java.util.List;
@@ -187,34 +184,6 @@ class AccountControllerTest extends BaseDocumentationTest {
                 requestFields(
                     fieldWithPath("nickname").type(STRING).description("닉네임").optional(),
                     fieldWithPath("file").type(STRING).description("프로필 이미지").optional()
-                ))
-            );
-    }
-
-    @Test
-    @DisplayName("회원 정보 수정 테스트")
-    void updatePasswordTest() throws Exception {
-        // given
-        AccountPasswordParam param = new AccountPasswordParam("otherPassword12!");
-        // when
-        ResultActions resultActions = mockMvc.perform(patch("/api/v1/change-password")
-            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(param)));
-
-        // then
-        resultActions
-            .andDo(print())
-            .andExpect(status().isNoContent())
-            .andDo(document("update-password",
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()),
-                requestHeaders(
-                    headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE),
-                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
-                ),
-                requestFields(
-                    fieldWithPath("password").type(STRING).description("비밀번호")
                 ))
             );
     }
