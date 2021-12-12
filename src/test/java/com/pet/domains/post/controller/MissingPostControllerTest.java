@@ -1,5 +1,6 @@
 package com.pet.domains.post.controller;
 
+import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
@@ -28,7 +29,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import com.pet.common.jwt.JwtMockToken;
+import com.pet.domains.account.WithAccount;
 import com.pet.domains.docs.BaseDocumentationTest;
+import com.pet.domains.image.domain.Image;
 import com.pet.domains.post.domain.SexType;
 import com.pet.domains.post.domain.Status;
 import com.pet.domains.post.dto.request.MissingPostCreateParam;
@@ -49,6 +52,7 @@ import org.springframework.test.web.servlet.ResultActions;
 class MissingPostControllerTest extends BaseDocumentationTest {
 
     @DisplayName("실종/보호 게시물 등록 테스트")
+    @WithAccount
     @Test
     void createMissingPostTest() throws Exception {
         //given
@@ -60,18 +64,24 @@ class MissingPostControllerTest extends BaseDocumentationTest {
             )
         );
 
-        MockMultipartFile multipartFile =
+        //when
+        MockMultipartFile firstMultipartFile =
             new MockMultipartFile("multipartFile", "", "multipart/form-data", "abcd.jpg".getBytes());
+        MockMultipartFile secondMultipartFile =
+            new MockMultipartFile("multipartFile", "", "multipart/form-data", "abcd2.jpg".getBytes());
         MockMultipartFile paramFile =
             new MockMultipartFile("param", "", "application/json", objectMapper.writeValueAsString(param).getBytes(
                 StandardCharsets.UTF_8));
 
+        given(imageService.createImage(firstMultipartFile)).willReturn(Image.builder().name("image.jpg").build());
+
         ResultActions resultActions = mockMvc.perform(multipart("/api/v1/missing-posts")
-            .file(multipartFile)
+            .file(firstMultipartFile)
+            .file(secondMultipartFile)
             .file(paramFile)
             .contentType(MediaType.MULTIPART_MIXED)
             .accept(MediaType.APPLICATION_JSON)
-            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN)
+            .header(HttpHeaders.AUTHORIZATION, getAuthenticationToken())
             .characterEncoding("UTF-8")
         );
 
