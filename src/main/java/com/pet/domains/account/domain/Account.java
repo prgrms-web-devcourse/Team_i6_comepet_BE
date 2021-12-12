@@ -3,6 +3,7 @@ package com.pet.domains.account.domain;
 import com.pet.domains.DeletableEntity;
 import com.pet.domains.auth.domain.Group;
 import com.pet.domains.image.domain.Image;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -45,7 +46,7 @@ public class Account extends DeletableEntity {
     @Column(name = "password", length = 100)
     private String password;
 
-    @Column(name = "nickname", length = 10)
+    @Column(name = "nickname", length = 100)
     private String nickname;
 
     @Column(name = "notification", columnDefinition = "boolean default false")
@@ -56,7 +57,7 @@ public class Account extends DeletableEntity {
 
     private SignStatus signStatus;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "image_id",
         referencedColumnName = "id",
         foreignKey = @ForeignKey(name = "fk_image_to_account")
@@ -70,6 +71,9 @@ public class Account extends DeletableEntity {
     )
     private Group group;
 
+    @Column(name = "provider", length = 10)
+    private String provider;
+
     @Builder
     public Account(String email, String password, String nickname, boolean notification, boolean checkedArea,
         SignStatus signStatus, Image image, Group group) {
@@ -80,6 +84,15 @@ public class Account extends DeletableEntity {
         this.checkedArea = checkedArea;
         this.signStatus = signStatus;
         this.image = image;
+        this.group = group;
+    }
+
+    @Builder
+    public Account(String email, String nickname, String provider, Image profileImage, Group group) {
+        this.email = email;
+        this.nickname = nickname;
+        this.provider = provider;
+        this.image = profileImage;
         this.group = group;
     }
 

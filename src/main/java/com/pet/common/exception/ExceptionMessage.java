@@ -35,7 +35,8 @@ public enum ExceptionMessage {
     INVALID_LOGIN(new AuthenticationException("로그인에 실패했습니다.")),
     INVALID_JWT(new AuthenticationException("유효하지 않은 토큰입니다.")),
     INVALID_JWT_EXPIRY(new AuthenticationException("토큰이 만료되었습니다.")),
-    NOT_FOUND_GROUP(new AuthenticationException("존재하지 않는 그룹입니다."));
+    NOT_FOUND_GROUP(new AuthenticationException("존재하지 않는 그룹입니다.")),
+    NOT_FOUND_PROVIDER(new AuthenticationException("지원하지 않는 인증 방식입니다."));
     // 댓글
 
     // 이미지
