@@ -66,9 +66,9 @@ class MissingPostControllerTest extends BaseDocumentationTest {
 
         //when
         MockMultipartFile firstMultipartFile =
-            new MockMultipartFile("multipartFile", "", "multipart/form-data", "abcd.jpg".getBytes());
+            new MockMultipartFile("multipartFiles", "", "multipart/form-data", "abcd.jpg".getBytes());
         MockMultipartFile secondMultipartFile =
-            new MockMultipartFile("multipartFile", "", "multipart/form-data", "abcd2.jpg".getBytes());
+            new MockMultipartFile("multipartFiles", "", "multipart/form-data", "abcd2.jpg".getBytes());
         MockMultipartFile paramFile =
             new MockMultipartFile("param", "", "application/json", objectMapper.writeValueAsString(param).getBytes(
                 StandardCharsets.UTF_8));
@@ -101,7 +101,7 @@ class MissingPostControllerTest extends BaseDocumentationTest {
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
                 requestParts(
-                    partWithName("multipartFile").description("게시글 이미지"),
+                    partWithName("multipartFiles").description("게시글 이미지"),
                     partWithName("param").description("게시글 등록 요청 데이터")
                 ),
                 requestPartFields(

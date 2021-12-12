@@ -3,8 +3,6 @@ package com.pet.domains.post.controller;
 import com.pet.common.response.ApiResponse;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.account.domain.LoginAccount;
-import com.pet.domains.image.domain.Image;
-import com.pet.domains.image.service.ImageService;
 import com.pet.domains.post.domain.SexType;
 import com.pet.domains.post.domain.Status;
 import com.pet.domains.post.dto.request.MissingPostCreateParam;
@@ -44,28 +42,18 @@ public class MissingPostController {
 
     private static final String RETURN_KEY = "id";
 
-    private final ImageService imageService;
     private final MissingPostService missingPostService;
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ApiResponse<Map<String, Long>> createMissingPost(
-        @RequestPart(required = false) List<MultipartFile> multipartFile,
+        @RequestPart(required = false) List<MultipartFile> multipartFiles,
         @RequestPart("param") MissingPostCreateParam missingPostCreateParam,
         @LoginAccount Account account
     ) {
-        StringJoiner stringJoiner = new StringJoiner(",", "[", "]");
-        multipartFile.stream().map(MultipartFile::getOriginalFilename).forEach(stringJoiner::add);
-        log.info("post image size: {}, names: {} ", multipartFile.size(), stringJoiner);
-
-        List<Image> imageFiles = multipartFile.stream()
-            .map(imageService::createImage)
-            .collect(Collectors.toList());
-
         // TODO: 2021/12/10 게시물 등록 안에서 알림전송까지 해야한다.
-
         return ApiResponse.ok(
-            Map.of(RETURN_KEY, missingPostService.createMissingPost(missingPostCreateParam, imageFiles)));
+            Map.of(RETURN_KEY, missingPostService.createMissingPost(missingPostCreateParam, multipartFiles, account)));
     }
 
     @ResponseStatus(HttpStatus.OK)
