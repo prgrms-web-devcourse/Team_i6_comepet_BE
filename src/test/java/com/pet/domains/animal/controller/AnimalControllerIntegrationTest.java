@@ -23,7 +23,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.transaction.annotation.Transactional;
 
 @AutoConfigureMockMvc
 @SpringBootTest
@@ -44,7 +43,6 @@ class AnimalControllerIntegrationTest {
 
     @Test
     @DisplayName("동물/품종 조회 성공 테스트")
-    @Transactional
     void getAnimalsTest() throws Exception {
         // given
         Animal animal = animalRepository.save(
