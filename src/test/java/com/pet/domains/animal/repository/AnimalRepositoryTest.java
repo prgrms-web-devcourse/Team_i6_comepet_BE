@@ -71,8 +71,8 @@ class AnimalRepositoryTest {
             .build();
         entityManager.persist(animal);
         IntStream.rangeClosed(1, 5)
-            .mapToObj(iter -> AnimalKind.builder()
-                .name("name#" + iter)
+            .mapToObj(id -> AnimalKind.builder()
+                .name("name#" + id)
                 .animal(animal)
                 .build())
             .forEach(animalKind -> entityManager.persist(animalKind));
