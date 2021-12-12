@@ -94,7 +94,8 @@ public class ShelterApiService {
 
     public long insertShelterPostFromFirstPageResults(ShelterApiPageResult result) {
         log.info("보호소 동물 게시글 api 첫번째 페이지 응답 데이터 테이블에 삽입 시작");
-        shelterPostService.bulkCreateShelterPosts(Objects.requireNonNull(result, "보호소 게시글 api 응답이 널입니다.").getBodyItems());
+        shelterPostService
+            .bulkCreateShelterPosts(Objects.requireNonNull(result, "보호소 게시글 api 응답이 널입니다.").getBodyItems());
         return result.getBody().getTotalCount();
     }
 
