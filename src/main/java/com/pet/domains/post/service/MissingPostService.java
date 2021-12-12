@@ -19,7 +19,6 @@ import com.pet.domains.tag.service.TagService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -72,7 +71,7 @@ public class MissingPostService {
             }
         }
 
-        createPostTag(imageFiles, createMissingPost);
+        createPostImage(imageFiles, createMissingPost);
 
         return createMissingPost.getId();
     }
@@ -85,8 +84,8 @@ public class MissingPostService {
         return thumbnail;
     }
 
-    private void createPostTag(List<Image> imageFiles, MissingPost createMissingPost) {
-        if (!CollectionUtils.isEmpty(imageFiles)) {
+    private void createPostImage(List<Image> imageFiles, MissingPost createMissingPost) {
+        if (!CollectionUtils.isEmpty(imageFiles) && imageFiles.size() > 0) {
             imageFiles.stream().map(image -> PostImage.builder()
                 .missingPost(createMissingPost)
                 .image(image)
@@ -96,12 +95,8 @@ public class MissingPostService {
     }
 
     private List<Image> uploadAndGetImages(List<MultipartFile> multipartFiles) {
-        StringJoiner stringJoiner = new StringJoiner(",", "[", "]");
-        multipartFiles.stream().map(MultipartFile::getOriginalFilename).forEach(stringJoiner::add);
-        log.info("post image size: {}, names: {} ", multipartFiles.size(), stringJoiner);
-
         List<Image> imageFiles = new ArrayList<>();
-        if (!CollectionUtils.isEmpty(multipartFiles)) {
+        if (!CollectionUtils.isEmpty(multipartFiles) && multipartFiles.size() > 0) {
             imageFiles = multipartFiles.stream()
                 .map(imageService::createImage)
                 .collect(Collectors.toList());
