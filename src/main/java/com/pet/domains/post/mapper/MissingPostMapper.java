@@ -7,12 +7,9 @@ import com.pet.domains.post.dto.request.MissingPostCreateParam;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
-import org.mapstruct.factory.Mappers;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface MissingPostMapper {
-
-    MissingPostMapper INSTANCE = Mappers.getMapper(MissingPostMapper.class);
 
     @Mappings({
         @Mapping(target = "id", ignore = true),
