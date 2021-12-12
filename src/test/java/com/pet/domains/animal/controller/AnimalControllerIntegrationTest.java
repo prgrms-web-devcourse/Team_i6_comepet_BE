@@ -72,10 +72,10 @@ class AnimalControllerIntegrationTest {
             .andExpect(handler().methodName("getAnimals"))
             .andExpect(jsonPath("$.data", is(notNullValue())))
             .andExpect(jsonPath("$.data.animals", hasSize(1)))
-            .andExpect(jsonPath("$.data.animals[0].id", is(1)))
+            .andExpect(jsonPath("$.data.animals[0].id", is(notNullValue())))
             .andExpect(jsonPath("$.data.animals[0].name", is("testAnimal")))
             .andExpect(jsonPath("$.data.animals[0].kinds", hasSize(5)))
-            .andExpect(jsonPath("$.data.animals[0].kinds[0].id", is(1)))
+            .andExpect(jsonPath("$.data.animals[0].kinds[0].id", is(notNullValue())))
             .andExpect(jsonPath("$.data.animals[0].kinds[0].name", is("name#1")))
             .andExpect(jsonPath("$.serverDateTime", is(notNullValue())));
     }
