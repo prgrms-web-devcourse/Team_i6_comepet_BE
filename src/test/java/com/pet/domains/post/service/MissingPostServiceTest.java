@@ -74,9 +74,7 @@ class MissingPostServiceTest {
 
     @BeforeEach
     void setUp() {
-        image = Image.builder()
-            .name("awern23kjnr2k3n423.jpg")
-            .build();
+        image = new Image("awern23kjnr2k3n423.jpg");
 
         group = new Group("1그룹");
 
@@ -116,7 +114,7 @@ class MissingPostServiceTest {
             .status(Status.DETECTION)
             .detailAddress("상세주소")
             .date(LocalDate.now())
-            .age(10)
+            .age(10L)
             .sexType(SexType.MALE)
             .chipNumber("010101003")
             .content("content")

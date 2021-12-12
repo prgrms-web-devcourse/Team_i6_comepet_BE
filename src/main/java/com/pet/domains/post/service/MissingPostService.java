@@ -44,7 +44,7 @@ public class MissingPostService {
 
     @Transactional
     public Long createMissingPost(MissingPostCreateParam missingPostCreateParam, List<Image> imageFiles) {
-        AnimalKind animalKind = animalKindService.getOrCreateByAnimalKind(missingPostCreateParam.getAnimalId(),
+        AnimalKind animalKind = animalKindService.getOrCreateAnimalKind(missingPostCreateParam.getAnimalId(),
             missingPostCreateParam.getAnimalKindName());
         Town town = townRepository.getById(missingPostCreateParam.getTownId());
 

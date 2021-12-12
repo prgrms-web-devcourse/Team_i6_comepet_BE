@@ -18,9 +18,7 @@ public class ImageService {
 
     @Transactional
     public Image createImage(MultipartFile imageFile) {
-        return imageRepository.save(Image.builder()
-            .name(fileUploadService.uploadImage(imageFile))
-            .build());
+        return imageRepository.save(new Image(fileUploadService.uploadImage(imageFile)));
     }
 
 }

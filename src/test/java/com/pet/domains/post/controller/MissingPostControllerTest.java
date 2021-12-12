@@ -73,7 +73,7 @@ class MissingPostControllerTest extends BaseDocumentationTest {
             new MockMultipartFile("param", "", "application/json", objectMapper.writeValueAsString(param).getBytes(
                 StandardCharsets.UTF_8));
 
-        given(imageService.createImage(firstMultipartFile)).willReturn(Image.builder().name("image.jpg").build());
+        given(imageService.createImage(firstMultipartFile)).willReturn(new Image("image.jpg"));
 
         ResultActions resultActions = mockMvc.perform(multipart("/api/v1/missing-posts")
             .file(firstMultipartFile)
