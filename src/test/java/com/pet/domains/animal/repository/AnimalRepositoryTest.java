@@ -3,6 +3,10 @@ package com.pet.domains.animal.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 import com.pet.common.config.JpaAuditingConfig;
 import com.pet.domains.animal.domain.Animal;
+import com.pet.domains.animal.domain.AnimalKind;
+import java.util.List;
+import java.util.stream.IntStream;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +59,35 @@ class AnimalRepositoryTest {
 
         // then
         assertThat(foundAnimal.getId()).isEqualTo(animal.getId());
+    }
+
+    @Test
+    @DisplayName("품종을 포함한 모든 Animal 조회 테스트")
+    void findAnimalAllWithAnimalKindsTest() {
+        // given
+        Animal animal = Animal.builder()
+            .code("1234")
+            .name("testAnimal")
+            .build();
+        entityManager.persist(animal);
+        IntStream.rangeClosed(1, 5)
+            .mapToObj(iter -> AnimalKind.builder()
+                .name("name#" + iter)
+                .animal(animal)
+                .build())
+            .forEach(animalKind -> entityManager.persist(animalKind));
+        entityManager.flush();
+        entityManager.clear();
+
+        // when
+        List<Animal> allAnimals = animalRepository.findAll();
+
+        // then
+        SoftAssertions.assertSoftly(softAssertions -> {
+                softAssertions.assertThat(allAnimals).hasSize(1);
+                softAssertions.assertThat(allAnimals.get(0).getAnimalKinds()).hasSize(5);
+            }
+        );
     }
 
 }

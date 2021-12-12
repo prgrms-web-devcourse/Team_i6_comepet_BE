@@ -1,6 +1,7 @@
 package com.pet.domains.animal.dto.response;
 
 import java.util.List;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
@@ -25,14 +26,11 @@ public class AnimalReadResults {
 
         private final List<Animal.AnimalKind> kinds;
 
-        private Animal(Long id, String name, List<Animal.AnimalKind> kinds) {
+        @Builder
+        public Animal(Long id, String name, List<Animal.AnimalKind> kinds) {
             this.id = id;
             this.name = name;
             this.kinds = kinds;
-        }
-
-        public static Animal of(Long id, String name, List<Animal.AnimalKind> kinds) {
-            return new Animal(id, name, kinds);
         }
 
         @Getter
@@ -42,13 +40,10 @@ public class AnimalReadResults {
 
             private final String name;
 
-            private AnimalKind(Long id, String name) {
+            @Builder
+            public AnimalKind(Long id, String name) {
                 this.id = id;
                 this.name = name;
-            }
-
-            public static AnimalKind of(Long id, String name) {
-                return new AnimalKind(id, name);
             }
         }
     }
