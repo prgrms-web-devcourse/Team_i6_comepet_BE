@@ -38,6 +38,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -91,20 +92,19 @@ public class AccountController {
         log.info("account id '{}' is logout", account.getId());
     }
 
+    @PatchMapping(path = "/me/image", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateAccountImage(@LoginAccount Account account) {
+        /** 이미지 서비스 머지 후 수정*/
+        accountService.updateImage(account, "temp");
+    }
+
     @PatchMapping(path = "/me", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateAccount(@RequestBody AccountUpdateParam accountUpdateParam) {
-        MultipartFile profile = accountUpdateParam.getFile();
-        if (profile != null) {
-            log.info("account update nickname : {} or profile : {} ",
-                accountUpdateParam.getNickname(),
-                accountUpdateParam.getFile().getName()
-            );
-        } else {
-            log.info("account update nickname : {}",
-                accountUpdateParam.getNickname()
-            );
-        }
+    public void updateAccount(@LoginAccount Account account,
+        @Valid @RequestBody AccountUpdateParam accountUpdateParam
+    ) {
+        accountService.updateAccount(account, accountUpdateParam);
     }
 
     @PatchMapping(path = "/change-password", consumes = MediaType.APPLICATION_JSON_VALUE)

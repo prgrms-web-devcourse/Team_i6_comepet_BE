@@ -5,6 +5,7 @@ import com.pet.domains.account.domain.Account;
 import com.pet.domains.account.domain.AccountGroup;
 import com.pet.domains.account.domain.SignEmail;
 import com.pet.domains.account.dto.request.AccountSignUpParam;
+import com.pet.domains.account.dto.request.AccountUpdateParam;
 import com.pet.domains.account.repository.AccountRepository;
 import com.pet.domains.account.repository.SignEmailRepository;
 import com.pet.domains.auth.domain.Group;
@@ -16,6 +17,8 @@ import com.pet.infra.EmailMessage;
 import com.pet.infra.MailSender;
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +27,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -127,4 +131,20 @@ public class AccountService {
             });
     }
 
+    @Transactional
+    public void updateAccount(Account account, AccountUpdateParam accountUpdateParam) {
+        if (Objects.nonNull(accountUpdateParam.getNewPassword())) {
+            if (!StringUtils.equals(accountUpdateParam.getNickname(), accountUpdateParam.getNewPasswordCheck())) {
+                throw ExceptionMessage.INVALID_PASSWORD.getException();
+            }
+            String encodePassword = passwordEncoder.encode(accountUpdateParam.getNewPassword());
+            account.updateProfile(Optional.ofNullable(accountUpdateParam.getNickname()), encodePassword);
+            accountRepository.save(account);
+        }
+    }
+
+    @Transactional
+    public void updateImage(Account account, String imageUrl) {
+        account.updateImage(new Image(imageUrl));
+    }
 }
