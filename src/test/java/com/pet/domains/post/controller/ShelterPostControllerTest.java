@@ -22,6 +22,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.pathPara
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import com.pet.common.jwt.JwtMockToken;
+import com.pet.domains.account.WithAccount;
 import com.pet.domains.docs.BaseDocumentationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -127,12 +128,13 @@ class ShelterPostControllerTest extends BaseDocumentationTest {
     }
 
     @Test
+    @WithAccount
     @DisplayName("보호소 게시글 북마크 생성 테스트")
     void createShelterPostBookmarkTest() throws Exception {
         // given
         // when
         ResultActions resultActions = mockMvc.perform(post("/api/v1/shelter-posts/{postId}/bookmark", 1L)
-            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN));
+            .header(HttpHeaders.AUTHORIZATION, getAuthenticationToken()));
 
         // then
         resultActions

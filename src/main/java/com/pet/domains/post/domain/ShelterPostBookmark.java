@@ -13,8 +13,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.ObjectUtils;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -41,4 +43,12 @@ public class ShelterPostBookmark extends BaseEntity {
         foreignKey = @ForeignKey(name = "fk_missing_post_to_shelter_book_mark"))
     private ShelterPost shelterPost;
 
+    @Builder
+    public ShelterPostBookmark(Account account, ShelterPost shelterPost) {
+        ObjectUtils.requireNonEmpty(account, "account must not be null");
+        ObjectUtils.requireNonEmpty(shelterPost, "shelterPost must not be null");
+
+        this.account = account;
+        this.shelterPost = shelterPost;
+    }
 }

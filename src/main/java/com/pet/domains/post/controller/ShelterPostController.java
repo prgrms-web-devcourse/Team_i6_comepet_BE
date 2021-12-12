@@ -1,10 +1,14 @@
 package com.pet.domains.post.controller;
 
 import com.pet.common.response.ApiResponse;
+import com.pet.domains.account.domain.Account;
+import com.pet.domains.account.domain.LoginAccount;
 import com.pet.domains.post.dto.response.ShelterPostPageResults;
 import com.pet.domains.post.dto.response.ShelterPostReadResult;
+import com.pet.domains.post.service.ShelterPostBookmarkService;
 import java.time.LocalDate;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,8 +22,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RequestMapping("/api/v1/shelter-posts")
+@RequiredArgsConstructor
 @RestController
 public class ShelterPostController {
+
+    private final ShelterPostBookmarkService shelterPostBookmarkService;
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -69,8 +76,8 @@ public class ShelterPostController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(path = "/{postId}/bookmark")
-    public void createShelterPostBookmark(@PathVariable Long postId) {
-        log.info("북마크 생성 call for {}", postId);
+    public void createShelterPostBookmark(@PathVariable Long postId, @LoginAccount Account account) {
+        shelterPostBookmarkService.createPostBookmark(postId, account);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

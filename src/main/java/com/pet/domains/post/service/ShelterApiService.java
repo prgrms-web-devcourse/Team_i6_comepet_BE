@@ -53,7 +53,7 @@ public class ShelterApiService {
 
     private final WebClient.Builder webClientBuilder;
 
-    private final ShelterService shelterService;
+    private final ShelterPostService shelterPostService;
 
     private final AnimalKindService animalKindService;
 
@@ -94,7 +94,7 @@ public class ShelterApiService {
 
     public long insertShelterPostFromFirstPageResults(ShelterApiPageResult result) {
         log.info("보호소 동물 게시글 api 첫번째 페이지 응답 데이터 테이블에 삽입 시작");
-        shelterService.bulkCreateShelterPosts(Objects.requireNonNull(result, "보호소 게시글 api 응답이 널입니다.").getBodyItems());
+        shelterPostService.bulkCreateShelterPosts(Objects.requireNonNull(result, "보호소 게시글 api 응답이 널입니다.").getBodyItems());
         return result.getBody().getTotalCount();
     }
 
@@ -102,7 +102,7 @@ public class ShelterApiService {
         log.info("보호소 동물 게시글 api 나머지 페이지들의 응답 데이터 테이블에 삽입 시작");
         getShelterApiRemainingPageResults(start, end, pageNumbersForRequest)
             .subscribe(response -> {
-                shelterService.bulkCreateShelterPosts(response.getBodyItems());
+                shelterPostService.bulkCreateShelterPosts(response.getBodyItems());
                 log.info("Get shelter post api response async");
             });
     }
