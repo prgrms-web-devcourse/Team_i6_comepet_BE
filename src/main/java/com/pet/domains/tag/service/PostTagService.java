@@ -15,6 +15,7 @@ public class PostTagService {
 
     private final PostTagRepository postTagRepository;
 
+    @Transactional
     public void createPostTag(Tag tag, MissingPost missingPost) {
         postTagRepository.save(PostTag.builder()
             .missingPost(missingPost)

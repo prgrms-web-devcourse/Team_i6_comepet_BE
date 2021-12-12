@@ -14,6 +14,7 @@ public class TagService {
 
     private final TagRepository tagRepository;
 
+    @Transactional
     public Tag getOrCreateByTagName(String tagName) {
         Optional<Tag> tag = tagRepository.findTagByName(tagName);
 
