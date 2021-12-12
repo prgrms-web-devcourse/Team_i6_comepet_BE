@@ -15,6 +15,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.ObjectUtils;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -44,6 +45,9 @@ public class AnimalKind extends BaseEntity {
 
     @Builder
     public AnimalKind(String name, String code, Animal animal) {
+        ObjectUtils.requireNonEmpty(name, "name must not be null");
+        ObjectUtils.requireNonEmpty(animal, "animal must not be null");
+
         this.name = name;
         this.code = code;
         this.animal = animal;
