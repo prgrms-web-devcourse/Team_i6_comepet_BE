@@ -2,8 +2,6 @@ package com.pet.domains.account.domain;
 
 import com.pet.domains.BaseEntity;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -30,15 +28,15 @@ public class SignEmail extends BaseEntity {
     @Column(name = "email", nullable = false, length = 50)
     private String email;
 
-    @Column(name = "key", nullable = false, unique = true)
-    private String key;
+    @Column(name = "verify_key", nullable = false, unique = true)
+    private String verifyKey;
 
     @Column(name = "is_checked", columnDefinition = "boolean default false")
     private boolean isChecked;
 
-    public SignEmail(String email, String key) {
+    public SignEmail(String email, String verifyKey) {
         this.email = email;
-        this.key = key;
+        this.verifyKey = verifyKey;
     }
 
     public boolean isVerifyTime(LocalDateTime requestTime) {

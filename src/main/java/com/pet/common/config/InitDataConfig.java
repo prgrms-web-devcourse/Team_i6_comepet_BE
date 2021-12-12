@@ -7,13 +7,14 @@ import com.pet.domains.auth.domain.Group;
 import com.pet.domains.auth.domain.GroupPermission;
 import com.pet.domains.auth.domain.Permission;
 import com.pet.domains.auth.repository.GroupPermissionRepository;
+import com.pet.domains.post.service.ShelterApiService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Profile;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
@@ -23,9 +24,12 @@ public class InitDataConfig implements ApplicationRunner {
 
     private final GroupPermissionRepository groupPermissionRepository;
     private final AccountRepository accountRepository;
+    private final ShelterApiService shelterApiService;
+    private final JdbcTemplate jdbcTemplate;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
+        log.info("runner start");
         String email = "test-user@email.com";
         Group group = new Group("USER_GROUP");
         Permission permission = new Permission("ROLE_USER");
@@ -47,6 +51,30 @@ public class InitDataConfig implements ApplicationRunner {
 
         groupPermissionRepository.save(new GroupPermission(group, permission));
         accountRepository.save(tester);
+    }
+
+    public void runShelterPostSchedulerTask() {
+        String sql = "INSERT INTO animal(created_at, updated_at, code, name)"
+            + " VALUES (NOW(), NOW(), '417000','개'),"
+            + "       (NOW(), NOW(), '422400','고양이'),"
+            + "       (NOW(), NOW(), '429900','기타');";
+        jdbcTemplate.execute(sql);
+
+        log.info("saveAllAnimalKinds start..");
+        shelterApiService.saveAllAnimalKinds();
+
+        log.info("saveAllCities start..");
+        shelterApiService.saveAllCities();
+
+        String sql2 = "INSERT INTO town (created_at, updated_at, code, name, city_id)"
+            + " SELECT NOW(), NOW(), '0000000', '전체', id FROM city WHERE code = '5690000';";
+        jdbcTemplate.execute(sql2);
+
+        log.info("saveAllTowns start..");
+        shelterApiService.saveAllTowns();
+
+        log.info("shelterPostDailyCronJob start..");
+        shelterApiService.shelterPostDailyCronJob();
     }
 
 }
