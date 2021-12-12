@@ -31,71 +31,71 @@ public class ShelterPost extends BaseEntity {
     @Column(name = "id", updatable = false)
     private Long id;
 
-    @Column(name = "age", columnDefinition = "SMALLINT default 0", nullable = false)
+    @Column(name = "age", columnDefinition = "SMALLINT default 0")
     private int age;
 
-    @Column(name = "address", length = 50, nullable = false)
+    @Column(name = "address", length = 50)
     private String address;
 
-    @Column(name = "shelter_place", length = 200, nullable = false)
+    @Column(name = "shelter_place", length = 200)
     private String shelterPlace;
 
-    @Column(name = "shelter_name", length = 50, nullable = false)
+    @Column(name = "shelter_name", length = 50)
     private String shelterName;
 
-    @Column(name = "shelter_tel_number", length = 14, nullable = false)
+    @Column(name = "shelter_tel_number", length = 14)
     private String shelterTelNumber;
 
-    @Column(name = "manager", length = 20, nullable = false)
+    @Column(name = "manager", length = 20)
     private String manager;
 
-    @Column(name = "color", length = 30, nullable = false)
+    @Column(name = "color", length = 30)
     private String color;
 
-    @Column(name = "desertion_number", length = 20, nullable = false)
+    @Column(name = "desertion_number", length = 20)
     private String desertionNumber;
 
-    @Column(name = "image", nullable = false)
+    @Column(name = "image")
     private String image;
 
-    @Column(name = "thumbnail", nullable = false)
+    @Column(name = "thumbnail")
     private String thumbnail;
 
-    @Column(name = "found_date", nullable = false)
+    @Column(name = "found_date")
     private LocalDate foundDate;
 
-    @Column(name = "found_place", length = 200, nullable = false)
+    @Column(name = "found_place", length = 200)
     private String foundPlace;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "neutered", length = 10, nullable = false)
+    @Column(name = "neutered", length = 10)
     private NeuteredType neutered;
 
-    @Column(name = "start_date", nullable = false)
+    @Column(name = "start_date")
     private LocalDate startDate;
 
-    @Column(name = "end_date", nullable = false)
+    @Column(name = "end_date")
     private LocalDate endDate;
 
-    @Column(name = "manager_tel_number", length = 14, nullable = false)
+    @Column(name = "manager_tel_number", length = 14)
     private String managerTelNumber;
 
-    @Column(name = "post_status", length = 10, nullable = false)
+    @Column(name = "post_status", length = 10)
     private String postStatus;
 
-    @Column(name = "sex", length = 10, nullable = false)
+    @Column(name = "sex", length = 10)
     private SexType sex;
 
-    @Column(name = "feature", length = 200, nullable = false)
+    @Column(name = "feature", length = 200)
     private String feature;
 
-    @Column(name = "weight", columnDefinition = "DOUBLE default 0", nullable = false)
+    @Column(name = "weight", columnDefinition = "DOUBLE default 0")
     private Double weight;
 
-    @Column(name = "notice_number", length = 30, nullable = false)
+    @Column(name = "notice_number", length = 30)
     private String noticeNumber;
 
-    @Column(name = "bookmark_count", columnDefinition = "BIGINT default 0", nullable = false)
+    @Column(name = "bookmark_count", columnDefinition = "BIGINT default 0")
     private long bookmarkCount;
 
     @ManyToOne(fetch = FetchType.LAZY)

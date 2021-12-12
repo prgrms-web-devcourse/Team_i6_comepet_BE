@@ -3,6 +3,7 @@ package com.pet.common.config;
 import com.pet.common.jwt.Jwt;
 import com.pet.common.jwt.JwtAuthenticationFilter;
 import com.pet.common.jwt.JwtAuthenticationProvider;
+import com.pet.common.oauth2.OAuth2AuthenticationSuccessHandler;
 import com.pet.common.property.JwtProperty;
 import com.pet.domains.account.service.AccountService;
 import java.io.IOException;
@@ -68,6 +69,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new JwtAuthenticationFilter(jwt());
     }
 
+    @Bean
+    public OAuth2AuthenticationSuccessHandler oauth2AuthenticationSuccessHandler(
+        Jwt jwt, AccountService accountService
+    ) {
+        return new OAuth2AuthenticationSuccessHandler(jwt, accountService);
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
@@ -86,6 +94,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
             .sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+
+            .oauth2Login()
+            .authorizationEndpoint()
+            .and()
+            .successHandler(getApplicationContext().getBean(OAuth2AuthenticationSuccessHandler.class))
+            .and()
 
             .exceptionHandling()
             .accessDeniedHandler(accessDeniedHandler()).and()
