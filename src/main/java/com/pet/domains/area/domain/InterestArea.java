@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -45,5 +46,12 @@ public class InterestArea extends BaseEntity {
         foreignKey = @ForeignKey(name = "fk_interest_area_to_town")
     )
     private Town town;
+
+    @Builder
+    public InterestArea(boolean selected, Account account, Town town) {
+        this.selected = selected;
+        this.account = account;
+        this.town = town;
+    }
 
 }

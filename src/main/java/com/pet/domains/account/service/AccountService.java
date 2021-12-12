@@ -4,10 +4,13 @@ import com.pet.common.exception.ExceptionMessage;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.account.domain.AccountGroup;
 import com.pet.domains.account.domain.SignEmail;
+import com.pet.domains.account.dto.request.AccountAreaUpdateParam;
 import com.pet.domains.account.dto.request.AccountSignUpParam;
-import com.pet.domains.account.dto.request.AccountUpdateParam;
 import com.pet.domains.account.repository.AccountRepository;
 import com.pet.domains.account.repository.SignEmailRepository;
+import com.pet.domains.area.domain.InterestArea;
+import com.pet.domains.area.repository.InterestAreaRepository;
+import com.pet.domains.area.repository.TownRepository;
 import com.pet.domains.auth.domain.Group;
 import com.pet.domains.auth.oauth2.Oauth2User;
 import com.pet.domains.auth.oauth2.ProviderType;
@@ -16,10 +19,10 @@ import com.pet.domains.image.domain.Image;
 import com.pet.infra.EmailMessage;
 import com.pet.infra.MailSender;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -27,7 +30,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -44,6 +46,10 @@ public class AccountService {
     private final SignEmailRepository signEmailRepository;
 
     private final GroupRepository groupRepository;
+
+    private final InterestAreaRepository interestAreaRepository;
+
+    private final TownRepository townRepository;
 
     @Transactional
     public void sendEmail(String email) {
@@ -88,6 +94,21 @@ public class AccountService {
             .build()).getId();
     }
 
+    @Transactional
+    public void updateArea(Account account, AccountAreaUpdateParam accountAreaUpdateParam) {
+        interestAreaRepository.saveAll(
+            accountAreaUpdateParam.getAreas().stream()
+                .map(area -> InterestArea.builder()
+                    .account(account)
+                    .selected(area.isDefaultArea())
+                    .town(townRepository.getById(area.getTownId()))
+                    .build())
+                .collect(Collectors.toList()));
+        account.useNotification(accountAreaUpdateParam.isNotification());
+        log.debug("account : {} setting notification", account.getId());
+        accountRepository.save(account);
+    }
+
     private Account checkPassword(String password, Account account) {
         if (account.isMatchPassword(passwordEncoder, password)) {
             return account;
@@ -129,22 +150,5 @@ public class AccountService {
                     .orElseThrow(ExceptionMessage.NOT_FOUND_GROUP::getException);
                 return accountRepository.save(new Account(nickname, email, provider, new Image(profileImage), group));
             });
-    }
-
-    @Transactional
-    public void updateAccount(Account account, AccountUpdateParam accountUpdateParam) {
-        if (Objects.nonNull(accountUpdateParam.getNewPassword())) {
-            if (!StringUtils.equals(accountUpdateParam.getNickname(), accountUpdateParam.getNewPasswordCheck())) {
-                throw ExceptionMessage.INVALID_PASSWORD.getException();
-            }
-            String encodePassword = passwordEncoder.encode(accountUpdateParam.getNewPassword());
-            account.updateProfile(Optional.ofNullable(accountUpdateParam.getNickname()), encodePassword);
-            accountRepository.save(account);
-        }
-    }
-
-    @Transactional
-    public void updateImage(Account account, String imageUrl) {
-        account.updateImage(new Image(imageUrl));
     }
 }

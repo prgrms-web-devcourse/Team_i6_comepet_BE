@@ -3,8 +3,6 @@ package com.pet.domains.account.domain;
 import com.pet.domains.DeletableEntity;
 import com.pet.domains.auth.domain.Group;
 import com.pet.domains.image.domain.Image;
-import java.util.Objects;
-import java.util.Optional;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -102,14 +100,7 @@ public class Account extends DeletableEntity {
         return passwordEncoder.matches(password, this.password);
     }
 
-    public void updateProfile(Optional<String> optionalNickname, String newPassword) {
-        optionalNickname.ifPresent(nickname -> this.nickname = nickname);
-        if (Objects.nonNull(newPassword)) {
-            this.password = newPassword;
-        }
-    }
-
-    public void updateImage(Image image) {
-        this.image = image;
+    public void useNotification(boolean notification) {
+        this.notification = notification;
     }
 }

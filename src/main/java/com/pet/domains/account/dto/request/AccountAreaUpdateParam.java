@@ -1,6 +1,7 @@
 package com.pet.domains.account.dto.request;
 
 import java.util.List;
+import javax.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,14 +22,12 @@ public class AccountAreaUpdateParam {
     @Getter
     public static class Area {
 
-        private Long cityId;
-
+        @NotBlank(message = "'시/군/구'를 입력해주세요.")
         private Long townId;
 
         private boolean defaultArea;
 
-        public Area(Long cityId, Long townId, boolean defaultArea) {
-            this.cityId = cityId;
+        public Area(Long townId, boolean defaultArea) {
             this.townId = townId;
             this.defaultArea = defaultArea;
         }
