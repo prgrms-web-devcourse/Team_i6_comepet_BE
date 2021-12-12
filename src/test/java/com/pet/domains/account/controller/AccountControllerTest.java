@@ -160,14 +160,13 @@ class AccountControllerTest extends BaseDocumentationTest {
     }
 
     @Test
-    @WithAccount
     @DisplayName("회원 정보 수정 테스트")
     void updateAccountTest() throws Exception {
         // given
-        AccountUpdateParam param = new AccountUpdateParam("updateNickname", "123132a!", "132123a!");
+        AccountUpdateParam param = new AccountUpdateParam("updateNickname", null);
         // when
         ResultActions resultActions = mockMvc.perform(patch("/api/v1/me")
-            .header(HttpHeaders.AUTHORIZATION, getAuthenticationToken())
+            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(param)));
 
@@ -184,31 +183,7 @@ class AccountControllerTest extends BaseDocumentationTest {
                 ),
                 requestFields(
                     fieldWithPath("nickname").type(STRING).description("닉네임").optional(),
-                    fieldWithPath("newPassword").type(STRING).description("변경 비밀번호").optional(),
-                    fieldWithPath("newPasswordCheck").type(STRING).description("변경 비밀번호 확인").optional()
-                ))
-            );
-    }
-
-    @Test
-    @WithAccount
-    @DisplayName("회원 이미지 수정 테스트")
-    void updateAccountImageTest() throws Exception {
-        // given
-        // when
-        ResultActions resultActions = mockMvc.perform(patch("/api/v1/me/image")
-            .header(HttpHeaders.AUTHORIZATION, getAuthenticationToken())
-            .contentType(MediaType.APPLICATION_JSON));
-        // then
-        resultActions
-            .andDo(print())
-            .andExpect(status().isNoContent())
-            .andDo(document("update-image-account",
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()),
-                requestHeaders(
-                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token"),
-                    headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
+                    fieldWithPath("file").type(STRING).description("프로필 이미지").optional()
                 ))
             );
     }

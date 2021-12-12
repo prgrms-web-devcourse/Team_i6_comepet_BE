@@ -88,19 +88,20 @@ public class AccountController {
         log.info("account id '{}' is logout", account.getId());
     }
 
-    @PatchMapping(path = "/me/image", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateAccountImage(@LoginAccount Account account) {
-        /** 이미지 서비스 머지 후 수정*/
-        accountService.updateImage(account, "temp");
-    }
-
     @PatchMapping(path = "/me", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateAccount(@LoginAccount Account account,
-        @Valid @RequestBody AccountUpdateParam accountUpdateParam
-    ) {
-        accountService.updateAccount(account, accountUpdateParam);
+    public void updateAccount(@RequestBody AccountUpdateParam accountUpdateParam) {
+        MultipartFile profile = accountUpdateParam.getFile();
+        if (profile != null) {
+            log.info("account update nickname : {} or profile : {} ",
+                accountUpdateParam.getNickname(),
+                accountUpdateParam.getFile().getName()
+            );
+        } else {
+            log.info("account update nickname : {}",
+                accountUpdateParam.getNickname()
+            );
+        }
     }
 
     @GetMapping(path = "/me/areas", produces = MediaType.APPLICATION_JSON_VALUE)

@@ -137,21 +137,6 @@ include::{snippets}/update-account/request-fields.adoc[]
 ==== Http Response
 include::{snippets}/update-account/http-response.adoc[]
 
-
-=== 회원이미지 변경
-
-==== CURL request
-include::{snippets}/update-image-account/curl-request.adoc[]
-
-==== Http Request
-include::{snippets}/update-image-account/http-request.adoc[]
-
-==== Request fields
-include::{snippets}/update-image-account/request-fields.adoc[]
-
-==== Http Response
-include::{snippets}/update-image-account/http-response.adoc[]
-
 === 회원의 관심지역 조회
 
 ==== CURL request
