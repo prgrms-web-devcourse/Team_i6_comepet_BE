@@ -14,6 +14,7 @@ import org.springframework.context.annotation.FilterType;
 
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DataJpaTest(includeFilters = @Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JpaAuditingConfig.class))
+@DisplayName("AnimalRepository 테스트")
 class AnimalRepositoryTest {
 
     @Autowired
@@ -23,21 +24,37 @@ class AnimalRepositoryTest {
     private AnimalRepository animalRepository;
 
     @Test
-    @DisplayName("코드로 동물 조회 테스트")
-    void findAnimalKindByNameTest() {
-        //Given
+    @DisplayName("코드로 Animal 조회 테스트")
+    void findAnimalByCodeTest() {
+        // given
         Animal animal = Animal.builder()
             .code("1234")
             .name("testAnimal")
             .build();
         entityManager.persist(animal);
-        entityManager.flush();
 
-        //When
+        // when
         Animal foundAnimal = animalRepository.findByCode("1234").get();
 
-        //Then
-        assertThat(foundAnimal.getId()).isNotNull();
+        // then
+        assertThat(foundAnimal.getId()).isEqualTo(animal.getId());
+    }
+
+    @Test
+    @DisplayName("이름로 Animal 조회 테스트")
+    void findAnimalByNameTest() {
+        // given
+        Animal animal = Animal.builder()
+            .code("1234")
+            .name("testAnimal")
+            .build();
+        entityManager.persist(animal);
+
+        // when
+        Animal foundAnimal = animalRepository.findByName("testAnimal").get();
+
+        // then
+        assertThat(foundAnimal.getId()).isEqualTo(animal.getId());
     }
 
 }

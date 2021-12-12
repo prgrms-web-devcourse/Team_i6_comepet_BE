@@ -8,4 +8,6 @@ public interface AnimalRepository extends JpaRepository<Animal, Long> {
 
     Optional<Animal> findByCode(String code);
 
+    Optional<Animal> findByName(String name);
+
 }

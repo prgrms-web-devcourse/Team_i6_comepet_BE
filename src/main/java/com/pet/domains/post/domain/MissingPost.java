@@ -47,8 +47,8 @@ public class MissingPost extends DeletableEntity {
     @Column(name = "date", nullable = false)
     private LocalDate date;
 
-    @Column(name = "age", columnDefinition = "SMALLINT default 0", nullable = false)
-    private int age;
+    @Column(name = "age", columnDefinition = "SMALLINT default 0")
+    private Long age;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 30, nullable = false)
@@ -97,13 +97,12 @@ public class MissingPost extends DeletableEntity {
     @JoinColumn(
         name = "animal_kind_id",
         referencedColumnName = "id",
-        foreignKey = @ForeignKey(name = "fk_animal_kind_to_missing_post"),
-        nullable = false
+        foreignKey = @ForeignKey(name = "fk_animal_kind_to_missing_post")
     )
     private AnimalKind animalKind;
 
     @Builder
-    public MissingPost(Long id, Status status, String detailAddress, LocalDate date, int age,
+    public MissingPost(Long id, Status status, String detailAddress, LocalDate date, Long age,
         SexType sexType, String chipNumber, String content, String telNumber, long viewCount, long bookmarkCount,
         long commentCount, String thumbnail, Account account, Town town,
         AnimalKind animalKind) {

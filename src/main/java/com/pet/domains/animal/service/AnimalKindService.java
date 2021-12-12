@@ -7,45 +7,39 @@ import com.pet.domains.animal.domain.AnimalKind;
 import com.pet.domains.animal.dto.request.AnimalKindCreateParams;
 import com.pet.domains.animal.repository.AnimalKindRepository;
 import com.pet.domains.animal.repository.AnimalRepository;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
 public class AnimalKindService {
 
-    private static final int TRANSACTION_CHUNK_LIMIT = 100;
+    private static final String ETC_ANIMAL_NAME = "기타";
 
     private final AnimalKindRepository animalKindRepository;
 
     private final AnimalRepository animalRepository;
 
+    @Transactional
     public void createAnimalKinds(String animalCode, AnimalKindCreateParams animalKindCreateParams) {
-        Set<AnimalKind> transactionChunk = new HashSet<>();
-        animalKindCreateParams.getAnimalKinds().forEach(animalKindCreateParam -> {
-                transactionChunk.add(AnimalKind.builder()
+        animalKindRepository.saveAll(
+            animalKindCreateParams.getAnimalKinds().stream()
+                .map(animalKindCreateParam -> AnimalKind.builder()
                     .name(animalKindCreateParam.getName())
                     .code(animalKindCreateParam.getCode())
                     .animal(getAnimalByCode(animalCode))
-                    .build()
-                );
-                if (transactionChunk.size() == TRANSACTION_CHUNK_LIMIT) {
-                    animalKindRepository.saveAll(transactionChunk);
-                    transactionChunk.clear();
-                    log.info("AnimalKind set has saved with chunk unit");
-                }
-            }
+                    .build())
+                .collect(Collectors.toList())
         );
-        animalKindRepository.saveAll(transactionChunk);
     }
 
     @Transactional
-    public AnimalKind getOrCreateByAnimalKind(Long animalId, String animalKindName) {
+    public AnimalKind getOrCreateAnimalKind(Long animalId, String animalKindName) {
         return animalKindRepository.findByName(animalKindName)
             .orElseGet(() -> animalKindRepository.save(
                 AnimalKind.builder()
@@ -55,12 +49,35 @@ public class AnimalKindService {
             ));
     }
 
+    @Transactional
+    public AnimalKind getOrCreateAnimalKindByEtcAnimal(String animalKindName) {
+        return animalKindRepository.findByName(animalKindName)
+            .orElseGet(() -> saveAnimalKindByEtcAnimal(animalKindName));
+    }
+
+    private AnimalKind saveAnimalKindByEtcAnimal(String animalKindName) {
+        return animalKindRepository.save(
+            AnimalKind.builder()
+                .animal(getAnimalByName(ETC_ANIMAL_NAME))
+                .name(animalKindName)
+                .build()
+        );
+    }
+
     private Animal getAnimalByCode(String animalCode) {
+        log.debug("animalCode: {}", animalCode);
         return animalRepository.findByCode(animalCode)
             .orElseThrow(ExceptionMessage.NOT_FOUND_ANIMAL::getException);
     }
 
+    private Animal getAnimalByName(String animalName) {
+        log.debug("animalName: {}", animalName);
+        return animalRepository.findByName(animalName)
+            .orElseThrow(ExceptionMessage.NOT_FOUND_ANIMAL::getException);
+    }
+
     private Animal getAnimalById(Long animalId) {
+        log.debug("animalId: {}", animalId);
         return animalRepository.findById(animalId)
             .orElseThrow(ExceptionMessage.NOT_FOUND_ANIMAL::getException);
     }

@@ -1,6 +1,6 @@
-package com.pet.domains.animal.dto.response;
+package com.pet.domains.area.dto.response;
 
-import com.pet.domains.animal.dto.request.AnimalKindCreateParams;
+import com.pet.domains.area.dto.request.TownCreateParams;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -11,10 +11,10 @@ import lombok.Getter;
 @Getter
 @XmlRootElement(name = "response")
 @XmlAccessorType(XmlAccessType.NONE)
-public class AnimalKindApiPageResults {
+public class TownApiPageResults {
 
     @XmlElement(name = "body")
-    private AnimalKindApiPageResults.Body body;
+    private TownApiPageResults.Body body;
 
     @Getter
     @XmlRootElement(name = "body")
@@ -22,12 +22,12 @@ public class AnimalKindApiPageResults {
     public static class Body {
 
         @XmlElement(name = "items")
-        private AnimalKindCreateParams items;
-
+        private TownCreateParams items;
     }
 
-    public AnimalKindCreateParams getBodyItems() {
-        Objects.requireNonNull(body, "품종 조회 api 응답 바디가 널입니다.");
+    public TownCreateParams getBodyItems() {
+        Objects.requireNonNull(body, "시군구 조회 api 응답 바디가 널입니다.");
         return body.getItems();
     }
+
 }
