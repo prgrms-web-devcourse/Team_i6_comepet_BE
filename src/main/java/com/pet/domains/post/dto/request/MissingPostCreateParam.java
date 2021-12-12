@@ -3,6 +3,7 @@ package com.pet.domains.post.dto.request;
 import java.time.LocalDate;
 import java.util.List;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import reactor.util.annotation.Nullable;
@@ -14,13 +15,13 @@ public class MissingPostCreateParam {
     @NotBlank(message = "상태를 선택해주세요.")
     private String status;
 
-    @NotBlank(message = "날짜를 입력해주세요.")
+    @NotNull(message = "날짜를 입력해주세요.")
     private LocalDate date;
 
-    @NotBlank(message = "시도를 선택해주세요.")
+    @NotNull(message = "시도를 선택해주세요.")
     private Long cityId;
 
-    @NotBlank(message = "시군구를 선택해주세요.")
+    @NotNull(message = "시군구를 선택해주세요.")
     private Long townId;
 
     private String detailAddress;
@@ -37,7 +38,7 @@ public class MissingPostCreateParam {
     @Nullable
     private int age;
 
-    @NotBlank(message = "전화번호를 입력해주세요.")
+    @NotBlank(message = "성별을 선택해주세요.")
     private String sex;
 
     @Nullable
