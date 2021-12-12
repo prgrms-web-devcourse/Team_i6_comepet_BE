@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -48,7 +49,7 @@ public class MissingPostController {
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ApiResponse<Map<String, Long>> createMissingPost(
         @RequestPart(required = false) List<MultipartFile> multipartFiles,
-        @RequestPart("param") MissingPostCreateParam missingPostCreateParam,
+        @RequestPart(value = "param") @Valid MissingPostCreateParam missingPostCreateParam,
         @LoginAccount Account account
     ) {
         // TODO: 2021/12/10 게시물 등록 안에서 알림전송까지 해야한다.
