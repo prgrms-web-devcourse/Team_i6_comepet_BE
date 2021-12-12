@@ -8,9 +8,10 @@ import com.pet.common.property.JwtProperty;
 import com.pet.domains.account.controller.AccountController;
 import com.pet.domains.account.controller.NotificationController;
 import com.pet.domains.account.service.AccountService;
-import com.pet.domains.auth.service.AuthenticationService;
 import com.pet.domains.animal.controller.AnimalController;
+import com.pet.domains.animal.service.AnimalService;
 import com.pet.domains.area.controller.CityController;
+import com.pet.domains.auth.service.AuthenticationService;
 import com.pet.domains.comment.controller.CommentController;
 import com.pet.domains.docs.controller.CommonDocumentationController;
 import com.pet.domains.post.controller.MissingPostController;
@@ -55,6 +56,9 @@ public abstract class BaseDocumentationTest {
 
     @MockBean
     protected AuthenticationService authenticationService;
+
+    @MockBean
+    protected AnimalService animalService;
 
     protected JwtAuthentication getAuthenticationToken() {
         return (JwtAuthentication)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
