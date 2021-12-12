@@ -36,10 +36,12 @@ public enum ExceptionMessage {
     INVALID_JWT(new AuthenticationException("유효하지 않은 토큰입니다.")),
     INVALID_JWT_EXPIRY(new AuthenticationException("토큰이 만료되었습니다.")),
     NOT_FOUND_GROUP(new AuthenticationException("존재하지 않는 그룹입니다.")),
-    NOT_FOUND_PROVIDER(new AuthenticationException("지원하지 않는 인증 방식입니다."));
+    NOT_FOUND_PROVIDER(new AuthenticationException("지원하지 않는 인증 방식입니다.")),
     // 댓글
 
     // 이미지
+    FAIL_CHANGE_IMAGE(new IllegalArgumentException("이미지 변환이 실패했습니다.")),
+    INVALID_IMAGE_TYPE(new IllegalArgumentException("잘못된 형식의 타입입니다."));
 
     // 실종 게시물
 
