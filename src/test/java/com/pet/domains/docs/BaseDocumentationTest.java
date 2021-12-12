@@ -61,7 +61,7 @@ public abstract class BaseDocumentationTest {
     protected AnimalService animalService;
 
     protected JwtAuthentication getAuthenticationToken() {
-        return (JwtAuthentication) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return (JwtAuthentication)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
 }
