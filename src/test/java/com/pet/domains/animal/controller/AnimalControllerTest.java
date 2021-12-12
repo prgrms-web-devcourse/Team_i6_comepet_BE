@@ -38,9 +38,9 @@ class AnimalControllerTest extends BaseDocumentationTest {
     void getAnimalsTest() throws Exception {
         // given
         List<AnimalReadResults.Animal.AnimalKind> animalKinds = LongStream.rangeClosed(1, 5)
-            .mapToObj(iter -> AnimalKind.builder()
-                .id(iter)
-                .name("kindName#" + iter)
+            .mapToObj(id -> AnimalKind.builder()
+                .id(id)
+                .name("kindName#" + id)
                 .build())
             .collect(Collectors.toList());
         AnimalReadResults.Animal animal = Animal.builder()

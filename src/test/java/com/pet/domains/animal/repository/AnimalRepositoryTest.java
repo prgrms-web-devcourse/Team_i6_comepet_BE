@@ -80,7 +80,7 @@ class AnimalRepositoryTest {
         entityManager.clear();
 
         // when
-        List<Animal> allAnimals = animalRepository.findAll();
+        List<Animal> allAnimals = animalRepository.findAllWithAnimalKinds();
 
         // then
         SoftAssertions.assertSoftly(softAssertions -> {

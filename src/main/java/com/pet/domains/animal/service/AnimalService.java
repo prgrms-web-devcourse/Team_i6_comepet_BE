@@ -20,7 +20,7 @@ public class AnimalService {
 
     public AnimalReadResults getAnimals() {
         List<AnimalReadResults.Animal> animalReadResult =
-            animalMapper.toAnimalReadResult(animalRepository.findAll());
+            animalMapper.toAnimalReadResult(animalRepository.findAllWithAnimalKinds());
         return animalMapper.toAnimalReadResults(animalReadResult);
     }
 

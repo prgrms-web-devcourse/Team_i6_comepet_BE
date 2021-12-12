@@ -6,12 +6,13 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.EntityGraph.EntityGraphType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 public interface AnimalRepository extends JpaRepository<Animal, Long> {
 
-    @Override
-    @EntityGraph(attributePaths = {"animalKinds"}, type = EntityGraphType.LOAD)
-    List<Animal> findAll();
+    @Query("select a from Animal a")
+    @EntityGraph(attributePaths = "animalKinds", type = EntityGraphType.LOAD)
+    List<Animal> findAllWithAnimalKinds();
 
     Optional<Animal> findByCode(String code);
 
