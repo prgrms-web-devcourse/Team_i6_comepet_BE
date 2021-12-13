@@ -18,16 +18,16 @@ public class GoogleUser implements Oauth2User {
 
     @Override
     public String getNickname(Map<String, Object> attributes) {
-        return (String)attributes.get(nickname);
+        return (String) attributes.get(nickname);
     }
 
     @Override
     public String getEmail(Map<String, Object> attributes) {
-        return (String)attributes.get(email);
+        return (String) attributes.get(email);
     }
 
     @Override
     public String getProfileImage(Map<String, Object> attributes) {
-        return (String)attributes.get(profileImage);
+        return (String) attributes.get(profileImage);
     }
 }

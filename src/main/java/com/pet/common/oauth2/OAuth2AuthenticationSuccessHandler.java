@@ -27,7 +27,7 @@ public class OAuth2AuthenticationSuccessHandler extends SavedRequestAwareAuthent
         HttpServletRequest request, HttpServletResponse response, Authentication authentication
     ) throws ServletException, IOException {
         if (authentication instanceof OAuth2AuthenticationToken) {
-            Account account = processUserOAuth2UserJoin((OAuth2AuthenticationToken)authentication);
+            Account account = processUserOAuth2UserJoin((OAuth2AuthenticationToken) authentication);
             String loginSuccessJson = generateLoginSuccessJson(account);
             setResponse(response, loginSuccessJson);
             return;
@@ -42,7 +42,7 @@ public class OAuth2AuthenticationSuccessHandler extends SavedRequestAwareAuthent
     }
 
     private String generateToken(Account account) {
-        return jwt.sign(Jwt.Claims.from(account.getId(), new String[]{"ROLE_USER"}));
+        return jwt.sign(Jwt.Claims.from(account.getId(), new String[] {"ROLE_USER"}));
     }
 
     private String generateLoginSuccessJson(Account account) {

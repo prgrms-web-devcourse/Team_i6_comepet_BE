@@ -25,6 +25,7 @@ public enum ExceptionMessage {
     NOT_FOUND_ANIMAL(new BadRequestException("해당하는 동물 종류를 찾을 수 없습니다.")),
     NOT_FOUND_ANIMAL_KIND(new BadRequestException("해당하는 품종 종류를 찾을 수 없습니다.")),
 
+
     // 지역
     NOT_FOUND_CITY(new BadRequestException("해당하는 시도 지역을 찾을 수 없습니다.")),
     NOT_FOUND_TOWN(new BadRequestException("해당하는 시군구 지역을 찾을 수 없습니다.")),
@@ -40,6 +41,8 @@ public enum ExceptionMessage {
     // 댓글
 
     // 이미지
+    FAIL_CHANGE_IMAGE(new IllegalArgumentException("이미지 변환이 실패했습니다.")),
+    INVALID_IMAGE_TYPE(new IllegalArgumentException("잘못된 형식의 타입입니다.")),
 
     // 실종 게시물
 
