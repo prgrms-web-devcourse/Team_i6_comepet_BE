@@ -2,6 +2,7 @@ package com.pet.domains.post.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
@@ -157,8 +158,6 @@ class MissingPostServiceTest {
     @DisplayName("실종/보호 게시물 생성 테스트")
     void createMissingPostTest() {
         //given
-        List<Image> images = List.of(image);
-
         MissingPostCreateParam param = MissingPostCreateParam.of(
             String.valueOf(missingPost.getStatus()), missingPost.getDate(), city.getId(), town.getId(),
             missingPost.getDetailAddress(),
@@ -194,6 +193,19 @@ class MissingPostServiceTest {
         verify(missingPostRepository).save(any());
         verify(imageService).createImage(any());
         verify(missingPostMapper).toEntity(any(), any(), any(), any(), any());
+    }
+
+    @Test
+    @DisplayName("실종/보호 게시물 삭제 테스트")
+    void deleteMissingPostTest() {
+        //given
+        doNothing().when(missingPostRepository).deleteMissingPostByIdAndAccount(any(), any(Account.class));
+
+        //when
+        missingPostRepository.deleteMissingPostByIdAndAccount(1L, mock(Account.class));
+
+        //then
+        verify(missingPostRepository).deleteMissingPostByIdAndAccount(anyLong(), any(Account.class));
     }
 
 }
