@@ -21,7 +21,7 @@ public class TagService {
         Optional<Tag> tag = tagRepository.findTagByName(tagName);
 
         if (tag.isPresent()) {
-            tag.get().increaseCount(tag.get().getId());
+            tag.get().increaseCount();
             return tag.get();
         }
 
