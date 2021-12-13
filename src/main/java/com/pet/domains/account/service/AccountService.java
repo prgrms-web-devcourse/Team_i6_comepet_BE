@@ -105,10 +105,10 @@ public class AccountService {
         Map<String, Object> attributes = oAuth2User.getAttributes();
         Oauth2User oauth2User = ProviderType.findProvider(provider);
         if (provider.equals(ProviderType.NAVER.getType())) {
-            attributes = (Map<String, Object>)attributes.get("response");
+            attributes = (Map<String, Object>) attributes.get("response");
         }
         if (provider.equals(ProviderType.KAKAO.getType())) {
-            attributes = (Map<String, Object>)attributes.get("properties");
+            attributes = (Map<String, Object>) attributes.get("properties");
         }
         String email = oauth2User.getEmail(attributes);
         return findByEmail(provider, attributes, oauth2User, email);

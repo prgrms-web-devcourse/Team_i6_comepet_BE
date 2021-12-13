@@ -14,8 +14,10 @@ import com.pet.domains.area.controller.CityController;
 import com.pet.domains.auth.service.AuthenticationService;
 import com.pet.domains.comment.controller.CommentController;
 import com.pet.domains.docs.controller.CommonDocumentationController;
+import com.pet.domains.image.service.ImageService;
 import com.pet.domains.post.controller.MissingPostController;
 import com.pet.domains.post.controller.ShelterPostController;
+import com.pet.domains.post.service.MissingPostService;
 import com.pet.domains.post.service.ShelterPostBookmarkService;
 import com.pet.domains.statistics.controller.PostStatisticsController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,13 +61,19 @@ public abstract class BaseDocumentationTest {
     protected AuthenticationService authenticationService;
 
     @MockBean
+    protected ImageService imageService;
+
+    @MockBean
+    protected MissingPostService missingPostService;
+
+    @MockBean
     protected AnimalService animalService;
 
     @MockBean
     protected ShelterPostBookmarkService shelterPostBookmarkService;
 
     protected JwtAuthentication getAuthenticationToken() {
-        return (JwtAuthentication)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return (JwtAuthentication) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
 }

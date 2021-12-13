@@ -1,21 +1,28 @@
 package com.pet.common.s3.service;
 
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.pet.common.exception.ExceptionMessage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.MessageFormat;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+@Slf4j
 @RequiredArgsConstructor
-@Service
+@Component
 public class FileUploadService {
 
     private final UploadService uploadService;
 
     public String uploadImage(MultipartFile file) {
+        if (ObjectUtils.isEmpty(file)) {
+            log.info("Image file is null.");
+            return null;
+        }
         String fileName = createFileName(file.getOriginalFilename());
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentLength(file.getSize());
@@ -23,8 +30,7 @@ public class FileUploadService {
         try (InputStream inputStream = file.getInputStream()) {
             uploadService.uploadFile(inputStream, objectMetadata, fileName);
         } catch (IOException e) {
-            throw new IllegalArgumentException(
-                MessageFormat.format("{0} 파일 변환 중 에러가 발생했습니다.", file.getOriginalFilename()));
+            throw ExceptionMessage.FAIL_CHANGE_IMAGE.getException();
         }
         return uploadService.getFileUrl(fileName);
     }
@@ -37,7 +43,7 @@ public class FileUploadService {
         try {
             return fileName.substring(fileName.lastIndexOf("."));
         } catch (StringIndexOutOfBoundsException e) {
-            throw new IllegalArgumentException(MessageFormat.format("잘못된 형식의 {0} 파일 입니다.", fileName));
+            throw ExceptionMessage.INVALID_IMAGE_TYPE.getException();
         }
     }
 
