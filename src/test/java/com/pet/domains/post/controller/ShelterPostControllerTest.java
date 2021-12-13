@@ -40,6 +40,7 @@ import org.springframework.test.web.servlet.ResultActions;
 class ShelterPostControllerTest extends BaseDocumentationTest {
 
     @Test
+    @WithAccount
     @DisplayName("보호소 게시글 리스트 조회 테스트")
     void getShelterPostsTest() throws Exception {
         // given
