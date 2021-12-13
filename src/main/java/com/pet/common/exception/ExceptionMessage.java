@@ -45,6 +45,7 @@ public enum ExceptionMessage {
     INVALID_IMAGE_TYPE(new IllegalArgumentException("잘못된 형식의 타입입니다.")),
 
     // 실종 게시물
+    INVALID_MISSING_POST_WRITER(new BadRequestException("현재 유저가 작성한 게시글이 아닙니다.")),
 
     // 보호소 게시물
     NOT_FOUND_SHELTER_POST(new BadRequestException("해당하는 보호소 게시글을 찾을 수 없습니다."));
