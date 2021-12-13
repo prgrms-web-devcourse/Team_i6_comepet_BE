@@ -33,10 +33,10 @@ public class ShelterPostController {
     public ApiResponse<ShelterPostPageResults> getShelterPosts() {
         return ApiResponse.ok(
             ShelterPostPageResults.of(List.of(
-                ShelterPostPageResults.ShelterPost.of(11L, "서울특별시", "도봉구", 2018L, "https://../2021/11/20211189_s.jpg",
-                    "개", "리트리버", LocalDate.of(2021, 11, 25), "경상남도 진주시", true, 10L),
-                ShelterPostPageResults.ShelterPost.of(10L, "서울특별시", "노원구", 2018L, "https://../2021/11/20211189_s.jpg",
-                    "개", "믹스견", LocalDate.of(2021, 11, 21), "경상남도 진주시", false, 8L),
+                    ShelterPostPageResults.ShelterPost.of(11L, "서울특별시", "도봉구", 2018L, "https://../2021/11/20211189_s.jpg",
+                        "개", "리트리버", LocalDate.of(2021, 11, 25), "경상남도 진주시", true, 10L),
+                    ShelterPostPageResults.ShelterPost.of(10L, "서울특별시", "노원구", 2018L, "https://../2021/11/20211189_s.jpg",
+                        "개", "믹스견", LocalDate.of(2021, 11, 21), "경상남도 진주시", false, 8L),
                 ShelterPostPageResults.ShelterPost.of(9L, "서울특별시", "광진구", 2018L, "https://../2021/11/20211189_s.jpg",
                     "개", "골든 리트리버", LocalDate.of(2021, 11, 19), "경상남도 진주시", true, 8L),
                 ShelterPostPageResults.ShelterPost.of(8L, "경기도", "구리시", 2018L, "https://../2021/11/20211189_s.jpg",

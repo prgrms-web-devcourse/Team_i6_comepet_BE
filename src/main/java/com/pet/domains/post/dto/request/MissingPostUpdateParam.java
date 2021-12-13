@@ -26,7 +26,7 @@ public class MissingPostUpdateParam {
 
     private Long animal;
 
-    private Long animalKind;
+    private String animalKindName;
 
     private int age;
 
@@ -41,7 +41,7 @@ public class MissingPostUpdateParam {
     private List<MultipartFile> files;
 
     public MissingPostUpdateParam(Status status, LocalDate date, Long city, Long town, String detailAddress,
-        String telNumber, Long animal, Long animalKind, int age, SexType sex, String chipNumber,
+        String telNumber, Long animal, String animalKindName, int age, SexType sex, String chipNumber,
         List<PostTag> postTags, String content, List<MultipartFile> files) {
         this.status = status;
         this.date = date;
@@ -50,7 +50,7 @@ public class MissingPostUpdateParam {
         this.detailAddress = detailAddress;
         this.telNumber = telNumber;
         this.animal = animal;
-        this.animalKind = animalKind;
+        this.animalKindName = animalKindName;
         this.age = age;
         this.sex = sex;
         this.chipNumber = chipNumber;
@@ -61,11 +61,11 @@ public class MissingPostUpdateParam {
 
     public static MissingPostUpdateParam of(
         Status status, LocalDate date, Long city, Long town, String detailAddress, String telNumber, Long animal,
-        Long animalKind, int age, SexType sex, String chipNumber, List<PostTag> postTags, String content,
+        String animalKindName, int age, SexType sex, String chipNumber, List<PostTag> postTags, String content,
         List<MultipartFile> files
     ) {
         return new MissingPostUpdateParam(
-            status, date, city, town, detailAddress, telNumber, animal, animalKind, age, sex, chipNumber, postTags,
+            status, date, city, town, detailAddress, telNumber, animal, animalKindName, age, sex, chipNumber, postTags,
             content, files
         );
     }

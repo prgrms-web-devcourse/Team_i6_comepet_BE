@@ -2,45 +2,66 @@ package com.pet.domains.post.dto.request;
 
 import java.time.LocalDate;
 import java.util.List;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
+import org.hibernate.validator.constraints.Length;
+import reactor.util.annotation.Nullable;
 
 @Getter
 @NoArgsConstructor
 public class MissingPostCreateParam {
 
+    @NotBlank(message = "상태를 선택해주세요.")
     private String status;
 
+    @NotNull(message = "날짜를 입력해주세요.")
     private LocalDate date;
 
+    @NotNull(message = "시도를 선택해주세요.")
     private Long cityId;
 
+    @NotNull(message = "시군구를 선택해주세요.")
     private Long townId;
 
+    @Length(max = 255, message = "범위이내의 상세주소를 입력해주세요.")
+    @Nullable
     private String detailAddress;
 
+    @Length(max = 15, message = "범위이내의 전화번호를 입력해주세요.")
+    @NotBlank(message = "전화번호를 입력해주세요.")
     private String telNumber;
 
+    @Nullable
     private Long animalId;
 
-    private Long animalKindId;
+    @Length(max = 50, message = "범위이내의 품종을 입력해주세요.")
+    @Nullable
+    private String animalKindName;
 
-    private int age;
+    @Max(value = 500, message = "범위이내의 나이를 입력해주세요.")
+    @Nullable
+    private Long age;
 
+    @NotBlank(message = "성별을 선택해주세요.")
     private String sex;
 
+    @Length(max = 15, message = "범위이내의 칩번호를 입력해주세요.")
+    @Nullable
     private String chipNumber;
 
+    @Length(max = 255, message = "범위이내의 내용을 입력해주세요.")
+    @Nullable
     private String content;
 
-    private List<MissingPostCreateParam.PostTag> postTags;
-
-    private List<MultipartFile> files;
+    @Nullable
+    private List<MissingPostCreateParam.Tag> tags;
 
     public MissingPostCreateParam(String status, LocalDate date, Long cityId, Long townId, String detailAddress,
-        String telNumber, Long animalId, Long animalKindId, int age, String sex, String chipNumber,
-        String content, List<PostTag> postTags, List<MultipartFile> files) {
+        String telNumber, Long animalId, String animalKindName, Long age, String sex, String chipNumber,
+        String content, List<Tag> tags) {
         this.status = status;
         this.date = date;
         this.cityId = cityId;
@@ -48,38 +69,37 @@ public class MissingPostCreateParam {
         this.detailAddress = detailAddress;
         this.telNumber = telNumber;
         this.animalId = animalId;
-        this.animalKindId = animalKindId;
+        this.animalKindName = animalKindName;
         this.age = age;
         this.sex = sex;
         this.chipNumber = chipNumber;
         this.content = content;
-        this.postTags = postTags;
-        this.files = files;
+        this.tags = tags;
     }
 
     public static MissingPostCreateParam of(
         String status, LocalDate date, Long cityId, Long townId, String detailAddress,
-        String telNumber, Long animalId, Long animalKindId, int age, String sex, String chipNumber,
-        String content, List<PostTag> postTags, List<MultipartFile> files
+        String telNumber, Long animalId, String animalKindName, Long age, String sex, String chipNumber,
+        String content, List<Tag> tags
     ) {
         return new MissingPostCreateParam(
-            status, date, cityId, townId, detailAddress, telNumber, animalId, animalKindId, age, sex, chipNumber,
-            content, postTags, files
+            status, date, cityId, townId, detailAddress, telNumber, animalId, animalKindName, age, sex, chipNumber,
+            content, tags
         );
     }
 
     @Getter
     @NoArgsConstructor
-    public static class PostTag {
+    public static class Tag {
 
         private String name;
 
-        public PostTag(String name) {
+        public Tag(String name) {
             this.name = name;
         }
 
-        public static PostTag of(String name) {
-            return new PostTag(name);
+        public static Tag of(String name) {
+            return new Tag(name);
         }
 
     }

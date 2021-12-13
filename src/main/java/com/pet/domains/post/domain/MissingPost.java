@@ -18,8 +18,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -50,7 +52,7 @@ public class MissingPost extends DeletableEntity {
     private Long age;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", length = 30, nullable = false)
+    @Column(name = "sex_type", length = 30, nullable = false)
     private SexType sexType;
 
     @Column(name = "chip_number", length = 15)
@@ -100,4 +102,34 @@ public class MissingPost extends DeletableEntity {
     )
     private AnimalKind animalKind;
 
+    @Builder
+    public MissingPost(Status status, String detailAddress, LocalDate date, Long age,
+        SexType sexType, String chipNumber, String content, String telNumber, long viewCount, long bookmarkCount,
+        long commentCount, String thumbnail, Account account, Town town,
+        AnimalKind animalKind) {
+        ObjectUtils.requireNonEmpty(status, "status must not be null");
+        ObjectUtils.requireNonEmpty(date, "date must not be null");
+        ObjectUtils.requireNonEmpty(sexType, "sexType must not be null");
+        ObjectUtils.requireNonEmpty(content, "content must not be null");
+        ObjectUtils.requireNonEmpty(telNumber, "telNumber must not be null");
+        ObjectUtils.requireNonEmpty(viewCount, "viewCount must not be null");
+        ObjectUtils.requireNonEmpty(bookmarkCount, "bookmarkCount must not be null");
+        ObjectUtils.requireNonEmpty(commentCount, "commentCount must not be null");
+
+        this.status = status;
+        this.detailAddress = detailAddress;
+        this.date = date;
+        this.age = age;
+        this.sexType = sexType;
+        this.chipNumber = chipNumber;
+        this.content = content;
+        this.telNumber = telNumber;
+        this.viewCount = viewCount;
+        this.bookmarkCount = bookmarkCount;
+        this.commentCount = commentCount;
+        this.thumbnail = thumbnail;
+        this.account = account;
+        this.town = town;
+        this.animalKind = animalKind;
+    }
 }
