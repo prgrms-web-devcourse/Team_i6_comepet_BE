@@ -8,6 +8,7 @@ import com.pet.domains.post.dto.response.ShelterPostReadResult;
 import com.pet.domains.post.service.ShelterPostBookmarkService;
 import com.pet.domains.post.service.ShelterPostService;
 import java.time.LocalDate;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -33,8 +34,9 @@ public class ShelterPostController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ApiResponse<ShelterPostPageResults> getShelterPosts(Pageable pageable) {
-        return ApiResponse.ok(shelterPostService.getShelterPostsPage(pageable));
+    public ApiResponse<ShelterPostPageResults> getShelterPosts(@LoginAccount Account account, Pageable pageable) {
+        System.out.println(account);
+        return ApiResponse.ok(getShelterPostPageResults(account, pageable));
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -59,5 +61,12 @@ public class ShelterPostController {
     @DeleteMapping(path = "/{postId}/bookmark")
     public void deleteShelterPostBookmark(@PathVariable Long postId, @LoginAccount Account account) {
         shelterPostBookmarkService.deletePostBookmark(postId, account);
+    }
+
+    private ShelterPostPageResults getShelterPostPageResults(Account account, Pageable pageable) {
+        if (Objects.nonNull(account)) {
+            return shelterPostService.getShelterPostsPageWithAccount(account, pageable);
+        }
+        return shelterPostService.getShelterPostsPage(pageable);
     }
 }

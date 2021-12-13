@@ -6,6 +6,7 @@ import com.pet.domains.post.domain.ShelterPost;
 import com.pet.domains.post.dto.request.ShelterPostCreateParams;
 import com.pet.domains.post.dto.response.ShelterPostPageResults;
 import com.pet.domains.post.repository.ShelterPostWithIsBookmark;
+import java.util.List;
 import java.util.stream.Collectors;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -23,12 +24,24 @@ public interface ShelterPostMapper {
         Town townEntity
     );
 
-    default ShelterPostPageResults toShelterPostPageResults(Page<ShelterPostWithIsBookmark> pageResult) {
-        var shelterPostResults = pageResult.getContent().stream()
+    default ShelterPostPageResults toShelterPostPageResultsW(Page<ShelterPostWithIsBookmark> pageResult) {
+        List<ShelterPostPageResults.ShelterPost> shelterPostResults = pageResult.getContent().stream()
             .map(shelterPostWithIsBookmark -> {
                 ShelterPost shelterPost = shelterPostWithIsBookmark.getShelterPost();
-                return toShelterPostOfShelterPostPageResults(shelterPost, shelterPostWithIsBookmark.getIsBookmark());
+                return toShelterPostDto(shelterPost, shelterPostWithIsBookmark.getIsBookmark());
             })
+            .collect(Collectors.toList());
+        return ShelterPostPageResults.of(
+            shelterPostResults,
+            pageResult.getTotalElements(),
+            pageResult.isLast(),
+            pageResult.getSize()
+        );
+    }
+
+    default ShelterPostPageResults toShelterPostPageResults(Page<ShelterPost> pageResult) {
+        List<ShelterPostPageResults.ShelterPost> shelterPostResults = pageResult.getContent().stream()
+            .map(this::toShelterPostDto)
             .collect(Collectors.toList());
         return ShelterPostPageResults.of(
             shelterPostResults,
@@ -43,8 +56,13 @@ public interface ShelterPostMapper {
     @Mapping(target = "isBookmark", source = "isBookmark")
     @Mapping(target = "town", source = "shelterPost.town.name")
     @Mapping(target = "city", source = "shelterPost.town.city.name")
-    ShelterPostPageResults.ShelterPost toShelterPostOfShelterPostPageResults(
-        ShelterPost shelterPost,
-        boolean isBookmark);
+    ShelterPostPageResults.ShelterPost toShelterPostDto(ShelterPost shelterPost, boolean isBookmark);
+
+    @Mapping(target = "animalKind", source = "shelterPost.animalKind.name")
+    @Mapping(target = "animal", source = "shelterPost.animalKind.animal.name")
+    @Mapping(target = "isBookmark", expression = "java(false)")
+    @Mapping(target = "town", source = "shelterPost.town.name")
+    @Mapping(target = "city", source = "shelterPost.town.city.name")
+    ShelterPostPageResults.ShelterPost toShelterPostDto(ShelterPost shelterPost);
 
 }

@@ -5,6 +5,8 @@ import com.pet.common.config.JpaAuditingConfig;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.animal.domain.Animal;
 import com.pet.domains.animal.domain.AnimalKind;
+import com.pet.domains.area.domain.City;
+import com.pet.domains.area.domain.Town;
 import com.pet.domains.post.domain.ShelterPost;
 import com.pet.domains.post.domain.ShelterPostBookmark;
 import java.util.List;
@@ -36,20 +38,32 @@ class ShelterPostBookmarkRepositoryTest {
             .email("test@gmail.com")
             .build();
         entityManager.persist(account);
+
         Animal animal = Animal.builder()
             .code("111111")
             .name("animal")
             .build();
         entityManager.persist(animal);
-
         AnimalKind animalKind = AnimalKind.builder()
             .name("animalKind")
             .animal(animal)
             .build();
         entityManager.persist(animalKind);
 
+        City city = City.builder()
+            .name("city")
+            .code("111111")
+            .build();
+        entityManager.persist(city);
+        Town town = Town.builder()
+            .city(city)
+            .name("town")
+            .build();
+        entityManager.persist(town);
+
         ShelterPost shelterPost = ShelterPost.builder()
             .animalKind(animalKind)
+            .town(town)
             .build();
         entityManager.persist(shelterPost);
         ShelterPostBookmark shelterPostBookmark = ShelterPostBookmark.builder()
@@ -67,7 +81,4 @@ class ShelterPostBookmarkRepositoryTest {
         // then
         assertThat(bookmarks).isEmpty();
     }
-
-
-
 }

@@ -1,9 +1,11 @@
 package com.pet.domains.post.service;
 
+import com.pet.domains.account.domain.Account;
 import com.pet.domains.animal.domain.AnimalKind;
 import com.pet.domains.animal.service.AnimalKindService;
 import com.pet.domains.area.domain.Town;
 import com.pet.domains.area.service.TownService;
+import com.pet.domains.post.domain.ShelterPost;
 import com.pet.domains.post.dto.request.ShelterPostCreateParams;
 import com.pet.domains.post.dto.response.ShelterPostPageResults;
 import com.pet.domains.post.mapper.ShelterPostMapper;
@@ -31,11 +33,17 @@ public class ShelterPostService {
 
     private final ShelterPostMapper shelterPostMapper;
 
-    public ShelterPostPageResults getShelterPostsPage(Pageable pageable) {
+    public ShelterPostPageResults getShelterPostsPageWithAccount(Account account, Pageable pageable) {
         Page<ShelterPostWithIsBookmark> pageResult =
-            shelterPostRepository.findAllWithIsBookmark(pageable);
+            shelterPostRepository.findAllWithIsBookmarkAccount(account, pageable);
+        return shelterPostMapper.toShelterPostPageResultsW(pageResult);
+    }
+
+    public ShelterPostPageResults getShelterPostsPage(Pageable pageable) {
+        Page<ShelterPost> pageResult = shelterPostRepository.findAll(pageable);
         return shelterPostMapper.toShelterPostPageResults(pageResult);
     }
+
 
     @Transactional
     public void bulkCreateShelterPosts(ShelterPostCreateParams shelterPostCreateParams) {
