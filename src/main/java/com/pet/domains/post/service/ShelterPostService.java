@@ -48,13 +48,11 @@ public class ShelterPostService {
     }
 
     private AnimalKind getAnimalKind(String animalKindName) {
-        log.info("animalKindName: {}", animalKindName);
+        log.debug("animalKindName: {}", animalKindName);
         return animalKindService.getOrCreateAnimalKindByEtcAnimal(animalKindName);
     }
 
     private Town getTown(String cityName, String townName) {
-        System.out.println(cityName);
-        System.out.println(townName);
         log.debug("cityName: {}, townName: {}", cityName, townName);
         return townService.getOrCreateTownByName(cityName, townName);
     }

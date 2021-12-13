@@ -105,14 +105,12 @@ public class ShelterPostCreateParams {
         public String getAnimalKindNameFromKindCd() {
             // format: [{동물}] {품종}, ex) [고양이] 한국 고양이
             ObjectUtils.requireNonEmpty(kindCd, "kindCd data must not be null");
-            System.out.println("kind Cd: " + kindCd);
 
             int whileSpaceIdx = StringUtils.indexOf(kindCd, " ");
             if (whileSpaceIdx == -1) {
-                System.out.println("here");
                 return "모름";
             }
-            return StringUtils.substring(kindCd, whileSpaceIdx + 1);
+            return StringUtils.substring(kindCd, whileSpaceIdx + 1).strip();
         }
 
         public String getCityNameFromAddress() {
