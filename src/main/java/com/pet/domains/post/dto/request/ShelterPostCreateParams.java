@@ -21,6 +21,10 @@ import org.apache.commons.lang3.StringUtils;
 @XmlAccessorType(XmlAccessType.NONE)
 public class ShelterPostCreateParams {
 
+    private static final String UNKNOWN = "모름";
+
+    private static final String ALL = "전체";
+
     @XmlElement(name = "item")
     private List<ShelterPostCreateParams.ShelterPost> shelterPosts;
 
@@ -108,7 +112,7 @@ public class ShelterPostCreateParams {
 
             int whileSpaceIdx = StringUtils.indexOf(kindCd, " ");
             if (whileSpaceIdx == -1) {
-                return "모름";
+                return UNKNOWN;
             }
             return StringUtils.substring(kindCd, whileSpaceIdx + 1).strip();
         }
@@ -123,7 +127,7 @@ public class ShelterPostCreateParams {
             String[] split = StringUtils.split(address);
             int size = split.length;
             if (size == 1) {
-                return "전체";
+                return ALL;
             }
             return split[size - 1];
         }

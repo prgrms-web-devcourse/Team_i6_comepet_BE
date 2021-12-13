@@ -58,8 +58,8 @@ class ShelterPostControllerTest extends BaseDocumentationTest {
                 .isBookmark(true)
                 .bookmarkCount(13)
                 .build()),
-            1
-            , true,
+            1,
+            true,
             10
         );
         given(shelterPostService.getShelterPostsPageWithAccount(any(Account.class), any(PageRequest.class)))
