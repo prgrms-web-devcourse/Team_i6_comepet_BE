@@ -1,12 +1,9 @@
 package com.pet.domains.animal.service;
 
-
-import com.pet.common.exception.ExceptionMessage;
 import com.pet.domains.animal.domain.Animal;
 import com.pet.domains.animal.domain.AnimalKind;
 import com.pet.domains.animal.dto.request.AnimalKindCreateParams;
 import com.pet.domains.animal.repository.AnimalKindRepository;
-import com.pet.domains.animal.repository.AnimalRepository;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +20,7 @@ public class AnimalKindService {
 
     private final AnimalKindRepository animalKindRepository;
 
-    private final AnimalRepository animalRepository;
+    private final AnimalService animalService;
 
     @Transactional
     public void createAnimalKinds(String animalCode, AnimalKindCreateParams animalKindCreateParams) {
@@ -32,54 +29,35 @@ public class AnimalKindService {
                 .map(animalKindCreateParam -> AnimalKind.builder()
                     .name(animalKindCreateParam.getName())
                     .code(animalKindCreateParam.getCode())
-                    .animal(getAnimalByCode(animalCode))
+                    .animal(animalService.getAnimalByCode(animalCode))
                     .build())
                 .collect(Collectors.toList())
         );
     }
 
-    @Transactional
     public AnimalKind getOrCreateAnimalKind(Long animalId, String animalKindName) {
         return animalKindRepository.findByName(animalKindName)
-            .orElseGet(() -> animalKindRepository.save(
-                AnimalKind.builder()
-                    .animal(getAnimalById(animalId))
-                    .name(animalKindName)
-                    .build()
-            ));
+            .orElseGet(() -> createAnimalKindByName(animalKindName, animalService.getAnimalById(animalId)));
+    }
+
+    public AnimalKind getOrCreateAnimalKindByEtcAnimal(String animalKindName) {
+        return animalKindRepository.findByName(animalKindName)
+            .orElseGet(() -> createAnimalKindByEtcAnimal(animalKindName));
     }
 
     @Transactional
-    public AnimalKind getOrCreateAnimalKindByEtcAnimal(String animalKindName) {
-        return animalKindRepository.findByName(animalKindName)
-            .orElseGet(() -> saveAnimalKindByEtcAnimal(animalKindName));
+    public AnimalKind createAnimalKindByEtcAnimal(String animalKindName) {
+        return createAnimalKindByName(animalKindName, animalService.getAnimalByName(ETC_ANIMAL_NAME));
     }
 
-    private AnimalKind saveAnimalKindByEtcAnimal(String animalKindName) {
+    @Transactional
+    public AnimalKind createAnimalKindByName(String animalKindName, Animal animalById) {
         return animalKindRepository.save(
             AnimalKind.builder()
-                .animal(getAnimalByName(ETC_ANIMAL_NAME))
+                .animal(animalById)
                 .name(animalKindName)
                 .build()
         );
-    }
-
-    private Animal getAnimalByCode(String animalCode) {
-        log.debug("animalCode: {}", animalCode);
-        return animalRepository.findByCode(animalCode)
-            .orElseThrow(ExceptionMessage.NOT_FOUND_ANIMAL::getException);
-    }
-
-    private Animal getAnimalByName(String animalName) {
-        log.debug("animalName: {}", animalName);
-        return animalRepository.findByName(animalName)
-            .orElseThrow(ExceptionMessage.NOT_FOUND_ANIMAL::getException);
-    }
-
-    private Animal getAnimalById(Long animalId) {
-        log.debug("animalId: {}", animalId);
-        return animalRepository.findById(animalId)
-            .orElseThrow(ExceptionMessage.NOT_FOUND_ANIMAL::getException);
     }
 
 }

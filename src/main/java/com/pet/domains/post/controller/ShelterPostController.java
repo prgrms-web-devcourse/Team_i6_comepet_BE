@@ -6,10 +6,11 @@ import com.pet.domains.account.domain.LoginAccount;
 import com.pet.domains.post.dto.response.ShelterPostPageResults;
 import com.pet.domains.post.dto.response.ShelterPostReadResult;
 import com.pet.domains.post.service.ShelterPostBookmarkService;
+import com.pet.domains.post.service.ShelterPostService;
 import java.time.LocalDate;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,40 +27,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ShelterPostController {
 
+    private final ShelterPostService shelterPostService;
+
     private final ShelterPostBookmarkService shelterPostBookmarkService;
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ApiResponse<ShelterPostPageResults> getShelterPosts() {
-        return ApiResponse.ok(
-            ShelterPostPageResults.of(List.of(
-                    ShelterPostPageResults.ShelterPost.of(11L, "서울특별시", "도봉구", 2018L, "https://../2021/11/20211189_s.jpg",
-                        "개", "리트리버", LocalDate.of(2021, 11, 25), "경상남도 진주시", true, 10L),
-                    ShelterPostPageResults.ShelterPost.of(10L, "서울특별시", "노원구", 2018L, "https://../2021/11/20211189_s.jpg",
-                        "개", "믹스견", LocalDate.of(2021, 11, 21), "경상남도 진주시", false, 8L),
-                ShelterPostPageResults.ShelterPost.of(9L, "서울특별시", "광진구", 2018L, "https://../2021/11/20211189_s.jpg",
-                    "개", "골든 리트리버", LocalDate.of(2021, 11, 19), "경상남도 진주시", true, 8L),
-                ShelterPostPageResults.ShelterPost.of(8L, "경기도", "구리시", 2018L, "https://../2021/11/20211189_s.jpg",
-                    "개", "삽살개", LocalDate.of(2021, 11, 14), "경상남도 진주시", false, 83L),
-                ShelterPostPageResults.ShelterPost.of(7L, "경기도", "구리시", 2014L, "https://../2021/11/20211189_s.jpg",
-                    "고양이", "샴", LocalDate.of(2021, 11, 11), "경상남도 진주시", true, 18L),
-                ShelterPostPageResults.ShelterPost.of(6L, "경기도", "구리시", 2013L, "https://../2021/11/20211189_s.jpg",
-                    "개", "리트리버", LocalDate.of(2021, 11, 3), "경상남도 진주시", false, 82L),
-                ShelterPostPageResults.ShelterPost.of(5L, "경기도", "구리시", 2018L, "https://../2021/11/20211189_s.jpg",
-                    "고양이", "노르웨이숲", LocalDate.of(2021, 10, 21), "경상남도 진주시", true, 28L),
-                ShelterPostPageResults.ShelterPost.of(4L, "경기도", "구리시", 2020L, "https://../2021/11/20211189_s.jpg",
-                    "개", "리트리버", LocalDate.of(2021, 10, 21), "경상남도 진주시", true, 38L),
-                ShelterPostPageResults.ShelterPost.of(3L, "서울특별시", "강남구", 2013L, "https://../2021/11/20211189_s.jpg",
-                    "고양이", "페르시안", LocalDate.of(2021, 10, 14), "경상남도 진주시", true, 84L),
-                ShelterPostPageResults.ShelterPost.of(2L, "경기도", "구리시", 2015L, "https://../2021/11/20211189_s.jpg",
-                    "개", "리트리버", LocalDate.of(2021, 10, 6), "경상남도 진주시", true, 48L),
-                ShelterPostPageResults.ShelterPost.of(1L, "경기도", "구리시", 2017L, "https://../2021/11/20211189_s.jpg",
-                    "개", "리트리버", LocalDate.of(2021, 10, 3), "경상남도 진주시", true, 58L)
-                ),
-                11,
-                true,
-                10
-            ));
+    public ApiResponse<ShelterPostPageResults> getShelterPosts(Pageable pageable) {
+        return ApiResponse.ok(shelterPostService.getShelterPostsPage(pageable));
     }
 
     @ResponseStatus(HttpStatus.OK)

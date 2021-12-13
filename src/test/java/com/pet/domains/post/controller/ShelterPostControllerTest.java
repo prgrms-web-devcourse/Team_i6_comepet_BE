@@ -1,5 +1,7 @@
 package com.pet.domains.post.controller;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
@@ -19,13 +21,18 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import com.pet.common.jwt.JwtMockToken;
 import com.pet.domains.account.WithAccount;
 import com.pet.domains.docs.BaseDocumentationTest;
+import com.pet.domains.post.dto.response.ShelterPostPageResults;
+import java.time.LocalDate;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
@@ -37,9 +44,31 @@ class ShelterPostControllerTest extends BaseDocumentationTest {
     @DisplayName("보호소 게시글 리스트 조회 테스트")
     void getShelterPostsTest() throws Exception {
         // given
+        var results = ShelterPostPageResults.of(List.of(
+            ShelterPostPageResults.ShelterPost.builder()
+                .id(1L)
+                .city("서울특별시")
+                .town("광진구")
+                .age(2018L)
+                .thumbnail("http://www.animal.go.kr/files/shelter/2021/11/202112140012452_s.jpg")
+                .animal("개")
+                .animalKind("보더콜리")
+                .foundDate(LocalDate.of(2021, 12, 11))
+                .isBookmark(true)
+                .bookmarkCount(13)
+                .build()),
+            1
+            , true,
+            10
+        );
+        given(shelterPostService.getShelterPostsPage(any(PageRequest.class))).willReturn(results);
+
         // when
         ResultActions resultActions = mockMvc.perform(get("/api/v1/shelter-posts")
-            .accept(MediaType.APPLICATION_JSON_VALUE));
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .param("page", "1")
+            .param("size", "10")
+            .param("sort", "id,DESC"));
 
         // then
         resultActions
@@ -51,6 +80,11 @@ class ShelterPostControllerTest extends BaseDocumentationTest {
                 requestHeaders(
                     headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
+                requestParameters(
+                    parameterWithName("page").description("페이지 번호"),
+                    parameterWithName("size").description("페이지 크기"),
+                    parameterWithName("sort").description("정렬, ex) id,[desc]")
+                ),
                 responseHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
@@ -61,16 +95,15 @@ class ShelterPostControllerTest extends BaseDocumentationTest {
                     fieldWithPath("data.shelters[].city").type(STRING).description("시도 이름"),
                     fieldWithPath("data.shelters[].town").type(STRING).description("시군구 이름"),
                     fieldWithPath("data.shelters[].age").type(NUMBER).description("동물 나이"),
-                    fieldWithPath("data.shelters[].image").type(STRING).description("동물 사진"),
+                    fieldWithPath("data.shelters[].thumbnail").type(STRING).description("동물 사진"),
                     fieldWithPath("data.shelters[].animal").type(STRING).description("동물 종류"),
                     fieldWithPath("data.shelters[].animalKind").type(STRING).description("동물 품종"),
                     fieldWithPath("data.shelters[].foundDate").type(STRING).description("접수일"),
-                    fieldWithPath("data.shelters[].shelterPlace").type(STRING).description("보호 장소"),
                     fieldWithPath("data.shelters[].isBookmark").type(BOOLEAN).description("북마크 여부"),
                     fieldWithPath("data.shelters[].bookmarkCount").type(NUMBER).description("북마크 수"),
-                    fieldWithPath("data.totalElements").type(NUMBER).description("전체 결과 수"),
+                    fieldWithPath("data.totalElements").type(NUMBER).description("전체 데이터수"),
                     fieldWithPath("data.last").type(BOOLEAN).description("마지막 페이지 여부"),
-                    fieldWithPath("data.size").type(NUMBER).description("페이지당 요청 수"),
+                    fieldWithPath("data.size").type(NUMBER).description("페이지 크기"),
                     fieldWithPath("serverDateTime").type(STRING).description("서버 응답 시간")))
             );
     }

@@ -2,6 +2,7 @@ package com.pet.domains.post.domain;
 
 import com.pet.domains.BaseEntity;
 import com.pet.domains.animal.domain.AnimalKind;
+import com.pet.domains.area.domain.Town;
 import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -99,10 +100,21 @@ public class ShelterPost extends BaseEntity {
     private long bookmarkCount;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "animal_kind_id",
+    @JoinColumn(
+        name = "town_id",
         referencedColumnName = "id",
-        nullable = false,
-        foreignKey = @ForeignKey(name = "fk_animal_kind_to_shelter_post"))
+        foreignKey = @ForeignKey(name = "fk_town_to_shelter_post"),
+        nullable = false
+    )
+    private Town town;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+        name = "animal_kind_id",
+        referencedColumnName = "id",
+        foreignKey = @ForeignKey(name = "fk_animal_kind_to_shelter_post"),
+        nullable = false
+    )
     private AnimalKind animalKind;
 
     @Builder
@@ -110,7 +122,7 @@ public class ShelterPost extends BaseEntity {
         String manager, String color, String desertionNumber, String image, String thumbnail, LocalDate foundDate,
         String foundPlace, NeuteredType neutered, LocalDate startDate, LocalDate endDate, String managerTelNumber,
         String postStatus, SexType sex, String feature, Double weight, String noticeNumber, long bookmarkCount,
-        AnimalKind animalKind) {
+        Town town, AnimalKind animalKind) {
         this.age = age;
         this.address = address;
         this.shelterPlace = shelterPlace;
@@ -133,6 +145,8 @@ public class ShelterPost extends BaseEntity {
         this.weight = weight;
         this.noticeNumber = noticeNumber;
         this.bookmarkCount = bookmarkCount;
+        this.town = town;
         this.animalKind = animalKind;
     }
+
 }

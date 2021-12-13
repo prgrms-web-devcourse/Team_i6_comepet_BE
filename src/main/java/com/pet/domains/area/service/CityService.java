@@ -1,5 +1,6 @@
 package com.pet.domains.area.service;
 
+import com.pet.common.exception.ExceptionMessage;
 import com.pet.domains.area.domain.City;
 import com.pet.domains.area.dto.request.CityCreateParams;
 import com.pet.domains.area.mapper.CityMapper;
@@ -25,6 +26,16 @@ public class CityService {
             .map(cityMapper::toEntity)
             .collect(Collectors.toList());
         cityRepository.saveAll(cities);
+    }
+
+    public City getCityByCode(String cityCode) {
+        return cityRepository.findByCode(cityCode)
+            .orElseThrow(ExceptionMessage.NOT_FOUND_CITY::getException);
+    }
+
+    public City getCityByName(String cityName) {
+        return cityRepository.findByName(cityName)
+            .orElseThrow(ExceptionMessage.NOT_FOUND_CITY::getException);
     }
 
 }

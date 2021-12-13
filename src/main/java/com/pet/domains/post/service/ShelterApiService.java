@@ -63,7 +63,6 @@ public class ShelterApiService {
 
     private WebClient webClient;
 
-
     @PostConstruct
     public void initWebClient() {
         String baseUrl = shelterProperties.getUrl();
@@ -112,7 +111,7 @@ public class ShelterApiService {
         List<Long> pageNumbers) {
         return Flux.fromIterable(pageNumbers)
             .flatMap(pageNumber -> getShelterApiPageResults(start, end, pageNumber))
-            .doOnComplete(() -> log.info("created ShelterApiPageResult flux "));
+            .doOnComplete(() -> log.info("complete"));
     }
 
     public Mono<ShelterApiPageResult> getShelterApiPageResults(
