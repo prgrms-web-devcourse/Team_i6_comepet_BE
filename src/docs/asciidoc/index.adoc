@@ -123,6 +123,20 @@ include::{snippets}/logout/http-request.adoc[]
 ==== Http Response
 include::{snippets}/logout/http-response.adoc[]
 
+=== 비밀번호 변경
+
+==== CURL request
+include::{snippets}/update-password/curl-request.adoc[]
+
+==== Http Request
+include::{snippets}/update-password/http-request.adoc[]
+
+==== Request fields
+include::{snippets}/update-password/request-fields.adoc[]
+
+==== Http Response
+include::{snippets}/update-password/http-response.adoc[]
+
 === 회원정보 변경
 
 ==== CURL request
