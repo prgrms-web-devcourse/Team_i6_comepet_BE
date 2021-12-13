@@ -57,7 +57,7 @@ public class ShelterPostController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(path = "/{postId}/bookmark")
-    public void deleteShelterPostBookmark(@PathVariable Long postId) {
-        log.info("북마크 삭제 call for {}", postId);
+    public void deleteShelterPostBookmark(@PathVariable Long postId, @LoginAccount Account account) {
+        shelterPostBookmarkService.deletePostBookmark(postId, account);
     }
 }

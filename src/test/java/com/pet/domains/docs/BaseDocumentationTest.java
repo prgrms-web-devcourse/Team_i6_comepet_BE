@@ -17,6 +17,7 @@ import com.pet.domains.docs.controller.CommonDocumentationController;
 import com.pet.domains.image.service.ImageService;
 import com.pet.domains.post.controller.MissingPostController;
 import com.pet.domains.post.controller.ShelterPostController;
+import com.pet.domains.post.service.ShelterPostBookmarkService;
 import com.pet.domains.post.service.MissingPostService;
 import com.pet.domains.post.service.ShelterPostBookmarkService;
 import com.pet.domains.post.service.ShelterPostService;

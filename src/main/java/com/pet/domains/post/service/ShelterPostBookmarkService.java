@@ -32,4 +32,9 @@ public class ShelterPostBookmarkService {
         );
     }
 
+    @Transactional
+    public void deletePostBookmark(Long postId, Account account) {
+        shelterPostBookmarkRepository.deleteByShelterPostIdAndAccount(postId, account);
+    }
+
 }
