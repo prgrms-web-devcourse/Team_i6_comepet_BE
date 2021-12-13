@@ -25,6 +25,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.requestP
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import com.pet.domains.account.WithAccount;
+import com.pet.domains.account.domain.Account;
 import com.pet.domains.docs.BaseDocumentationTest;
 import com.pet.domains.post.dto.response.ShelterPostPageResults;
 import java.time.LocalDate;
@@ -61,7 +62,7 @@ class ShelterPostControllerTest extends BaseDocumentationTest {
             , true,
             10
         );
-        given(shelterPostService.getShelterPostsPage(any(PageRequest.class))).willReturn(results);
+        given(shelterPostService.getShelterPostsPageWithAccount(any(Account.class), any(PageRequest.class))).willReturn(results);
 
         // when
         ResultActions resultActions = mockMvc.perform(get("/api/v1/shelter-posts")
