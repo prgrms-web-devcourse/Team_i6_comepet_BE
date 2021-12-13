@@ -42,7 +42,7 @@ public enum ExceptionMessage {
 
     // 이미지
     FAIL_CHANGE_IMAGE(new IllegalArgumentException("이미지 변환이 실패했습니다.")),
-    INVALID_IMAGE_TYPE(new IllegalArgumentException("잘못된 형식의 타입입니다."));
+    INVALID_IMAGE_TYPE(new IllegalArgumentException("잘못된 형식의 타입입니다.")),
 
     // 실종 게시물
 
