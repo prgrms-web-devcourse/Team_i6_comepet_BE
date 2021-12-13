@@ -4,6 +4,8 @@ import com.pet.domains.post.domain.MissingPost;
 import com.pet.domains.tag.domain.PostTag;
 import com.pet.domains.tag.domain.Tag;
 import com.pet.domains.tag.repository.PostTagRepository;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,11 +18,13 @@ public class PostTagService {
     private final PostTagRepository postTagRepository;
 
     @Transactional
-    public void createPostTag(Tag tag, MissingPost missingPost) {
-        postTagRepository.save(PostTag.builder()
-            .missingPost(missingPost)
-            .tag(tag)
-            .build());
+    public void createPostTag(List<Tag> tags, MissingPost missingPost) {
+        postTagRepository.saveAll(tags.stream()
+            .map(getTag -> PostTag.builder()
+                .missingPost(missingPost)
+                .tag(getTag)
+                .build())
+            .collect(Collectors.toList()));
     }
 
 }

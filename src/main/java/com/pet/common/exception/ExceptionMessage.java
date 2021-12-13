@@ -23,6 +23,7 @@ public enum ExceptionMessage {
 
     // 동물
     NOT_FOUND_ANIMAL(new BadRequestException("해당하는 동물 종류를 찾을 수 없습니다.")),
+    NOT_FOUND_ANIMAL_KIND(new BadRequestException("해당하는 품종 종류를 찾을 수 없습니다.")),
 
 
     // 지역

@@ -13,7 +13,6 @@ import org.mapstruct.Mappings;
 public interface MissingPostMapper {
 
     @Mappings({
-        @Mapping(target = "id", ignore = true),
         @Mapping(target = "sexType", source = "param.sex"),
         @Mapping(target = "viewCount", expression = "java(0)"),
         @Mapping(target = "bookmarkCount", expression = "java(0)"),

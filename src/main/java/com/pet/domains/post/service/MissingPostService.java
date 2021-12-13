@@ -18,7 +18,6 @@ import com.pet.domains.tag.service.PostTagService;
 import com.pet.domains.tag.service.TagService;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -65,10 +64,8 @@ public class MissingPostService {
         MissingPost createMissingPost = missingPostRepository.save(
             missingPostMapper.toEntity(missingPostCreateParam, town, animalKind, thumbnail, account));
 
-        if (!CollectionUtils.isEmpty(tags)) {
-            for (Tag tag : tags) {
-                postTagService.createPostTag(tag, createMissingPost);
-            }
+        if (!CollectionUtils.isEmpty(tags) && tags.size() > 0) {
+            postTagService.createPostTag(tags, createMissingPost);
         }
 
         createPostImage(imageFiles, createMissingPost);
@@ -78,7 +75,7 @@ public class MissingPostService {
 
     private String getThumbnail(List<Image> imageFiles) {
         String thumbnail = null;
-        if (!imageFiles.isEmpty()) {
+        if (!CollectionUtils.isEmpty(imageFiles) && imageFiles.size() > 0) {
             thumbnail = imageFiles.get(0).getName();
         }
         return thumbnail;
@@ -106,12 +103,11 @@ public class MissingPostService {
 
     private List<Tag> getTags(MissingPostCreateParam missingPostCreateParam) {
         List<Tag> tags = new ArrayList<>();
-        if (!CollectionUtils.isEmpty(missingPostCreateParam.getTags())) {
+        if (!CollectionUtils.isEmpty(missingPostCreateParam.getTags()) && missingPostCreateParam.getTags().size() > 0) {
             tags =
                 missingPostCreateParam.getTags()
                     .stream()
                     .map(tag -> tagService.getOrCreateByTagName(tag.getName()))
-                    .filter(Objects::nonNull)
                     .collect(Collectors.toList());
         }
         return tags;

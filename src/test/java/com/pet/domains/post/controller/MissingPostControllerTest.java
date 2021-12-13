@@ -58,7 +58,7 @@ class MissingPostControllerTest extends BaseDocumentationTest {
         //given
         MissingPostCreateParam param = MissingPostCreateParam.of(
             "DETECTION", LocalDate.now(), 1L, 1L, "주민센터 앞 골목 근처",
-            "01012343323", 1L, "푸들", 10, "MALE", "410123456789112",
+            "01012343323", 1L, "푸들", 10L, "MALE", "410123456789112",
             "찾아주시면 사례하겠습니다.", List.of(
                 Tag.of("춘식이")
             )
