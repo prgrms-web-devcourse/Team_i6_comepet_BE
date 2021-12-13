@@ -5,12 +5,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import com.pet.common.exception.ExceptionMessage;
-import com.pet.common.exception.httpexception.BadRequestException;
+import com.pet.common.exception.httpexception.NotFoundException;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.post.domain.ShelterPost;
 import com.pet.domains.post.domain.ShelterPostBookmark;
@@ -61,10 +62,23 @@ class ShelterPostBookmarkServiceTest {
 
         // when, then
         assertThatThrownBy(() -> shelterPostBookmarkService.createPostBookmark(1L, mock(Account.class)))
-            .isInstanceOf(BadRequestException.class)
+            .isInstanceOf(NotFoundException.class)
             .hasMessageContaining(exception.getMessage());
 
         verify(shelterPostBookmarkRepository, never()).save(any(ShelterPostBookmark.class));
+    }
+
+    @Test
+    @DisplayName("사용자의 보호소 게시글 북마크 삭제 성공 테스트")
+    void deletePostBookmarkSuccessTest() {
+        // given
+        doNothing().when(shelterPostBookmarkRepository).deleteByShelterPostIdAndAccount(anyLong(), any(Account.class));
+
+        // when
+        shelterPostBookmarkService.deletePostBookmark(1L, mock(Account.class));
+
+        // then
+        verify(shelterPostBookmarkRepository, times(1)).deleteByShelterPostIdAndAccount(anyLong(), any(Account.class));
     }
 
 }
