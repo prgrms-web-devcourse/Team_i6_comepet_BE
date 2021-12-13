@@ -28,7 +28,7 @@ public class HtmlMailSender implements MailSender {
             mimeMessageHelper.setText(emailMessage.getMessage(), false);
             javaMailSender.send(mimeMessage);
 
-            log.info("이메일을 정상적으로 전송했습니다.: {}", emailMessage.getTo());
+            log.debug("이메일을 정상적으로 전송했습니다.: {}", emailMessage.getTo());
         } catch (MessagingException e) {
             log.warn("메일 전송에 실패했습니다.");
             throw ExceptionMessage.FAIL_TO_EMAIL.getException();

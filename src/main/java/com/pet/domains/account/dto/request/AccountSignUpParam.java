@@ -1,6 +1,7 @@
 package com.pet.domains.account.dto.request;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -30,10 +31,14 @@ public class AccountSignUpParam {
         message = "올바른 비밀번호 형식이 아닙니다.")
     private String passwordCheck;
 
-    public AccountSignUpParam(String nickname, String email, String password, String passwordCheck) {
+    @NotNull(message = "올바른 요청이 아닙니다.")
+    private Long verifiedId;
+
+    public AccountSignUpParam(String nickname, String email, String password, String passwordCheck, Long verifiedId) {
         this.nickname = nickname;
         this.email = email;
         this.password = password;
         this.passwordCheck = passwordCheck;
+        this.verifiedId = verifiedId;
     }
 }
