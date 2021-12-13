@@ -16,7 +16,8 @@ public interface ShelterPostRepository extends JpaRepository<ShelterPost, Long> 
     Page<ShelterPost> findAll(Pageable pageable);
 
     @EntityGraph(attributePaths = {"animalKind", "animalKind.animal", "town", "town.city"}, type = EntityGraphType.LOAD)
-    @Query("SELECT sp AS shelterPost, spb.id IS NOT NULL AS isBookmark FROM ShelterPost sp LEFT JOIN ShelterPostBookmark spb ON sp.id = spb.id AND spb.account=:account")
+    @Query("SELECT sp AS shelterPost, spb.id IS NOT NULL AS isBookmark FROM ShelterPost sp"
+        + " LEFT JOIN ShelterPostBookmark spb ON sp.id = spb.id AND spb.account=:account")
     Page<ShelterPostWithIsBookmark> findAllWithIsBookmarkAccount(Account account, Pageable pageable);
 
 }
