@@ -40,7 +40,7 @@ class TownRepositoryTest {
         entityManager.clear();
 
         //when
-        Town foundTown = townRepository.getById(city.getId());
+        Town foundTown = townRepository.getById(town.getId());
 
         //then
         assertThat(foundTown.getId()).isEqualTo(town.getId());
