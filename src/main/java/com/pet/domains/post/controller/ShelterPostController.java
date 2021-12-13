@@ -35,7 +35,6 @@ public class ShelterPostController {
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ApiResponse<ShelterPostPageResults> getShelterPosts(@LoginAccount Account account, Pageable pageable) {
-        System.out.println(account);
         return ApiResponse.ok(getShelterPostPageResults(account, pageable));
     }
 
