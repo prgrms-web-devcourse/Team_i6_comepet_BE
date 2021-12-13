@@ -1,7 +1,9 @@
 package com.pet.domains.tag.service;
 
+import com.pet.domains.tag.domain.PostTag;
 import com.pet.domains.tag.domain.Tag;
 import com.pet.domains.tag.repository.TagRepository;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,7 +21,7 @@ public class TagService {
         Optional<Tag> tag = tagRepository.findTagByName(tagName);
 
         if (tag.isPresent()) {
-            tag.get().changeCount(tag.get().getId());
+            tag.get().increaseCount(tag.get().getId());
             return tag.get();
         }
 
@@ -28,6 +30,13 @@ public class TagService {
                 .name(tagName)
                 .build()
         );
+    }
+
+    @Transactional
+    public void decreaseTagCount(List<PostTag> postTags) {
+        postTags.stream()
+            .map(PostTag::getTag)
+            .forEach(Tag::decreaseCount);
     }
 
 }

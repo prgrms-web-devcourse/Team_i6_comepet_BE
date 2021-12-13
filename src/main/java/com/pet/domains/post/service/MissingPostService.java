@@ -1,10 +1,12 @@
 package com.pet.domains.post.service;
 
+import com.pet.common.exception.ExceptionMessage;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.animal.domain.AnimalKind;
 import com.pet.domains.animal.service.AnimalKindService;
 import com.pet.domains.area.domain.Town;
 import com.pet.domains.area.repository.TownRepository;
+import com.pet.domains.comment.CommentRepository;
 import com.pet.domains.image.domain.Image;
 import com.pet.domains.image.domain.PostImage;
 import com.pet.domains.image.repository.PostImageRepository;
@@ -13,11 +15,14 @@ import com.pet.domains.post.domain.MissingPost;
 import com.pet.domains.post.dto.request.MissingPostCreateParam;
 import com.pet.domains.post.mapper.MissingPostMapper;
 import com.pet.domains.post.repository.MissingPostRepository;
+import com.pet.domains.tag.domain.PostTag;
 import com.pet.domains.tag.domain.Tag;
 import com.pet.domains.tag.service.PostTagService;
 import com.pet.domains.tag.service.TagService;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,6 +53,8 @@ public class MissingPostService {
 
     private final ImageService imageService;
 
+    private final CommentRepository commentRepository;
+
     @Transactional
     public Long createMissingPost(MissingPostCreateParam missingPostCreateParam, List<MultipartFile> multipartFiles,
         Account account) {
@@ -71,6 +78,27 @@ public class MissingPostService {
         createPostImage(imageFiles, createMissingPost);
 
         return createMissingPost.getId();
+    }
+
+    @Transactional
+    public void deleteMissingPost(Long postId, Account account) {
+        Optional<MissingPost> getMissingPost = Optional.of(missingPostRepository.getById(postId));
+        if (!Objects.equals(getMissingPost.get().getAccount().getId(), account.getId())) {
+            throw ExceptionMessage.INVALID_MISSING_POST_WRITER.getException();
+        }
+
+        postImageRepository.deleteAllByMissingPostId(postId);
+
+        commentRepository.deleteAllByMissingPostId(postId);
+
+        List<PostTag> postTags = postTagService.getPostTagsByMissingPost(postId);
+
+        if (!CollectionUtils.isEmpty(postTags) && postTags.size() > 0) {
+            tagService.decreaseTagCount(postTags);
+            postTagService.deletePostTagByMissingPost(postId);
+        }
+
+        missingPostRepository.deleteMissingPostByIdAndAccount(postId, account);
     }
 
     private String getThumbnail(List<Image> imageFiles) {
