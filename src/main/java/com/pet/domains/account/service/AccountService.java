@@ -52,17 +52,21 @@ public class AccountService {
     }
 
     @Transactional
-    public void verifyEmail(String email, String key) {
+    public Long verifyEmail(String email, String key) {
         SignEmail signEmail = signEmailRepository.findByEmailAndVerifyKey(email, key)
             .filter(findSignEmail -> findSignEmail.isVerifyTime(LocalDateTime.now()))
             .orElseThrow(ExceptionMessage.INVALID_MAIL_KEY::getException);
         signEmail.successVerified();
+        return signEmail.getId();
     }
 
     public Account login(String email, String password) {
         Account account = accountRepository.findByEmail(email)
             .orElseThrow(ExceptionMessage.NOT_FOUND_ACCOUNT::getException);
-        return checkPassword(password, account);
+        if (!account.isMatchPassword(passwordEncoder, password)) {
+            throw ExceptionMessage.INVALID_LOGIN.getException();
+        }
+        return account;
     }
 
     public Account checkLoginAccountById(Long accountId) {
@@ -74,7 +78,7 @@ public class AccountService {
     @Transactional
     public Long signUp(AccountSignUpParam param) {
         compareWithPassword(param);
-        verifyEmailAndDelete(param.getEmail());
+        checkSignEmail(param);
         return accountRepository.save(Account.builder()
             .email(param.getEmail())
             .password(passwordEncoder.encode(param.getPassword()))
@@ -84,22 +88,16 @@ public class AccountService {
             .build()).getId();
     }
 
-    private Account checkPassword(String password, Account account) {
-        if (account.isMatchPassword(passwordEncoder, password)) {
-            return account;
-        }
-        throw ExceptionMessage.INVALID_LOGIN.getException();
+    private void checkSignEmail(AccountSignUpParam param) {
+        signEmailRepository.findById(param.getVerifiedId())
+            .orElseThrow(ExceptionMessage.INVALID_SIGN_UP::getException)
+            .isVerifyEmail(param.getEmail());
     }
 
     private void compareWithPassword(AccountSignUpParam param) {
         if (!StringUtils.equals(param.getPassword(), param.getPasswordCheck())) {
             throw ExceptionMessage.INVALID_SIGN_UP.getException();
         }
-    }
-
-    private void verifyEmailAndDelete(String email) {
-        signEmailRepository.deleteById(signEmailRepository.findByEmailAndIsCheckedTrue(email)
-            .orElseThrow(ExceptionMessage.INVALID_SIGN_UP::getException).getId());
     }
 
     @Transactional
