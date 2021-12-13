@@ -49,7 +49,6 @@ public class InitDataConfig implements ApplicationRunner {
                 log.info("임시 회원이 정상적으로 삭제되었습니다.");
             });
 
-        groupPermissionRepository.save(new GroupPermission(group, permission));
         accountRepository.save(tester);
     }
 

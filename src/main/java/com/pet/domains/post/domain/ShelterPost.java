@@ -19,6 +19,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.ObjectUtils;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -111,6 +112,8 @@ public class ShelterPost extends BaseEntity {
         String foundPlace, NeuteredType neutered, LocalDate startDate, LocalDate endDate, String managerTelNumber,
         String postStatus, SexType sex, String feature, Double weight, String noticeNumber, long bookmarkCount,
         AnimalKind animalKind) {
+        ObjectUtils.requireNonEmpty(animalKind, "animalKind must not be null");
+
         this.age = age;
         this.address = address;
         this.shelterPlace = shelterPlace;

@@ -1,5 +1,6 @@
 package com.pet.domains.post.controller;
 
+import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
@@ -18,17 +19,25 @@ import static org.springframework.restdocs.payload.JsonFieldType.OBJECT;
 import static org.springframework.restdocs.payload.JsonFieldType.STRING;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestPartFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParts;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import com.pet.common.jwt.JwtMockToken;
+import com.pet.domains.account.WithAccount;
 import com.pet.domains.docs.BaseDocumentationTest;
+import com.pet.domains.image.domain.Image;
 import com.pet.domains.post.domain.SexType;
 import com.pet.domains.post.domain.Status;
 import com.pet.domains.post.dto.request.MissingPostCreateParam;
+import com.pet.domains.post.dto.request.MissingPostCreateParam.Tag;
 import com.pet.domains.post.dto.request.MissingPostUpdateParam;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
 import org.assertj.core.util.Lists;
@@ -36,30 +45,45 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.ResultActions;
 
 @DisplayName("실종/보호 게시물 컨트롤러 테스트")
 class MissingPostControllerTest extends BaseDocumentationTest {
 
     @DisplayName("실종/보호 게시물 등록 테스트")
+    @WithAccount
     @Test
     void createMissingPostTest() throws Exception {
         //given
         MissingPostCreateParam param = MissingPostCreateParam.of(
             "DETECTION", LocalDate.now(), 1L, 1L, "주민센터 앞 골목 근처",
-            "01012343323", 1L, 1L, 10, "MALE", "410123456789112",
+            "01012343323", 1L, "푸들", 10L, "MALE", "410123456789112",
             "찾아주시면 사례하겠습니다.", List.of(
-                MissingPostCreateParam.PostTag.of("춘식이")
-            ),
-            Lists.emptyList()
+                Tag.of("춘식이")
+            )
         );
 
         //when
-        ResultActions resultActions = mockMvc.perform(post("/api/v1/missing-posts")
-            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN)
-            .contentType(MediaType.APPLICATION_JSON)
+        MockMultipartFile firstMultipartFile =
+            new MockMultipartFile("multipartFiles", "", "multipart/form-data", "abcd.jpg".getBytes());
+        MockMultipartFile secondMultipartFile =
+            new MockMultipartFile("multipartFiles", "", "multipart/form-data", "abcd2.jpg".getBytes());
+        MockMultipartFile paramFile =
+            new MockMultipartFile("param", "", "application/json", objectMapper.writeValueAsString(param).getBytes(
+                StandardCharsets.UTF_8));
+
+        given(imageService.createImage(firstMultipartFile)).willReturn(new Image("image.jpg"));
+
+        ResultActions resultActions = mockMvc.perform(multipart("/api/v1/missing-posts")
+            .file(firstMultipartFile)
+            .file(secondMultipartFile)
+            .file(paramFile)
+            .contentType(MediaType.MULTIPART_MIXED)
             .accept(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(param)));
+            .header(HttpHeaders.AUTHORIZATION, getAuthenticationToken())
+            .characterEncoding("UTF-8")
+        );
 
         //then
         resultActions
@@ -76,7 +100,12 @@ class MissingPostControllerTest extends BaseDocumentationTest {
                 responseHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
-                requestFields(
+                requestParts(
+                    partWithName("multipartFiles").description("게시글 이미지"),
+                    partWithName("param").description("게시글 등록 요청 데이터")
+                ),
+                requestPartFields(
+                    "param",
                     fieldWithPath("status").type(STRING).description("<<status,게시물 상태>>"),
                     fieldWithPath("date").type(STRING).description("발견 날짜"),
                     fieldWithPath("cityId").type(NUMBER).description("시도 id"),
@@ -84,15 +113,14 @@ class MissingPostControllerTest extends BaseDocumentationTest {
                     fieldWithPath("detailAddress").type(STRING).description("상세 및 추가 주소").optional(),
                     fieldWithPath("telNumber").type(STRING).description("연락처"),
                     fieldWithPath("animalId").type(NUMBER).description("동물 id").optional(),
-                    fieldWithPath("animalKindId").type(NUMBER).description("품종 id").optional(),
+                    fieldWithPath("animalKindName").type(STRING).description("품종 이름").optional(),
                     fieldWithPath("age").type(NUMBER).description("나이").optional(),
                     fieldWithPath("sex").type(STRING).description("<<sexType,동물 성별>>"),
                     fieldWithPath("chipNumber").type(STRING).description("칩번호").optional(),
                     fieldWithPath("content").type(STRING).description("게시물 내용").optional(),
-                    fieldWithPath("postTags").type(ARRAY).description("게시글의 해시태그들").optional(),
-                    fieldWithPath("postTags[0].name").type(STRING).description("해시태그 내용").optional(),
-                    fieldWithPath("files").type(ARRAY).description("게시글의 이미지들").optional()
-                    ),
+                    fieldWithPath("tags").type(ARRAY).description("게시글의 해시태그들").optional(),
+                    fieldWithPath("tags[0].name").type(STRING).description("해시태그 내용").optional()
+                ),
                 responseFields(
                     fieldWithPath("data").type(OBJECT).description("응답 데이터").optional(),
                     fieldWithPath("data.id").type(NUMBER).description("게시글 id"),
@@ -127,7 +155,7 @@ class MissingPostControllerTest extends BaseDocumentationTest {
                     fieldWithPath("data.missingPosts[].id").type(NUMBER).description("게시글 id"),
                     fieldWithPath("data.missingPosts[].city").type(STRING).description("시도 이름"),
                     fieldWithPath("data.missingPosts[].town").type(STRING).description("시군구 이름"),
-                    fieldWithPath("data.missingPosts[].animalKind").type(STRING).description("동물 품종"),
+                    fieldWithPath("data.missingPosts[].animalKind").type(STRING).description("동물 품종 이름"),
                     fieldWithPath("data.missingPosts[].status").type(STRING).description("<<status,게시물 상태>>"),
                     fieldWithPath("data.missingPosts[].createdAt").type(STRING).description("게시글 작성날짜"),
                     fieldWithPath("data.missingPosts[].sex").type(STRING).description("<<sexType,동물 성별>>"),
@@ -178,7 +206,7 @@ class MissingPostControllerTest extends BaseDocumentationTest {
                     fieldWithPath("data.detailAddress").type(STRING).description("상세 및 추가 주소"),
                     fieldWithPath("data.telNumber").type(STRING).description("연락처"),
                     fieldWithPath("data.animal").type(STRING).description("동물 종류"),
-                    fieldWithPath("data.animalKind").type(STRING).description("동물 품종"),
+                    fieldWithPath("data.animalKind").type(STRING).description("동물 품종 이름"),
                     fieldWithPath("data.age").type(NUMBER).description("동물 나이"),
                     fieldWithPath("data.sex").type(STRING).description("<<sexType,동물 성별>>"),
                     fieldWithPath("data.chipNumber").type(STRING).description("칩번호"),
@@ -212,7 +240,7 @@ class MissingPostControllerTest extends BaseDocumentationTest {
         //given
         MissingPostUpdateParam param = MissingPostUpdateParam.of(
             Status.DETECTION, LocalDate.now(), 1L, 1L, "주민센터 앞 골목 근처", "01034231111",
-            1L, 1L, 10, SexType.MALE, "410123456789112",
+            1L, "푸들", 10, SexType.MALE, "410123456789112",
             List.of(
                 MissingPostUpdateParam.PostTag.of("춘식이")
             ),
@@ -250,7 +278,7 @@ class MissingPostControllerTest extends BaseDocumentationTest {
                     fieldWithPath("detailAddress").type(STRING).description("상세 및 추가 주소"),
                     fieldWithPath("telNumber").type(STRING).description("연락처"),
                     fieldWithPath("animal").type(NUMBER).description("동물 종류 id"),
-                    fieldWithPath("animalKind").type(NUMBER).description("품종 종류 id"),
+                    fieldWithPath("animalKindName").type(STRING).description("동물 품종 이름"),
                     fieldWithPath("age").type(NUMBER).description("나이"),
                     fieldWithPath("sex").type(STRING).description("<<sexType,동물 성별>>"),
                     fieldWithPath("chipNumber").type(STRING).description("칩번호"),
