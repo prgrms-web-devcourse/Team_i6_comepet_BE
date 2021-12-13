@@ -62,7 +62,8 @@ class ShelterPostControllerTest extends BaseDocumentationTest {
             , true,
             10
         );
-        given(shelterPostService.getShelterPostsPageWithAccount(any(Account.class), any(PageRequest.class))).willReturn(results);
+        given(shelterPostService.getShelterPostsPageWithAccount(any(Account.class), any(PageRequest.class)))
+            .willReturn(results);
 
         // when
         ResultActions resultActions = mockMvc.perform(get("/api/v1/shelter-posts")
