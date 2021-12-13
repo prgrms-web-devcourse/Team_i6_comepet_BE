@@ -331,7 +331,9 @@ include::{snippets}/create-missing-post/curl-request.adoc[]
 include::{snippets}/create-missing-post/http-request.adoc[]
 
 ==== Request fields
-include::{snippets}/create-missing-post/request-fields.adoc[]
+include::{snippets}/create-missing-post/request-parts.adoc[]
+
+include::{snippets}/create-missing-post/request-part-param-fields.adoc[]
 
 ==== Http Response
 include::{snippets}/create-missing-post/http-response.adoc[]
@@ -412,6 +414,12 @@ include::{snippets}/get-shelter-posts/curl-request.adoc[]
 
 ==== Http Request
 include::{snippets}/get-shelter-posts/http-request.adoc[]
+
+==== Request Headers
+include::{snippets}/get-shelter-posts/request-headers.adoc[]
+
+==== Request Parameters
+include::{snippets}/get-shelter-posts/request-parameters.adoc[]
 
 ==== Http Response
 include::{snippets}/get-shelter-posts/http-response.adoc[]
