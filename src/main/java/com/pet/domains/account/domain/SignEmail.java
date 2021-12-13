@@ -52,7 +52,7 @@ public class SignEmail extends BaseEntity {
     }
 
     public boolean isVerifyEmail(String email) {
-        if (StringUtils.equals(this.email, email) || isChecked) {
+        if (StringUtils.equals(this.email, email) && isChecked) {
             return true;
         }
         throw ExceptionMessage.INVALID_SIGN_UP.getException();
