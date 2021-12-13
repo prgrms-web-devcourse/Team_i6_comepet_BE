@@ -5,7 +5,7 @@ spring:
   datasource:
     url: "jdbc:h2:mem:testdb;MODE=MYSQL;DB_CLOSE_DELAY=-1"
   jpa:
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL5InnoDBDialect
@@ -98,6 +98,9 @@ logging:
       amazonaws:
         util:
           EC2MetadataUtils: error
+
+logging.level:
+  org.hibernate.SQL: debug
 
 jwt:
   header: authorization

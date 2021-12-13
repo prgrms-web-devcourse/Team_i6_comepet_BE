@@ -47,6 +47,7 @@ public enum ExceptionMessage {
     // 실종 게시물
 
     // 보호소 게시물
+    NOT_FOUND_SHELTER_POST(new BadRequestException("해당하는 보호소 게시글을 찾을 수 없습니다."));
 
     // 알림
 
