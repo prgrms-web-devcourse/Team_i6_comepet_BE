@@ -22,9 +22,6 @@ class TownRepositoryTest {
     private TestEntityManager entityManager;
 
     @Autowired
-    private CityRepository cityRepository;
-
-    @Autowired
     private TownRepository townRepository;
 
     @Test
@@ -35,10 +32,12 @@ class TownRepositoryTest {
             .name("서울시")
             .code("001")
             .build();
-        cityRepository.save(city);
+        entityManager.persist(city);
 
         Town town = new Town("001", "노원구", city);
-        townRepository.save(town);
+        entityManager.persist(town);
+        entityManager.flush();
+        entityManager.clear();
 
         //when
         Town foundTown = townRepository.getById(city.getId());
