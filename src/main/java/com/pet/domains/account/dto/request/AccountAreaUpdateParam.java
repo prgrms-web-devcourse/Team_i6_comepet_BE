@@ -22,16 +22,12 @@ public class AccountAreaUpdateParam {
     @Getter
     public static class Area {
 
-        @NotBlank(message = "'시/도'를 입력해주세요.")
-        private Long cityId;
-
         @NotBlank(message = "'시/군/구'를 입력해주세요.")
         private Long townId;
 
         private boolean defaultArea;
 
-        public Area(Long cityId, Long townId, boolean defaultArea) {
-            this.cityId = cityId;
+        public Area(Long townId, boolean defaultArea) {
             this.townId = townId;
             this.defaultArea = defaultArea;
         }

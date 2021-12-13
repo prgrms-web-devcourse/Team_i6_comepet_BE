@@ -130,7 +130,6 @@ public class AccountController {
         @LoginAccount Account account, @RequestBody AccountAreaUpdateParam accountAreaUpdateParam
     ) {
         accountService.updateArea(account, accountAreaUpdateParam);
-        log.info("update account area, notification : {}", accountAreaUpdateParam.isNotification());
     }
 
     @GetMapping(path = "/me/posts", produces = MediaType.APPLICATION_JSON_VALUE)

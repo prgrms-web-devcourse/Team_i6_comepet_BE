@@ -104,8 +104,9 @@ public class AccountService {
                     .town(townRepository.getById(area.getTownId()))
                     .build())
                 .collect(Collectors.toList()));
-
-        accountRepository.findAll();
+        account.useNotification(accountAreaUpdateParam.isNotification());
+        log.debug("account : {} setting notification", account.getId());
+        accountRepository.save(account);
     }
 
     private Account checkPassword(String password, Account account) {

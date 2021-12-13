@@ -255,18 +255,19 @@ class AccountControllerTest extends BaseDocumentationTest {
     }
 
     @Test
+    @WithAccount
     @DisplayName("관심 지역 설정 테스트")
     void updateAccountAreaTest() throws Exception {
         // given
         AccountAreaUpdateParam param = new AccountAreaUpdateParam(
             List.of(
-                new AccountAreaUpdateParam.Area(1L, 1L, true),
-                new AccountAreaUpdateParam.Area(1L, 2L, false)
+                new AccountAreaUpdateParam.Area(1L, true),
+                new AccountAreaUpdateParam.Area(2L, false)
             ), true
         );
         // when
         ResultActions resultActions = mockMvc.perform(put("/api/v1/me/areas")
-            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN)
+            .header(HttpHeaders.AUTHORIZATION, getAuthenticationToken())
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(param)));
 
@@ -283,7 +284,6 @@ class AccountControllerTest extends BaseDocumentationTest {
                 ),
                 requestFields(
                     fieldWithPath("areas").type(ARRAY).description("시도"),
-                    fieldWithPath("areas[0].cityId").type(NUMBER).description("시도 id"),
                     fieldWithPath("areas[0].townId").type(NUMBER).description("시군구 id"),
                     fieldWithPath("areas[0].defaultArea").type(BOOLEAN).description("디폴트 지역 여부"),
                     fieldWithPath("notification").type(BOOLEAN).description("알림 여부")
