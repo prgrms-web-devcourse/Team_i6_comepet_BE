@@ -65,6 +65,7 @@ class ShelterPostControllerTest extends BaseDocumentationTest {
         // when
         ResultActions resultActions = mockMvc.perform(get("/api/v1/shelter-posts")
             .accept(MediaType.APPLICATION_JSON_VALUE)
+            .header(HttpHeaders.AUTHORIZATION, getAuthenticationToken())
             .param("page", "1")
             .param("size", "10")
             .param("sort", "id,DESC"));
@@ -77,7 +78,8 @@ class ShelterPostControllerTest extends BaseDocumentationTest {
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 requestHeaders(
-                    headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE)
+                    headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE),
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token - optional").optional()
                 ),
                 requestParameters(
                     parameterWithName("page").description("페이지 번호"),
@@ -113,8 +115,7 @@ class ShelterPostControllerTest extends BaseDocumentationTest {
         // given
         // when
         ResultActions resultActions = mockMvc.perform(get("/api/v1/shelter-posts/{postId}", 1L)
-            .accept(MediaType.APPLICATION_JSON_VALUE)
-            .header(HttpHeaders.AUTHORIZATION, getAuthenticationToken()));
+            .accept(MediaType.APPLICATION_JSON_VALUE));
 
         // then
         resultActions
@@ -127,8 +128,7 @@ class ShelterPostControllerTest extends BaseDocumentationTest {
                     parameterWithName("postId").description("게시글 아이디")
                 ),
                 requestHeaders(
-                    headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE),
-                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token - optional").optional()
+                    headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
                 responseHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
