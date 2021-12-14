@@ -1,8 +1,10 @@
 package com.pet.domains.account.domain;
 
+import com.pet.common.exception.ExceptionMessage;
 import com.pet.domains.DeletableEntity;
 import com.pet.domains.auth.domain.Group;
 import com.pet.domains.image.domain.Image;
+import java.util.Objects;
 import java.util.StringJoiner;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -17,8 +19,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -105,6 +105,29 @@ public class Account extends DeletableEntity {
 
     public void updateNotification(boolean notification) {
         this.notification = notification;
+    }
+
+    public void isIdentification(Long accountId) {
+        if (this.id.equals(accountId)) {
+            throw ExceptionMessage.UN_IDENTIFICATION.getException();
+        }
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        Account account = (Account) obj;
+        return id.equals(account.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     public void updateProfile(String nickname, String password) {

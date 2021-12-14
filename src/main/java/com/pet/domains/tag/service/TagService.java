@@ -1,8 +1,9 @@
 package com.pet.domains.tag.service;
 
+import com.pet.domains.tag.domain.PostTag;
 import com.pet.domains.tag.domain.Tag;
 import com.pet.domains.tag.repository.TagRepository;
-import java.util.Optional;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,18 +17,23 @@ public class TagService {
 
     @Transactional
     public Tag getOrCreateByTagName(String tagName) {
-        Optional<Tag> tag = tagRepository.findTagByName(tagName);
+        return tagRepository.findTagByName(tagName)
+            .map(tag -> {
+                tag.increaseCount();
+                return tag;
+            })
+            .orElseGet(() -> tagRepository.save(
+                Tag.builder()
+                    .name(tagName)
+                    .build())
+            );
+    }
 
-        if (tag.isPresent()) {
-            tag.get().changeCount(tag.get().getId());
-            return tag.get();
-        }
-
-        return tagRepository.save(
-            Tag.builder()
-                .name(tagName)
-                .build()
-        );
+    @Transactional
+    public void decreaseTagCount(List<PostTag> postTags) {
+        postTags.stream()
+            .map(PostTag::getTag)
+            .forEach(Tag::decreaseCount);
     }
 
 }

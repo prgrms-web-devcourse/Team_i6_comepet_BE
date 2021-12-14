@@ -16,6 +16,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.ObjectUtils;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -48,6 +49,9 @@ public class PostImage {
 
     @Builder
     public PostImage(MissingPost missingPost, Image image) {
+        ObjectUtils.requireNonEmpty(missingPost, "missingPost must not be null");
+        ObjectUtils.requireNonEmpty(image, "image must not be null");
+
         this.missingPost = missingPost;
         this.image = image;
     }
