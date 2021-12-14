@@ -10,6 +10,7 @@ import com.pet.domains.post.dto.request.MissingPostUpdateParam;
 import com.pet.domains.post.dto.response.MissingPostCommentPageResults;
 import com.pet.domains.post.dto.response.MissingPostReadResult;
 import com.pet.domains.post.dto.response.MissingPostReadResults;
+import com.pet.domains.post.service.MissingPostBookmarkService;
 import com.pet.domains.post.service.MissingPostService;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -44,6 +45,8 @@ public class MissingPostController {
     private static final String RETURN_KEY = "id";
 
     private final MissingPostService missingPostService;
+
+    private final MissingPostBookmarkService missingPostBookmarkService;
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -204,8 +207,9 @@ public class MissingPostController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(path = "/{postId}/bookmark")
-    public void createMissingPostBookmark(@PathVariable Long postId) {
+    public void createMissingPostBookmark(@PathVariable Long postId, @LoginAccount Account account) {
         log.info("실종/보호 북마크 생성 call for {}", postId);
+        missingPostBookmarkService.createMissingPostBookmark(postId, account);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
