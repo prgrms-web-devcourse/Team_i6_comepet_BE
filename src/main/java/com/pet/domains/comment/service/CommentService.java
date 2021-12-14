@@ -6,7 +6,7 @@ import com.pet.domains.comment.domain.Comment;
 import com.pet.domains.comment.dto.request.CommentCreateParam;
 import com.pet.domains.comment.repository.CommentRepository;
 import com.pet.domains.post.domain.MissingPost;
-import com.pet.domains.post.service.MissingPostService;
+import com.pet.domains.post.repository.MissingPostRepository;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,20 +19,20 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
 
-    private final MissingPostService missingPostService;
+    private final MissingPostRepository missingPostRepository;
 
     @Transactional
     public Long createComment(Account account, CommentCreateParam commentCreateParam) {
         return commentRepository.save(getNewComment(account, commentCreateParam)).getId();
     }
 
-    public Comment getCommentById(Long commentId) {
+    private Comment getCommentById(Long commentId) {
         return commentRepository.findById(commentId)
             .orElseThrow(ExceptionMessage.NOT_FOUND_COMMENT::getException);
     }
 
     private Comment getNewComment(Account account, CommentCreateParam commentCreateParam) {
-        MissingPost missingPost = missingPostService.getMissingPostById(commentCreateParam.getPostId());
+        MissingPost missingPost = getMissingPostById(commentCreateParam.getPostId());
         if (Objects.nonNull(commentCreateParam.getParentCommentId())) {
             return Comment.ChildCommentBuilder()
                 .content(commentCreateParam.getContent())
@@ -46,6 +46,11 @@ public class CommentService {
             .missingPost(missingPost)
             .account(account)
             .build();
+    }
+
+    private MissingPost getMissingPostById(Long postId) {
+        return missingPostRepository.findById(postId)
+            .orElseThrow(ExceptionMessage.NOT_FOUND_MISSING_POST::getException);
     }
 
 }
