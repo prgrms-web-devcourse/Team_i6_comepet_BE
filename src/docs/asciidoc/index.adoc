@@ -410,15 +410,27 @@ include::{snippets}/delete-missing-post-bookmark/http-response.adoc[]
 === 게시글 목록 조회
 
 ==== CURL request
+
 include::{snippets}/get-shelter-posts/curl-request.adoc[]
 
 ==== Http Request
+
 include::{snippets}/get-shelter-posts/http-request.adoc[]
 
+==== Request Headers
+
+include::{snippets}/get-shelter-posts/request-headers.adoc[]
+
+==== Request Parameters
+
+include::{snippets}/get-shelter-posts/request-parameters.adoc[]
+
 ==== Http Response
+
 include::{snippets}/get-shelter-posts/http-response.adoc[]
 
 ==== Response fields
+
 include::{snippets}/get-shelter-posts/response-fields.adoc[]
 
 === 게시글 단건 조회
