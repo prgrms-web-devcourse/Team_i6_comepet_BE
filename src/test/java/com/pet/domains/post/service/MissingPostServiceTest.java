@@ -199,13 +199,13 @@ class MissingPostServiceTest {
     @DisplayName("실종/보호 게시물 삭제 테스트")
     void deleteMissingPostTest() {
         //given
-        doNothing().when(missingPostRepository).deleteMissingPostByIdAndAccount(any(), any(Account.class));
+        doNothing().when(missingPostRepository).deleteById(any());
 
         //when
-        missingPostRepository.deleteMissingPostByIdAndAccount(1L, mock(Account.class));
+        missingPostRepository.deleteById(1L);
 
         //then
-        verify(missingPostRepository).deleteMissingPostByIdAndAccount(anyLong(), any(Account.class));
+        verify(missingPostRepository).deleteById(anyLong());
     }
 
 }

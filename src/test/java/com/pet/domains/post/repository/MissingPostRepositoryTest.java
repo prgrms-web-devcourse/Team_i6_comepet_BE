@@ -183,7 +183,7 @@ class MissingPostRepositoryTest {
     void deleteMissingPostTest() {
         //given
         //when
-        MissingPost getMissingPost = missingPostRepository.getById(missingPost.getId());
+        MissingPost getMissingPost = missingPostRepository.findById(missingPost.getId()).get();
 
         postImageRepository.deleteAllByMissingPostId(missingPost.getId());
         List<PostImage> getPostImages = postImageRepository.findAllByMissingPostId(missingPost.getId());
@@ -201,6 +201,9 @@ class MissingPostRepositoryTest {
         postTagRepository.deleteAllByMissingPostId(missingPost.getId());
         List<PostTag> getPostTagsAfterDelete = postTagRepository.findAll();
 
+        missingPostRepository.deleteById(missingPost.getId());
+        List<MissingPost> getMissingPosts = missingPostRepository.findAll();
+
         //then
         assertThat(getMissingPost.getId()).isEqualTo(missingPost.getId());
         assertThat(getPostImages.isEmpty());
@@ -208,6 +211,7 @@ class MissingPostRepositoryTest {
         assertThat(getPostTags.size()).isEqualTo(1);
         assertThat(getTag.getCount()).isEqualTo(0);
         assertThat(getPostTagsAfterDelete.size()).isEqualTo(0);
+        assertThat(getMissingPosts.size()).isEqualTo(0);
     }
 
 }

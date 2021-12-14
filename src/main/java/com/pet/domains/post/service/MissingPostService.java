@@ -1,6 +1,5 @@
 package com.pet.domains.post.service;
 
-import com.pet.common.exception.ExceptionMessage;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.animal.domain.AnimalKind;
 import com.pet.domains.animal.service.AnimalKindService;
@@ -21,7 +20,6 @@ import com.pet.domains.tag.service.PostTagService;
 import com.pet.domains.tag.service.TagService;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -63,9 +61,7 @@ public class MissingPostService {
         Town town = townRepository.getById(missingPostCreateParam.getTownId());
 
         List<Tag> tags = getTags(missingPostCreateParam);
-
         List<Image> imageFiles = uploadAndGetImages(multipartFiles);
-
         String thumbnail = getThumbnail(imageFiles);
 
         MissingPost createMissingPost = missingPostRepository.save(
@@ -74,7 +70,6 @@ public class MissingPostService {
         if (!CollectionUtils.isEmpty(tags) && tags.size() > 0) {
             postTagService.createPostTag(tags, createMissingPost);
         }
-
         createPostImage(imageFiles, createMissingPost);
 
         return createMissingPost.getId();
@@ -82,23 +77,19 @@ public class MissingPostService {
 
     @Transactional
     public void deleteMissingPost(Long postId, Account account) {
-        Optional<MissingPost> getMissingPost = Optional.of(missingPostRepository.getById(postId));
-        if (!Objects.equals(getMissingPost.get().getAccount().getId(), account.getId())) {
-            throw ExceptionMessage.INVALID_MISSING_POST_WRITER.getException();
-        }
+        Optional<MissingPost> getMissingPost = missingPostRepository.findById(postId);
+        getMissingPost.get().isVerifyAccount(account.getId());
 
         postImageRepository.deleteAllByMissingPostId(postId);
-
         commentRepository.deleteAllByMissingPostId(postId);
 
         List<PostTag> postTags = postTagService.getPostTagsByMissingPost(postId);
-
         if (!CollectionUtils.isEmpty(postTags) && postTags.size() > 0) {
             tagService.decreaseTagCount(postTags);
             postTagService.deletePostTagByMissingPost(postId);
         }
 
-        missingPostRepository.deleteMissingPostByIdAndAccount(postId, account);
+        missingPostRepository.deleteById(postId);
     }
 
     private String getThumbnail(List<Image> imageFiles) {
