@@ -16,7 +16,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.Validate;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -45,8 +45,8 @@ public class MissingPostBookmark extends BaseEntity {
 
     @Builder
     public MissingPostBookmark(Account account, MissingPost missingPost) {
-        ObjectUtils.requireNonEmpty(account, "account must not be null");
-        ObjectUtils.requireNonEmpty(missingPost, "missingPost must not be null");
+        Validate.notNull(account, "account must not be null");
+        Validate.notNull(missingPost, "missingPost must not be null");
 
         this.account = account;
         this.missingPost = missingPost;
