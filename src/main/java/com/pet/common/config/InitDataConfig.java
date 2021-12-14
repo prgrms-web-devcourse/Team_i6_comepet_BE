@@ -3,6 +3,10 @@ package com.pet.common.config;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.account.domain.SignStatus;
 import com.pet.domains.account.repository.AccountRepository;
+import com.pet.domains.area.domain.City;
+import com.pet.domains.area.domain.Town;
+import com.pet.domains.area.repository.CityRepository;
+import com.pet.domains.area.repository.TownRepository;
 import com.pet.domains.auth.domain.Group;
 import com.pet.domains.auth.domain.GroupPermission;
 import com.pet.domains.auth.domain.Permission;
@@ -26,6 +30,8 @@ public class InitDataConfig implements ApplicationRunner {
     private final AccountRepository accountRepository;
     private final ShelterApiService shelterApiService;
     private final JdbcTemplate jdbcTemplate;
+    private final TownRepository townRepository;
+    private final CityRepository cityRepository;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -50,6 +56,10 @@ public class InitDataConfig implements ApplicationRunner {
                 log.info("임시 회원이 정상적으로 삭제되었습니다.");
             });
         accountRepository.save(tester);
+
+        City city = cityRepository.save(City.builder().code("100").name("서울시").build());
+        townRepository.save(Town.builder().name("도봉구").code("111").city(city).build());
+        townRepository.save(Town.builder().name("강북구").code("112").city(city).build());
     }
 
     public void runShelterPostSchedulerTask() {
