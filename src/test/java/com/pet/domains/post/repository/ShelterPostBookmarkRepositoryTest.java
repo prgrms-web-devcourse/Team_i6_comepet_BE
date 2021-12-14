@@ -7,6 +7,7 @@ import com.pet.domains.animal.domain.Animal;
 import com.pet.domains.animal.domain.AnimalKind;
 import com.pet.domains.area.domain.City;
 import com.pet.domains.area.domain.Town;
+import com.pet.domains.auth.domain.Group;
 import com.pet.domains.post.domain.ShelterPost;
 import com.pet.domains.post.domain.ShelterPostBookmark;
 import java.util.List;
@@ -36,6 +37,9 @@ class ShelterPostBookmarkRepositoryTest {
         // given
         Account account = Account.builder()
             .email("test@gmail.com")
+            .nickname("nickname")
+            .password("123123a!")
+            .group(entityManager.persist(new Group("USER_GROUP")))
             .build();
         entityManager.persist(account);
 

@@ -2,11 +2,14 @@ package com.pet.domains.area.repository;
 
 import com.pet.common.config.JpaAuditingConfig;
 import com.pet.domains.account.domain.Account;
-import com.pet.domains.account.domain.SignStatus;
 import com.pet.domains.account.repository.AccountRepository;
 import com.pet.domains.area.domain.City;
 import com.pet.domains.area.domain.InterestArea;
 import com.pet.domains.area.domain.Town;
+import com.pet.domains.auth.domain.Group;
+import com.pet.domains.auth.domain.GroupPermission;
+import com.pet.domains.auth.domain.Permission;
+import com.pet.domains.auth.repository.GroupPermissionRepository;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,6 +44,9 @@ class InterestAreaRepositoryTest {
     @Autowired
     private TestEntityManager entityManager;
 
+    @Autowired
+    private GroupPermissionRepository groupPermissionRepository;
+
     private Account account;
 
     private City city;
@@ -49,8 +55,13 @@ class InterestAreaRepositoryTest {
 
     private Town town2;
 
+    private GroupPermission groupPermission;
+
     @BeforeEach
     void setUp() {
+        groupPermission = groupPermissionRepository.save(
+            new GroupPermission(new Group("USER_GROUP"), new Permission("ROLE_USER"))
+        );
         account = accountRepository.save(givenAccount());
         city = cityRepository.save(City.builder().code("100").name("서울시").build());
         town1 = townRepository.save(Town.builder().name("도봉구").code("111").city(city).build());
@@ -94,7 +105,8 @@ class InterestAreaRepositoryTest {
     }
 
     private Account givenAccount() {
-        return Account.builder().email("tester@email.com").password("1234").nickname("name").notification(true)
+        return Account.builder().email("tester@email.com").password("1234")
+            .group(groupPermission.getGroup()).nickname("name").notification(true)
             .checkedArea(true).build();
     }
 
