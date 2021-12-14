@@ -1,6 +1,8 @@
 package com.pet.common.config;
 
 import com.pet.domains.account.domain.Account;
+import com.pet.domains.account.domain.Provider;
+import com.pet.domains.account.domain.SignStatus;
 import com.pet.domains.account.repository.AccountRepository;
 import com.pet.domains.area.domain.City;
 import com.pet.domains.area.domain.Town;
@@ -36,14 +38,11 @@ public class InitDataConfig implements ApplicationRunner {
         String email = "test-user@email.com";
         Group group = new Group("USER_GROUP");
         Permission permission = new Permission("ROLE_USER");
-        Account tester = new Account(
-            email,
-            "$2a$10$21Pd/Fr9GAN9Js6FmvahmuBMEZo73FSBUpDPXl2lTIyLWSqnQoaqi",             // user123
-            "tester",
-            true,
-            true,
-            null,
-            group);
+        Account tester = Account.builder()
+            .email(email)
+            .password("$2a$10$21Pd/Fr9GAN9Js6FmvahmuBMEZo73FSBUpDPXl2lTIyLWSqnQoaqi") // user123
+            .nickname("tester").notification(true).checkedArea(true).group(group)
+            .build();
 
         groupPermissionRepository.save(new GroupPermission(group, permission));
         accountRepository.findByEmail(email)

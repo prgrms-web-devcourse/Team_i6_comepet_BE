@@ -5,9 +5,12 @@ import com.pet.domains.DeletableEntity;
 import com.pet.domains.auth.domain.Group;
 import com.pet.domains.image.domain.Image;
 import java.util.Objects;
+import java.util.StringJoiner;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
@@ -23,6 +26,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -56,6 +60,8 @@ public class Account extends DeletableEntity {
     @Column(name = "checked_area", columnDefinition = "boolean default false")
     private boolean checkedArea;
 
+    private SignStatus signStatus;
+
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "image_id",
         referencedColumnName = "id",
@@ -70,28 +76,27 @@ public class Account extends DeletableEntity {
     )
     private Group group;
 
-    @Column(name = "provider", length = 10)
-    private String provider;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "provider", length = 20, nullable = false)
+    private Provider provider;
 
     @Builder
-    public Account(String email, String password, String nickname, boolean notification, boolean checkedArea,
-        Image image, Group group) {
+    private Account(String email, String password, String nickname, boolean notification, boolean checkedArea,
+        Image profileImage, Group group, Provider provider
+    ) {
+        Validate.notBlank(email, "email must not be null");
+        Validate.notBlank(password, "password must not be null");
+        Validate.notBlank(nickname, "nickname must not be null");
+        Validate.notNull(group, "group must not be null");
+
         this.email = email;
         this.password = password;
         this.nickname = nickname;
         this.notification = notification;
         this.checkedArea = checkedArea;
-        this.image = image;
-        this.group = group;
-    }
-
-    @Builder
-    public Account(String email, String nickname, String provider, Image profileImage, Group group) {
-        this.email = email;
-        this.nickname = nickname;
-        this.provider = provider;
         this.image = profileImage;
         this.group = group;
+        this.provider = Objects.requireNonNullElse(provider, Provider.LOCAL);
     }
 
     public boolean isMatchPassword(PasswordEncoder passwordEncoder, String password) {
