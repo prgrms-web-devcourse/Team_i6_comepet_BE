@@ -3,13 +3,18 @@ package com.pet.domains.account.service;
 import com.pet.common.exception.ExceptionMessage;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.account.domain.AccountGroup;
+import com.pet.domains.account.domain.Provider;
 import com.pet.domains.account.domain.SignEmail;
 import com.pet.domains.account.dto.request.AccountAreaUpdateParam;
 import com.pet.domains.account.dto.request.AccountSignUpParam;
 import com.pet.domains.account.dto.request.AccountUpdateParam;
+import com.pet.domains.account.dto.response.AccountAreaReadResults;
 import com.pet.domains.account.repository.AccountRepository;
 import com.pet.domains.account.repository.SignEmailRepository;
+import com.pet.domains.area.domain.City;
 import com.pet.domains.area.domain.InterestArea;
+import com.pet.domains.area.domain.Town;
+import com.pet.domains.area.mapper.InterestAreaMapper;
 import com.pet.domains.area.repository.InterestAreaRepository;
 import com.pet.domains.area.repository.TownRepository;
 import com.pet.domains.auth.domain.Group;
@@ -20,6 +25,7 @@ import com.pet.domains.image.domain.Image;
 import com.pet.infra.EmailMessage;
 import com.pet.infra.MailSender;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -50,6 +56,8 @@ public class AccountService {
     private final InterestAreaRepository interestAreaRepository;
 
     private final TownRepository townRepository;
+
+    private final InterestAreaMapper interestAreaMapper;
 
     @Transactional
     public void sendEmail(String email) {
@@ -93,6 +101,7 @@ public class AccountService {
             .email(param.getEmail())
             .password(passwordEncoder.encode(param.getPassword()))
             .nickname(param.getNickname())
+            .provider(Provider.LOCAL)
             .group(groupRepository.findByName(AccountGroup.USER_GROUP.name())
                 .orElseThrow(ExceptionMessage.NOT_FOUND_GROUP::getException))
             .build()).getId();
@@ -115,10 +124,10 @@ public class AccountService {
         Map<String, Object> attributes = oAuth2User.getAttributes();
         Oauth2User oauth2User = ProviderType.findProvider(provider);
         if (provider.equals(ProviderType.NAVER.getType())) {
-            attributes = (Map<String, Object>) attributes.get("response");
+            attributes = (Map<String, Object>)attributes.get("response");
         }
         if (provider.equals(ProviderType.KAKAO.getType())) {
-            attributes = (Map<String, Object>) attributes.get("properties");
+            attributes = (Map<String, Object>)attributes.get("properties");
         }
         String email = oauth2User.getEmail(attributes);
         return findByEmail(provider, attributes, oauth2User, email);
@@ -131,21 +140,30 @@ public class AccountService {
                 String profileImage = oauth2User.getProfileImage(attributes);
                 Group group = groupRepository.findByName(AccountGroup.USER_GROUP.name())
                     .orElseThrow(ExceptionMessage.NOT_FOUND_GROUP::getException);
-                return accountRepository.save(new Account(nickname, email, provider, new Image(profileImage), group));
+                return accountRepository.save(Account.builder().nickname(nickname).email(email)
+                    .provider(Provider.findByType(provider))
+                    .profileImage(new Image(profileImage)).group(group).build());
             });
     }
 
-
     @Transactional
     public void updateArea(Account account, AccountAreaUpdateParam accountAreaUpdateParam) {
-        interestAreaRepository.saveAll(
-            accountAreaUpdateParam.getAreas().stream()
-                .map(area -> InterestArea.builder()
+        if (!accountAreaUpdateParam.getAreas().isEmpty()) {
+            interestAreaRepository.deleteAllByAccountId(account.getId());
+        }
+
+        interestAreaRepository.saveAll(accountAreaUpdateParam.getAreas().stream()
+            .map(area -> {
+                Long townId = area.getTownId();
+                return InterestArea.builder()
                     .account(account)
                     .selected(area.isDefaultArea())
-                    .town(townRepository.getById(area.getTownId()))
-                    .build())
-                .collect(Collectors.toList()));
+                    .town(townRepository.getById(townId))
+                    .build();
+            })
+            .distinct()
+            .limit(2)
+            .collect(Collectors.toList()));
 
         account.updateNotification(accountAreaUpdateParam.isNotification());
         accountRepository.save(account);
@@ -161,5 +179,16 @@ public class AccountService {
             passwordEncoder.encode(accountUpdateParam.getNewPassword())
         );
         accountRepository.save(account);
+    }
+
+    public AccountAreaReadResults getInterestArea(Account account) {
+        List<InterestArea> interestAreas = interestAreaRepository.findByAccountId(account.getId());
+        return AccountAreaReadResults.of(interestAreas.stream()
+            .map(interestArea -> {
+                Town town = interestArea.getTown();
+                City city = town.getCity();
+                return interestAreaMapper.toAreaResult(city, town, interestArea.isSelected());
+            })
+            .collect(Collectors.toList()));
     }
 }

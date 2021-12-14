@@ -6,6 +6,7 @@ import static org.mockito.BDDMockito.mock;
 import com.pet.common.jwt.JwtAuthenticationProvider;
 import com.pet.common.jwt.JwtAuthenticationToken;
 import com.pet.domains.account.domain.Account;
+import com.pet.domains.account.domain.Provider;
 import com.pet.domains.account.service.AccountService;
 import com.pet.domains.auth.domain.Group;
 import java.util.List;
@@ -50,7 +51,7 @@ public class WithAccountSecurityContextFactory implements WithSecurityContextFac
             true,
             null,
             group,
-            "local");
+            Provider.LOCAL);
     }
 
 }

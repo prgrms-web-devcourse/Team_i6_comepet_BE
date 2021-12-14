@@ -98,9 +98,9 @@ class MissingPostServiceTest {
 
         group = new Group("1그룹");
 
-        account =
-            new Account("aaa@naver.com", "user123", "nickName", false, false, image,
-                group);
+        account = Account.builder()
+            .email("aaa@naver.com").password("user123").nickname("nickname")
+            .notification(false).profileImage(image).group(group).build();
 
         city = City.builder()
             .code("001")

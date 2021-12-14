@@ -2,6 +2,7 @@ package com.pet.domains.area.domain;
 
 import com.pet.domains.BaseEntity;
 import com.pet.domains.account.domain.Account;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -14,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -21,6 +23,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "interest_area")
+@EqualsAndHashCode(of = "id", callSuper = false)
 public class InterestArea extends BaseEntity {
 
     @Id

@@ -19,6 +19,7 @@ import com.pet.domains.account.dto.request.AccountSignUpParam;
 import com.pet.domains.account.dto.request.AccountEmailCheck;
 import com.pet.domains.account.dto.request.AccountLonginParam;
 import com.pet.domains.account.dto.request.AccountUpdateParam;
+import com.pet.domains.account.dto.response.AccountAreaReadResults;
 import com.pet.domains.docs.BaseDocumentationTest;
 import java.util.List;
 import lombok.With;
@@ -201,12 +202,20 @@ class AccountControllerTest extends BaseDocumentationTest {
     }
 
     @Test
+    @WithAccount
     @DisplayName("회원의 관심 지역 조회 테스트")
     void getAccountAreaTest() throws Exception {
         // given
+        AccountAreaReadResults result = AccountAreaReadResults.of(
+            List.of(
+                AccountAreaReadResults.Area.of(1L, "서울특별시", 1L, "강남구", true),
+                AccountAreaReadResults.Area.of(1L, "서울특별시", 2L, "강동구", false)
+            )
+        );
+        given(accountService.getInterestArea(any())).willReturn(result);
         // when
         ResultActions resultActions = mockMvc.perform(get("/api/v1/me/areas")
-            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN));
+            .header(HttpHeaders.AUTHORIZATION, getAuthenticationToken()));
 
         // then
         resultActions
