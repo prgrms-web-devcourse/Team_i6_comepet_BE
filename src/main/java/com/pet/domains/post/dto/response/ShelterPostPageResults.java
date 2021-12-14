@@ -3,12 +3,13 @@ package com.pet.domains.post.dto.response;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDate;
 import java.util.List;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 public class ShelterPostPageResults {
 
-    private final List<ShelterPost> shelters;
+    private final List<ShelterPostPageResults.ShelterPost> shelters;
 
     private final long totalElements;
 
@@ -24,8 +25,12 @@ public class ShelterPostPageResults {
         this.size = size;
     }
 
-    public static ShelterPostPageResults of(List<ShelterPostPageResults.ShelterPost> shelters, long totalElements,
-        boolean last, long size) {
+    public static ShelterPostPageResults of(
+        List<ShelterPostPageResults.ShelterPost> shelters,
+        long totalElements,
+        boolean last,
+        long size
+    ) {
         return new ShelterPostPageResults(shelters, totalElements, last, size);
     }
 
@@ -40,7 +45,7 @@ public class ShelterPostPageResults {
 
         private final Long age;
 
-        private final String image;
+        private final String thumbnail;
 
         private final String animal;
 
@@ -48,35 +53,27 @@ public class ShelterPostPageResults {
 
         private final LocalDate foundDate;
 
-        private final String shelterPlace;
+        private final boolean isBookmark;
 
-        private final Boolean isBookmark;
+        private final long bookmarkCount;
 
-        private final Long bookmarkCount;
-
-        private ShelterPost(Long id, String city, String town, Long age, String image, String animal,
-            String animalKind, LocalDate foundDate, String shelterPlace, Boolean isBookmark, Long bookmarkCount) {
+        @Builder
+        public ShelterPost(Long id, String city, String town, Long age, String thumbnail, String animal,
+            String animalKind, LocalDate foundDate, boolean isBookmark, long bookmarkCount) {
             this.id = id;
             this.city = city;
             this.town = town;
             this.age = age;
-            this.image = image;
+            this.thumbnail = thumbnail;
             this.animal = animal;
             this.animalKind = animalKind;
             this.foundDate = foundDate;
-            this.shelterPlace = shelterPlace;
             this.isBookmark = isBookmark;
             this.bookmarkCount = bookmarkCount;
         }
 
-        public static ShelterPost of(Long id, String city, String town, Long age, String image, String animal,
-            String animalKind, LocalDate foundDate, String shelterPlace, Boolean isBookmark, Long bookmarkCount) {
-            return new ShelterPost(id, city, town, age, image, animal, animalKind,
-                foundDate, shelterPlace, isBookmark, bookmarkCount);
-        }
-
         @JsonProperty("isBookmark")
-        public Boolean getBookmark() {
+        public boolean getBookmark() {
             return isBookmark;
         }
     }

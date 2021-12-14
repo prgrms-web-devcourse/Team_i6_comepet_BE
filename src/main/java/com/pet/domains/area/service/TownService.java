@@ -22,7 +22,7 @@ public class TownService {
     private final TownRepository townRepository;
 
     @Transactional
-    public void createTowns(String cityCode, TownCreateParams townCreateParams) {
+    public void bulkCreateTowns(String cityCode, TownCreateParams townCreateParams) {
         City city = getCityByCode(cityCode);
         List<Town> towns = townCreateParams.getTowns().stream()
             .map(townCreateParam -> Town.builder()
@@ -34,9 +34,27 @@ public class TownService {
         townRepository.saveAll(towns);
     }
 
+    @Transactional
+    public Town getOrCreateTownByName(String cityName, String townName) {
+        City foundCity = getCityByName(cityName);
+        return townRepository.findByNameAndCity(townName, foundCity)
+            .orElseGet(() -> townRepository.findByNameContainingAndCity(townName, foundCity)
+                .orElseGet(() -> townRepository.save(
+                    Town.builder()
+                        .name(townName)
+                        .city(foundCity)
+                        .build()
+                ))
+            );
+    }
+
     private City getCityByCode(String cityCode) {
         return cityRepository.findByCode(cityCode)
             .orElseThrow(ExceptionMessage.NOT_FOUND_CITY::getException);
     }
 
+    private City getCityByName(String cityName) {
+        return cityRepository.findByName(cityName)
+            .orElseThrow(ExceptionMessage.NOT_FOUND_CITY::getException);
+    }
 }

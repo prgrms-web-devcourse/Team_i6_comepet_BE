@@ -40,4 +40,21 @@ class CityRepositoryTest {
         assertThat(foundCity.getId()).isEqualTo(city.getId());
     }
 
+    @Test
+    @DisplayName("이름로 city 조회 테스트")
+    void findCityByNameTest() {
+        // given
+        City city = City.builder()
+            .code("1234")
+            .name("city")
+            .build();
+        entityManager.persist(city);
+
+        // when
+        City foundCity = cityRepository.findByName("city").get();
+
+        // then
+        assertThat(foundCity.getId()).isEqualTo(city.getId());
+    }
+
 }

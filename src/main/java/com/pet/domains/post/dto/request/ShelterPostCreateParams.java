@@ -13,12 +13,17 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import lombok.Getter;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
 @Getter
 @XmlRootElement(name = "items")
 @XmlAccessorType(XmlAccessType.NONE)
 public class ShelterPostCreateParams {
+
+    private static final String UNKNOWN = "모름";
+
+    private static final String ALL = "전체";
 
     @XmlElement(name = "item")
     private List<ShelterPostCreateParams.ShelterPost> shelterPosts;
@@ -103,8 +108,28 @@ public class ShelterPostCreateParams {
 
         public String getAnimalKindNameFromKindCd() {
             // format: [{동물}] {품종}, ex) [고양이] 한국 고양이
+            ObjectUtils.requireNonEmpty(kindCd, "kindCd data must not be null");
+
             int whileSpaceIdx = StringUtils.indexOf(kindCd, " ");
+            if (whileSpaceIdx == -1) {
+                return UNKNOWN;
+            }
             return StringUtils.substring(kindCd, whileSpaceIdx + 1).strip();
+        }
+
+        public String getCityNameFromAddress() {
+            ObjectUtils.requireNonEmpty(address, "address data must not be null");
+
+            return StringUtils.split(address)[0];
+        }
+
+        public String getTownNameFromAddress() {
+            String[] split = StringUtils.split(address);
+            int size = split.length;
+            if (size == 1) {
+                return ALL;
+            }
+            return split[size - 1];
         }
 
         public static class AgeAdapter extends XmlAdapter<String, Long> {
