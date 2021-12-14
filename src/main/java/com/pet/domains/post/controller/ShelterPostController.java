@@ -1,10 +1,14 @@
 package com.pet.domains.post.controller;
 
 import com.pet.common.response.ApiResponse;
+import com.pet.domains.account.domain.Account;
+import com.pet.domains.account.domain.LoginAccount;
 import com.pet.domains.post.dto.response.ShelterPostPageResults;
 import com.pet.domains.post.dto.response.ShelterPostReadResult;
+import com.pet.domains.post.service.ShelterPostBookmarkService;
 import java.time.LocalDate;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,18 +22,21 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RequestMapping("/api/v1/shelter-posts")
+@RequiredArgsConstructor
 @RestController
 public class ShelterPostController {
+
+    private final ShelterPostBookmarkService shelterPostBookmarkService;
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ApiResponse<ShelterPostPageResults> getShelterPosts() {
         return ApiResponse.ok(
             ShelterPostPageResults.of(List.of(
-                ShelterPostPageResults.ShelterPost.of(11L, "서울특별시", "도봉구", 2018L, "https://../2021/11/20211189_s.jpg",
-                    "개", "리트리버", LocalDate.of(2021, 11, 25), "경상남도 진주시", true, 10L),
-                ShelterPostPageResults.ShelterPost.of(10L, "서울특별시", "노원구", 2018L, "https://../2021/11/20211189_s.jpg",
-                    "개", "믹스견", LocalDate.of(2021, 11, 21), "경상남도 진주시", false, 8L),
+                    ShelterPostPageResults.ShelterPost.of(11L, "서울특별시", "도봉구", 2018L, "https://../2021/11/20211189_s.jpg",
+                        "개", "리트리버", LocalDate.of(2021, 11, 25), "경상남도 진주시", true, 10L),
+                    ShelterPostPageResults.ShelterPost.of(10L, "서울특별시", "노원구", 2018L, "https://../2021/11/20211189_s.jpg",
+                        "개", "믹스견", LocalDate.of(2021, 11, 21), "경상남도 진주시", false, 8L),
                 ShelterPostPageResults.ShelterPost.of(9L, "서울특별시", "광진구", 2018L, "https://../2021/11/20211189_s.jpg",
                     "개", "골든 리트리버", LocalDate.of(2021, 11, 19), "경상남도 진주시", true, 8L),
                 ShelterPostPageResults.ShelterPost.of(8L, "경기도", "구리시", 2018L, "https://../2021/11/20211189_s.jpg",
@@ -69,13 +76,13 @@ public class ShelterPostController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(path = "/{postId}/bookmark")
-    public void createShelterPostBookmark(@PathVariable Long postId) {
-        log.info("북마크 생성 call for {}", postId);
+    public void createShelterPostBookmark(@PathVariable Long postId, @LoginAccount Account account) {
+        shelterPostBookmarkService.createPostBookmark(postId, account);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(path = "/{postId}/bookmark")
-    public void deleteShelterPostBookmark(@PathVariable Long postId) {
-        log.info("북마크 삭제 call for {}", postId);
+    public void deleteShelterPostBookmark(@PathVariable Long postId, @LoginAccount Account account) {
+        shelterPostBookmarkService.deletePostBookmark(postId, account);
     }
 }

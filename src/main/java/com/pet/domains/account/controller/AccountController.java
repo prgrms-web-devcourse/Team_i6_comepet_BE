@@ -22,6 +22,7 @@ import com.pet.domains.post.domain.SexType;
 import com.pet.domains.post.domain.Status;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.LongStream;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -56,9 +57,10 @@ public class AccountController {
     }
 
     @PostMapping(path = "/verify-email", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void verifyEmail(@RequestBody @Valid AccountEmailCheck accountEmailCheck) {
-        accountService.verifyEmail(accountEmailCheck.getEmail(), accountEmailCheck.getKey());
+    @ResponseStatus(HttpStatus.CREATED)
+    public ApiResponse<Map<String, Long>> verifyEmail(@RequestBody @Valid AccountEmailCheck accountEmailCheck) {
+        return ApiResponse.ok(
+            Map.of("id", accountService.verifyEmail(accountEmailCheck.getEmail(), accountEmailCheck.getKey())));
     }
 
     @PostMapping(path = "/sign-up",
@@ -74,18 +76,16 @@ public class AccountController {
         consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse<AccountLoginResult> login(@RequestBody AccountLonginParam accountLoginParam) {
-        // todo: 서버에서 확인하고 삭제할 것
-        log.info("request password : {} ", accountLoginParam.getPassword());
         String email = accountLoginParam.getEmail();
-        log.info("login account email : {}", email);
         JwtAuthentication authentication = authenticationService.authenticate(email, accountLoginParam.getPassword());
+        log.debug("login account email : {}", email);
         return ApiResponse.ok(AccountLoginResult.of(authentication.getAccountId(), authentication.getToken()));
     }
 
     @PostMapping(path = "/logout")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void logout(@LoginAccount Account account) {
-        log.info("account id '{}' is logout", account.getId());
+        log.debug("account id '{}' is logout", account.getId());
     }
 
     @PatchMapping(path = "/me", consumes = MediaType.APPLICATION_JSON_VALUE)

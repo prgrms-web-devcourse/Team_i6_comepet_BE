@@ -13,6 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.pet.common.jwt.JwtAuthentication;
 import com.pet.common.jwt.JwtMockToken;
 import com.pet.domains.account.WithAccount;
+import com.pet.domains.account.domain.SignEmail;
 import com.pet.domains.account.dto.request.AccountAreaUpdateParam;
 import com.pet.domains.account.dto.request.AccountSignUpParam;
 import com.pet.domains.account.dto.request.AccountEmailCheck;
@@ -42,12 +43,17 @@ class AccountControllerTest extends BaseDocumentationTest {
 
         resultActions
             .andDo(print())
-            .andExpect(status().isNoContent())
+            .andExpect(status().isCreated())
             .andDo(document("verify-email",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 requestHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
+                ),
+                responseFields(
+                    fieldWithPath("data").type(OBJECT).description("응답 데이터"),
+                    fieldWithPath("data.id").type(NUMBER).description("이메일 인증 id"),
+                    fieldWithPath("serverDateTime").type(STRING).description("서버 응답 시간")
                 ))
             );
     }
@@ -57,10 +63,12 @@ class AccountControllerTest extends BaseDocumentationTest {
     void signUpTest() throws Exception {
         // given
         AccountSignUpParam param = new AccountSignUpParam(
-            "test", "test@gmail.com", "1234123a!", "1234123a!");
+            "test", "test@gmail.com", "1234123a!", "1234123a!", 14L);
 
         given(authenticationService.authenticate(param.getEmail(), param.getPassword()))
             .willReturn(new JwtAuthentication("mock-token", 1L));
+
+        given(mock(SignEmail.class).isVerifyEmail("test@gmail.com")).willReturn(true);
 
         // when
         ResultActions resultActions = mockMvc.perform(post("/api/v1/sign-up")
@@ -84,6 +92,7 @@ class AccountControllerTest extends BaseDocumentationTest {
                     fieldWithPath("email").type(STRING).description("이메일"),
                     fieldWithPath("password").type(STRING).description("비밀번호"),
                     fieldWithPath("passwordCheck").type(STRING).description("비밀번호 확인"),
+                    fieldWithPath("verifiedId").type(NUMBER).description("검증 id"),
                     fieldWithPath("file").type(OBJECT).description("프로필 이미지").optional()
                 ),
                 responseHeaders(

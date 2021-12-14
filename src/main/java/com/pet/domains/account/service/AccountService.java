@@ -62,17 +62,21 @@ public class AccountService {
     }
 
     @Transactional
-    public void verifyEmail(String email, String key) {
+    public Long verifyEmail(String email, String key) {
         SignEmail signEmail = signEmailRepository.findByEmailAndVerifyKey(email, key)
             .filter(findSignEmail -> findSignEmail.isVerifyTime(LocalDateTime.now()))
             .orElseThrow(ExceptionMessage.INVALID_MAIL_KEY::getException);
         signEmail.successVerified();
+        return signEmail.getId();
     }
 
     public Account login(String email, String password) {
         Account account = accountRepository.findByEmail(email)
             .orElseThrow(ExceptionMessage.NOT_FOUND_ACCOUNT::getException);
-        return checkPassword(password, account);
+        if (!account.isMatchPassword(passwordEncoder, password)) {
+            throw ExceptionMessage.INVALID_LOGIN.getException();
+        }
+        return account;
     }
 
     public Account checkLoginAccountById(Long accountId) {
@@ -84,7 +88,7 @@ public class AccountService {
     @Transactional
     public Long signUp(AccountSignUpParam param) {
         compareWithPassword(param);
-        verifyEmailAndDelete(param.getEmail());
+        checkSignEmail(param);
         return accountRepository.save(Account.builder()
             .email(param.getEmail())
             .password(passwordEncoder.encode(param.getPassword()))
@@ -93,27 +97,17 @@ public class AccountService {
                 .orElseThrow(ExceptionMessage.NOT_FOUND_GROUP::getException))
             .build()).getId();
     }
-
-    @Transactional
-    public void updateArea(Account account, AccountAreaUpdateParam accountAreaUpdateParam) {
-        interestAreaRepository.saveAll(
-            accountAreaUpdateParam.getAreas().stream()
-                .map(area -> InterestArea.builder()
-                    .account(account)
-                    .selected(area.isDefaultArea())
-                    .town(townRepository.getById(area.getTownId()))
-                    .build())
-                .collect(Collectors.toList()));
-        account.useNotification(accountAreaUpdateParam.isNotification());
-        log.debug("account : {} setting notification", account.getId());
-        accountRepository.save(account);
-    }
-
+  
     private Account checkPassword(String password, Account account) {
         if (account.isMatchPassword(passwordEncoder, password)) {
             return account;
         }
         throw ExceptionMessage.INVALID_LOGIN.getException();
+
+    private void checkSignEmail(AccountSignUpParam param) {
+        signEmailRepository.findById(param.getVerifiedId())
+            .orElseThrow(ExceptionMessage.INVALID_SIGN_UP::getException)
+            .isVerifyEmail(param.getEmail());
     }
 
     private void compareWithPassword(AccountSignUpParam param) {
@@ -122,20 +116,15 @@ public class AccountService {
         }
     }
 
-    private void verifyEmailAndDelete(String email) {
-        signEmailRepository.deleteById(signEmailRepository.findByEmailAndIsCheckedTrue(email)
-            .orElseThrow(ExceptionMessage.INVALID_SIGN_UP::getException).getId());
-    }
-
     @Transactional
     public Account joinOath2User(OAuth2User oAuth2User, String provider) {
         Map<String, Object> attributes = oAuth2User.getAttributes();
         Oauth2User oauth2User = ProviderType.findProvider(provider);
         if (provider.equals(ProviderType.NAVER.getType())) {
-            attributes = (Map<String, Object>)attributes.get("response");
+            attributes = (Map<String, Object>) attributes.get("response");
         }
         if (provider.equals(ProviderType.KAKAO.getType())) {
-            attributes = (Map<String, Object>)attributes.get("properties");
+            attributes = (Map<String, Object>) attributes.get("properties");
         }
         String email = oauth2User.getEmail(attributes);
         return findByEmail(provider, attributes, oauth2User, email);

@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -44,5 +45,11 @@ public class PostTag extends BaseEntity {
         nullable = false
     )
     private Tag tag;
+
+    @Builder
+    public PostTag(MissingPost missingPost, Tag tag) {
+        this.missingPost = missingPost;
+        this.tag = tag;
+    }
 
 }

@@ -1,7 +1,6 @@
-package com.pet.domains.post.domain;
+package com.pet.domains.image.domain;
 
-import com.pet.domains.BaseEntity;
-import com.pet.domains.image.domain.Image;
+import com.pet.domains.post.domain.MissingPost;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -14,14 +13,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "missing_post_image")
-public class MissingPostImage extends BaseEntity {
+@Table(name = "post_image")
+public class PostImage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,7 +32,7 @@ public class MissingPostImage extends BaseEntity {
     @JoinColumn(
         name = "missing_post_id",
         referencedColumnName = "id",
-        foreignKey = @ForeignKey(name = "fk_missing_to_missing_post_image"),
+        foreignKey = @ForeignKey(name = "fk_missing_post_to_post_image"),
         nullable = false
     )
     private MissingPost missingPost;
@@ -41,9 +41,15 @@ public class MissingPostImage extends BaseEntity {
     @JoinColumn(
         name = "image_id",
         referencedColumnName = "id",
-        foreignKey = @ForeignKey(name = "fk_image_to_missing_post_image"),
+        foreignKey = @ForeignKey(name = "fk_image_to_post_image"),
         nullable = false
     )
     private Image image;
+
+    @Builder
+    public PostImage(MissingPost missingPost, Image image) {
+        this.missingPost = missingPost;
+        this.image = image;
+    }
 
 }
