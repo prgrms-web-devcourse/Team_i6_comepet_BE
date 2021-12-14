@@ -1,10 +1,11 @@
 package com.pet.domains.account;
 
-import static org.mockito.BDDMockito.*;
+import static org.mockito.BDDMockito.anyLong;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.mock;
 import com.pet.common.jwt.JwtAuthenticationProvider;
 import com.pet.common.jwt.JwtAuthenticationToken;
 import com.pet.domains.account.domain.Account;
-import com.pet.domains.account.domain.SignStatus;
 import com.pet.domains.account.service.AccountService;
 import com.pet.domains.auth.domain.Group;
 import java.util.List;
@@ -47,7 +48,6 @@ public class WithAccountSecurityContextFactory implements WithSecurityContextFac
             nickname,
             true,
             true,
-            SignStatus.SUCCESS,
             null,
             group,
             "local");
