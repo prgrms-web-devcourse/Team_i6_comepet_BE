@@ -13,6 +13,10 @@ import com.pet.domains.area.domain.City;
 import com.pet.domains.area.domain.Town;
 import com.pet.domains.area.repository.CityRepository;
 import com.pet.domains.area.repository.TownRepository;
+import com.pet.domains.auth.domain.Group;
+import com.pet.domains.auth.domain.GroupPermission;
+import com.pet.domains.auth.domain.Permission;
+import com.pet.domains.auth.repository.GroupPermissionRepository;
 import com.pet.domains.comment.domain.Comment;
 import com.pet.domains.comment.repository.CommentRepository;
 import com.pet.domains.image.domain.Image;
@@ -75,6 +79,9 @@ class MissingPostRepositoryTest {
     @Autowired
     CommentRepository commentRepository;
 
+    @Autowired
+    GroupPermissionRepository groupPermissionRepository;
+
     private Account account;
 
     private City city;
@@ -97,11 +104,19 @@ class MissingPostRepositoryTest {
 
     private Comment comment;
 
+    private GroupPermission groupPermission;
+
     @BeforeEach
     void setUp() {
+        groupPermission = groupPermissionRepository.save(
+            new GroupPermission(new Group("USER_GROUP"), new Permission("ROLE_USER"))
+        );
+
         account = Account.builder()
             .nickname("nickname")
             .email("abvcd@naver.com")
+            .password("123123a!")
+            .group(groupPermission.getGroup())
             .build();
         accountRepository.save(account);
 
