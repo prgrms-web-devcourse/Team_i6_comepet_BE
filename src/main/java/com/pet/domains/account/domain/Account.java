@@ -3,9 +3,11 @@ package com.pet.domains.account.domain;
 import com.pet.domains.DeletableEntity;
 import com.pet.domains.auth.domain.Group;
 import com.pet.domains.image.domain.Image;
+import java.util.StringJoiner;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
@@ -22,6 +24,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -103,4 +106,15 @@ public class Account extends DeletableEntity {
     public void updateNotification(boolean notification) {
         this.notification = notification;
     }
+
+    public void updateProfile(String nickname, String password) {
+        if (StringUtils.isNotBlank(nickname)) {
+            this.nickname = nickname;
+        }
+
+        if (StringUtils.isNotBlank(password)) {
+            this.password = password;
+        }
+    }
+
 }
