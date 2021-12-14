@@ -53,6 +53,6 @@ public class ExceptionHandlerAdvice {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleAuthenticationException(Exception exception) {
         log.error(exception.getMessage());
-        return ErrorResponse.error(HttpStatus.INTERNAL_SERVER_ERROR.value(),exception.getMessage());
+        return ErrorResponse.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.getMessage());
     }
 }
