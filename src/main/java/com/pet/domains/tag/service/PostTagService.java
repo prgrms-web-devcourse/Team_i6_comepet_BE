@@ -27,13 +27,4 @@ public class PostTagService {
             .collect(Collectors.toList()));
     }
 
-    public List<PostTag> getPostTagsByMissingPost(Long postId) {
-        return postTagRepository.getPostTagsByMissingPostId(postId);
-    }
-
-    @Transactional
-    public void deletePostTagByMissingPost(Long postId) {
-        postTagRepository.deleteAllByMissingPostId(postId);
-    }
-
 }

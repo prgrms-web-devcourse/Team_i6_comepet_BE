@@ -1,5 +1,6 @@
 package com.pet.domains.post.service;
 
+import com.pet.common.exception.ExceptionMessage;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.animal.domain.AnimalKind;
 import com.pet.domains.animal.service.AnimalKindService;
@@ -16,11 +17,11 @@ import com.pet.domains.post.mapper.MissingPostMapper;
 import com.pet.domains.post.repository.MissingPostRepository;
 import com.pet.domains.tag.domain.PostTag;
 import com.pet.domains.tag.domain.Tag;
+import com.pet.domains.tag.repository.PostTagRepository;
 import com.pet.domains.tag.service.PostTagService;
 import com.pet.domains.tag.service.TagService;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,6 +45,8 @@ public class MissingPostService {
     private final PostImageRepository postImageRepository;
 
     private final PostTagService postTagService;
+
+    private final PostTagRepository postTagRepository;
 
     private final TagService tagService;
 
@@ -77,16 +80,17 @@ public class MissingPostService {
 
     @Transactional
     public void deleteMissingPost(Long postId, Account account) {
-        Optional<MissingPost> getMissingPost = missingPostRepository.findById(postId);
-        getMissingPost.get().isVerifyAccount(account.getId());
+        missingPostRepository.findById(postId)
+            .filter(post -> post.getAccount().getId().equals(account.getId()))
+            .orElseThrow(ExceptionMessage.INVALID_ACCOUNT::getException);
 
         postImageRepository.deleteAllByMissingPostId(postId);
         commentRepository.deleteAllByMissingPostId(postId);
 
-        List<PostTag> postTags = postTagService.getPostTagsByMissingPost(postId);
-        if (!CollectionUtils.isEmpty(postTags) && postTags.size() > 0) {
-            tagService.decreaseTagCount(postTags);
-            postTagService.deletePostTagByMissingPost(postId);
+        List<PostTag> getPostTags = postTagRepository.getPostTagsByMissingPostId(postId);
+        tagService.decreaseTagCount(getPostTags);
+        if (!CollectionUtils.isEmpty(getPostTags) && getPostTags.size() > 0) {
+            postTagRepository.deleteAllByMissingPostId(postId);
         }
 
         missingPostRepository.deleteById(postId);

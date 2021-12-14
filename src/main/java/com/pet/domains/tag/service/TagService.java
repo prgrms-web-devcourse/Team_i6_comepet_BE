@@ -4,7 +4,6 @@ import com.pet.domains.tag.domain.PostTag;
 import com.pet.domains.tag.domain.Tag;
 import com.pet.domains.tag.repository.TagRepository;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,18 +17,16 @@ public class TagService {
 
     @Transactional
     public Tag getOrCreateByTagName(String tagName) {
-        Optional<Tag> tag = tagRepository.findTagByName(tagName);
-
-        if (tag.isPresent()) {
-            tag.get().increaseCount();
-            return tag.get();
-        }
-
-        return tagRepository.save(
-            Tag.builder()
-                .name(tagName)
-                .build()
-        );
+        return tagRepository.findTagByName(tagName)
+            .map(tag -> {
+                tag.increaseCount();
+                return tag;
+            })
+            .orElseGet(() -> tagRepository.save(
+                Tag.builder()
+                    .name(tagName)
+                    .build())
+            );
     }
 
     @Transactional

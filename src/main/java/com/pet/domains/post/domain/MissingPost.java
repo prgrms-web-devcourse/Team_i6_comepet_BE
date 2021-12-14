@@ -1,12 +1,10 @@
 package com.pet.domains.post.domain;
 
-import com.pet.common.exception.ExceptionMessage;
 import com.pet.domains.DeletableEntity;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.animal.domain.AnimalKind;
 import com.pet.domains.area.domain.Town;
 import java.time.LocalDate;
-import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -133,12 +131,6 @@ public class MissingPost extends DeletableEntity {
         this.account = account;
         this.town = town;
         this.animalKind = animalKind;
-    }
-
-    public void isVerifyAccount(Long accountId) {
-        if (!Objects.equals(this.account.getId(), accountId)) {
-            throw ExceptionMessage.INVALID_MISSING_POST_WRITER.getException();
-        }
     }
 
 }

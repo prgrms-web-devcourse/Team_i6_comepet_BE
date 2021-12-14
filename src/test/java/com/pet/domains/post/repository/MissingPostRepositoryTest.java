@@ -2,6 +2,7 @@ package com.pet.domains.post.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import com.pet.common.config.JpaAuditingConfig;
+import com.pet.common.exception.ExceptionMessage;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.account.repository.AccountRepository;
 import com.pet.domains.animal.domain.Animal;
@@ -183,7 +184,9 @@ class MissingPostRepositoryTest {
     void deleteMissingPostTest() {
         //given
         //when
-        MissingPost getMissingPost = missingPostRepository.findById(missingPost.getId()).get();
+        MissingPost getMissingPost = missingPostRepository.findById(missingPost.getId())
+            .filter(post -> post.getAccount().getId().equals(account.getId()))
+            .orElseThrow(ExceptionMessage.INVALID_ACCOUNT::getException);
 
         postImageRepository.deleteAllByMissingPostId(missingPost.getId());
         List<PostImage> getPostImages = postImageRepository.findAllByMissingPostId(missingPost.getId());
