@@ -16,6 +16,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.ObjectUtils;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -48,6 +49,9 @@ public class PostTag extends BaseEntity {
 
     @Builder
     public PostTag(MissingPost missingPost, Tag tag) {
+        ObjectUtils.requireNonEmpty(missingPost, "missingPost must not be null");
+        ObjectUtils.requireNonEmpty(tag, "tag must not be null");
+
         this.missingPost = missingPost;
         this.tag = tag;
     }

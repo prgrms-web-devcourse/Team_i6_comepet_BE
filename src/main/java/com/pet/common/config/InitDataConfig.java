@@ -1,7 +1,6 @@
 package com.pet.common.config;
 
 import com.pet.domains.account.domain.Account;
-import com.pet.domains.account.domain.SignStatus;
 import com.pet.domains.account.repository.AccountRepository;
 import com.pet.domains.area.domain.City;
 import com.pet.domains.area.domain.Town;
@@ -43,7 +42,6 @@ public class InitDataConfig implements ApplicationRunner {
             "tester",
             true,
             true,
-            SignStatus.SUCCESS,
             null,
             group);
 
