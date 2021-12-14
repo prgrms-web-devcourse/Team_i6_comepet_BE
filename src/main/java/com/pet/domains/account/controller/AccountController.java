@@ -126,8 +126,10 @@ public class AccountController {
 
     @PutMapping(path = "/me/areas", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateAccountArea(@RequestBody AccountAreaUpdateParam accountAreaUpdateParam) {
-        log.info("update account area, notification : {}", accountAreaUpdateParam.isNotification());
+    public void updateAccountArea(
+        @LoginAccount Account account, @RequestBody AccountAreaUpdateParam accountAreaUpdateParam
+    ) {
+        accountService.updateArea(account, accountAreaUpdateParam);
     }
 
     @GetMapping(path = "/me/posts", produces = MediaType.APPLICATION_JSON_VALUE)
