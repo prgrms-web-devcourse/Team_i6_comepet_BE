@@ -5,9 +5,11 @@ import com.pet.domains.DeletableEntity;
 import com.pet.domains.auth.domain.Group;
 import com.pet.domains.image.domain.Image;
 import java.util.Objects;
+import java.util.StringJoiner;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
@@ -111,16 +113,6 @@ public class Account extends DeletableEntity {
         }
     }
 
-    public void updateProfile(String nickname, String password) {
-        if (StringUtils.isNotBlank(nickname)) {
-            this.nickname = nickname;
-        }
-
-        if (StringUtils.isNotBlank(password)) {
-            this.password = password;
-        }
-    }
-
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -136,6 +128,16 @@ public class Account extends DeletableEntity {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    public void updateProfile(String nickname, String password) {
+        if (StringUtils.isNotBlank(nickname)) {
+            this.nickname = nickname;
+        }
+
+        if (StringUtils.isNotBlank(password)) {
+            this.password = password;
+        }
     }
 
 }
