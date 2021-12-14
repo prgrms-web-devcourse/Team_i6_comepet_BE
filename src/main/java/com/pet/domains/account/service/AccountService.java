@@ -200,8 +200,8 @@ public class AccountService {
     }
 
     @Transactional
-    public void updateAccountImage(Account account, MultipartFile accountProfile) {
-        account.updateProfileImage(imageService.createImage(accountProfile));
+    public void updateAccountImage(Account account, MultipartFile accountImage) {
+        account.updateProfileImage(imageService.createImage(accountImage));
         accountRepository.save(account);
     }
 

@@ -99,8 +99,8 @@ public class AccountController {
 
     @PostMapping(value = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateImage(@LoginAccount Account account, @RequestPart(required = false) MultipartFile multipartFile) {
-        accountService.updateAccountImage(account, multipartFile);
+    public void updateImage(@LoginAccount Account account, @RequestPart(required = false) MultipartFile image) {
+        accountService.updateAccountImage(account, image);
     }
 
     @GetMapping(path = "/me/areas", produces = MediaType.APPLICATION_JSON_VALUE)
