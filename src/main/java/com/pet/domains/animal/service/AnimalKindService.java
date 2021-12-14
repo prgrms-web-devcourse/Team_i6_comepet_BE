@@ -1,6 +1,5 @@
 package com.pet.domains.animal.service;
 
-
 import com.pet.common.exception.ExceptionMessage;
 import com.pet.domains.animal.domain.Animal;
 import com.pet.domains.animal.domain.AnimalKind;
@@ -26,7 +25,7 @@ public class AnimalKindService {
     private final AnimalRepository animalRepository;
 
     @Transactional
-    public void createAnimalKinds(String animalCode, AnimalKindCreateParams animalKindCreateParams) {
+    public void bulkCreateAnimalKind(String animalCode, AnimalKindCreateParams animalKindCreateParams) {
         animalKindRepository.saveAll(
             animalKindCreateParams.getAnimalKinds().stream()
                 .map(animalKindCreateParam -> AnimalKind.builder()
@@ -41,24 +40,23 @@ public class AnimalKindService {
     @Transactional
     public AnimalKind getOrCreateAnimalKind(Long animalId, String animalKindName) {
         return animalKindRepository.findByName(animalKindName)
-            .orElseGet(() -> animalKindRepository.save(
-                AnimalKind.builder()
-                    .animal(getAnimalById(animalId))
-                    .name(animalKindName)
-                    .build()
-            ));
+            .orElseGet(() -> createAnimalKindByName(animalKindName, getAnimalById(animalId)));
     }
 
     @Transactional
     public AnimalKind getOrCreateAnimalKindByEtcAnimal(String animalKindName) {
         return animalKindRepository.findByName(animalKindName)
-            .orElseGet(() -> saveAnimalKindByEtcAnimal(animalKindName));
+            .orElseGet(() -> createAnimalKindByEtcAnimal(animalKindName));
     }
 
-    private AnimalKind saveAnimalKindByEtcAnimal(String animalKindName) {
+    private AnimalKind createAnimalKindByEtcAnimal(String animalKindName) {
+        return createAnimalKindByName(animalKindName, getAnimalByName(ETC_ANIMAL_NAME));
+    }
+
+    private AnimalKind createAnimalKindByName(String animalKindName, Animal animal) {
         return animalKindRepository.save(
             AnimalKind.builder()
-                .animal(getAnimalByName(ETC_ANIMAL_NAME))
+                .animal(animal)
                 .name(animalKindName)
                 .build()
         );
