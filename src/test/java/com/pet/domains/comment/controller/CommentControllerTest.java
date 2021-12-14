@@ -1,5 +1,7 @@
 package com.pet.domains.comment.controller;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
@@ -21,6 +23,8 @@ import static org.springframework.restdocs.request.RequestDocumentation.pathPara
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import com.pet.common.jwt.JwtMockToken;
+import com.pet.domains.account.WithAccount;
+import com.pet.domains.account.domain.Account;
 import com.pet.domains.comment.dto.request.CommentCreateParam;
 import com.pet.domains.comment.dto.request.CommentUpdateParam;
 import com.pet.domains.docs.BaseDocumentationTest;
@@ -34,9 +38,11 @@ import org.springframework.test.web.servlet.ResultActions;
 class CommentControllerTest extends BaseDocumentationTest {
 
     @Test
+    @WithAccount
     @DisplayName("댓글 생성 테스트")
     void createCommentTest() throws Exception {
         // given
+        given(commentService.createComment(any(Account.class), any(CommentCreateParam.class))).willReturn(1L);
         CommentCreateParam param = CommentCreateParam.builder()
             .postId(1L)
             .content("content")
@@ -45,7 +51,7 @@ class CommentControllerTest extends BaseDocumentationTest {
 
         // when
         ResultActions resultActions = mockMvc.perform(post("/api/v1/comments")
-            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN)
+            .header(HttpHeaders.AUTHORIZATION, getAuthenticationToken())
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(objectMapper.writeValueAsString(param)));
 

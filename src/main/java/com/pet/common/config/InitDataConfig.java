@@ -49,7 +49,6 @@ public class InitDataConfig implements ApplicationRunner {
                 accountRepository.deleteById(account.getId());
                 log.info("임시 회원이 정상적으로 삭제되었습니다.");
             });
-
         accountRepository.save(tester);
     }
 

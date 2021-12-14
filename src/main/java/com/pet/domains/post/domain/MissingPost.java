@@ -80,7 +80,7 @@ public class MissingPost extends DeletableEntity {
     @JoinColumn(
         name = "account_id",
         referencedColumnName = "id",
-        foreignKey = @ForeignKey(name = "fk_account_id"),
+        foreignKey = @ForeignKey(name = "fk_account_to_missing_post"),
         nullable = false
     )
     private Account account;
@@ -89,7 +89,7 @@ public class MissingPost extends DeletableEntity {
     @JoinColumn(
         name = "town_id",
         referencedColumnName = "id",
-        foreignKey = @ForeignKey(name = "fk_town_id"),
+        foreignKey = @ForeignKey(name = "fk_town_to_missing_most"),
         nullable = false
     )
     private Town town;
