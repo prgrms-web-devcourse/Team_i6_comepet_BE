@@ -80,7 +80,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
             .authorizeRequests()
-             .antMatchers("/api/v1/shelter-posts").hasAnyRole("USER", "ANONYMOUS")
+            .antMatchers("/api/v1/shelter-posts").hasAnyRole("USER", "ANONYMOUS")
             .anyRequest().permitAll()
             .and()
 

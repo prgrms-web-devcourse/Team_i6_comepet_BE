@@ -21,6 +21,7 @@ public enum ExceptionMessage {
     INVALID_SIGN_UP(new BadRequestException("잘못된 회원가입 입력값입니다.")),
     INVALID_MAIL_KEY(new BadRequestException("잘못된 이메일 인증번호입니다.")),
     FAIL_TO_EMAIL(new BadRequestException("이메일 전송에 실패했습니다.")),
+    INVALID_ACCOUNT(new BadRequestException("동일한 유저가 아닙니다.")),
     INVALID_PASSWORD(new BadRequestException("비밀번호가 일치하지 않습니다.")),
 
     // 동물

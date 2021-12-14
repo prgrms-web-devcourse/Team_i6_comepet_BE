@@ -1,10 +1,12 @@
 package com.pet.domains.post.service;
 
+import com.pet.common.exception.ExceptionMessage;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.animal.domain.AnimalKind;
 import com.pet.domains.animal.service.AnimalKindService;
 import com.pet.domains.area.domain.Town;
 import com.pet.domains.area.repository.TownRepository;
+import com.pet.domains.comment.repository.CommentRepository;
 import com.pet.domains.image.domain.Image;
 import com.pet.domains.image.domain.PostImage;
 import com.pet.domains.image.repository.PostImageRepository;
@@ -13,7 +15,9 @@ import com.pet.domains.post.domain.MissingPost;
 import com.pet.domains.post.dto.request.MissingPostCreateParam;
 import com.pet.domains.post.mapper.MissingPostMapper;
 import com.pet.domains.post.repository.MissingPostRepository;
+import com.pet.domains.tag.domain.PostTag;
 import com.pet.domains.tag.domain.Tag;
+import com.pet.domains.tag.repository.PostTagRepository;
 import com.pet.domains.tag.service.PostTagService;
 import com.pet.domains.tag.service.TagService;
 import java.util.ArrayList;
@@ -42,11 +46,15 @@ public class MissingPostService {
 
     private final PostTagService postTagService;
 
+    private final PostTagRepository postTagRepository;
+
     private final TagService tagService;
 
     private final MissingPostMapper missingPostMapper;
 
     private final ImageService imageService;
+
+    private final CommentRepository commentRepository;
 
     @Transactional
     public Long createMissingPost(MissingPostCreateParam missingPostCreateParam, List<MultipartFile> multipartFiles,
@@ -56,9 +64,7 @@ public class MissingPostService {
         Town town = townRepository.getById(missingPostCreateParam.getTownId());
 
         List<Tag> tags = getTags(missingPostCreateParam);
-
         List<Image> imageFiles = uploadAndGetImages(multipartFiles);
-
         String thumbnail = getThumbnail(imageFiles);
 
         MissingPost createMissingPost = missingPostRepository.save(
@@ -67,10 +73,27 @@ public class MissingPostService {
         if (!CollectionUtils.isEmpty(tags) && tags.size() > 0) {
             postTagService.createPostTag(tags, createMissingPost);
         }
-
         createPostImage(imageFiles, createMissingPost);
 
         return createMissingPost.getId();
+    }
+
+    @Transactional
+    public void deleteMissingPost(Long postId, Account account) {
+        missingPostRepository.findById(postId)
+            .filter(post -> post.getAccount().getId().equals(account.getId()))
+            .orElseThrow(ExceptionMessage.INVALID_ACCOUNT::getException);
+
+        postImageRepository.deleteAllByMissingPostId(postId);
+        commentRepository.deleteAllByMissingPostId(postId);
+
+        List<PostTag> getPostTags = postTagRepository.getPostTagsByMissingPostId(postId);
+        tagService.decreaseTagCount(getPostTags);
+        if (!CollectionUtils.isEmpty(getPostTags) && getPostTags.size() > 0) {
+            postTagRepository.deleteAllByMissingPostId(postId);
+        }
+
+        missingPostRepository.deleteById(postId);
     }
 
     private String getThumbnail(List<Image> imageFiles) {
