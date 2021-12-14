@@ -3,6 +3,7 @@ package com.pet.domains.account.service;
 import com.pet.common.exception.ExceptionMessage;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.account.domain.AccountGroup;
+import com.pet.domains.account.domain.Provider;
 import com.pet.domains.account.domain.SignEmail;
 import com.pet.domains.account.dto.request.AccountAreaUpdateParam;
 import com.pet.domains.account.dto.request.AccountSignUpParam;
@@ -100,6 +101,7 @@ public class AccountService {
             .email(param.getEmail())
             .password(passwordEncoder.encode(param.getPassword()))
             .nickname(param.getNickname())
+            .provider(Provider.LOCAL)
             .group(groupRepository.findByName(AccountGroup.USER_GROUP.name())
                 .orElseThrow(ExceptionMessage.NOT_FOUND_GROUP::getException))
             .build()).getId();
@@ -138,7 +140,9 @@ public class AccountService {
                 String profileImage = oauth2User.getProfileImage(attributes);
                 Group group = groupRepository.findByName(AccountGroup.USER_GROUP.name())
                     .orElseThrow(ExceptionMessage.NOT_FOUND_GROUP::getException);
-                return accountRepository.save(new Account(nickname, email, provider, new Image(profileImage), group));
+                return accountRepository.save(Account.builder().nickname(nickname).email(email)
+                    .provider(Provider.findByType(provider))
+                    .profileImage(new Image(profileImage)).group(group).build());
             });
     }
 
