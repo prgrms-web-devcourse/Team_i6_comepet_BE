@@ -1,8 +1,6 @@
 package com.pet.common.config;
 
 import com.pet.domains.account.domain.Account;
-import com.pet.domains.account.domain.Provider;
-import com.pet.domains.account.domain.SignStatus;
 import com.pet.domains.account.repository.AccountRepository;
 import com.pet.domains.auth.domain.Group;
 import com.pet.domains.auth.domain.GroupPermission;
