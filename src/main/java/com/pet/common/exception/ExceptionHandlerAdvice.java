@@ -1,6 +1,7 @@
 package com.pet.common.exception;
 
 import com.pet.common.exception.httpexception.BadRequestException;
+import com.pet.common.exception.httpexception.ConflictException;
 import com.pet.common.exception.httpexception.NotFoundException;
 import com.pet.common.exception.httpexception.UnauthorizedException;
 import com.pet.common.response.ErrorResponse;
@@ -19,33 +20,39 @@ public class ExceptionHandlerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleAuthenticationException(BadRequestException exception) {
         log.warn(exception.getMessage());
-        return ErrorResponse.error(exception.getMessage());
+        return ErrorResponse.error(exception.getCode(), exception.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
-        return ErrorResponse.error(exception.getMessage());
+        return ErrorResponse.error(HttpStatus.BAD_REQUEST.value(), exception.getMessage());
+    }
+
+    @ExceptionHandler(ConflictException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleConflictException(ConflictException exception) {
+        return ErrorResponse.error(exception.getCode(), exception.getMessage());
     }
 
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFoundException(NotFoundException exception) {
         log.warn(exception.getMessage());
-        return ErrorResponse.error(exception.getMessage());
+        return ErrorResponse.error(exception.getCode(), exception.getMessage());
     }
 
     @ExceptionHandler(UnauthorizedException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ErrorResponse handleUnauthorizedException(UnauthorizedException exception) {
         log.warn(exception.getMessage());
-        return ErrorResponse.error(exception.getMessage());
+        return ErrorResponse.error(exception.getCode(), exception.getMessage());
     }
 
     @ExceptionHandler({Exception.class, RuntimeException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleAuthenticationException(Exception exception) {
         log.error(exception.getMessage());
-        return ErrorResponse.error(exception.getMessage());
+        return ErrorResponse.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.getMessage());
     }
 }
