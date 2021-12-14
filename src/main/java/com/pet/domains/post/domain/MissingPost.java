@@ -132,4 +132,5 @@ public class MissingPost extends DeletableEntity {
         this.town = town;
         this.animalKind = animalKind;
     }
+
 }

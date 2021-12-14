@@ -117,7 +117,7 @@ class MissingPostControllerTest extends BaseDocumentationTest {
                     fieldWithPath("age").type(NUMBER).description("나이").optional(),
                     fieldWithPath("sex").type(STRING).description("<<sexType,동물 성별>>"),
                     fieldWithPath("chipNumber").type(STRING).description("칩번호").optional(),
-                    fieldWithPath("content").type(STRING).description("게시물 내용").optional(),
+                    fieldWithPath("content").type(STRING).description("게시물 내용"),
                     fieldWithPath("tags").type(ARRAY).description("게시글의 해시태그들").optional(),
                     fieldWithPath("tags[0].name").type(STRING).description("해시태그 내용").optional()
                 ),
@@ -299,12 +299,13 @@ class MissingPostControllerTest extends BaseDocumentationTest {
     }
 
     @Test
+    @WithAccount
     @DisplayName("실종/보호 게시물 삭제 테스트")
     void deleteMissingPostTest() throws Exception {
         // given
         // when
         ResultActions resultActions = mockMvc.perform(delete("/api/v1/missing-posts/{postId}", 1L)
-            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN));
+            .header(HttpHeaders.AUTHORIZATION, getAuthenticationToken()));
 
         // then
         resultActions

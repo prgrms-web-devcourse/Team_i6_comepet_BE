@@ -53,7 +53,7 @@ public class MissingPostCreateParam {
     private String chipNumber;
 
     @Length(max = 255, message = "범위이내의 내용을 입력해주세요.")
-    @Nullable
+    @NotBlank(message = "내용을 입력해주세요.")
     private String content;
 
     @Nullable

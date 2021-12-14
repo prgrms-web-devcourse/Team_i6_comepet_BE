@@ -40,7 +40,7 @@ public class JwtAuthenticationArgumentResolver implements HandlerMethodArgumentR
     }
 
     private JwtAuthentication getJwtAuthentication(Authentication authentication) {
-        return (JwtAuthentication)authentication.getPrincipal();
+        return (JwtAuthentication) authentication.getPrincipal();
     }
 
     private void validateAuthentication(Authentication authentication) {
