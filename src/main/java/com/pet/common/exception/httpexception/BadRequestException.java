@@ -1,9 +1,9 @@
 package com.pet.common.exception.httpexception;
 
-public class BadRequestException extends RuntimeException {
+public class BadRequestException extends BaseHttpException {
 
-    public BadRequestException(String message) {
-        super(message);
+    public BadRequestException(String message, int code) {
+        super(message, code);
     }
 
 }
