@@ -70,7 +70,7 @@ public class MissingPostService {
         MissingPost createMissingPost = missingPostRepository.save(
             missingPostMapper.toEntity(missingPostCreateParam, town, animalKind, thumbnail, account));
 
-        if (!CollectionUtils.isEmpty(tags) && tags.size() > 0) {
+        if (!CollectionUtils.isEmpty(tags)) {
             postTagService.createPostTag(tags, createMissingPost);
         }
         createPostImage(imageFiles, createMissingPost);
@@ -80,32 +80,32 @@ public class MissingPostService {
 
     @Transactional
     public void deleteMissingPost(Long postId, Account account) {
-        missingPostRepository.findById(postId)
+        MissingPost getMissingPost = missingPostRepository.findById(postId)
             .filter(post -> post.getAccount().getId().equals(account.getId()))
             .orElseThrow(ExceptionMessage.UN_IDENTIFICATION::getException);
 
-        postImageRepository.deleteAllByMissingPostId(postId);
-        commentRepository.deleteAllByMissingPostId(postId);
+        postImageRepository.deleteAllByMissingPostId(getMissingPost.getId());
+        commentRepository.deleteAllByMissingPostId(getMissingPost.getId());
 
-        List<PostTag> getPostTags = postTagRepository.getPostTagsByMissingPostId(postId);
+        List<PostTag> getPostTags = postTagRepository.getPostTagsByMissingPostId(getMissingPost.getId());
         tagService.decreaseTagCount(getPostTags);
-        if (!CollectionUtils.isEmpty(getPostTags) && getPostTags.size() > 0) {
-            postTagRepository.deleteAllByMissingPostId(postId);
+        if (!CollectionUtils.isEmpty(getPostTags)) {
+            postTagRepository.deleteAllByMissingPostId(getMissingPost.getId());
         }
 
-        missingPostRepository.deleteById(postId);
+        missingPostRepository.deleteById(getMissingPost.getId());
     }
 
     private String getThumbnail(List<Image> imageFiles) {
         String thumbnail = null;
-        if (!CollectionUtils.isEmpty(imageFiles) && imageFiles.size() > 0) {
+        if (!CollectionUtils.isEmpty(imageFiles)) {
             thumbnail = imageFiles.get(0).getName();
         }
         return thumbnail;
     }
 
     private void createPostImage(List<Image> imageFiles, MissingPost createMissingPost) {
-        if (!CollectionUtils.isEmpty(imageFiles) && imageFiles.size() > 0) {
+        if (!CollectionUtils.isEmpty(imageFiles)) {
             imageFiles.stream().map(image -> PostImage.builder()
                 .missingPost(createMissingPost)
                 .image(image)
@@ -116,7 +116,7 @@ public class MissingPostService {
 
     private List<Image> uploadAndGetImages(List<MultipartFile> multipartFiles) {
         List<Image> imageFiles = new ArrayList<>();
-        if (!CollectionUtils.isEmpty(multipartFiles) && multipartFiles.size() > 0) {
+        if (!CollectionUtils.isEmpty(multipartFiles)) {
             imageFiles = multipartFiles.stream()
                 .map(imageService::createImage)
                 .collect(Collectors.toList());
@@ -126,7 +126,7 @@ public class MissingPostService {
 
     private List<Tag> getTags(MissingPostCreateParam missingPostCreateParam) {
         List<Tag> tags = new ArrayList<>();
-        if (!CollectionUtils.isEmpty(missingPostCreateParam.getTags()) && missingPostCreateParam.getTags().size() > 0) {
+        if (!CollectionUtils.isEmpty(missingPostCreateParam.getTags())) {
             tags =
                 missingPostCreateParam.getTags()
                     .stream()
