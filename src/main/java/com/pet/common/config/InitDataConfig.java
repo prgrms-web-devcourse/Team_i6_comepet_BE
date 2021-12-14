@@ -43,6 +43,7 @@ public class InitDataConfig implements ApplicationRunner {
             null,
             group);
 
+        groupPermissionRepository.save(new GroupPermission(group, permission));
         accountRepository.findByEmail(email)
             .ifPresent(account -> {
                 accountRepository.deleteById(account.getId());

@@ -21,6 +21,7 @@ import com.pet.domains.account.dto.request.AccountLonginParam;
 import com.pet.domains.account.dto.request.AccountUpdateParam;
 import com.pet.domains.docs.BaseDocumentationTest;
 import java.util.List;
+import lombok.With;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
@@ -169,13 +170,14 @@ class AccountControllerTest extends BaseDocumentationTest {
     }
 
     @Test
+    @WithAccount
     @DisplayName("회원 정보 수정 테스트")
     void updateAccountTest() throws Exception {
         // given
-        AccountUpdateParam param = new AccountUpdateParam("updateNickname", null);
+        AccountUpdateParam param = new AccountUpdateParam("updateNickname", "12341234a!", "12341234a!");
         // when
         ResultActions resultActions = mockMvc.perform(patch("/api/v1/me")
-            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN)
+            .header(HttpHeaders.AUTHORIZATION, getAuthenticationToken())
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(param)));
 
@@ -192,7 +194,8 @@ class AccountControllerTest extends BaseDocumentationTest {
                 ),
                 requestFields(
                     fieldWithPath("nickname").type(STRING).description("닉네임").optional(),
-                    fieldWithPath("file").type(STRING).description("프로필 이미지").optional()
+                    fieldWithPath("newPassword").type(STRING).description("수정 비밀번호").optional(),
+                    fieldWithPath("newPasswordCheck").type(STRING).description("수정 비밀번호 확인").optional()
                 ))
             );
     }

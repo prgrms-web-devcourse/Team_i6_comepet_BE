@@ -6,6 +6,7 @@ import com.pet.domains.account.domain.AccountGroup;
 import com.pet.domains.account.domain.SignEmail;
 import com.pet.domains.account.dto.request.AccountAreaUpdateParam;
 import com.pet.domains.account.dto.request.AccountSignUpParam;
+import com.pet.domains.account.dto.request.AccountUpdateParam;
 import com.pet.domains.account.repository.AccountRepository;
 import com.pet.domains.account.repository.SignEmailRepository;
 import com.pet.domains.area.domain.InterestArea;
@@ -147,6 +148,18 @@ public class AccountService {
                 .collect(Collectors.toList()));
 
         account.updateNotification(accountAreaUpdateParam.isNotification());
+        accountRepository.save(account);
+    }
+
+    @Transactional
+    public void updateAccount(Account account, AccountUpdateParam accountUpdateParam) {
+        if (!StringUtils.equals(accountUpdateParam.getNewPassword(), accountUpdateParam.getNewPasswordCheck())) {
+            throw ExceptionMessage.INVALID_PASSWORD.getException();
+        }
+        account.updateProfile(
+            accountUpdateParam.getNickname(),
+            passwordEncoder.encode(accountUpdateParam.getNewPassword())
+        );
         accountRepository.save(account);
     }
 }

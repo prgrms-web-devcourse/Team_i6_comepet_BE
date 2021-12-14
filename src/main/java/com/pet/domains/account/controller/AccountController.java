@@ -91,18 +91,8 @@ public class AccountController {
 
     @PatchMapping(path = "/me", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateAccount(@RequestBody AccountUpdateParam accountUpdateParam) {
-        MultipartFile profile = accountUpdateParam.getFile();
-        if (profile != null) {
-            log.info("account update nickname : {} or profile : {} ",
-                accountUpdateParam.getNickname(),
-                accountUpdateParam.getFile().getName()
-            );
-        } else {
-            log.info("account update nickname : {}",
-                accountUpdateParam.getNickname()
-            );
-        }
+    public void updateAccount(@LoginAccount Account account, @RequestBody AccountUpdateParam accountUpdateParam) {
+        accountService.updateAccount(account, accountUpdateParam);
     }
 
     @GetMapping(path = "/me/areas", produces = MediaType.APPLICATION_JSON_VALUE)
