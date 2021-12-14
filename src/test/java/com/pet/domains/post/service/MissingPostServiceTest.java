@@ -10,7 +10,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import com.pet.domains.account.domain.Account;
-import com.pet.domains.account.domain.SignStatus;
 import com.pet.domains.animal.domain.Animal;
 import com.pet.domains.animal.domain.AnimalKind;
 import com.pet.domains.animal.service.AnimalKindService;
@@ -100,7 +99,7 @@ class MissingPostServiceTest {
         group = new Group("1그룹");
 
         account =
-            new Account("aaa@naver.com", "user123", "nickName", false, false, SignStatus.VERIFICATION, image,
+            new Account("aaa@naver.com", "user123", "nickName", false, false, image,
                 group);
 
         city = City.builder()
