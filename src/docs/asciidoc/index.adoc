@@ -328,16 +328,14 @@ include::{snippets}/get-missing-post/response-fields.adoc[]
 include::{snippets}/create-missing-post/curl-request.adoc[]
 
 ==== Http Request
-
 include::{snippets}/create-missing-post/http-request.adoc[]
 
 ==== Request fields
-
 include::{snippets}/create-missing-post/request-parts.adoc[]
+
 include::{snippets}/create-missing-post/request-part-param-fields.adoc[]
 
 ==== Http Response
-
 include::{snippets}/create-missing-post/http-response.adoc[]
 
 ==== Response fields

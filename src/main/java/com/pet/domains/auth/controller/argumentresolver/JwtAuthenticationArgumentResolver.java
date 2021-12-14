@@ -28,26 +28,29 @@ public class JwtAuthenticationArgumentResolver implements HandlerMethodArgumentR
     @Override
     public Object resolveArgument(
         MethodParameter parameter, ModelAndViewContainer mavContainer,
-        NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-        return accountService.checkLoginAccountById(getJwtAuthentication().getAccountId());
-    }
+        NativeWebRequest webRequest, WebDataBinderFactory binderFactory
+    ) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        validateAuthentication(authentication);
 
-    private JwtAuthentication getJwtAuthentication() {
-        return validateAuthenticationByGetJwtAuthentication(SecurityContextHolder.getContext().getAuthentication());
-    }
-
-    private JwtAuthentication validateAuthenticationByGetJwtAuthentication(Authentication authentication) {
-        if (Objects.nonNull(authentication)) {
-            validateAnonymousAuthentication(authentication);
-            return (JwtAuthentication)authentication.getPrincipal();
+        if (isAnonymousAuthentication(authentication)) {
+            return null;
         }
-        throw ExceptionMessage.INVALID_JWT.getException();
+        return accountService.checkLoginAccountById(getJwtAuthentication(authentication).getAccountId());
     }
 
-    private void validateAnonymousAuthentication(Authentication authentication) {
-        if (authentication instanceof AnonymousAuthenticationToken) {
+    private JwtAuthentication getJwtAuthentication(Authentication authentication) {
+        return (JwtAuthentication) authentication.getPrincipal();
+    }
+
+    private void validateAuthentication(Authentication authentication) {
+        if (Objects.isNull(authentication)) {
             throw ExceptionMessage.INVALID_JWT.getException();
         }
+    }
+
+    private boolean isAnonymousAuthentication(Authentication authentication) {
+        return authentication instanceof AnonymousAuthenticationToken;
     }
 
 }
