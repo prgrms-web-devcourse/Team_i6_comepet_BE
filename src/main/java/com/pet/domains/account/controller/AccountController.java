@@ -2,7 +2,6 @@ package com.pet.domains.account.controller;
 
 import static java.util.stream.Collectors.*;
 import com.pet.common.jwt.JwtAuthentication;
-import com.pet.common.jwt.JwtMockToken;
 import com.pet.common.response.ApiResponse;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.account.domain.LoginAccount;
@@ -11,7 +10,6 @@ import com.pet.domains.account.dto.request.AccountEmailParam;
 import com.pet.domains.account.dto.request.AccountSignUpParam;
 import com.pet.domains.account.dto.request.AccountEmailCheck;
 import com.pet.domains.account.dto.request.AccountLonginParam;
-import com.pet.domains.account.dto.request.AccountPasswordParam;
 import com.pet.domains.account.dto.request.AccountUpdateParam;
 import com.pet.domains.account.dto.response.AccountAreaReadResults;
 import com.pet.domains.account.dto.response.AccountBookmarkPostPageResults;
@@ -105,12 +103,6 @@ public class AccountController {
                 accountUpdateParam.getNickname()
             );
         }
-    }
-
-    @PatchMapping(path = "/change-password", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateAccountByPassword(@RequestBody AccountPasswordParam accountPasswordParam) {
-        log.info("success change password");
     }
 
     @GetMapping(path = "/me/areas", produces = MediaType.APPLICATION_JSON_VALUE)
