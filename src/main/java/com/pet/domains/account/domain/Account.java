@@ -5,7 +5,6 @@ import com.pet.domains.DeletableEntity;
 import com.pet.domains.auth.domain.Group;
 import com.pet.domains.image.domain.Image;
 import java.util.Objects;
-import java.util.StringJoiner;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -59,8 +58,6 @@ public class Account extends DeletableEntity {
 
     @Column(name = "checked_area", columnDefinition = "boolean default false")
     private boolean checkedArea;
-
-    private SignStatus signStatus;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "image_id",
