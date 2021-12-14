@@ -22,6 +22,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -110,6 +111,16 @@ public class Account extends DeletableEntity {
         }
     }
 
+    public void updateProfile(String nickname, String password) {
+        if (StringUtils.isNotBlank(nickname)) {
+            this.nickname = nickname;
+        }
+
+        if (StringUtils.isNotBlank(password)) {
+            this.password = password;
+        }
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -126,4 +137,5 @@ public class Account extends DeletableEntity {
     public int hashCode() {
         return Objects.hash(id);
     }
+
 }

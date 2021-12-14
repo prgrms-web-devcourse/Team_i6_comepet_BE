@@ -1,6 +1,7 @@
 package com.pet.domains.comment.domain;
 
 import com.pet.domains.DeletableEntity;
+import com.pet.domains.account.domain.Account;
 import com.pet.domains.post.domain.MissingPost;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -54,15 +56,42 @@ public class Comment extends DeletableEntity {
     )
     private MissingPost missingPost;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+        name = "account_id",
+        referencedColumnName = "id",
+        foreignKey = @ForeignKey(name = "fk_account_to_comment"),
+        nullable = false
+    )
+    private Account account;
+
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "parentComment")
     private List<Comment> childComments = new ArrayList<>();
 
-    @Builder
+    @Builder(builderClassName = "ChildCommentBuilder", builderMethodName = "ChildCommentBuilder")
     public Comment(String content, Comment parentComment, MissingPost missingPost,
-        List<Comment> childComments) {
+        Account account) {
+        ObjectUtils.requireNonEmpty(content, "content must not be null");
+        ObjectUtils.requireNonEmpty(parentComment, "parentComment must not be null");
+        ObjectUtils.requireNonEmpty(missingPost, "missingPost must not be null");
+        ObjectUtils.requireNonEmpty(account, "account must not be null");
+
         this.content = content;
         this.parentComment = parentComment;
         this.missingPost = missingPost;
-        this.childComments = childComments;
+        this.account = account;
     }
+
+    @Builder
+    public Comment(String content, MissingPost missingPost, Account account) {
+        ObjectUtils.requireNonEmpty(content, "content must not be null");
+        ObjectUtils.requireNonEmpty(missingPost, "missingPost must not be null");
+        ObjectUtils.requireNonEmpty(account, "account must not be null");
+
+        this.content = content;
+        this.missingPost = missingPost;
+        this.account = account;
+    }
+
 }
