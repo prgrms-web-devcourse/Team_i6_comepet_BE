@@ -107,9 +107,9 @@ public class Account extends DeletableEntity {
         this.notification = notification;
     }
 
-    public void isVerifyAccount(Long accountId) {
-        if (this.getId().equals(accountId)) {
-            throw ExceptionMessage.INVALID_ACCOUNT.getException();
+    public void isIdentification(Long accountId) {
+        if (this.id.equals(accountId)) {
+            throw ExceptionMessage.UN_IDENTIFICATION.getException();
         }
     }
 

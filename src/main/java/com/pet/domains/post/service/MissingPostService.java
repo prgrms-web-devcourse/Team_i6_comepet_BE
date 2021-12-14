@@ -82,7 +82,7 @@ public class MissingPostService {
     public void deleteMissingPost(Long postId, Account account) {
         missingPostRepository.findById(postId)
             .filter(post -> post.getAccount().getId().equals(account.getId()))
-            .orElseThrow(ExceptionMessage.INVALID_ACCOUNT::getException);
+            .orElseThrow(ExceptionMessage.UN_IDENTIFICATION::getException);
 
         postImageRepository.deleteAllByMissingPostId(postId);
         commentRepository.deleteAllByMissingPostId(postId);

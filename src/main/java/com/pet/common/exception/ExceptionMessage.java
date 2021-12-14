@@ -37,6 +37,7 @@ public enum ExceptionMessage {
     INVALID_JWT_EXPIRY(new AuthenticationException("토큰이 만료되었습니다.", 904)),
     NOT_FOUND_GROUP(new AuthenticationException("존재하지 않는 그룹입니다.", 905)),
     NOT_FOUND_PROVIDER(new AuthenticationException("지원하지 않는 인증 방식입니다.", 906)),
+    UN_IDENTIFICATION(new AuthenticationException("본인이 아닙니다.", 907)),
 
     // 댓글 10xx
     NOT_FOUND_COMMENT(new NotFoundException("해당하는 댓글을 찾을 수 없습니다.", 1001)),
