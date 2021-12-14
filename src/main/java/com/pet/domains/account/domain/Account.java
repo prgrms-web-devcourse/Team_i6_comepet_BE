@@ -100,7 +100,7 @@ public class Account extends DeletableEntity {
         return passwordEncoder.matches(password, this.password);
     }
 
-    public void useNotification(boolean notification) {
+    public void updateNotification(boolean notification) {
         this.notification = notification;
     }
 }

@@ -146,6 +146,7 @@ public class AccountService {
                     .build())
                 .collect(Collectors.toList()));
 
-        accountRepository.findAll();
+        account.updateNotification(accountAreaUpdateParam.isNotification());
+        accountRepository.save(account);
     }
 }
