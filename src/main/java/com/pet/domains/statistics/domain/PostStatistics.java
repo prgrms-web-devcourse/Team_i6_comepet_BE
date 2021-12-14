@@ -12,6 +12,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -43,6 +44,8 @@ public class PostStatistics extends BaseEntity {
 
     @Builder
     public PostStatistics(long missing, long detection, long protection, long completion, LocalDateTime date) {
+        Validate.notNull(date, "date must not be null");
+
         this.missing = missing;
         this.detection = detection;
         this.protection = protection;
