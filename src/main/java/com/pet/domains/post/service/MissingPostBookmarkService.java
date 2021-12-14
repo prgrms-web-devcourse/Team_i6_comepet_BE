@@ -32,4 +32,9 @@ public class MissingPostBookmarkService {
         );
     }
 
+    @Transactional
+    public void deleteMissingPostBookmark(Long postId, Account account) {
+        missingPostBookmarkRepository.deleteByMissingPostIdAndAccount(postId, account);
+    }
+
 }

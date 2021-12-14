@@ -214,8 +214,9 @@ public class MissingPostController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(path = "/{postId}/bookmark")
-    public void deleteMissingPostBookmark(@PathVariable Long postId) {
+    public void deleteMissingPostBookmark(@PathVariable Long postId, @LoginAccount Account account) {
         log.info("실종/보호 북마크 삭제 call for {}", postId);
+        missingPostBookmarkService.deleteMissingPostBookmark(postId, account);
     }
 
     @ResponseStatus(HttpStatus.OK)
