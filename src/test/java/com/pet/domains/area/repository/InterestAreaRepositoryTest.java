@@ -78,10 +78,6 @@ class InterestAreaRepositoryTest {
         // fetch join
         assertThat(interestAreas.get(0).getTown().getName()).isEqualTo("도봉구");
         assertThat(interestAreas.get(0).getTown().getCity().getName()).isEqualTo("서울시");
-
-        interestAreaRepository.deleteAllByAccountId(account.getId());
-
-        assertThat(interestAreaRepository.findAll().size()).isEqualTo(0);
     }
 
     @DisplayName("회원 관심 지역 삭제 테스트")
