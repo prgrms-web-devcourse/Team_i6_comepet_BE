@@ -13,11 +13,11 @@ import com.pet.domains.animal.service.AnimalService;
 import com.pet.domains.area.controller.CityController;
 import com.pet.domains.auth.service.AuthenticationService;
 import com.pet.domains.comment.controller.CommentController;
+import com.pet.domains.comment.service.CommentService;
 import com.pet.domains.docs.controller.CommonDocumentationController;
 import com.pet.domains.image.service.ImageService;
 import com.pet.domains.post.controller.MissingPostController;
 import com.pet.domains.post.controller.ShelterPostController;
-import com.pet.domains.post.service.ShelterPostBookmarkService;
 import com.pet.domains.post.service.MissingPostService;
 import com.pet.domains.post.service.ShelterPostBookmarkService;
 import com.pet.domains.statistics.controller.PostStatisticsController;
@@ -72,6 +72,9 @@ public abstract class BaseDocumentationTest {
 
     @MockBean
     protected ShelterPostBookmarkService shelterPostBookmarkService;
+
+    @MockBean
+    protected CommentService commentService;
 
     protected JwtAuthentication getAuthenticationToken() {
         return (JwtAuthentication) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

@@ -1,5 +1,6 @@
 package com.pet.domains.post.service;
 
+import com.pet.common.exception.ExceptionMessage;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.animal.domain.AnimalKind;
 import com.pet.domains.animal.service.AnimalKindService;
@@ -71,6 +72,11 @@ public class MissingPostService {
         createPostImage(imageFiles, createMissingPost);
 
         return createMissingPost.getId();
+    }
+
+    public MissingPost getMissingPostById(Long postId) {
+        return missingPostRepository.findById(postId)
+            .orElseThrow(ExceptionMessage.NOT_FOUND_MISSING_POST::getException);
     }
 
     private String getThumbnail(List<Image> imageFiles) {
