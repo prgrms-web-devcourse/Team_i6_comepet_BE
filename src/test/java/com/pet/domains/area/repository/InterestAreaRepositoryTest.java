@@ -94,8 +94,8 @@ class InterestAreaRepositoryTest {
     }
 
     private Account givenAccount() {
-        return Account.builder().email("tseter@email.com").password("1234").nickname("name").notification(true)
-            .checkedArea(true).signStatus(SignStatus.SUCCESS).build();
+        return Account.builder().email("tester@email.com").password("1234").nickname("name").notification(true)
+            .checkedArea(true).build();
     }
 
 }
