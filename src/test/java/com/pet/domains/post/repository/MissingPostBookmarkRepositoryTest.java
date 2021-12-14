@@ -12,6 +12,8 @@ import com.pet.domains.area.domain.City;
 import com.pet.domains.area.domain.Town;
 import com.pet.domains.area.repository.CityRepository;
 import com.pet.domains.area.repository.TownRepository;
+import com.pet.domains.auth.domain.Group;
+import com.pet.domains.auth.repository.GroupRepository;
 import com.pet.domains.post.domain.MissingPost;
 import com.pet.domains.post.domain.MissingPostBookmark;
 import com.pet.domains.post.domain.SexType;
@@ -34,6 +36,9 @@ import org.springframework.context.annotation.FilterType;
 class MissingPostBookmarkRepositoryTest {
 
     @Autowired
+    GroupRepository groupRepository;
+
+    @Autowired
     AccountRepository accountRepository;
 
     @Autowired
@@ -54,6 +59,8 @@ class MissingPostBookmarkRepositoryTest {
     @Autowired
     MissingPostBookmarkRepository missingPostBookmarkRepository;
 
+    private Group group;
+
     private Account account;
 
     private City city;
@@ -70,9 +77,14 @@ class MissingPostBookmarkRepositoryTest {
 
     @BeforeEach
     void setUp() {
+        group = new Group("name");
+        groupRepository.save(group);
+
         account = Account.builder()
             .nickname("nickname")
             .email("abvcd@naver.com")
+            .group(group)
+            .password("111111")
             .build();
         accountRepository.save(account);
 
