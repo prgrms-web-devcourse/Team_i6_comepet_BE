@@ -20,6 +20,7 @@ import com.pet.domains.post.controller.MissingPostController;
 import com.pet.domains.post.controller.ShelterPostController;
 import com.pet.domains.post.service.MissingPostService;
 import com.pet.domains.post.service.ShelterPostBookmarkService;
+import com.pet.domains.post.service.ShelterPostService;
 import com.pet.domains.statistics.controller.PostStatisticsController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -75,6 +76,9 @@ public abstract class BaseDocumentationTest {
 
     @MockBean
     protected CommentService commentService;
+
+    @MockBean
+    protected ShelterPostService shelterPostService;
 
     protected JwtAuthentication getAuthenticationToken() {
         return (JwtAuthentication) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

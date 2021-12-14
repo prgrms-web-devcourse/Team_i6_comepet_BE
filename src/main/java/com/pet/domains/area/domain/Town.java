@@ -15,6 +15,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.ObjectUtils;
 
 
 @Getter
@@ -28,7 +29,7 @@ public class Town extends BaseEntity {
     @Column(name = "id", updatable = false)
     private Long id;
 
-    @Column(name = "code", nullable = false, length = 10)
+    @Column(name = "code", length = 10)
     private String code;
 
     @Column(name = "name", nullable = false, length = 200)
@@ -44,6 +45,9 @@ public class Town extends BaseEntity {
 
     @Builder
     public Town(String code, String name, City city) {
+        ObjectUtils.requireNonEmpty(name, "name must not be null");
+        ObjectUtils.requireNonEmpty(city, "city must not be null");
+
         this.code = code;
         this.name = name;
         this.city = city;

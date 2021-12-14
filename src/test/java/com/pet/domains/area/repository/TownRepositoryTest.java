@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
 
@@ -18,7 +19,7 @@ import org.springframework.context.annotation.FilterType;
 class TownRepositoryTest {
 
     @Autowired
-    private CityRepository cityRepository;
+    private TestEntityManager entityManager;
 
     @Autowired
     private TownRepository townRepository;
@@ -31,13 +32,59 @@ class TownRepositoryTest {
             .name("서울시")
             .code("001")
             .build();
-        cityRepository.save(city);
+        entityManager.persist(city);
 
         Town town = new Town("001", "노원구", city);
-        townRepository.save(town);
+        entityManager.persist(town);
+        entityManager.flush();
+        entityManager.clear();
 
         //when
-        Town foundTown = townRepository.getById(1L);
+        Town foundTown = townRepository.getById(town.getId());
+
+        //then
+        assertThat(foundTown.getId()).isEqualTo(town.getId());
+    }
+
+    @Test
+    @DisplayName("시군구 이름 일치 & 시도 조건으로 조회 테스트")
+    void findByNameAndCityTest() {
+        //given
+        City city = City.builder()
+            .name("서울시")
+            .code("001")
+            .build();
+        entityManager.persist(city);
+
+        Town town = new Town("001", "노원구", city);
+        entityManager.persist(town);
+        entityManager.flush();
+        entityManager.clear();
+
+        //when
+        Town foundTown = townRepository.findByNameAndCity("노원구", city).get();
+
+        //then
+        assertThat(foundTown.getId()).isEqualTo(town.getId());
+    }
+
+    @Test
+    @DisplayName("시군구 이름 containing & 시도 조건으로 조회 테스트")
+    void findByNameContainingAndCityTest() {
+        //given
+        City city = City.builder()
+            .name("서울시")
+            .code("001")
+            .build();
+        entityManager.persist(city);
+
+        Town town = new Town("001", "노원구 어쩌구저쩌구", city);
+        entityManager.persist(town);
+        entityManager.flush();
+        entityManager.clear();
+
+        //when
+        Town foundTown = townRepository.findByNameContainingAndCity("노원구", city).get();
 
         //then
         assertThat(foundTown.getId()).isEqualTo(town.getId());

@@ -65,10 +65,6 @@ public class InitDataConfig implements ApplicationRunner {
         log.info("saveAllCities start..");
         shelterApiService.saveAllCities();
 
-        String sql2 = "INSERT INTO town (created_at, updated_at, code, name, city_id)"
-            + " SELECT NOW(), NOW(), '0000000', '전체', id FROM city WHERE code = '5690000';";
-        jdbcTemplate.execute(sql2);
-
         log.info("saveAllTowns start..");
         shelterApiService.saveAllTowns();
 

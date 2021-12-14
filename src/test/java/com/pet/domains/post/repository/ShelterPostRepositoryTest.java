@@ -1,6 +1,5 @@
 package com.pet.domains.post.repository;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import com.pet.common.config.JpaAuditingConfig;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.animal.domain.Animal;
@@ -10,6 +9,8 @@ import com.pet.domains.area.domain.Town;
 import com.pet.domains.post.domain.ShelterPost;
 import com.pet.domains.post.domain.ShelterPostBookmark;
 import java.util.List;
+import org.assertj.core.api.SoftAssertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,23 +19,27 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DataJpaTest(includeFilters = @Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JpaAuditingConfig.class))
-@DisplayName("ShelterPostBookmark Repository  테스트")
-class ShelterPostBookmarkRepositoryTest {
+@DisplayName("ShelterPost Repository 테스트")
+class ShelterPostRepositoryTest {
 
     @Autowired
     private TestEntityManager entityManager;
 
     @Autowired
-    private ShelterPostBookmarkRepository shelterPostBookmarkRepository;
+    private ShelterPostRepository shelterPostRepository;
 
-    @Test
-    @DisplayName("보호소 게시글 북마크 삭제 테스트")
-    void deleteByShelterPostIdAndAccountTest() {
-        // given
-        Account account = Account.builder()
+    private ShelterPost shelterPost;
+
+    private Account account;
+
+    @BeforeEach
+    void setUp() {
+        account = Account.builder()
             .email("test@gmail.com")
             .build();
         entityManager.persist(account);
@@ -61,24 +66,47 @@ class ShelterPostBookmarkRepositoryTest {
             .build();
         entityManager.persist(town);
 
-        ShelterPost shelterPost = ShelterPost.builder()
+        shelterPost = ShelterPost.builder()
             .animalKind(animalKind)
             .town(town)
             .build();
         entityManager.persist(shelterPost);
-        ShelterPostBookmark shelterPostBookmark = ShelterPostBookmark.builder()
+        entityManager.persist(
+            ShelterPost.builder()
+                .animalKind(animalKind)
+                .town(town)
+                .feature("other post")
+                .build()
+        );
+        entityManager.flush();
+        entityManager.clear();
+    }
+
+    @Test
+    @DisplayName("북마크 여부를 포함한 조회 테스트")
+    void findAllWithIsBookmarkTest() {
+        // given
+        ShelterPostBookmark postBookmark = ShelterPostBookmark.builder()
             .shelterPost(shelterPost)
             .account(account)
             .build();
-        entityManager.persist(shelterPostBookmark);
+        entityManager.persist(postBookmark);
         entityManager.flush();
         entityManager.clear();
 
         // when
-        shelterPostBookmarkRepository.deleteByShelterPostIdAndAccount(shelterPost.getId(), account);
-        List<ShelterPostBookmark> bookmarks = shelterPostBookmarkRepository.findAll();
+        Page<ShelterPostWithIsBookmark> pageResult =
+            shelterPostRepository.findAllWithIsBookmarkAccount(account, PageRequest.of(0, 10));
 
         // then
-        assertThat(bookmarks).isEmpty();
+        List<ShelterPostWithIsBookmark> contents = pageResult.getContent();
+        SoftAssertions.assertSoftly(softAssertions -> {
+                softAssertions.assertThat(contents).hasSize(2);
+                softAssertions.assertThat(contents.get(0).getShelterPost().getId()).isEqualTo(shelterPost.getId());
+                softAssertions.assertThat(contents.get(0).getIsBookmark()).isTrue();
+                softAssertions.assertThat(contents.get(1).getIsBookmark()).isFalse();
+                softAssertions.assertThat(pageResult.getTotalElements()).isEqualTo(2L);
+            }
+        );
     }
 }
