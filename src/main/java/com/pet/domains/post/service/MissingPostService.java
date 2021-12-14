@@ -6,7 +6,7 @@ import com.pet.domains.animal.domain.AnimalKind;
 import com.pet.domains.animal.service.AnimalKindService;
 import com.pet.domains.area.domain.Town;
 import com.pet.domains.area.repository.TownRepository;
-import com.pet.domains.comment.CommentRepository;
+import com.pet.domains.comment.repository.CommentRepository;
 import com.pet.domains.image.domain.Image;
 import com.pet.domains.image.domain.PostImage;
 import com.pet.domains.image.repository.PostImageRepository;

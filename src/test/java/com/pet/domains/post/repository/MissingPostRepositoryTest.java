@@ -13,8 +13,8 @@ import com.pet.domains.area.domain.City;
 import com.pet.domains.area.domain.Town;
 import com.pet.domains.area.repository.CityRepository;
 import com.pet.domains.area.repository.TownRepository;
-import com.pet.domains.comment.CommentRepository;
 import com.pet.domains.comment.domain.Comment;
+import com.pet.domains.comment.repository.CommentRepository;
 import com.pet.domains.image.domain.Image;
 import com.pet.domains.image.domain.PostImage;
 import com.pet.domains.image.repository.ImageRepository;
@@ -175,6 +175,7 @@ class MissingPostRepositoryTest {
         comment = Comment.builder()
             .missingPost(missingPost)
             .content("내용")
+            .account(account)
             .build();
         commentRepository.save(comment);
     }
