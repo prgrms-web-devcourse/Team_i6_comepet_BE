@@ -27,7 +27,8 @@ public class PostStatisticsService {
     public void createPostStatistics() {
         LocalDateTime now = LocalDateTime.now();
         List<PostCountByStatus> groupByStatus = postStatisticsRepository.findGroupByStatus();
-        PostStatistics postStatistics = postStatisticsRepository.save(postStatisticsMapper.toEntity(groupByStatus, now));
+        PostStatistics postStatistics = postStatisticsRepository.save(
+            postStatisticsMapper.toEntity(groupByStatus, now));
         log.info("{} created at {}", postStatistics, postStatistics.getDate());
     }
 

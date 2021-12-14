@@ -7,7 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface PostStatisticsRepository extends JpaRepository<PostStatistics, Long> {
 
-    @Query("SELECT mp.status AS postStatus, count(mp) AS count FROM MissingPost AS mp WHERE mp.deleted=false GROUP BY mp.status")
+    @Query("SELECT mp.status AS postStatus, count(mp) AS count FROM"
+        + " MissingPost AS mp WHERE mp.deleted=false GROUP BY mp.status")
     List<PostCountByStatus> findGroupByStatus();
 
 }
