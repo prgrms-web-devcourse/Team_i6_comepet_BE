@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.LongStream;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -37,6 +38,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -91,8 +93,14 @@ public class AccountController {
 
     @PatchMapping(path = "/me", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateAccount(@LoginAccount Account account, @RequestBody AccountUpdateParam accountUpdateParam) {
+    public void updateAccount(@LoginAccount Account account, @RequestBody @Valid AccountUpdateParam accountUpdateParam) {
         accountService.updateAccount(account, accountUpdateParam);
+    }
+
+    @PostMapping(value = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateImage(@LoginAccount Account account, @RequestPart(required = false) MultipartFile multipartFile) {
+        accountService.updateAccountImage(account, multipartFile);
     }
 
     @GetMapping(path = "/me/areas", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -104,7 +112,7 @@ public class AccountController {
     @PutMapping(path = "/me/areas", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateAccountArea(
-        @LoginAccount Account account, @RequestBody AccountAreaUpdateParam accountAreaUpdateParam
+        @LoginAccount Account account, @RequestBody @Valid AccountAreaUpdateParam accountAreaUpdateParam
     ) {
         accountService.updateArea(account, accountAreaUpdateParam);
     }

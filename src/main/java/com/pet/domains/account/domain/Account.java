@@ -137,4 +137,8 @@ public class Account extends DeletableEntity {
         }
     }
 
+    public void updateProfileImage(Image image) {
+        this.image = image;
+    }
+
 }
