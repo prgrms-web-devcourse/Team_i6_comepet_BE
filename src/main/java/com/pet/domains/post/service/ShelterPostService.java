@@ -36,7 +36,7 @@ public class ShelterPostService {
     public ShelterPostPageResults getShelterPostsPageWithAccount(Account account, Pageable pageable) {
         Page<ShelterPostWithIsBookmark> pageResult =
             shelterPostRepository.findAllWithIsBookmarkAccount(account, pageable);
-        return shelterPostMapper.toShelterPostPageResultsW(pageResult);
+        return shelterPostMapper.toShelterPostPageResultsWithAccount(pageResult);
     }
 
     public ShelterPostPageResults getShelterPostsPage(Pageable pageable) {
@@ -44,9 +44,8 @@ public class ShelterPostService {
         return shelterPostMapper.toShelterPostPageResults(pageResult);
     }
 
-
     @Transactional
-    public void bulkCreateShelterPosts(ShelterPostCreateParams shelterPostCreateParams) {
+    public void bulkCreateShelterPost(ShelterPostCreateParams shelterPostCreateParams) {
         shelterPostRepository.saveAll(shelterPostCreateParams.getShelterPosts().stream()
             .map(createParam -> shelterPostMapper.toEntity(
                 createParam,
@@ -64,4 +63,5 @@ public class ShelterPostService {
         log.debug("cityName: {}, townName: {}", cityName, townName);
         return townService.getOrCreateTownByName(cityName, townName);
     }
+
 }

@@ -24,7 +24,7 @@ public interface ShelterPostMapper {
         Town townEntity
     );
 
-    default ShelterPostPageResults toShelterPostPageResultsW(Page<ShelterPostWithIsBookmark> pageResult) {
+    default ShelterPostPageResults toShelterPostPageResultsWithAccount(Page<ShelterPostWithIsBookmark> pageResult) {
         List<ShelterPostPageResults.ShelterPost> shelterPostResults = pageResult.getContent().stream()
             .map(shelterPostWithIsBookmark -> {
                 ShelterPost shelterPost = shelterPostWithIsBookmark.getShelterPost();

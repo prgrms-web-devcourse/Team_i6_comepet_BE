@@ -1,8 +1,10 @@
 package com.pet.domains.area.service;
 
+import com.pet.common.exception.ExceptionMessage;
 import com.pet.domains.area.domain.City;
 import com.pet.domains.area.domain.Town;
 import com.pet.domains.area.dto.request.TownCreateParams;
+import com.pet.domains.area.repository.CityRepository;
 import com.pet.domains.area.repository.TownRepository;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,13 +17,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TownService {
 
-    private final CityService cityService;
+    private final CityRepository cityRepository;
 
     private final TownRepository townRepository;
 
     @Transactional
-    public void createTowns(String cityCode, TownCreateParams townCreateParams) {
-        City city = cityService.getCityByCode(cityCode);
+    public void bulkCreateTowns(String cityCode, TownCreateParams townCreateParams) {
+        City city = getCityByCode(cityCode);
         List<Town> towns = townCreateParams.getTowns().stream()
             .map(townCreateParam -> Town.builder()
                 .city(city)
@@ -32,21 +34,27 @@ public class TownService {
         townRepository.saveAll(towns);
     }
 
+    @Transactional
     public Town getOrCreateTownByName(String cityName, String townName) {
-        City foundCity = cityService.getCityByName(cityName);
+        City foundCity = getCityByName(cityName);
         return townRepository.findByNameAndCity(townName, foundCity)
             .orElseGet(() -> townRepository.findByNameContainingAndCity(townName, foundCity)
-                .orElseGet(() -> createTownByName(townName, foundCity))
+                .orElseGet(() -> townRepository.save(
+                    Town.builder()
+                        .name(townName)
+                        .city(foundCity)
+                        .build()
+                ))
             );
     }
 
-    @Transactional
-    public Town createTownByName(String townName, City city) {
-        return townRepository.save(
-            Town.builder()
-                .name(townName)
-                .city(city)
-                .build()
-        );
+    private City getCityByCode(String cityCode) {
+        return cityRepository.findByCode(cityCode)
+            .orElseThrow(ExceptionMessage.NOT_FOUND_CITY::getException);
+    }
+
+    private City getCityByName(String cityName) {
+        return cityRepository.findByName(cityName)
+            .orElseThrow(ExceptionMessage.NOT_FOUND_CITY::getException);
     }
 }
