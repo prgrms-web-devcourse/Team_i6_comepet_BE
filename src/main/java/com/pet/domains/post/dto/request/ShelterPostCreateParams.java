@@ -114,7 +114,11 @@ public class ShelterPostCreateParams {
             if (whileSpaceIdx == -1) {
                 return UNKNOWN;
             }
-            return StringUtils.substring(kindCd, whileSpaceIdx + 1).strip();
+            String splitName = StringUtils.substring(kindCd, whileSpaceIdx + 1);
+            if (StringUtils.isEmpty(splitName)) {
+                return UNKNOWN;
+            }
+            return splitName.strip();
         }
 
         public String getCityNameFromAddress() {
