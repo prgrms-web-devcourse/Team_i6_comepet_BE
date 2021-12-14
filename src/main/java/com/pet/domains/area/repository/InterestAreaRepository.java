@@ -11,4 +11,7 @@ public interface InterestAreaRepository extends JpaRepository<InterestArea, Long
     @EntityGraph(attributePaths = "town")
     @Query("select i from InterestArea i join fetch i.town t left join fetch t.city c")
     List<InterestArea> findByAccountId(Long id);
+
+    void deleteAllByAccountId(Long id);
+
 }

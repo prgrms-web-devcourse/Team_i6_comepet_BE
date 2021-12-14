@@ -144,14 +144,22 @@ public class AccountService {
 
     @Transactional
     public void updateArea(Account account, AccountAreaUpdateParam accountAreaUpdateParam) {
-        interestAreaRepository.saveAll(
-            accountAreaUpdateParam.getAreas().stream()
-                .map(area -> InterestArea.builder()
+        if (!accountAreaUpdateParam.getAreas().isEmpty()) {
+            interestAreaRepository.deleteAllByAccountId(account.getId());
+        }
+
+        interestAreaRepository.saveAll(accountAreaUpdateParam.getAreas().stream()
+            .map(area -> {
+                Long townId = area.getTownId();
+                return InterestArea.builder()
                     .account(account)
                     .selected(area.isDefaultArea())
-                    .town(townRepository.getById(area.getTownId()))
-                    .build())
-                .collect(Collectors.toList()));
+                    .town(townRepository.getById(townId))
+                    .build();
+            })
+            .distinct()
+            .limit(2)
+            .collect(Collectors.toList()));
 
         account.updateNotification(accountAreaUpdateParam.isNotification());
         accountRepository.save(account);

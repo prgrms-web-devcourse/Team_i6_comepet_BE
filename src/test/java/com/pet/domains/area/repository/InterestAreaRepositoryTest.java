@@ -8,6 +8,8 @@ import com.pet.domains.area.domain.City;
 import com.pet.domains.area.domain.InterestArea;
 import com.pet.domains.area.domain.Town;
 import java.util.List;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,14 +41,30 @@ class InterestAreaRepositoryTest {
     @Autowired
     private TestEntityManager entityManager;
 
+    private Account account;
+
+    private City city;
+
+    private Town town1;
+
+    private Town town2;
+
+    @BeforeEach
+    void setUp() {
+        account = accountRepository.save(givenAccount());
+        city = cityRepository.save(City.builder().code("100").name("서울시").build());
+        town1 = townRepository.save(Town.builder().name("도봉구").code("111").city(city).build());
+        town2 = townRepository.save(Town.builder().name("강북구").code("112").city(city).build());
+    }
+
+    @AfterEach
+    void tearDown() {
+        interestAreaRepository.deleteAll();
+    }
+
     @DisplayName("회원 관심 지역 조회 테스트")
     @Test
-    void saveInterestArea() {
-        Account account = accountRepository.save(givenAccount());
-        City city = cityRepository.save(City.builder().code("100").name("서울시").build());
-        Town town1 = townRepository.save(Town.builder().name("도봉구").code("111").city(city).build());
-        Town town2 = townRepository.save(Town.builder().name("강북구").code("112").city(city).build());
-
+    void getInterestAreaTest() {
         interestAreaRepository.save(InterestArea.builder().town(town1).selected(true).account(account).build());
         interestAreaRepository.save(InterestArea.builder().town(town2).selected(true).account(account).build());
 
@@ -60,6 +78,23 @@ class InterestAreaRepositoryTest {
         // fetch join
         assertThat(interestAreas.get(0).getTown().getName()).isEqualTo("도봉구");
         assertThat(interestAreas.get(0).getTown().getCity().getName()).isEqualTo("서울시");
+
+        interestAreaRepository.deleteAllByAccountId(account.getId());
+
+        assertThat(interestAreaRepository.findAll().size()).isEqualTo(0);
+    }
+
+    @DisplayName("회원 관심 지역 삭제 테스트")
+    @Test
+    void saveInterestAreaTest() {
+        interestAreaRepository.save(InterestArea.builder().town(town1).selected(true).account(account).build());
+        interestAreaRepository.save(InterestArea.builder().town(town2).selected(true).account(account).build());
+
+        entityManager.flush();
+        entityManager.clear();
+
+        interestAreaRepository.deleteAllByAccountId(account.getId());
+        assertThat(interestAreaRepository.findAll().size()).isEqualTo(0);
     }
 
     private Account givenAccount() {
