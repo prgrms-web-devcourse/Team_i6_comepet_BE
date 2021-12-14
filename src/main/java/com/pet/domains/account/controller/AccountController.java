@@ -97,13 +97,8 @@ public class AccountController {
 
     @GetMapping(path = "/me/areas", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<AccountAreaReadResults> getAccountAreas() {
-        return ApiResponse.ok(AccountAreaReadResults.of(
-            List.of(
-                AccountAreaReadResults.Area.of(1L, "서울특별시", 1L, "강남구", true),
-                AccountAreaReadResults.Area.of(1L, "서울특별시", 2L, "강동구", false)
-            )
-        ));
+    public ApiResponse<AccountAreaReadResults> getAccountAreas(@LoginAccount Account account) {
+        return ApiResponse.ok(accountService.getInterestArea(account));
     }
 
     @PutMapping(path = "/me/areas", consumes = MediaType.APPLICATION_JSON_VALUE)
