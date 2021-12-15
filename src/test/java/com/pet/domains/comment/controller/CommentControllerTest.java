@@ -1,6 +1,7 @@
 package com.pet.domains.comment.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
@@ -42,7 +43,7 @@ class CommentControllerTest extends BaseDocumentationTest {
     void createCommentTest() throws Exception {
         // given
         given(commentService.createComment(any(Account.class), any(CommentCreateParam.class))).willReturn(1L);
-        CommentCreateParam param = CommentCreateParam.builder()
+        CommentCreateParam createParam = CommentCreateParam.builder()
             .postId(1L)
             .content("content")
             .parentCommentId(13L)
@@ -52,7 +53,7 @@ class CommentControllerTest extends BaseDocumentationTest {
         ResultActions resultActions = mockMvc.perform(post("/api/v1/comments")
             .header(HttpHeaders.AUTHORIZATION, getAuthenticationToken())
             .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .content(objectMapper.writeValueAsString(param)));
+            .content(objectMapper.writeValueAsString(createParam)));
 
         // then
         resultActions
@@ -81,15 +82,20 @@ class CommentControllerTest extends BaseDocumentationTest {
     }
 
     @Test
+    @WithAccount
     @DisplayName("댓글 수정 테스트")
     void updateCommentTest() throws Exception {
         // given
-        CommentUpdateParam param = CommentUpdateParam.of("updated content");
+        given(commentService.updateComment(anyLong(), any(CommentUpdateParam.class), any(Account.class))).willReturn(1L);
+        CommentUpdateParam updateParam = CommentUpdateParam.builder()
+            .content("updated content")
+            .build();
 
         // when
         ResultActions resultActions = mockMvc.perform(patch("/api/v1/comments/{commentId}", 1L)
+            .header(HttpHeaders.AUTHORIZATION, getAuthenticationToken())
             .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .content(objectMapper.writeValueAsString(param)));
+            .content(objectMapper.writeValueAsString(updateParam)));
 
         // then
         resultActions
@@ -102,10 +108,11 @@ class CommentControllerTest extends BaseDocumentationTest {
                     parameterWithName("commentId").description("댓글 아이디")
                 ),
                 requestHeaders(
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token"),
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
                 requestFields(
-                    fieldWithPath("content").description("댓글 내용")
+                    fieldWithPath("content").description("수정할 댓글 내용")
                 ),
                 responseHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)

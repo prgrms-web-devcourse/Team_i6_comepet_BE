@@ -94,4 +94,9 @@ public class Comment extends DeletableEntity {
         this.account = account;
     }
 
+    public void updateContent(String content, Long accountId) {
+        Validate.notBlank(content, "content must not be blank");
+        this.account.isIdentification(account.getId());
+        this.content = content;
+    }
 }
