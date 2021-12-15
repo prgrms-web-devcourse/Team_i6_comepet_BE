@@ -1,6 +1,5 @@
 package com.pet.domains.post.repository;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import com.pet.common.config.JpaAuditingConfig;
 import com.pet.common.exception.ExceptionMessage;
 import com.pet.domains.account.domain.Account;
@@ -32,6 +31,7 @@ import com.pet.domains.tag.repository.PostTagRepository;
 import com.pet.domains.tag.repository.TagRepository;
 import java.time.LocalDate;
 import java.util.List;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -146,6 +146,12 @@ class MissingPostRepositoryTest {
             .build();
         animalKindRepository.save(animalKind);
 
+        tag = Tag.builder()
+            .name("웰시코기")
+            .count(1)
+            .build();
+        tagRepository.save(tag);
+
         missingPost = MissingPost.builder()
             .status(Status.DETECTION)
             .detailAddress("상세주소")
@@ -163,29 +169,22 @@ class MissingPostRepositoryTest {
             .town(town)
             .animalKind(animalKind)
             .build();
-        missingPostRepository.save(missingPost);
 
         image = new Image("awern23kjnr2k3n423.jpg");
         imageRepository.save(image);
-
-        postImage = PostImage.builder()
-            .missingPost(missingPost)
-            .image(image)
-            .build();
-        postImageRepository.save(postImage);
-
-        tag = Tag.builder()
-            .name("웰시코기")
-            .count(1)
-            .build();
-        tagRepository.save(tag);
 
         postTag = PostTag
             .builder()
             .missingPost(missingPost)
             .tag(tag)
             .build();
-        postTagRepository.save(postTag);
+        missingPostRepository.save(missingPost);
+
+        postImage = PostImage.builder()
+            .missingPost(missingPost)
+            .image(image)
+            .build();
+        postImageRepository.save(postImage);
 
         comment = Comment.builder()
             .missingPost(missingPost)
@@ -217,20 +216,19 @@ class MissingPostRepositoryTest {
             .forEach(Tag::decreaseCount);
         Tag getTag = tagRepository.findById(tag.getId()).get();
 
-        postTagRepository.deleteAllByMissingPostId(missingPost.getId());
-        List<PostTag> getPostTagsAfterDelete = postTagRepository.findAll();
-
         missingPostRepository.deleteById(missingPost.getId());
         List<MissingPost> getMissingPosts = missingPostRepository.findAll();
 
         //then
-        assertThat(getMissingPost.getId()).isEqualTo(missingPost.getId());
-        assertThat(getPostImages.isEmpty());
-        assertThat(getComments.isEmpty());
-        assertThat(getPostTags.size()).isEqualTo(1);
-        assertThat(getTag.getCount()).isEqualTo(0);
-        assertThat(getPostTagsAfterDelete.size()).isEqualTo(0);
-        assertThat(getMissingPosts.size()).isEqualTo(0);
+        SoftAssertions.assertSoftly(softAssertions -> {
+                softAssertions.assertThat(getMissingPost.getId()).isEqualTo(missingPost.getId());
+                softAssertions.assertThat(getPostImages.isEmpty());
+                softAssertions.assertThat(getComments.isEmpty());
+                softAssertions.assertThat(getPostTags.size()).isEqualTo(1);
+                softAssertions.assertThat(getTag.getCount()).isEqualTo(0);
+                softAssertions.assertThat(getMissingPosts.size()).isEqualTo(0);
+            }
+        );
     }
 
 }
