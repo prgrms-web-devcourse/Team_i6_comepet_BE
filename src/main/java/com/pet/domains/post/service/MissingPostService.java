@@ -16,6 +16,7 @@ import com.pet.domains.post.dto.request.MissingPostCreateParam;
 import com.pet.domains.post.dto.response.MissingPostReadResults;
 import com.pet.domains.post.mapper.MissingPostMapper;
 import com.pet.domains.post.repository.MissingPostRepository;
+import com.pet.domains.post.repository.MissingPostWithIsBookmark;
 import com.pet.domains.tag.domain.PostTag;
 import com.pet.domains.tag.domain.Tag;
 import com.pet.domains.tag.repository.PostTagRepository;
@@ -99,16 +100,14 @@ public class MissingPostService {
     }
 
     public MissingPostReadResults getMissingPostsPage(Pageable pageable) {
-        //anonymous 리스트 조회
         Page<MissingPost> pageResult = missingPostRepository.findAllByDeletedIsFalse(pageable);
-        System.out.println(missingPostMapper.toMissingPostResults(pageResult).toString());
         return missingPostMapper.toMissingPostResults(pageResult);
     }
 
     public MissingPostReadResults getMissingPostsPageWithAccount(Account account, Pageable pageable) {
-        //사용자 포함 리스트 조회
-        //북마크 여부 알려줘야함
-        return null;
+        Page<MissingPostWithIsBookmark> pageResult =
+            missingPostRepository.findAllWithIsBookmarkAccountByDeletedIsFalse(account, pageable);
+        return missingPostMapper.toMissingPostWithBookmarkResults(pageResult);
     }
 
     private String getThumbnail(List<Image> imageFiles) {

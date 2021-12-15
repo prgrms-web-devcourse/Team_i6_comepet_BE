@@ -6,6 +6,7 @@ import com.pet.domains.area.domain.Town;
 import com.pet.domains.post.domain.MissingPost;
 import com.pet.domains.post.dto.request.MissingPostCreateParam;
 import com.pet.domains.post.dto.response.MissingPostReadResults;
+import com.pet.domains.post.repository.MissingPostWithIsBookmark;
 import com.pet.domains.tag.domain.PostTag;
 import com.pet.domains.tag.domain.Tag;
 import java.util.ArrayList;
@@ -29,21 +30,25 @@ public interface MissingPostMapper {
     MissingPost toEntity(MissingPostCreateParam param, Town townEntity,
         AnimalKind animalKindEntity, String thumbnail, Account account);
 
-    default MissingPostReadResults toMissingPostResults(Page<MissingPost> pageResult) {
-        List<MissingPostReadResults.MissingPost> missingPostResults = new ArrayList<>();
-        for (MissingPost missingPost : pageResult.getContent()) {
-            MissingPostReadResults.MissingPost post = toMissingPostDto(missingPost);
-            missingPostResults.add(post);
-        }
-        return MissingPostReadResults.of(
-            missingPostResults,
-            pageResult.getTotalElements(),
-            pageResult.isLast(),
-            pageResult.getSize()
-        );
-    }
+    @Mappings({
+        @Mapping(target = "town",
+            expression = "java(String.valueOf(missingPostWithIsBookmark.getMissingPost().getTown().getName()))"),
+        @Mapping(target = "city",
+            expression = "java(String.valueOf("
+                + "missingPostWithIsBookmark.getMissingPost().getTown().getCity().getName()))"),
+        @Mapping(target = "animalKind", source = "missingPostWithIsBookmark.missingPost.animalKind.animal.name"),
+        @Mapping(target = "status", source = "missingPostWithIsBookmark.missingPost.status"),
+        @Mapping(target = "createdAt", source = "missingPostWithIsBookmark.missingPost.createdAt"),
+        @Mapping(target = "sex", source = "missingPostWithIsBookmark.missingPost.sexType"),
+        @Mapping(target = "bookmarkCount", source = "missingPostWithIsBookmark.missingPost.bookmarkCount"),
+        @Mapping(target = "thumbnail", source = "missingPostWithIsBookmark.missingPost.thumbnail"),
+        @Mapping(target = "isBookmark", source = "missingPostWithIsBookmark.isBookmark"),
+        @Mapping(target = "tags",
+            expression = "java(toMissingPostTagResults(missingPostWithIsBookmark.getMissingPost().getPostTags()))"),
+        @Mapping(target = "id", source = "missingPostWithIsBookmark.missingPost.id")
+    })
+    MissingPostReadResults.MissingPost toMissingPostDto(MissingPostWithIsBookmark missingPostWithIsBookmark);
 
-    //toMissingPostDto - 익명 사용자 리스트 조회
     @Mappings({
         @Mapping(target = "town", expression = "java(String.valueOf(missingPost.getTown().getName()))"),
         @Mapping(target = "city", expression = "java(String.valueOf(missingPost.getTown().getCity().getName()))"),
@@ -58,9 +63,41 @@ public interface MissingPostMapper {
     })
     MissingPostReadResults.MissingPost toMissingPostDto(MissingPost missingPost);
 
+    @Mappings({
+        @Mapping(target = "name", source = "tag.name")
+    })
+    MissingPostReadResults.MissingPost.Tag toMissingPostTagDto(Tag tag);
+
+    default MissingPostReadResults toMissingPostResults(Page<MissingPost> pageResult) {
+        List<MissingPostReadResults.MissingPost> missingPostResults = new ArrayList<>();
+        for (MissingPost missingPost : pageResult.getContent()) {
+            MissingPostReadResults.MissingPost post = toMissingPostDto(missingPost);
+            missingPostResults.add(post);
+        }
+        return MissingPostReadResults.of(
+            missingPostResults,
+            pageResult.getTotalElements(),
+            pageResult.isLast(),
+            pageResult.getSize()
+        );
+    }
+
+    default MissingPostReadResults toMissingPostWithBookmarkResults(Page<MissingPostWithIsBookmark> pageResult) {
+        List<MissingPostReadResults.MissingPost> missingPostResults = new ArrayList<>();
+        for (MissingPostWithIsBookmark missingPost : pageResult.getContent()) {
+            MissingPostReadResults.MissingPost post = toMissingPostDto(missingPost);
+            missingPostResults.add(post);
+        }
+        return MissingPostReadResults.of(
+            missingPostResults,
+            pageResult.getTotalElements(),
+            pageResult.isLast(),
+            pageResult.getSize()
+        );
+    }
+
     default List<MissingPostReadResults.MissingPost.Tag> toMissingPostTagResults(List<PostTag> postTags) {
         List<MissingPostReadResults.MissingPost.Tag> missingPostTagResults = new ArrayList<>();
-        //tag -> missingPost
         for (PostTag postTag : postTags) {
             MissingPostReadResults.MissingPost.Tag getTag = toMissingPostTagDto(postTag.getTag());
             missingPostTagResults.add(getTag);
@@ -68,9 +105,4 @@ public interface MissingPostMapper {
         return missingPostTagResults;
     }
 
-    //toMissingPostTagsDto - 리스트 안 게시물의 태그 리스트 조회
-    @Mappings({
-        @Mapping(target = "name", source = "tag.name")
-    })
-    MissingPostReadResults.MissingPost.Tag toMissingPostTagDto(Tag tag);
 }
