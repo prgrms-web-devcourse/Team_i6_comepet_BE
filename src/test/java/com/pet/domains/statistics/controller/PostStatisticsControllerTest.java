@@ -1,5 +1,6 @@
 package com.pet.domains.statistics.controller;
 
+import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
@@ -16,6 +17,8 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import com.pet.domains.docs.BaseDocumentationTest;
+import com.pet.domains.statistics.dto.response.PostStatisticsReadResult;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
@@ -29,6 +32,15 @@ class PostStatisticsControllerTest extends BaseDocumentationTest {
     @DisplayName("게시글 통계 데이터 조회 테스트")
     void getPostStatisticsTest() throws Exception {
         // given
+        PostStatisticsReadResult result = PostStatisticsReadResult.builder()
+            .missing(5312L)
+            .detection(312L)
+            .protection(142L)
+            .completion(4213L)
+            .date(LocalDateTime.now())
+            .build();
+        given(postStatisticsService.getPostStatistics()).willReturn(result);
+
         // when
         ResultActions resultActions = mockMvc.perform(get("/api/v1/statistics")
             .accept(MediaType.APPLICATION_JSON_VALUE));
