@@ -213,7 +213,7 @@ class AccountControllerTest extends BaseDocumentationTest {
         resultActions
             .andDo(print())
             .andExpect(status().isOk())
-            .andDo(document("update-account",
+            .andDo(document("get-account",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 requestHeaders(
