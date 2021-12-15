@@ -58,7 +58,7 @@ public enum ExceptionMessage {
     // 태그 15xx
 
     // 통계 16xx
-    NOT_FOUND_POST_STATISTICS(new NotFoundException("해당하는 게시글 통계 데이터를 찾을 수 없습니다.", 1301));
+    NOT_FOUND_POST_STATISTICS(new NotFoundException("해당하는 게시글 통계 데이터를 찾을 수 없습니다.", 1601));
 
 
     private final RuntimeException exception;
