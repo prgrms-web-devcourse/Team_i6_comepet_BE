@@ -1,8 +1,11 @@
 package com.pet.domains.account.controller;
 
 import com.pet.common.response.ApiResponse;
+import com.pet.domains.account.domain.Account;
+import com.pet.domains.account.domain.LoginAccount;
 import com.pet.domains.account.dto.request.NotificationUpdateParam;
 import com.pet.domains.account.dto.response.NotificationReadResults;
+import com.pet.domains.account.service.NotificationService;
 import com.pet.domains.post.domain.Status;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +26,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Slf4j
 public class NotificationController {
+
+    private final NotificationService notificationService;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
@@ -53,8 +58,8 @@ public class NotificationController {
 
     @DeleteMapping("/{noticeId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteNotification(@PathVariable Long noticeId) {
-        log.info("success delete notification id : {}", noticeId);
+    public void deleteNotification(@LoginAccount Account account, @PathVariable Long noticeId) {
+        notificationService.deleteNoticeById(account, noticeId);
     }
 
     @PatchMapping("/{noticeId}")

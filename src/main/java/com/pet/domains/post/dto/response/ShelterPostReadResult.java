@@ -2,6 +2,7 @@ package com.pet.domains.post.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDate;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
@@ -11,7 +12,9 @@ public class ShelterPostReadResult {
 
     private final Long age;
 
-    private final String shelterPlace;
+    private final String city;
+
+    private final String town;
 
     private final String shelterName;
 
@@ -51,14 +54,16 @@ public class ShelterPostReadResult {
 
     private final Long bookmarkCount;
 
-    private ShelterPostReadResult(Long id, Long age, String shelterPlace, String shelterName,
+    @Builder
+    private ShelterPostReadResult(Long id, Long age, String city, String town, String shelterName,
         String shelterTelNumber, String color, String image, LocalDate foundDate, String foundPlace,
         String animal, String animalKind, String neutered, LocalDate startDate, LocalDate endDate,
         String noticeNumber, String managerTelNumber, String status, String sex, String feature, Double weight,
         Boolean isBookmark, Long bookmarkCount) {
         this.id = id;
         this.age = age;
-        this.shelterPlace = shelterPlace;
+        this.city = city;
+        this.town = town;
         this.shelterName = shelterName;
         this.shelterTelNumber = shelterTelNumber;
         this.color = color;
@@ -80,15 +85,6 @@ public class ShelterPostReadResult {
         this.bookmarkCount = bookmarkCount;
     }
 
-    public static ShelterPostReadResult of(Long id, Long age, String shelterPlace, String shelterName,
-        String shelterTelNumber, String color, String image, LocalDate foundDate, String foundPlace,
-        String animal, String animalKind, String neutered, LocalDate startDate, LocalDate endDate,
-        String noticeNumber, String managerTelNumber, String status, String sex, String feature, Double weight,
-        Boolean isBookmark, Long bookmarkCount) {
-        return new ShelterPostReadResult(id, age, shelterPlace, shelterName, shelterTelNumber, color, image, foundDate,
-            foundPlace, animal, animalKind, neutered, startDate, endDate, noticeNumber, managerTelNumber, status, sex,
-            feature, weight, isBookmark, bookmarkCount);
-    }
 
     @JsonProperty("isBookmark")
     public Boolean getBookmark() {

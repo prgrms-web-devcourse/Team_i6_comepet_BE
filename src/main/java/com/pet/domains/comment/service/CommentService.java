@@ -4,6 +4,7 @@ import com.pet.common.exception.ExceptionMessage;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.comment.domain.Comment;
 import com.pet.domains.comment.dto.request.CommentCreateParam;
+import com.pet.domains.comment.dto.request.CommentUpdateParam;
 import com.pet.domains.comment.repository.CommentRepository;
 import com.pet.domains.post.domain.MissingPost;
 import com.pet.domains.post.repository.MissingPostRepository;
@@ -26,9 +27,17 @@ public class CommentService {
         return commentRepository.save(getNewComment(account, commentCreateParam)).getId();
     }
 
-    private Comment getCommentById(Long commentId) {
-        return commentRepository.findById(commentId)
-            .orElseThrow(ExceptionMessage.NOT_FOUND_COMMENT::getException);
+    @Transactional
+    public Long updateComment(Long commentId, CommentUpdateParam commentUpdateParam, Account account) {
+        Comment foundComment = getComment(commentId);
+        foundComment.updateContent(commentUpdateParam.getContent(), account.getId());
+
+        return foundComment.getId();
+    }
+
+    @Transactional
+    public void deleteMyCommentById(Account account, Long commentId) {
+        commentRepository.deleteByIdAndAccount(commentId, account);
     }
 
     private Comment getNewComment(Account account, CommentCreateParam commentCreateParam) {
@@ -36,7 +45,7 @@ public class CommentService {
         if (Objects.nonNull(commentCreateParam.getParentCommentId())) {
             return Comment.ChildCommentBuilder()
                 .content(commentCreateParam.getContent())
-                .parentComment(getCommentById(commentCreateParam.getParentCommentId()))
+                .parentComment(getComment(commentCreateParam.getParentCommentId()))
                 .missingPost(missingPost)
                 .account(account)
                 .build();
@@ -46,6 +55,11 @@ public class CommentService {
             .missingPost(missingPost)
             .account(account)
             .build();
+    }
+
+    private Comment getComment(Long commentId) {
+        return commentRepository.findById(commentId)
+            .orElseThrow(ExceptionMessage.NOT_FOUND_COMMENT::getException);
     }
 
     private MissingPost getMissingPostById(Long postId) {

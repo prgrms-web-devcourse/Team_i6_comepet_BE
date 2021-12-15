@@ -1,6 +1,7 @@
 package com.pet.domains.comment.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
@@ -22,7 +23,6 @@ import static org.springframework.restdocs.request.RequestDocumentation.paramete
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import com.pet.common.jwt.JwtMockToken;
 import com.pet.domains.account.WithAccount;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.comment.dto.request.CommentCreateParam;
@@ -34,7 +34,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
-@DisplayName("댓글 컨트롤러 docs 테스트")
+@DisplayName("댓글 컨트롤러 테스트")
 class CommentControllerTest extends BaseDocumentationTest {
 
     @Test
@@ -43,7 +43,7 @@ class CommentControllerTest extends BaseDocumentationTest {
     void createCommentTest() throws Exception {
         // given
         given(commentService.createComment(any(Account.class), any(CommentCreateParam.class))).willReturn(1L);
-        CommentCreateParam param = CommentCreateParam.builder()
+        CommentCreateParam createParam = CommentCreateParam.builder()
             .postId(1L)
             .content("content")
             .parentCommentId(13L)
@@ -53,7 +53,7 @@ class CommentControllerTest extends BaseDocumentationTest {
         ResultActions resultActions = mockMvc.perform(post("/api/v1/comments")
             .header(HttpHeaders.AUTHORIZATION, getAuthenticationToken())
             .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .content(objectMapper.writeValueAsString(param)));
+            .content(objectMapper.writeValueAsString(createParam)));
 
         // then
         resultActions
@@ -82,16 +82,21 @@ class CommentControllerTest extends BaseDocumentationTest {
     }
 
     @Test
+    @WithAccount
     @DisplayName("댓글 수정 테스트")
     void updateCommentTest() throws Exception {
         // given
-        CommentUpdateParam param = CommentUpdateParam.of("updated content");
+        given(commentService.updateComment(anyLong(), any(CommentUpdateParam.class), any(Account.class)))
+            .willReturn(1L);
+        CommentUpdateParam updateParam = CommentUpdateParam.builder()
+            .content("updated content")
+            .build();
 
         // when
         ResultActions resultActions = mockMvc.perform(patch("/api/v1/comments/{commentId}", 1L)
-            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN)
+            .header(HttpHeaders.AUTHORIZATION, getAuthenticationToken())
             .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .content(objectMapper.writeValueAsString(param)));
+            .content(objectMapper.writeValueAsString(updateParam)));
 
         // then
         resultActions
@@ -108,7 +113,7 @@ class CommentControllerTest extends BaseDocumentationTest {
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
                 requestFields(
-                    fieldWithPath("content").description("댓글 내용")
+                    fieldWithPath("content").description("수정할 댓글 내용")
                 ),
                 responseHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
@@ -121,12 +126,13 @@ class CommentControllerTest extends BaseDocumentationTest {
     }
 
     @Test
+    @WithAccount
     @DisplayName("댓글 삭제 테스트")
     void deleteCommentTest() throws Exception {
         // given
         // when
         ResultActions resultActions = mockMvc.perform(delete("/api/v1/comments/{commentId}", 1L)
-            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN));
+            .header(HttpHeaders.AUTHORIZATION, getAuthenticationToken()));
 
         // then
         resultActions

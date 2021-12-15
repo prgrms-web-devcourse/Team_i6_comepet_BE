@@ -28,7 +28,7 @@ import org.springframework.data.domain.PageRequest;
 
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DataJpaTest(includeFilters = @Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JpaAuditingConfig.class))
-@DisplayName("ShelterPost Repository 테스트")
+@DisplayName("보호소 게시글 리포지토리 테스트")
 class ShelterPostRepositoryTest {
 
     @Autowired
@@ -43,6 +43,14 @@ class ShelterPostRepositoryTest {
     private ShelterPost shelterPost;
 
     private Account account;
+
+    private Animal animal;
+
+    private AnimalKind animalKind;
+
+    private City city;
+
+    private Town town;
 
     private GroupPermission groupPermission;
 
@@ -60,23 +68,23 @@ class ShelterPostRepositoryTest {
             .build();
         entityManager.persist(account);
 
-        Animal animal = Animal.builder()
+        animal = Animal.builder()
             .code("111111")
             .name("animal")
             .build();
         entityManager.persist(animal);
-        AnimalKind animalKind = AnimalKind.builder()
+        animalKind = AnimalKind.builder()
             .name("animalKind")
             .animal(animal)
             .build();
         entityManager.persist(animalKind);
 
-        City city = City.builder()
+        city = City.builder()
             .name("city")
             .code("111111")
             .build();
         entityManager.persist(city);
-        Town town = Town.builder()
+        town = Town.builder()
             .city(city)
             .name("town")
             .build();
@@ -87,13 +95,6 @@ class ShelterPostRepositoryTest {
             .town(town)
             .build();
         entityManager.persist(shelterPost);
-        entityManager.persist(
-            ShelterPost.builder()
-                .animalKind(animalKind)
-                .town(town)
-                .feature("other post")
-                .build()
-        );
         entityManager.flush();
         entityManager.clear();
     }
@@ -102,8 +103,14 @@ class ShelterPostRepositoryTest {
     @DisplayName("북마크 여부를 포함한 조회 테스트")
     void findAllWithIsBookmarkTest() {
         // given
+        ShelterPost bookMarkPost = ShelterPost.builder()
+            .animalKind(animalKind)
+            .town(town)
+            .feature("bookmark post")
+            .build();
+        entityManager.persist(bookMarkPost);
         ShelterPostBookmark postBookmark = ShelterPostBookmark.builder()
-            .shelterPost(shelterPost)
+            .shelterPost(bookMarkPost)
             .account(account)
             .build();
         entityManager.persist(postBookmark);
@@ -112,16 +119,46 @@ class ShelterPostRepositoryTest {
 
         // when
         Page<ShelterPostWithIsBookmark> pageResult =
-            shelterPostRepository.findAllWithIsBookmarkAccount(account, PageRequest.of(0, 10));
+            shelterPostRepository.findAllWithIsBookmark(account, PageRequest.of(0, 10));
 
         // then
         List<ShelterPostWithIsBookmark> contents = pageResult.getContent();
         SoftAssertions.assertSoftly(softAssertions -> {
                 softAssertions.assertThat(contents).hasSize(2);
                 softAssertions.assertThat(contents.get(0).getShelterPost().getId()).isEqualTo(shelterPost.getId());
-                softAssertions.assertThat(contents.get(0).getIsBookmark()).isTrue();
-                softAssertions.assertThat(contents.get(1).getIsBookmark()).isFalse();
+                softAssertions.assertThat(contents.get(0).getIsBookmark()).isFalse();
+                softAssertions.assertThat(contents.get(1).getShelterPost().getId()).isEqualTo(bookMarkPost.getId());
+                softAssertions.assertThat(contents.get(1).getIsBookmark()).isTrue();
                 softAssertions.assertThat(pageResult.getTotalElements()).isEqualTo(2L);
+            }
+        );
+    }
+
+    @Test
+    @DisplayName("북마크 여부를 포함한 단건 조회 테스트")
+    void findByIdWithIsBookmarkTest() {
+        // given
+        ShelterPost bookMarkPost = ShelterPost.builder()
+            .animalKind(animalKind)
+            .town(town)
+            .feature("bookmark post")
+            .build();
+        entityManager.persist(bookMarkPost);
+        ShelterPostBookmark postBookmark = ShelterPostBookmark.builder()
+            .shelterPost(bookMarkPost)
+            .account(account)
+            .build();
+        entityManager.persist(postBookmark);
+        entityManager.flush();
+        entityManager.clear();
+
+        // when
+        ShelterPostWithIsBookmark result = shelterPostRepository.findByIdWithIsBookmark(account, bookMarkPost.getId());
+
+        // then
+        SoftAssertions.assertSoftly(softAssertions -> {
+                softAssertions.assertThat(result.getShelterPost().getId()).isEqualTo(bookMarkPost.getId());
+                softAssertions.assertThat(result.getIsBookmark()).isTrue();
             }
         );
     }

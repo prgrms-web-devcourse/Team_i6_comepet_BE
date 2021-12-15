@@ -11,7 +11,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import com.pet.common.jwt.JwtAuthentication;
-import com.pet.common.jwt.JwtMockToken;
 import com.pet.domains.account.WithAccount;
 import com.pet.domains.account.domain.SignEmail;
 import com.pet.domains.account.dto.request.AccountAreaUpdateParam;
@@ -20,13 +19,15 @@ import com.pet.domains.account.dto.request.AccountEmailCheck;
 import com.pet.domains.account.dto.request.AccountLonginParam;
 import com.pet.domains.account.dto.request.AccountUpdateParam;
 import com.pet.domains.account.dto.response.AccountAreaReadResults;
+import com.pet.domains.account.dto.response.AccountReadResult;
 import com.pet.domains.docs.BaseDocumentationTest;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
-import lombok.With;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -172,15 +173,58 @@ class AccountControllerTest extends BaseDocumentationTest {
 
     @Test
     @WithAccount
+    @DisplayName("회원 정보 조회")
+    void getAccount() throws Exception {
+        // given
+        given(accountService.convertToResult(any()))
+            .willReturn(new AccountReadResult(1L, "nickname", "tester@email.com"));
+        // when
+        ResultActions resultActions = mockMvc.perform(get("/api/v1/me")
+            .header(HttpHeaders.AUTHORIZATION, getAuthenticationToken())
+            .contentType(MediaType.APPLICATION_JSON));
+
+        // then
+        resultActions
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andDo(document("get-account",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                requestHeaders(
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token"),
+                    headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
+                ),
+                responseFields(
+                    fieldWithPath("data").type(OBJECT).description("응답 데이터"),
+                    fieldWithPath("data.id").type(NUMBER).description("회원 id"),
+                    fieldWithPath("data.nickname").type(STRING).description("닉네임"),
+                    fieldWithPath("data.email").type(STRING).description("이메일"),
+                    fieldWithPath("serverDateTime").type(STRING).description("서버 응답 시간")
+                ))
+            );
+    }
+
+    @Test
+    @WithAccount
     @DisplayName("회원 정보 수정 테스트")
     void updateAccountTest() throws Exception {
         // given
-        AccountUpdateParam param = new AccountUpdateParam("updateNickname", "12341234a!", "12341234a!");
+        MockMultipartFile param =
+            new MockMultipartFile("param", "", "application/json",
+                objectMapper.writeValueAsString(
+                    new AccountUpdateParam("updateNickname", "12341234a!", "12341234a!")).getBytes(
+                    StandardCharsets.UTF_8)
+            );
+        MockMultipartFile profileImage =
+            new MockMultipartFile("image", "",
+                "multipart/form-data", "comepet.jpg".getBytes());
+
         // when
-        ResultActions resultActions = mockMvc.perform(patch("/api/v1/me")
+        ResultActions resultActions = mockMvc.perform(multipart("/api/v1/me")
+            .file(profileImage)
+            .file(param)
             .header(HttpHeaders.AUTHORIZATION, getAuthenticationToken())
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(param)));
+            .contentType(MediaType.MULTIPART_FORM_DATA_VALUE));
 
         // then
         resultActions
@@ -191,12 +235,11 @@ class AccountControllerTest extends BaseDocumentationTest {
                 preprocessResponse(prettyPrint()),
                 requestHeaders(
                     headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token"),
-                    headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
+                    headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.MULTIPART_FORM_DATA_VALUE)
                 ),
-                requestFields(
-                    fieldWithPath("nickname").type(STRING).description("닉네임").optional(),
-                    fieldWithPath("newPassword").type(STRING).description("수정 비밀번호").optional(),
-                    fieldWithPath("newPasswordCheck").type(STRING).description("수정 비밀번호 확인").optional()
+                requestParts(
+                    partWithName("image").description("회원 이미지"),
+                    partWithName("param").description("회원 정보 수정 데이터")
                 ))
             );
     }
@@ -282,13 +325,12 @@ class AccountControllerTest extends BaseDocumentationTest {
     }
 
     @Test
+    @WithAccount
     @DisplayName("회원 게시물 조회")
     void getAccountMissingPostsTest() throws Exception {
         // given
         // when
-        ResultActions resultActions = mockMvc.perform(get("/api/v1/me/posts")
-            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN));
-
+        ResultActions resultActions = mockMvc.perform(get("/api/v1/me/posts"));
         // then
         resultActions
             .andDo(print())
@@ -296,9 +338,6 @@ class AccountControllerTest extends BaseDocumentationTest {
             .andDo(document("get-account-missing-posts",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
-                requestHeaders(
-                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
-                ),
                 responseHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
@@ -328,12 +367,12 @@ class AccountControllerTest extends BaseDocumentationTest {
     }
 
     @Test
+    @WithAccount
     @DisplayName("회원 북마크(실종/보호) 조회")
     void getAccountMissingBookmarkPostTest() throws Exception {
         // given
         // when
-        ResultActions resultActions = mockMvc.perform(get("/api/v1/me/bookmarks?status=missing")
-            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN));
+        ResultActions resultActions = mockMvc.perform(get("/api/v1/me/bookmarks?status=missing"));
 
         // then
         resultActions
@@ -342,9 +381,6 @@ class AccountControllerTest extends BaseDocumentationTest {
             .andDo(document("get-account-missing-bookmark-posts",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
-                requestHeaders(
-                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
-                ),
                 responseHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
@@ -372,12 +408,12 @@ class AccountControllerTest extends BaseDocumentationTest {
     }
 
     @Test
+    @WithAccount
     @DisplayName("회원 북마크(보호소) 조회")
     void getAccountShelterBookmarkPostTest() throws Exception {
         // given
         // when
-        ResultActions resultActions = mockMvc.perform(get("/api/v1/me/bookmarks?status=shelter")
-            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN));
+        ResultActions resultActions = mockMvc.perform(get("/api/v1/me/bookmarks?status=shelter"));
 
         // then
         resultActions
@@ -386,9 +422,6 @@ class AccountControllerTest extends BaseDocumentationTest {
             .andDo(document("get-account-shelter-bookmark-posts",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
-                requestHeaders(
-                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
-                ),
                 responseHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
@@ -416,6 +449,7 @@ class AccountControllerTest extends BaseDocumentationTest {
     }
 
     @Test
+    @WithAccount
     @DisplayName("회원 탈퇴 테스트")
     void deleteAccount() throws Exception {
         // given

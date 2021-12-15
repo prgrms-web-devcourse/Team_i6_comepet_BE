@@ -30,6 +30,7 @@ public class JwtAuthenticationArgumentResolver implements HandlerMethodArgumentR
         MethodParameter parameter, ModelAndViewContainer mavContainer,
         NativeWebRequest webRequest, WebDataBinderFactory binderFactory
     ) {
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         validateAuthentication(authentication);
 

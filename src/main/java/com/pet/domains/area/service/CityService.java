@@ -2,6 +2,7 @@ package com.pet.domains.area.service;
 
 import com.pet.domains.area.domain.City;
 import com.pet.domains.area.dto.request.CityCreateParams;
+import com.pet.domains.area.dto.response.CityReadResults;
 import com.pet.domains.area.mapper.CityMapper;
 import com.pet.domains.area.repository.CityRepository;
 import java.util.List;
@@ -27,4 +28,12 @@ public class CityService {
         cityRepository.saveAll(cities);
     }
 
+    public CityReadResults getAllTownAndCity() {
+        List<City> cities = cityRepository.findAll();
+        return CityReadResults.of(cities.stream()
+            .map(city -> cityMapper.toCityDto(city, city.getTowns().stream()
+                .map(cityMapper::toTownDto)
+                .collect(Collectors.toList())))
+            .collect(Collectors.toList()));
+    }
 }

@@ -1,6 +1,7 @@
 package com.pet.domains.post.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
@@ -28,6 +29,7 @@ import com.pet.domains.account.WithAccount;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.docs.BaseDocumentationTest;
 import com.pet.domains.post.dto.response.ShelterPostPageResults;
+import com.pet.domains.post.dto.response.ShelterPostReadResult;
 import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -113,12 +115,43 @@ class ShelterPostControllerTest extends BaseDocumentationTest {
     }
 
     @Test
+    @WithAccount
     @DisplayName("보호소 게시글 단건 조회 테스트")
     void getShelterPostTest() throws Exception {
         // given
+        var results = ShelterPostReadResult.builder()
+            .id(1L)
+            .city("서울특별시")
+            .town("광진구")
+            .age(2018L)
+            .image("http://www.animal.go.kr/files/shelter/2021/11/202112140012452_s.jpg")
+            .animal("개")
+            .animalKind("보더콜리")
+            .foundDate(LocalDate.of(2021, 12, 11))
+            .isBookmark(true)
+            .bookmarkCount(13L)
+            .color("흰색")
+            .startDate(LocalDate.of(2021, 10, 1))
+            .endDate(LocalDate.of(2021, 12, 1))
+            .feature("상태양호")
+            .foundPlace("전라남도 화순군 동면 동림길 3-15")
+            .managerTelNumber("055-749-6134")
+            .neutered("N")
+            .shelterName("화순군유기동물보호소")
+            .noticeNumber("전남-화순-2021-00262")
+            .sex("MALE")
+            .status("보호중")
+            .weight(15.0)
+            .shelterTelNumber("055-749-6134")
+            .isBookmark(true)
+            .build();
+        given(shelterPostService.getShelterPostReadResultWithAccount(any(Account.class), anyLong()))
+            .willReturn(results);
+
         // when
         ResultActions resultActions = mockMvc.perform(get("/api/v1/shelter-posts/{postId}", 1L)
-            .accept(MediaType.APPLICATION_JSON_VALUE));
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .header(HttpHeaders.AUTHORIZATION, getAuthenticationToken()));
 
         // then
         resultActions
@@ -131,7 +164,8 @@ class ShelterPostControllerTest extends BaseDocumentationTest {
                     parameterWithName("postId").description("게시글 아이디")
                 ),
                 requestHeaders(
-                    headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE)
+                    headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE),
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token - optional").optional()
                 ),
                 responseHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
@@ -140,7 +174,8 @@ class ShelterPostControllerTest extends BaseDocumentationTest {
                     fieldWithPath("data").type(OBJECT).description("응답 데이터"),
                     fieldWithPath("data.id").type(NUMBER).description("게시글 id"),
                     fieldWithPath("data.age").type(NUMBER).description("동물 나이"),
-                    fieldWithPath("data.shelterPlace").type(STRING).description("보호 장소"),
+                    fieldWithPath("data.city").type(STRING).description("시도 이름"),
+                    fieldWithPath("data.town").type(STRING).description("시군구 이름"),
                     fieldWithPath("data.shelterName").type(STRING).description("보호소 이름"),
                     fieldWithPath("data.shelterTelNumber").type(STRING).description("보호소 전화번호"),
                     fieldWithPath("data.color").type(STRING).description("동물 색상"),

@@ -5,6 +5,7 @@ import com.pet.domains.area.domain.Town;
 import com.pet.domains.post.domain.ShelterPost;
 import com.pet.domains.post.dto.request.ShelterPostCreateParams;
 import com.pet.domains.post.dto.response.ShelterPostPageResults;
+import com.pet.domains.post.dto.response.ShelterPostReadResult;
 import com.pet.domains.post.repository.ShelterPostWithIsBookmark;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -53,16 +54,32 @@ public interface ShelterPostMapper {
 
     @Mapping(target = "animalKind", source = "shelterPost.animalKind.name")
     @Mapping(target = "animal", source = "shelterPost.animalKind.animal.name")
-    @Mapping(target = "isBookmark", source = "isBookmark")
     @Mapping(target = "town", source = "shelterPost.town.name")
     @Mapping(target = "city", source = "shelterPost.town.city.name")
+    @Mapping(target = "isBookmark", source = "isBookmark")
     ShelterPostPageResults.ShelterPost toShelterPostDto(ShelterPost shelterPost, boolean isBookmark);
 
     @Mapping(target = "animalKind", source = "shelterPost.animalKind.name")
     @Mapping(target = "animal", source = "shelterPost.animalKind.animal.name")
-    @Mapping(target = "isBookmark", expression = "java(false)")
     @Mapping(target = "town", source = "shelterPost.town.name")
     @Mapping(target = "city", source = "shelterPost.town.city.name")
+    @Mapping(target = "isBookmark", expression = "java(false)")
     ShelterPostPageResults.ShelterPost toShelterPostDto(ShelterPost shelterPost);
+
+    @Mapping(target = "animalKind", source = "shelterPost.animalKind.name")
+    @Mapping(target = "animal", source = "shelterPost.animalKind.animal.name")
+    @Mapping(target = "town", source = "shelterPost.town.name")
+    @Mapping(target = "city", source = "shelterPost.town.city.name")
+    @Mapping(target = "isBookmark", source = "isBookmark")
+    @Mapping(target = "status", source = "shelterPost.postStatus")
+    ShelterPostReadResult toShelterPostReadResult(ShelterPost shelterPost, boolean isBookmark);
+
+    @Mapping(target = "animalKind", source = "animalKind.name")
+    @Mapping(target = "animal", source = "animalKind.animal.name")
+    @Mapping(target = "town", source = "town.name")
+    @Mapping(target = "city", source = "town.city.name")
+    @Mapping(target = "isBookmark", expression = "java(false)")
+    @Mapping(target = "status", source = "postStatus")
+    ShelterPostReadResult toShelterPostReadResult(ShelterPost shelterPost);
 
 }

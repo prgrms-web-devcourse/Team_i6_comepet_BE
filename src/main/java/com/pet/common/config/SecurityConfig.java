@@ -1,5 +1,6 @@
 package com.pet.common.config;
 
+import com.pet.common.exception.CustomAuthenticationEntryPoint;
 import com.pet.common.jwt.Jwt;
 import com.pet.common.jwt.JwtAuthenticationFilter;
 import com.pet.common.jwt.JwtAuthenticationProvider;
@@ -14,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -25,9 +26,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
-import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.context.SecurityContextPersistenceFilter;
+import static org.springframework.http.HttpMethod.*;
 
 @Configuration
 @RequiredArgsConstructor
@@ -35,6 +37,9 @@ import org.springframework.security.web.context.SecurityContextPersistenceFilter
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String ACCESS_DINED = "ACCESS_DENIED";
+    private static final String V1 = "/api/v1";
+    private static final String ROLE_USER = "USER";
+    private static final String ROLE_ANONYMOUS = "ANONYMOUS";
 
     private final JwtProperty jwtProperty;
 
@@ -76,11 +81,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new OAuth2AuthenticationSuccessHandler(jwt, accountService);
     }
 
+    @Bean
+    public AuthenticationEntryPoint authenticationEntryPoint() {
+        return new CustomAuthenticationEntryPoint();
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
             .authorizeRequests()
-            .antMatchers("/api/v1/shelter-posts").hasAnyRole("USER", "ANONYMOUS")
+
+            // 보호소 게시글
+            .antMatchers(GET, v1("/shelter-posts")).hasAnyRole(ROLE_USER, ROLE_ANONYMOUS)
+
+            // 회원, 알림
+            .antMatchers(v1("/me/**"), v1("/auth-user"), v1("/notices/**")).hasAnyRole(ROLE_USER)
+
             .anyRequest().permitAll()
             .and()
 
@@ -88,7 +104,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .csrf().disable()
             .cors().and()
             .headers().disable()
-            .httpBasic().disable()
+            .httpBasic()
+            .authenticationEntryPoint(authenticationEntryPoint()).and()
             .rememberMe().disable()
             .logout().disable()
 
@@ -104,10 +121,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .exceptionHandling()
             .accessDeniedHandler(accessDeniedHandler()).and()
 
-            .exceptionHandling()
-            .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)).and()
-
             .addFilterAfter(jwtAuthenticationFilter(), SecurityContextPersistenceFilter.class);
+    }
+
+    private String v1(String url) {
+        return V1 + url;
     }
 
     @Bean

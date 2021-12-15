@@ -47,7 +47,7 @@ import org.springframework.data.domain.PageRequest;
 
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DataJpaTest(includeFilters = @Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JpaAuditingConfig.class))
-@DisplayName("MissingPost Repository 테스트")
+@DisplayName("실종 게시글 리포지토리 테스트")
 class MissingPostRepositoryTest {
 
     @Autowired
@@ -232,15 +232,18 @@ class MissingPostRepositoryTest {
             .forEach(Tag::decreaseCount);
         Tag getTag = tagRepository.findById(tag.getId()).get();
 
+        postTagRepository.deleteAllByMissingPostId(missingPost.getId());
+        List<PostTag> getPostTagsAfterDelete = postTagRepository.findAll();
+
         missingPostRepository.deleteById(missingPost.getId());
         List<MissingPost> getMissingPosts = missingPostRepository.findAll();
 
         //then
         SoftAssertions.assertSoftly(softAssertions -> {
-                softAssertions.assertThat(getMissingPost.getId()).isEqualTo(missingPost.getId());
-                softAssertions.assertThat(getPostImages.isEmpty());
-                softAssertions.assertThat(getComments.isEmpty());
-                softAssertions.assertThat(getPostTags.size()).isEqualTo(1);
+            softAssertions.assertThat(getMissingPost.getId()).isEqualTo(missingPost.getId());
+            softAssertions.assertThat(getPostImages.isEmpty());
+            softAssertions.assertThat(getComments.isEmpty());
+            softAssertions.assertThat(getPostTags.size()).isEqualTo(1);
                 softAssertions.assertThat(getTag.getCount()).isEqualTo(0);
                 softAssertions.assertThat(getMissingPosts.size()).isEqualTo(0);
             }

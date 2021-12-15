@@ -1,65 +1,44 @@
-package com.pet.domains.post.repository;
+package com.pet.domains.comment.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import com.pet.common.config.JpaAuditingConfig;
 import com.pet.domains.account.domain.Account;
-import com.pet.domains.account.repository.AccountRepository;
 import com.pet.domains.animal.domain.Animal;
 import com.pet.domains.animal.domain.AnimalKind;
-import com.pet.domains.animal.repository.AnimalKindRepository;
-import com.pet.domains.animal.repository.AnimalRepository;
 import com.pet.domains.area.domain.City;
 import com.pet.domains.area.domain.Town;
-import com.pet.domains.area.repository.CityRepository;
-import com.pet.domains.area.repository.TownRepository;
 import com.pet.domains.auth.domain.Group;
-import com.pet.domains.auth.repository.GroupRepository;
+import com.pet.domains.auth.domain.GroupPermission;
+import com.pet.domains.auth.domain.Permission;
+import com.pet.domains.comment.domain.Comment;
 import com.pet.domains.post.domain.MissingPost;
-import com.pet.domains.post.domain.MissingPostBookmark;
 import com.pet.domains.post.domain.SexType;
 import com.pet.domains.post.domain.Status;
 import java.time.LocalDate;
 import java.util.List;
-import org.junit.jupiter.api.AfterEach;
+import java.util.stream.LongStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
 
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DataJpaTest(includeFilters = @Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JpaAuditingConfig.class))
-@DisplayName("실종 게시글 리포지토리 테스트")
-class MissingPostBookmarkRepositoryTest {
+@DisplayName("Comment Repository 테스트")
+class CommentRepositoryTest {
 
     @Autowired
-    GroupRepository groupRepository;
+    private TestEntityManager entityManager;
 
     @Autowired
-    AccountRepository accountRepository;
+    private CommentRepository commentRepository;
 
-    @Autowired
-    CityRepository cityRepository;
-
-    @Autowired
-    TownRepository townRepository;
-
-    @Autowired
-    MissingPostRepository missingPostRepository;
-
-    @Autowired
-    AnimalRepository animalRepository;
-
-    @Autowired
-    AnimalKindRepository animalKindRepository;
-
-    @Autowired
-    MissingPostBookmarkRepository missingPostBookmarkRepository;
-
-    private Group group;
+    private MissingPost missingPost;
 
     private Account account;
 
@@ -67,52 +46,51 @@ class MissingPostBookmarkRepositoryTest {
 
     private Town town;
 
-    private MissingPost missingPost;
-
     private Animal animal;
 
     private AnimalKind animalKind;
 
-    private MissingPostBookmark missingPostBookmark;
-
     @BeforeEach
     void setUp() {
-        group = new Group("name");
-        groupRepository.save(group);
+        GroupPermission groupPermission = new GroupPermission(
+            new Group("USER_GROUP"), new Permission("ROLE_USER"));
+        entityManager.persist(
+            groupPermission
+        );
 
         account = Account.builder()
             .nickname("nickname")
             .email("abvcd@naver.com")
-            .group(group)
-            .password("111111")
+            .password("123123a!")
+            .group(groupPermission.getGroup())
             .build();
-        accountRepository.save(account);
+        entityManager.persist(account);
 
         city = City.builder()
             .code("001")
             .name("서울시")
             .build();
-        cityRepository.save(city);
+        entityManager.persist(city);
 
         town = Town.builder()
             .city(city)
             .code("001")
             .name("노원구")
             .build();
-        townRepository.save(town);
+        entityManager.persist(town);
 
         animal = Animal.builder()
             .code("001")
             .name("강아지")
             .build();
-        animalRepository.save(animal);
+        entityManager.persist(animal);
 
         animalKind = AnimalKind.builder()
             .code("001")
             .name("푸들")
             .animal(animal)
             .build();
-        animalKindRepository.save(animalKind);
+        entityManager.persist(animalKind);
 
         missingPost = MissingPost.builder()
             .status(Status.DETECTION)
@@ -131,36 +109,50 @@ class MissingPostBookmarkRepositoryTest {
             .town(town)
             .animalKind(animalKind)
             .build();
-        missingPostRepository.save(missingPost);
-    }
-
-    @AfterEach
-    void tearDown() {
-        missingPostBookmarkRepository.deleteAll();
-        missingPostRepository.deleteAll();
-        animalKindRepository.deleteAll();
-        animalRepository.deleteAll();
-        townRepository.deleteAll();
-        cityRepository.deleteAll();
-        accountRepository.deleteAll();
+        entityManager.persist(missingPost);
+        entityManager.flush();
+        entityManager.clear();
     }
 
     @Test
-    @DisplayName("실종/보호 게시물 북마크 삭제 테스트")
-    void deleteMissingPost() {
-        //given
-        missingPostBookmark = MissingPostBookmark.builder()
+    @DisplayName("게시글 아이디로 댓글 목록 삭제 테스트")
+    void deleteAllByMissingPostIdTest() {
+        // given
+        LongStream.rangeClosed(1, 5).forEach(idx ->
+            entityManager.persist(Comment.builder()
+                .missingPost(missingPost)
+                .content("내용")
+                .account(account)
+                .build()
+            )
+        );
+        entityManager.flush();
+        entityManager.clear();
+
+        // when
+        commentRepository.deleteAllByMissingPostId(missingPost.getId());
+        List<Comment> comments = commentRepository.findAll();
+
+        // then
+        assertThat(comments).isEmpty();
+    }
+
+    @Test
+    @DisplayName("댓글 아이디와 회원값으로 삭제 테스트")
+    void deleteByIdAndAccountTest() {
+        // given
+        Comment comment = Comment.builder()
             .missingPost(missingPost)
             .account(account)
+            .content("내용")
             .build();
-        missingPostBookmarkRepository.save(missingPostBookmark);
 
-        //when
-        missingPostBookmarkRepository.deleteByMissingPostIdAndAccount(missingPost.getId(), account);
+        // when
+        commentRepository.deleteByIdAndAccount(comment.getId(), account);
+        List<Comment> comments = commentRepository.findAll();
 
-        //then
-        List<MissingPostBookmark> getMissingPostBookmarks = missingPostBookmarkRepository.findAll();
-        assertThat(getMissingPostBookmarks.size()).isEqualTo(0);
+        // then
+        assertThat(comments).isEmpty();
     }
 
 }

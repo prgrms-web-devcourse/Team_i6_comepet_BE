@@ -9,6 +9,8 @@ import com.pet.domains.account.dto.request.AccountAreaUpdateParam;
 import com.pet.domains.account.dto.request.AccountSignUpParam;
 import com.pet.domains.account.dto.request.AccountUpdateParam;
 import com.pet.domains.account.dto.response.AccountAreaReadResults;
+import com.pet.domains.account.dto.response.AccountReadResult;
+import com.pet.domains.account.mapper.AccountMapper;
 import com.pet.domains.account.repository.AccountRepository;
 import com.pet.domains.account.repository.SignEmailRepository;
 import com.pet.domains.area.domain.City;
@@ -22,6 +24,7 @@ import com.pet.domains.auth.oauth2.Oauth2User;
 import com.pet.domains.auth.oauth2.ProviderType;
 import com.pet.domains.auth.repository.GroupRepository;
 import com.pet.domains.image.domain.Image;
+import com.pet.domains.image.service.ImageService;
 import com.pet.infra.EmailMessage;
 import com.pet.infra.MailSender;
 import java.time.LocalDateTime;
@@ -29,13 +32,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -58,6 +65,10 @@ public class AccountService {
     private final TownRepository townRepository;
 
     private final InterestAreaMapper interestAreaMapper;
+
+    private final ImageService imageService;
+
+    private final AccountMapper accountMapper;
 
     @Transactional
     public void sendEmail(String email) {
@@ -170,13 +181,14 @@ public class AccountService {
     }
 
     @Transactional
-    public void updateAccount(Account account, AccountUpdateParam accountUpdateParam) {
+    public void updateAccount(Account account, AccountUpdateParam accountUpdateParam, MultipartFile accountImage) {
         if (!StringUtils.equals(accountUpdateParam.getNewPassword(), accountUpdateParam.getNewPasswordCheck())) {
             throw ExceptionMessage.INVALID_PASSWORD.getException();
         }
         account.updateProfile(
             accountUpdateParam.getNickname(),
-            passwordEncoder.encode(accountUpdateParam.getNewPassword())
+            passwordEncoder.encode(accountUpdateParam.getNewPassword()),
+            imageService.createImage(accountImage)
         );
         accountRepository.save(account);
     }
@@ -191,4 +203,9 @@ public class AccountService {
             })
             .collect(Collectors.toList()));
     }
+
+    public AccountReadResult convertToResult(Account account) {
+        return accountMapper.toReadResult(account);
+    }
+
 }

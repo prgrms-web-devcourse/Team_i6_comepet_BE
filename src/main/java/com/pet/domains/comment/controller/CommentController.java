@@ -45,20 +45,21 @@ public class CommentController {
 
     @ResponseStatus(HttpStatus.OK)
     @PatchMapping(
-        path = "/{postId}",
+        path = "/{commentId}",
         consumes = MediaType.APPLICATION_JSON_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ApiResponse<Object> updateComment(
-        @PathVariable Long postId,
-        @RequestBody CommentUpdateParam commentUpdateParam
+        @PathVariable Long commentId,
+        @RequestBody @Valid CommentUpdateParam commentUpdateParam,
+        @LoginAccount Account account
     ) {
-        return ApiResponse.ok(Map.of("id", 1L));
+        return ApiResponse.ok(Map.of("id", commentService.updateComment(commentId, commentUpdateParam, account)));
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping(path = "/{postId}")
-    public void deleteComment(@PathVariable Long postId) {
-        log.info("comment delete call for {}", postId);
+    @DeleteMapping(path = "/{commentId}")
+    public void deleteComment(@LoginAccount Account account, @PathVariable Long commentId) {
+        commentService.deleteMyCommentById(account, commentId);
     }
 }

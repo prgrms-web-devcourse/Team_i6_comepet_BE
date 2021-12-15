@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 public interface AnimalRepository extends JpaRepository<Animal, Long> {
 
     @EntityGraph(attributePaths = "animalKinds", type = EntityGraphType.LOAD)
-    @Query("select a from Animal a")
+    @Query("select distinct a from Animal a")
     List<Animal> findAllWithAnimalKinds();
 
     Optional<Animal> findByCode(String code);
