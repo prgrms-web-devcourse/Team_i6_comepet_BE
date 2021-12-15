@@ -23,6 +23,7 @@ public class ShelterPostBookmarkService {
     public void createPostBookmark(Long postId, Account account) {
         ShelterPost foundPost = shelterPostRepository.findById(postId)
             .orElseThrow(ExceptionMessage.NOT_FOUND_SHELTER_POST::getException);
+        foundPost.increaseBookMarkCount();
 
         shelterPostBookmarkRepository.save(
             ShelterPostBookmark.builder()
