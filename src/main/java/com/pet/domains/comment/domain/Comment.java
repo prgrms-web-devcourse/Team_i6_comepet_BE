@@ -20,7 +20,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.Validate;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -72,10 +72,10 @@ public class Comment extends DeletableEntity {
     @Builder(builderClassName = "ChildCommentBuilder", builderMethodName = "ChildCommentBuilder")
     public Comment(String content, Comment parentComment, MissingPost missingPost,
         Account account) {
-        ObjectUtils.requireNonEmpty(content, "content must not be null");
-        ObjectUtils.requireNonEmpty(parentComment, "parentComment must not be null");
-        ObjectUtils.requireNonEmpty(missingPost, "missingPost must not be null");
-        ObjectUtils.requireNonEmpty(account, "account must not be null");
+        Validate.notBlank(content, "content must not be blank");
+        Validate.notNull(parentComment, "parentComment must not be null");
+        Validate.notNull(missingPost, "missingPost must not be null");
+        Validate.notNull(account, "account must not be null");
 
         this.content = content;
         this.parentComment = parentComment;
@@ -85,9 +85,9 @@ public class Comment extends DeletableEntity {
 
     @Builder
     public Comment(String content, MissingPost missingPost, Account account) {
-        ObjectUtils.requireNonEmpty(content, "content must not be null");
-        ObjectUtils.requireNonEmpty(missingPost, "missingPost must not be null");
-        ObjectUtils.requireNonEmpty(account, "account must not be null");
+        Validate.notBlank(content, "content must not be blank");
+        Validate.notNull(missingPost, "missingPost must not be null");
+        Validate.notNull(account, "account must not be null");
 
         this.content = content;
         this.missingPost = missingPost;
