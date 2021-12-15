@@ -1,6 +1,8 @@
 package com.pet.domains.statistics.service;
 
+import com.pet.common.exception.ExceptionMessage;
 import com.pet.domains.statistics.domain.PostStatistics;
+import com.pet.domains.statistics.dto.response.PostStatisticsReadResult;
 import com.pet.domains.statistics.mapper.PostStatisticsMapper;
 import com.pet.domains.statistics.repository.PostCountByStatus;
 import com.pet.domains.statistics.repository.PostStatisticsRepository;
@@ -30,6 +32,12 @@ public class PostStatisticsService {
         PostStatistics postStatistics = postStatisticsRepository.save(
             postStatisticsMapper.toEntity(groupByStatus, now));
         log.info("{} created at {}", postStatistics, postStatistics.getDate());
+    }
+
+    public PostStatisticsReadResult getPostStatistics() {
+        PostStatistics postStatistics = postStatisticsRepository.findFirstByOrderByIdDesc()
+            .orElseThrow(ExceptionMessage.NOT_FOUND_POST_STATISTICS::getException);
+        return postStatisticsMapper.toReadResult(postStatistics);
     }
 
 }

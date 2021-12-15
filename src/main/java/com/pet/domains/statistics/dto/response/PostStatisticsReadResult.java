@@ -1,6 +1,7 @@
 package com.pet.domains.statistics.dto.response;
 
 import java.time.LocalDateTime;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
@@ -16,6 +17,7 @@ public class PostStatisticsReadResult {
 
     private final LocalDateTime date;
 
+    @Builder
     private PostStatisticsReadResult(Long missing, Long detection, Long protection, Long completion,
         LocalDateTime date) {
         this.missing = missing;
@@ -23,10 +25,5 @@ public class PostStatisticsReadResult {
         this.protection = protection;
         this.completion = completion;
         this.date = date;
-    }
-
-    public static PostStatisticsReadResult of(Long missing, Long detection, Long protection, Long completion,
-        LocalDateTime date) {
-        return new PostStatisticsReadResult(missing, detection, protection, completion, date);
     }
 }
