@@ -1,11 +1,14 @@
 package com.pet.domains.area.domain;
 
 import com.pet.domains.BaseEntity;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -28,6 +31,9 @@ public class City extends BaseEntity {
 
     @Column(name = "name", nullable = false, length = 200)
     private String name;
+
+    @OneToMany(mappedBy = "city")
+    private List<Town> towns = new ArrayList<>();
 
     @Builder
     public City(String code, String name) {

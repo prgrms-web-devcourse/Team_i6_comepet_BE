@@ -12,6 +12,7 @@ import com.pet.domains.account.service.NotificationService;
 import com.pet.domains.animal.controller.AnimalController;
 import com.pet.domains.animal.service.AnimalService;
 import com.pet.domains.area.controller.CityController;
+import com.pet.domains.area.service.CityService;
 import com.pet.domains.auth.service.AuthenticationService;
 import com.pet.domains.comment.controller.CommentController;
 import com.pet.domains.comment.service.CommentService;
@@ -24,6 +25,7 @@ import com.pet.domains.post.service.MissingPostService;
 import com.pet.domains.post.service.ShelterPostBookmarkService;
 import com.pet.domains.post.service.ShelterPostService;
 import com.pet.domains.statistics.controller.PostStatisticsController;
+import org.junit.jupiter.api.Disabled;
 import com.pet.domains.statistics.service.PostStatisticsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -51,6 +53,7 @@ import org.springframework.test.web.servlet.MockMvc;
     })
 @AutoConfigureRestDocs
 @EnableConfigurationProperties(value = JwtProperty.class)
+@Disabled
 public abstract class BaseDocumentationTest {
 
     @Autowired
@@ -91,6 +94,9 @@ public abstract class BaseDocumentationTest {
 
     @MockBean
     protected NotificationService notificationService;
+
+    @MockBean
+    protected CityService cityService;
 
     protected JwtAuthentication getAuthenticationToken() {
         return (JwtAuthentication) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
