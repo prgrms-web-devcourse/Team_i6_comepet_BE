@@ -1,11 +1,10 @@
 package com.pet.domains.account.repository;
 
+import static org.assertj.core.api.Assertions.*;
 import com.pet.common.config.JpaAuditingConfig;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.account.domain.Notification;
 import com.pet.domains.account.domain.Provider;
-import com.pet.domains.animal.domain.Animal;
-import com.pet.domains.animal.domain.AnimalKind;
 import com.pet.domains.area.domain.City;
 import com.pet.domains.area.domain.Town;
 import com.pet.domains.area.repository.CityRepository;
@@ -15,27 +14,21 @@ import com.pet.domains.auth.domain.GroupPermission;
 import com.pet.domains.auth.domain.Permission;
 import com.pet.domains.auth.repository.GroupPermissionRepository;
 import com.pet.domains.post.domain.MissingPost;
-import com.pet.domains.post.domain.MissingPostBookmark;
 import com.pet.domains.post.domain.SexType;
 import com.pet.domains.post.domain.Status;
-import com.pet.domains.post.repository.MissingPostBookmarkRepository;
 import com.pet.domains.post.repository.MissingPostRepository;
 import java.time.LocalDate;
-import javax.persistence.Id;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@DataJpaTest(includeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JpaAuditingConfig.class))
+@DataJpaTest(includeFilters = @Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JpaAuditingConfig.class))
 @DisplayName("알림 Repository 테스트")
 class NotificationRepositoryTest {
 
