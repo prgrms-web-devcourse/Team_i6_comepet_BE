@@ -7,7 +7,6 @@ import com.pet.domains.post.dto.response.ShelterPostPageResults;
 import com.pet.domains.post.dto.response.ShelterPostReadResult;
 import com.pet.domains.post.service.ShelterPostBookmarkService;
 import com.pet.domains.post.service.ShelterPostService;
-import java.time.LocalDate;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,14 +39,8 @@ public class ShelterPostController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(path = "/{postId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ApiResponse<ShelterPostReadResult> getShelterPost(@PathVariable Long postId) {
-        return ApiResponse.ok(
-            ShelterPostReadResult.of(
-                1L, 2018L, "경상남도 진주시 집현면 신당길207번길 22 (집현면, 지역농업개발시설)", "진주시청", "055-749-6134", "흰색",
-                "https://../2021/11/20211asd89_s.jpg", LocalDate.of(2021, 10, 23), "진주시 일반성면 창촌리 56", "개", "달마시안", "N",
-                LocalDate.of(2021, 10, 1), LocalDate.of(2021, 12, 1), "경남-진주-2021-00624", "055-749-5645", "보호중", "F",
-                "순함", 7.2, true, 14L)
-        );
+    public ApiResponse<ShelterPostReadResult> getShelterPost(@LoginAccount Account account, @PathVariable Long postId) {
+        return ApiResponse.ok(getShelterPostReadResult(account, postId));
     }
 
     @ResponseStatus(HttpStatus.CREATED)
@@ -67,5 +60,12 @@ public class ShelterPostController {
             return shelterPostService.getShelterPostsPageWithAccount(account, pageable);
         }
         return shelterPostService.getShelterPostsPage(pageable);
+    }
+
+    private ShelterPostReadResult getShelterPostReadResult(Account account, Long postId) {
+        if (Objects.nonNull(account)) {
+            return shelterPostService.getShelterPostReadResultWithAccount(account, postId);
+        }
+        return shelterPostService.getShelterPostReadResult(postId);
     }
 }

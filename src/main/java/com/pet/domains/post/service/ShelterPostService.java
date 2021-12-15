@@ -1,5 +1,6 @@
 package com.pet.domains.post.service;
 
+import com.pet.common.exception.ExceptionMessage;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.animal.domain.AnimalKind;
 import com.pet.domains.animal.service.AnimalKindService;
@@ -8,6 +9,7 @@ import com.pet.domains.area.service.TownService;
 import com.pet.domains.post.domain.ShelterPost;
 import com.pet.domains.post.dto.request.ShelterPostCreateParams;
 import com.pet.domains.post.dto.response.ShelterPostPageResults;
+import com.pet.domains.post.dto.response.ShelterPostReadResult;
 import com.pet.domains.post.mapper.ShelterPostMapper;
 import com.pet.domains.post.repository.ShelterPostRepository;
 import com.pet.domains.post.repository.ShelterPostWithIsBookmark;
@@ -35,13 +37,26 @@ public class ShelterPostService {
 
     public ShelterPostPageResults getShelterPostsPageWithAccount(Account account, Pageable pageable) {
         Page<ShelterPostWithIsBookmark> pageResult =
-            shelterPostRepository.findAllWithIsBookmarkAccount(account, pageable);
+            shelterPostRepository.findAllWithIsBookmark(account, pageable);
         return shelterPostMapper.toShelterPostPageResultsWithAccount(pageResult);
     }
 
     public ShelterPostPageResults getShelterPostsPage(Pageable pageable) {
         Page<ShelterPost> pageResult = shelterPostRepository.findAll(pageable);
         return shelterPostMapper.toShelterPostPageResults(pageResult);
+    }
+
+    public ShelterPostReadResult getShelterPostReadResultWithAccount(Account account, Long postId) {
+        ShelterPostWithIsBookmark shelterPostWithIsBookmark =
+            shelterPostRepository.findByIdWithIsBookmark(account, postId);
+        return shelterPostMapper.toShelterPostReadResult(
+            shelterPostWithIsBookmark.getShelterPost(),
+            shelterPostWithIsBookmark.getIsBookmark()
+        );
+    }
+
+    public ShelterPostReadResult getShelterPostReadResult(Long postId) {
+        return shelterPostMapper.toShelterPostReadResult(getShelterPost(postId));
     }
 
     @Transactional
@@ -52,6 +67,11 @@ public class ShelterPostService {
                 getAnimalKind(createParam.getAnimalKindNameFromKindCd()),
                 getTown(createParam.getCityNameFromAddress(), createParam.getTownNameFromAddress())
             )).collect(Collectors.toList()));
+    }
+
+    private ShelterPost getShelterPost(Long postId) {
+        return shelterPostRepository.findById(postId)
+            .orElseThrow(ExceptionMessage.NOT_FOUND_SHELTER_POST::getException);
     }
 
     private AnimalKind getAnimalKind(String animalKindName) {
