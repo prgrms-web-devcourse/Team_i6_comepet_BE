@@ -155,7 +155,8 @@ class AccountControllerTest extends BaseDocumentationTest {
     void updateProfileImage() throws Exception {
         // given
         MockMultipartFile profileImage =
-            new MockMultipartFile("image", "", "multipart/form-data", "comepet.jpg".getBytes());
+            new MockMultipartFile("image", "",
+                "multipart/form-data", "comepet.jpg".getBytes());
         // when
         ResultActions resultActions = mockMvc.perform(multipart("/api/v1/me/image")
             .file(profileImage)

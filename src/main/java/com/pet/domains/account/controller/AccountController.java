@@ -93,8 +93,8 @@ public class AccountController {
 
     @PatchMapping(path = "/me", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateAccount(@LoginAccount Account account, @RequestBody @Valid AccountUpdateParam accountUpdateParam) {
-        accountService.updateAccount(account, accountUpdateParam);
+    public void updateAccount(@LoginAccount Account account, @RequestBody @Valid AccountUpdateParam param) {
+        accountService.updateAccount(account, param);
     }
 
     @PostMapping(value = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
