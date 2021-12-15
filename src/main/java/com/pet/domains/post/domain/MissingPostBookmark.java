@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,7 +22,10 @@ import org.apache.commons.lang3.Validate;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "missing_post_bookmark")
+@Table(
+    name = "missing_post_bookmark",
+    uniqueConstraints = @UniqueConstraint(name = "uni_missing_post_post_and_account", columnNames = {"missing_post_id", "account_id"})
+)
 public class MissingPostBookmark extends BaseEntity {
 
     @Id

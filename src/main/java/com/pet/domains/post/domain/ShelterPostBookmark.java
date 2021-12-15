@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,7 +22,11 @@ import org.apache.commons.lang3.ObjectUtils;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "shelter_post_bookmark")
+@Table(
+    name = "shelter_post_bookmark",
+    uniqueConstraints = @UniqueConstraint(name = "uni_shelter_post_and_account", columnNames = {"shelter_post_id", "account_id"})
+
+)
 public class ShelterPostBookmark extends BaseEntity {
 
     @Id
@@ -37,10 +42,10 @@ public class ShelterPostBookmark extends BaseEntity {
     private Account account;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "missing_post_id",
+    @JoinColumn(name = "shelter_post_id",
         referencedColumnName = "id",
         nullable = false,
-        foreignKey = @ForeignKey(name = "fk_missing_post_to_shelter_book_mark"))
+        foreignKey = @ForeignKey(name = "fk_shelter_post_to_shelter_book_mark"))
     private ShelterPost shelterPost;
 
     @Builder
