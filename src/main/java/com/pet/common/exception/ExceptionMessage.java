@@ -2,6 +2,7 @@ package com.pet.common.exception;
 
 import com.pet.common.exception.httpexception.AuthenticationException;
 import com.pet.common.exception.httpexception.BadRequestException;
+import com.pet.common.exception.httpexception.BaseHttpException;
 import com.pet.common.exception.httpexception.ConflictException;
 import com.pet.common.exception.httpexception.InternalServerException;
 import com.pet.common.exception.httpexception.NotFoundException;
@@ -58,5 +59,10 @@ public enum ExceptionMessage {
     // 태그 15xx
 
     private final RuntimeException exception;
+
+    public static int getCode(ExceptionMessage exceptionMessage) {
+        BaseHttpException exception = (BaseHttpException)exceptionMessage.getException();
+        return exception.getCode();
+    }
 
 }
