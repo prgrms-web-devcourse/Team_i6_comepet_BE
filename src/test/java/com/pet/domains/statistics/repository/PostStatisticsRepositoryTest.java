@@ -32,7 +32,7 @@ import org.springframework.context.annotation.FilterType;
 
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DataJpaTest(includeFilters = @Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JpaAuditingConfig.class))
-@DisplayName("PostStatistics Repository 테스트")
+@DisplayName("통계 리포지토리 테스트")
 class PostStatisticsRepositoryTest {
 
     @Autowired

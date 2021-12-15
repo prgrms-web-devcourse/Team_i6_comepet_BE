@@ -18,6 +18,7 @@ import com.pet.domains.docs.dto.CommonDocumentationResults;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.FieldDescriptor;
@@ -25,9 +26,11 @@ import org.springframework.restdocs.payload.PayloadSubsectionExtractor;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 
+@DisplayName("rest docs 테스트")
 class CommonDocumentationControllerTest extends BaseDocumentationTest {
 
     @Test
+    @DisplayName("공통 응답 테스트")
     void commonDocumentationTest() throws Exception {
 
         // given

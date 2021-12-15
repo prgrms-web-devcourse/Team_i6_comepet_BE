@@ -34,7 +34,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
-@DisplayName("댓글 컨트롤러 docs 테스트")
+@DisplayName("댓글 컨트롤러 테스트")
 class CommentControllerTest extends BaseDocumentationTest {
 
     @Test
