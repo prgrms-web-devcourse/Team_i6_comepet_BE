@@ -67,12 +67,14 @@ public class MissingPostService {
         List<Image> imageFiles = uploadAndGetImages(multipartFiles);
         String thumbnail = getThumbnail(imageFiles);
 
-        MissingPost createMissingPost = missingPostRepository.save(
-            missingPostMapper.toEntity(missingPostCreateParam, town, animalKind, thumbnail, account));
+        MissingPost mappingMissingPost =
+            missingPostMapper.toEntity(missingPostCreateParam, town, animalKind, thumbnail, account);
 
         if (!CollectionUtils.isEmpty(tags)) {
-            postTagService.createPostTag(tags, createMissingPost);
+            postTagService.createPostTag(tags, mappingMissingPost);
         }
+
+        MissingPost createMissingPost = missingPostRepository.save(mappingMissingPost);
         createPostImage(imageFiles, createMissingPost);
 
         return createMissingPost.getId();

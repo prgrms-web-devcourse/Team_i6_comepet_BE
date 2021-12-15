@@ -4,7 +4,11 @@ import com.pet.domains.DeletableEntity;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.animal.domain.AnimalKind;
 import com.pet.domains.area.domain.Town;
+import com.pet.domains.tag.domain.PostTag;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -16,6 +20,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -64,13 +69,13 @@ public class MissingPost extends DeletableEntity {
     @Column(name = "tel_number", length = 15, nullable = false)
     private String telNumber;
 
-    @Column(name = "view_count", columnDefinition = "BIGINT default 0", nullable = false)
+    @Column(name = "view_count", columnDefinition = "BIGINT default 0")
     private long viewCount;
 
-    @Column(name = "bookmark_count", columnDefinition = "BIGINT default 0", nullable = false)
+    @Column(name = "bookmark_count", columnDefinition = "BIGINT default 0")
     private long bookmarkCount;
 
-    @Column(name = "comment_count", columnDefinition = "BIGINT default 0", nullable = false)
+    @Column(name = "comment_count", columnDefinition = "BIGINT default 0")
     private long commentCount;
 
     @Column(name = "thumbnail")
@@ -102,19 +107,18 @@ public class MissingPost extends DeletableEntity {
     )
     private AnimalKind animalKind;
 
+    @OneToMany(mappedBy = "missingPost", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PostTag> postTags = new ArrayList<>();
+
     @Builder
     public MissingPost(Status status, String detailAddress, LocalDate date, Long age,
         SexType sexType, String chipNumber, String content, String telNumber, long viewCount, long bookmarkCount,
-        long commentCount, String thumbnail, Account account, Town town,
-        AnimalKind animalKind) {
+        long commentCount, String thumbnail, Account account, Town town, AnimalKind animalKind) {
         ObjectUtils.requireNonEmpty(status, "status must not be null");
         ObjectUtils.requireNonEmpty(date, "date must not be null");
         ObjectUtils.requireNonEmpty(sexType, "sexType must not be null");
         ObjectUtils.requireNonEmpty(content, "content must not be null");
         ObjectUtils.requireNonEmpty(telNumber, "telNumber must not be null");
-        ObjectUtils.requireNonEmpty(viewCount, "viewCount must not be null");
-        ObjectUtils.requireNonEmpty(bookmarkCount, "bookmarkCount must not be null");
-        ObjectUtils.requireNonEmpty(commentCount, "commentCount must not be null");
 
         this.status = status;
         this.detailAddress = detailAddress;
