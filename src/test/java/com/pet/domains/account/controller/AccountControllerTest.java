@@ -19,6 +19,7 @@ import com.pet.domains.account.dto.request.AccountEmailCheck;
 import com.pet.domains.account.dto.request.AccountLonginParam;
 import com.pet.domains.account.dto.request.AccountUpdateParam;
 import com.pet.domains.account.dto.response.AccountAreaReadResults;
+import com.pet.domains.account.dto.response.AccountReadResult;
 import com.pet.domains.docs.BaseDocumentationTest;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -192,6 +193,39 @@ class AccountControllerTest extends BaseDocumentationTest {
                 preprocessResponse(prettyPrint()),
                 requestHeaders(
                     headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
+                ))
+            );
+    }
+
+    @Test
+    @WithAccount
+    @DisplayName("회원 정보 조회")
+    void getAccount() throws Exception {
+        // given
+        given(accountService.convertToResult(any()))
+            .willReturn(new AccountReadResult(1L, "nickname", "tester@email.com"));
+        // when
+        ResultActions resultActions = mockMvc.perform(get("/api/v1/me")
+            .header(HttpHeaders.AUTHORIZATION, getAuthenticationToken())
+            .contentType(MediaType.APPLICATION_JSON));
+
+        // then
+        resultActions
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andDo(document("get-account",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                requestHeaders(
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token"),
+                    headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
+                ),
+                responseFields(
+                    fieldWithPath("data").type(OBJECT).description("응답 데이터"),
+                    fieldWithPath("data.id").type(NUMBER).description("회원 id"),
+                    fieldWithPath("data.nickname").type(STRING).description("닉네임"),
+                    fieldWithPath("data.email").type(STRING).description("이메일"),
+                    fieldWithPath("serverDateTime").type(STRING).description("서버 응답 시간")
                 ))
             );
     }
