@@ -21,14 +21,18 @@ public class CommentService {
 
     private final MissingPostRepository missingPostRepository;
 
+    private Comment getCommentById(Long commentId) {
+        return getComment(commentId);
+    }
+
     @Transactional
     public Long createComment(Account account, CommentCreateParam commentCreateParam) {
         return commentRepository.save(getNewComment(account, commentCreateParam)).getId();
     }
 
-    private Comment getCommentById(Long commentId) {
-        return commentRepository.findById(commentId)
-            .orElseThrow(ExceptionMessage.NOT_FOUND_COMMENT::getException);
+    @Transactional
+    public void deleteMyCommentById(Account account, Long commentId) {
+        commentRepository.deleteByIdAndAccount(commentId, account);
     }
 
     private Comment getNewComment(Account account, CommentCreateParam commentCreateParam) {
@@ -46,6 +50,11 @@ public class CommentService {
             .missingPost(missingPost)
             .account(account)
             .build();
+    }
+
+    private Comment getComment(Long commentId) {
+        return commentRepository.findById(commentId)
+            .orElseThrow(ExceptionMessage.NOT_FOUND_COMMENT::getException);
     }
 
     private MissingPost getMissingPostById(Long postId) {

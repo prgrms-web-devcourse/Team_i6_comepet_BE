@@ -34,7 +34,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
-@DisplayName("댓글 컨트롤러 docs 테스트")
+@DisplayName("댓글 컨트롤러 테스트")
 class CommentControllerTest extends BaseDocumentationTest {
 
     @Test
@@ -121,12 +121,13 @@ class CommentControllerTest extends BaseDocumentationTest {
     }
 
     @Test
+    @WithAccount
     @DisplayName("댓글 삭제 테스트")
     void deleteCommentTest() throws Exception {
         // given
         // when
         ResultActions resultActions = mockMvc.perform(delete("/api/v1/comments/{commentId}", 1L)
-            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN));
+            .header(HttpHeaders.AUTHORIZATION, getAuthenticationToken()));
 
         // then
         resultActions
