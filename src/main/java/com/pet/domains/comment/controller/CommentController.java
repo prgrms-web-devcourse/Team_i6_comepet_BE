@@ -51,9 +51,10 @@ public class CommentController {
     )
     public ApiResponse<Object> updateComment(
         @PathVariable Long commentId,
-        @RequestBody CommentUpdateParam commentUpdateParam
+        @RequestBody @Valid CommentUpdateParam commentUpdateParam,
+        @LoginAccount Account account
     ) {
-        return ApiResponse.ok(Map.of("id", 1L));
+        return ApiResponse.ok(Map.of("id", commentService.updateComment(commentId, commentUpdateParam, account)));
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
