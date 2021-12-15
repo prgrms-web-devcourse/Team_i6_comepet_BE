@@ -19,8 +19,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import com.pet.common.jwt.JwtMockToken;
-import com.pet.domains.account.WithAccount;
 import com.pet.domains.account.dto.request.NotificationUpdateParam;
 import com.pet.domains.docs.BaseDocumentationTest;
 import org.junit.jupiter.api.DisplayName;
@@ -38,7 +36,6 @@ class NotificationControllerTest extends BaseDocumentationTest {
         // given
         // when
         ResultActions resultActions = mockMvc.perform(get("/api/v1/notices")
-            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN)
             .accept(MediaType.APPLICATION_JSON_VALUE));
 
         // then
@@ -49,7 +46,6 @@ class NotificationControllerTest extends BaseDocumentationTest {
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 requestHeaders(
-                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token"),
                     headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
                 responseFields(
@@ -65,13 +61,11 @@ class NotificationControllerTest extends BaseDocumentationTest {
     }
 
     @Test
-    @WithAccount
     @DisplayName("알림 삭제 요청 테스트")
     void deleteNotificationTest() throws Exception {
         // given
         // when
-        ResultActions resultActions = mockMvc.perform(delete("/api/v1/notices/{noticeId}", 1L)
-            .header(HttpHeaders.AUTHORIZATION, getAuthenticationToken()));
+        ResultActions resultActions = mockMvc.perform(delete("/api/v1/notices/{noticeId}", 1L));
 
         // then
         resultActions
@@ -90,7 +84,6 @@ class NotificationControllerTest extends BaseDocumentationTest {
         NotificationUpdateParam param = new NotificationUpdateParam(true);
         // when
         ResultActions resultActions = mockMvc.perform(patch("/api/v1/notices/{noticeId}", 1L)
-            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(param)));
 
@@ -102,7 +95,6 @@ class NotificationControllerTest extends BaseDocumentationTest {
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 requestHeaders(
-                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token"),
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
                 requestFields(

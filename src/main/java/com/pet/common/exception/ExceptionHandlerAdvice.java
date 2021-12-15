@@ -1,9 +1,9 @@
 package com.pet.common.exception;
 
+import com.pet.common.exception.httpexception.AuthenticationException;
 import com.pet.common.exception.httpexception.BadRequestException;
 import com.pet.common.exception.httpexception.ConflictException;
 import com.pet.common.exception.httpexception.NotFoundException;
-import com.pet.common.exception.httpexception.UnauthorizedException;
 import com.pet.common.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -42,9 +42,9 @@ public class ExceptionHandlerAdvice {
         return ErrorResponse.error(exception.getCode(), exception.getMessage());
     }
 
-    @ExceptionHandler(UnauthorizedException.class)
+    @ExceptionHandler(AuthenticationException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ErrorResponse handleUnauthorizedException(UnauthorizedException exception) {
+    public ErrorResponse handleUnauthorizedException(AuthenticationException exception) {
         log.warn(exception.getMessage());
         return ErrorResponse.error(exception.getCode(), exception.getMessage());
     }
