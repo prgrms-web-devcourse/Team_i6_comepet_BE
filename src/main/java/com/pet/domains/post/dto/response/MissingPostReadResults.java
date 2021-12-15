@@ -103,13 +103,4 @@ public class MissingPostReadResults {
 
     }
 
-    @Override
-    public String toString() {
-        return "MissingPostReadResults{" +
-            "missingPosts=" + missingPosts +
-            ", totalElements=" + totalElements +
-            ", last=" + last +
-            ", size=" + size +
-            '}';
-    }
 }
