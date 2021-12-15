@@ -127,7 +127,7 @@ public class Account extends DeletableEntity {
         return Objects.hash(id);
     }
 
-    public void updateProfile(String nickname, String password) {
+    public void updateProfile(String nickname, String password, Image image) {
         if (StringUtils.isNotBlank(nickname)) {
             this.nickname = nickname;
         }
@@ -135,9 +135,6 @@ public class Account extends DeletableEntity {
         if (StringUtils.isNotBlank(password)) {
             this.password = password;
         }
-    }
-
-    public void updateProfileImage(Image image) {
         this.image = image;
     }
 
