@@ -24,6 +24,7 @@ import com.pet.domains.post.service.MissingPostService;
 import com.pet.domains.post.service.ShelterPostBookmarkService;
 import com.pet.domains.post.service.ShelterPostService;
 import com.pet.domains.statistics.controller.PostStatisticsController;
+import com.pet.domains.statistics.service.PostStatisticsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
@@ -84,6 +85,9 @@ public abstract class BaseDocumentationTest {
 
     @MockBean
     protected MissingPostBookmarkService missingPostBookmarkService;
+
+    @MockBean
+    protected PostStatisticsService postStatisticsService;
 
     @MockBean
     protected NotificationService notificationService;
