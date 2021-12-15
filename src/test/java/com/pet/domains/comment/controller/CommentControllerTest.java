@@ -22,7 +22,6 @@ import static org.springframework.restdocs.request.RequestDocumentation.paramete
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import com.pet.common.jwt.JwtMockToken;
 import com.pet.domains.account.WithAccount;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.comment.dto.request.CommentCreateParam;
@@ -89,7 +88,6 @@ class CommentControllerTest extends BaseDocumentationTest {
 
         // when
         ResultActions resultActions = mockMvc.perform(patch("/api/v1/comments/{commentId}", 1L)
-            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(objectMapper.writeValueAsString(param)));
 
@@ -104,7 +102,6 @@ class CommentControllerTest extends BaseDocumentationTest {
                     parameterWithName("commentId").description("댓글 아이디")
                 ),
                 requestHeaders(
-                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token"),
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
                 requestFields(
@@ -121,12 +118,13 @@ class CommentControllerTest extends BaseDocumentationTest {
     }
 
     @Test
+    @WithAccount
     @DisplayName("댓글 삭제 테스트")
     void deleteCommentTest() throws Exception {
         // given
         // when
         ResultActions resultActions = mockMvc.perform(delete("/api/v1/comments/{commentId}", 1L)
-            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN));
+            .header(HttpHeaders.AUTHORIZATION, getAuthenticationToken()));
 
         // then
         resultActions
