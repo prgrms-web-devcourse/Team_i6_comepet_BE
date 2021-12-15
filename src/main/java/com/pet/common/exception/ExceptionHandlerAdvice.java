@@ -3,6 +3,7 @@ package com.pet.common.exception;
 import com.pet.common.exception.httpexception.AuthenticationException;
 import com.pet.common.exception.httpexception.BadRequestException;
 import com.pet.common.exception.httpexception.ConflictException;
+import com.pet.common.exception.httpexception.ForbiddenException;
 import com.pet.common.exception.httpexception.NotFoundException;
 import com.pet.common.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -29,12 +30,6 @@ public class ExceptionHandlerAdvice {
         return ErrorResponse.error(HttpStatus.BAD_REQUEST.value(), exception.getMessage());
     }
 
-    @ExceptionHandler(ConflictException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleConflictException(ConflictException exception) {
-        return ErrorResponse.error(exception.getCode(), exception.getMessage());
-    }
-
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFoundException(NotFoundException exception) {
@@ -46,6 +41,19 @@ public class ExceptionHandlerAdvice {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ErrorResponse handleUnauthorizedException(AuthenticationException exception) {
         log.warn(exception.getMessage());
+        return ErrorResponse.error(exception.getCode(), exception.getMessage());
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleForbiddenException(ForbiddenException exception) {
+        log.warn(exception.getMessage());
+        return ErrorResponse.error(exception.getCode(), exception.getMessage());
+    }
+
+    @ExceptionHandler(ConflictException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleConflictException(ConflictException exception) {
         return ErrorResponse.error(exception.getCode(), exception.getMessage());
     }
 

@@ -4,6 +4,7 @@ import com.pet.common.exception.httpexception.AuthenticationException;
 import com.pet.common.exception.httpexception.BadRequestException;
 import com.pet.common.exception.httpexception.BaseHttpException;
 import com.pet.common.exception.httpexception.ConflictException;
+import com.pet.common.exception.httpexception.ForbiddenException;
 import com.pet.common.exception.httpexception.InternalServerException;
 import com.pet.common.exception.httpexception.NotFoundException;
 import lombok.Getter;
@@ -12,6 +13,9 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum ExceptionMessage {
+    // 인가
+    UN_IDENTIFICATION(new ForbiddenException("권한이 없습니다", 403)),
+
     // 서버 관련
     INTERNAL_SERVER(new InternalServerException("서버 에러입니다. 서버 관리자에게 문의주세요.", 500)),
 
@@ -31,14 +35,14 @@ public enum ExceptionMessage {
     NOT_FOUND_CITY(new NotFoundException("해당하는 시도 지역을 찾을 수 없습니다.", 801)),
     NOT_FOUND_TOWN(new NotFoundException("해당하는 시군구 지역을 찾을 수 없습니다.", 802)),
 
-    // 인증 9xx
+    // 인증 9xx,
     SHOULD_LOGIN(new AuthenticationException("로그인이 필요합니다.", 901)),
     INVALID_LOGIN(new AuthenticationException("로그인에 실패했습니다.", 902)),
     INVALID_JWT(new AuthenticationException("유효하지 않은 토큰입니다.", 903)),
     INVALID_JWT_EXPIRY(new AuthenticationException("토큰이 만료되었습니다.", 904)),
     NOT_FOUND_GROUP(new AuthenticationException("존재하지 않는 그룹입니다.", 905)),
     NOT_FOUND_PROVIDER(new AuthenticationException("지원하지 않는 인증 방식입니다.", 906)),
-    UN_IDENTIFICATION(new AuthenticationException("본인이 아닙니다.", 907)),
+    NOT_FOUND_JWT(new AuthenticationException("토큰이 필요합니다.", 907)),
 
     // 댓글 10xx
     NOT_FOUND_COMMENT(new NotFoundException("해당하는 댓글을 찾을 수 없습니다.", 1001)),
