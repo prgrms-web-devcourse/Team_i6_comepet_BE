@@ -18,6 +18,7 @@ import com.pet.domains.post.domain.SexType;
 import com.pet.domains.post.domain.Status;
 import com.pet.domains.post.repository.MissingPostRepository;
 import java.time.LocalDate;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -69,6 +70,12 @@ class NotificationRepositoryTest {
         missingPost = givenPost(accountRepository.save(account));
         missingPostRepository.save(missingPost);
     }
+
+    @AfterEach
+    void tearDown() {
+        notificationRepository.deleteAllInBatch();
+    }
+
     @Test
     @DisplayName("알림 아이디와 회원 아이디로 알림 조회 테스트")
     void checkNotificationTest() {
@@ -78,8 +85,7 @@ class NotificationRepositoryTest {
         entityManager.flush();
         entityManager.clear();
 
-        Notification findNotification =
-            notificationRepository.findByIdAndAccountId(save.getId(), account.getId()).get();
+        Notification findNotification = notificationRepository.findByIdAndAccount(save.getId(), account).get();
 
         assertThat(findNotification.getAccount()).isEqualTo(account);
     }

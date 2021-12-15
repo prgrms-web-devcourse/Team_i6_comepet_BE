@@ -9,6 +9,6 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
 
     void deleteByIdAndAccount(Long noticeId, Account account);
 
-    Optional<Notification> findByIdAndAccountId(Long noticeId, Long id);
+    Optional<Notification> findByIdAndAccount(Long noticeId, Account account);
 
 }

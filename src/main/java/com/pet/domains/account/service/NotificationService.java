@@ -23,7 +23,7 @@ public class NotificationService {
     @Transactional
     public void checkNotification(Account account, Long noticeId, boolean checked) {
         if (checked) {
-            Notification notification = notificationRepository.findByIdAndAccountId(noticeId, account.getId())
+            Notification notification = notificationRepository.findByIdAndAccount(noticeId, account)
                 .orElseThrow(ExceptionMessage.NOT_FOUND_NOTIFICATION::getException);
             notification.checkReadStatus();
         }
