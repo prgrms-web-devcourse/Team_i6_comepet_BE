@@ -1,18 +1,23 @@
 package com.pet.domains.post.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import com.pet.common.exception.ExceptionMessage;
 import com.pet.common.exception.httpexception.NotFoundException;
 import com.pet.domains.account.domain.Account;
+import com.pet.domains.animal.domain.Animal;
+import com.pet.domains.animal.domain.AnimalKind;
+import com.pet.domains.area.domain.City;
+import com.pet.domains.area.domain.Town;
 import com.pet.domains.post.domain.ShelterPost;
 import com.pet.domains.post.domain.ShelterPostBookmark;
 import com.pet.domains.post.repository.ShelterPostBookmarkRepository;
@@ -43,7 +48,25 @@ class ShelterPostBookmarkServiceTest {
     @DisplayName("사용자의 보호소 게시글 북마크 등록 성공 테스트")
     void createPostBookmarkSuccessTest() {
         // given
-        given(shelterPostRepository.findById(anyLong())).willReturn(Optional.of(mock(ShelterPost.class)));
+        ShelterPost spyShelterPost = spy(
+            ShelterPost.builder()
+                .animalKind(AnimalKind.builder()
+                    .animal(Animal.builder()
+                        .code("1111")
+                        .name("animal")
+                        .build())
+                    .name("animalKind")
+                    .build())
+                .town(Town.builder()
+                    .city(City.builder()
+                        .code("11111")
+                        .name("city")
+                        .build())
+                    .name("town")
+                    .build())
+                .bookmarkCount(10)
+                .build());
+        given(shelterPostRepository.findById(anyLong())).willReturn(Optional.of(spyShelterPost));
 
         // when
         shelterPostBookmarkService.createPostBookmark(1L, mock(Account.class));
@@ -51,6 +74,8 @@ class ShelterPostBookmarkServiceTest {
         // then
         ArgumentCaptor<ShelterPostBookmark> captor = ArgumentCaptor.forClass(ShelterPostBookmark.class);
         verify(shelterPostBookmarkRepository, times(1)).save(captor.capture());
+        verify(spyShelterPost).increaseBookMarkCount();
+        assertThat(spyShelterPost.getBookmarkCount()).isEqualTo(11);
     }
 
     @Test
@@ -65,7 +90,6 @@ class ShelterPostBookmarkServiceTest {
         assertThatThrownBy(() -> shelterPostBookmarkService.createPostBookmark(1L, mock(Account.class)))
             .isInstanceOf(NotFoundException.class)
             .hasMessageContaining(exception.getMessage());
-
         verify(shelterPostBookmarkRepository, never()).save(any(ShelterPostBookmark.class));
     }
 
@@ -73,13 +97,35 @@ class ShelterPostBookmarkServiceTest {
     @DisplayName("사용자의 보호소 게시글 북마크 삭제 성공 테스트")
     void deletePostBookmarkSuccessTest() {
         // given
-        doNothing().when(shelterPostBookmarkRepository).deleteByShelterPostIdAndAccount(anyLong(), any(Account.class));
+        ShelterPost spyShelterPost = spy(
+            ShelterPost.builder()
+                .animalKind(AnimalKind.builder()
+                    .animal(Animal.builder()
+                        .code("1111")
+                        .name("animal")
+                        .build())
+                    .name("animalKind")
+                    .build())
+                .town(Town.builder()
+                    .city(City.builder()
+                        .code("11111")
+                        .name("city")
+                        .build())
+                    .name("town")
+                    .build())
+                .bookmarkCount(10)
+                .build());
+        given(shelterPostRepository.findById(anyLong())).willReturn(Optional.of(spyShelterPost));
+        given(shelterPostBookmarkRepository.deleteByShelterPostIdAndAccount(anyLong(), any(Account.class))).willReturn(1L);
 
         // when
         shelterPostBookmarkService.deletePostBookmark(1L, mock(Account.class));
 
         // then
         verify(shelterPostBookmarkRepository, times(1)).deleteByShelterPostIdAndAccount(anyLong(), any(Account.class));
+        verify(spyShelterPost).decreaseBookMarkCount();
+        assertThat(spyShelterPost.getBookmarkCount()).isEqualTo(9);
+
     }
 
 }
