@@ -91,9 +91,6 @@ public class MissingPostService {
 
         List<PostTag> getPostTags = postTagRepository.getPostTagsByMissingPostId(getMissingPost.getId());
         tagService.decreaseTagCount(getPostTags);
-        if (!CollectionUtils.isEmpty(getPostTags)) {
-            postTagRepository.deleteAllByMissingPostId(getMissingPost.getId());
-        }
 
         missingPostRepository.deleteById(getMissingPost.getId());
     }
