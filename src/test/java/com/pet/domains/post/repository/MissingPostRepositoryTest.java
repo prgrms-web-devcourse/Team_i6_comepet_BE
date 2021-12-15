@@ -249,11 +249,23 @@ class MissingPostRepositoryTest {
 
     @Test
     @DisplayName("실종/보호 게시물 익명 리스트 조회 테스트")
-    void readMissingPost() {
+    void getAnonymousMissingPostTest() {
         //given
         //when
         Page<MissingPost> missingPostReadResultsPage =
             missingPostRepository.findAllByDeletedIsFalse(PageRequest.of(0, 10));
+
+        //then
+        assertThat(missingPostReadResultsPage.getTotalElements()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("실종/보호 게시물 로그인 리스트 조회 테스트")
+    void getUserMissingPostTest() {
+        //given
+        //when
+        Page<MissingPostWithIsBookmark> missingPostReadResultsPage =
+            missingPostRepository.findAllWithIsBookmarkAccountByDeletedIsFalse(account, PageRequest.of(0, 10));
 
         //then
         assertThat(missingPostReadResultsPage.getTotalElements()).isEqualTo(1);

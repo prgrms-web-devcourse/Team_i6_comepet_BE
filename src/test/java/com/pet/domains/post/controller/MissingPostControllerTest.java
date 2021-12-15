@@ -1,5 +1,6 @@
 package com.pet.domains.post.controller;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
@@ -24,12 +25,14 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.requestParts;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import com.pet.common.jwt.JwtMockToken;
 import com.pet.domains.account.WithAccount;
+import com.pet.domains.account.domain.Account;
 import com.pet.domains.docs.BaseDocumentationTest;
 import com.pet.domains.image.domain.Image;
 import com.pet.domains.post.domain.SexType;
@@ -37,12 +40,16 @@ import com.pet.domains.post.domain.Status;
 import com.pet.domains.post.dto.request.MissingPostCreateParam;
 import com.pet.domains.post.dto.request.MissingPostCreateParam.Tag;
 import com.pet.domains.post.dto.request.MissingPostUpdateParam;
+import com.pet.domains.post.dto.response.MissingPostReadResults;
+import com.pet.domains.post.dto.response.MissingPostReadResults.MissingPost;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
@@ -130,12 +137,35 @@ class MissingPostControllerTest extends BaseDocumentationTest {
     }
 
     @Test
+    @WithAccount
     @DisplayName("실종/보호 게시물 리스트 조회 테스트")
     void getMissingPostsTest() throws Exception {
         //given
+        MissingPostReadResults missingPostReadResults = MissingPostReadResults.of(List.of(
+                MissingPost.of(
+                    1L, "서울특별시", "도봉구", "토이푸들", Status.DETECTION, LocalDateTime.now(),
+                    SexType.FEMALE, true, 2,
+                    "https://post-phinf.pstatic.net/MjAyMTA0MTJfNTAg/MDAxNjE4MjMwNjg1MTEw",
+                    List.of(
+                        MissingPost.Tag.of(1L, "고슴도치"),
+                        MissingPost.Tag.of(2L, "애완동물"),
+                        MissingPost.Tag.of(3L, "반려동물")
+                    )
+                )),
+            10,
+            true,
+            5
+        );
+        given(missingPostService.getMissingPostsPageWithAccount(any(Account.class), any(PageRequest.class))).willReturn(
+            missingPostReadResults);
+
         //when
         ResultActions resultActions = mockMvc.perform(get("/api/v1/missing-posts")
-            .accept(MediaType.APPLICATION_JSON));
+            .accept(MediaType.APPLICATION_JSON)
+            .header(HttpHeaders.AUTHORIZATION, getAuthenticationToken())
+            .param("page", "1")
+            .param("size", "10")
+            .param("sort", "id,DESC"));
 
         // then
         resultActions
@@ -144,7 +174,13 @@ class MissingPostControllerTest extends BaseDocumentationTest {
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 requestHeaders(
-                    headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE)
+                    headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE),
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token - optional").optional()
+                ),
+                requestParameters(
+                    parameterWithName("page").description("페이지 번호"),
+                    parameterWithName("size").description("페이지 크기"),
+                    parameterWithName("sort").description("정렬, ex) id,[desc]")
                 ),
                 responseHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
@@ -162,9 +198,9 @@ class MissingPostControllerTest extends BaseDocumentationTest {
                     fieldWithPath("data.missingPosts[].thumbnail").type(STRING).description("게시글 썸네일"),
                     fieldWithPath("data.missingPosts[].isBookmark").type(BOOLEAN).description("북마크 여부"),
                     fieldWithPath("data.missingPosts[].bookmarkCount").type(NUMBER).description("북마크 수"),
-                    fieldWithPath("data.missingPosts[].postTags").type(ARRAY).description("해시태그 배열"),
-                    fieldWithPath("data.missingPosts[].postTags[].id").type(NUMBER).description("해시태그 id"),
-                    fieldWithPath("data.missingPosts[].postTags[].name").type(STRING).description("해시태그 내용"),
+                    fieldWithPath("data.missingPosts[].tags").type(ARRAY).description("해시태그 배열"),
+                    fieldWithPath("data.missingPosts[].tags[].id").type(NUMBER).description("해시태그 id"),
+                    fieldWithPath("data.missingPosts[].tags[].name").type(STRING).description("해시태그 내용"),
                     fieldWithPath("data.totalElements").type(NUMBER).description("전체 게시물 수"),
                     fieldWithPath("data.last").type(BOOLEAN).description("마지막 페이지 여부"),
                     fieldWithPath("data.size").type(NUMBER).description("페이지당 요청 수"),

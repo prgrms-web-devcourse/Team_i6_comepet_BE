@@ -28,6 +28,7 @@ import com.pet.domains.post.domain.Status;
 import com.pet.domains.post.dto.request.MissingPostCreateParam;
 import com.pet.domains.post.mapper.MissingPostMapper;
 import com.pet.domains.post.repository.MissingPostRepository;
+import com.pet.domains.post.repository.MissingPostWithIsBookmark;
 import com.pet.domains.tag.domain.Tag;
 import com.pet.domains.tag.service.PostTagService;
 import com.pet.domains.tag.service.TagService;
@@ -212,7 +213,7 @@ class MissingPostServiceTest {
 
     @Test
     @DisplayName("실종/보호 게시물 익명 조회 테스트")
-    void getMissingPostsReadTest() {
+    void getAnonymousMissingPostTest() {
         //given
         given(missingPostRepository.findAllByDeletedIsFalse(any())).willReturn(mock(Page.class));
 
@@ -223,4 +224,18 @@ class MissingPostServiceTest {
         verify(missingPostRepository, times(1)).findAllByDeletedIsFalse(any());
     }
 
+    @Test
+    @DisplayName("실종/보호 게시물 사용자 조회 테스트")
+    void getUserMissingPostTest() {
+        //given
+        given(missingPostRepository.findAllWithIsBookmarkAccountByDeletedIsFalse(any(), any())).willReturn(
+            mock(Page.class));
+
+        //when
+        Page<MissingPostWithIsBookmark> pageResult =
+            missingPostRepository.findAllWithIsBookmarkAccountByDeletedIsFalse(account, PageRequest.of(1, 5));
+
+        //then
+        verify(missingPostRepository, times(1)).findAllWithIsBookmarkAccountByDeletedIsFalse(any(), any());
+    }
 }
