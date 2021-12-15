@@ -94,7 +94,7 @@ public class MissingPost extends DeletableEntity {
     @JoinColumn(
         name = "town_id",
         referencedColumnName = "id",
-        foreignKey = @ForeignKey(name = "fk_town_to_missing_most"),
+        foreignKey = @ForeignKey(name = "fk_town_to_missing_post"),
         nullable = false
     )
     private Town town;
