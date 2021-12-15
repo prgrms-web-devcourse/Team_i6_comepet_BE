@@ -52,11 +52,15 @@ public enum ExceptionMessage {
     NOT_FOUND_MISSING_POST(new NotFoundException("해당하는 실종 게시글을 찾을 수 없습니다.", 1201)),
 
     // 보호소 게시물 13xx
-    NOT_FOUND_SHELTER_POST(new NotFoundException("해당하는 보호소 게시글을 찾을 수 없습니다.", 1301));
+    NOT_FOUND_SHELTER_POST(new NotFoundException("해당하는 보호소 게시글을 찾을 수 없습니다.", 1301)),
 
     // 알림 14xx
 
     // 태그 15xx
+
+    // 통계 16xx
+    NOT_FOUND_POST_STATISTICS(new NotFoundException("해당하는 게시글 통계 데이터를 찾을 수 없습니다.", 1601));
+
 
     private final RuntimeException exception;
 
