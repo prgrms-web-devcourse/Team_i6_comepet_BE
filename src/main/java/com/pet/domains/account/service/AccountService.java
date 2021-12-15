@@ -177,13 +177,14 @@ public class AccountService {
     }
 
     @Transactional
-    public void updateAccount(Account account, AccountUpdateParam accountUpdateParam) {
+    public void updateAccount(Account account, AccountUpdateParam accountUpdateParam, MultipartFile accountImage) {
         if (!StringUtils.equals(accountUpdateParam.getNewPassword(), accountUpdateParam.getNewPasswordCheck())) {
             throw ExceptionMessage.INVALID_PASSWORD.getException();
         }
         account.updateProfile(
             accountUpdateParam.getNickname(),
-            passwordEncoder.encode(accountUpdateParam.getNewPassword())
+            passwordEncoder.encode(accountUpdateParam.getNewPassword()),
+            imageService.createImage(accountImage)
         );
         accountRepository.save(account);
     }
@@ -197,12 +198,6 @@ public class AccountService {
                 return interestAreaMapper.toAreaResult(city, town, interestArea.isSelected());
             })
             .collect(Collectors.toList()));
-    }
-
-    @Transactional
-    public void updateAccountImage(Account account, MultipartFile accountImage) {
-        account.updateProfileImage(imageService.createImage(accountImage));
-        accountRepository.save(account);
     }
 
 }

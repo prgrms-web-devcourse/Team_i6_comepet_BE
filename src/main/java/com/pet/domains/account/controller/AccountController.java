@@ -91,16 +91,14 @@ public class AccountController {
         log.debug("account id '{}' is logout", account.getId());
     }
 
-    @PatchMapping(path = "/me", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/me", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateAccount(@LoginAccount Account account, @RequestBody @Valid AccountUpdateParam param) {
-        accountService.updateAccount(account, param);
-    }
-
-    @PostMapping(value = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateImage(@LoginAccount Account account, @RequestPart(required = false) MultipartFile image) {
-        accountService.updateAccountImage(account, image);
+    public void updateAccount(
+        @LoginAccount Account account,
+        @RequestPart @Valid AccountUpdateParam param,
+        @RequestPart(required = false) MultipartFile image
+    ) {
+        accountService.updateAccount(account, param, image);
     }
 
     @GetMapping(path = "/me/areas", produces = MediaType.APPLICATION_JSON_VALUE)
