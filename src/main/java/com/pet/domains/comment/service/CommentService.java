@@ -4,6 +4,7 @@ import com.pet.common.exception.ExceptionMessage;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.comment.domain.Comment;
 import com.pet.domains.comment.dto.request.CommentCreateParam;
+import com.pet.domains.comment.dto.request.CommentUpdateParam;
 import com.pet.domains.comment.repository.CommentRepository;
 import com.pet.domains.post.domain.MissingPost;
 import com.pet.domains.post.repository.MissingPostRepository;
@@ -21,13 +22,17 @@ public class CommentService {
 
     private final MissingPostRepository missingPostRepository;
 
-    private Comment getCommentById(Long commentId) {
-        return getComment(commentId);
-    }
-
     @Transactional
     public Long createComment(Account account, CommentCreateParam commentCreateParam) {
         return commentRepository.save(getNewComment(account, commentCreateParam)).getId();
+    }
+
+    @Transactional
+    public Long updateComment(Long commentId, CommentUpdateParam commentUpdateParam, Account account) {
+        Comment foundComment = getComment(commentId);
+        foundComment.updateContent(commentUpdateParam.getContent(), account.getId());
+
+        return foundComment.getId();
     }
 
     @Transactional
@@ -40,7 +45,7 @@ public class CommentService {
         if (Objects.nonNull(commentCreateParam.getParentCommentId())) {
             return Comment.ChildCommentBuilder()
                 .content(commentCreateParam.getContent())
-                .parentComment(getCommentById(commentCreateParam.getParentCommentId()))
+                .parentComment(getComment(commentCreateParam.getParentCommentId()))
                 .missingPost(missingPost)
                 .account(account)
                 .build();
