@@ -21,6 +21,7 @@ import com.pet.domains.account.dto.request.AccountUpdateParam;
 import com.pet.domains.account.dto.response.AccountAreaReadResults;
 import com.pet.domains.account.dto.response.AccountReadResult;
 import com.pet.domains.docs.BaseDocumentationTest;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -150,33 +151,6 @@ class AccountControllerTest extends BaseDocumentationTest {
 
     @Test
     @WithAccount
-    @DisplayName("이미지 수정 테스트")
-    void updateProfileImage() throws Exception {
-        // given
-        MockMultipartFile profileImage =
-            new MockMultipartFile("image", "",
-                "multipart/form-data", "comepet.jpg".getBytes());
-        // when
-        ResultActions resultActions = mockMvc.perform(multipart("/api/v1/me/image")
-            .file(profileImage)
-            .header(HttpHeaders.AUTHORIZATION, getAuthenticationToken())
-            .contentType(MediaType.MULTIPART_FORM_DATA_VALUE));
-
-        // then
-        resultActions
-            .andDo(print())
-            .andExpect(status().isNoContent())
-            .andDo(document("update-image",
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()),
-                requestHeaders(
-                    headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.MULTIPART_FORM_DATA_VALUE)
-                ))
-            );
-    }
-
-    @Test
-    @WithAccount
     @DisplayName("로그아웃 테스트")
     void logoutTest() throws Exception {
         // given
@@ -235,12 +209,22 @@ class AccountControllerTest extends BaseDocumentationTest {
     @DisplayName("회원 정보 수정 테스트")
     void updateAccountTest() throws Exception {
         // given
-        AccountUpdateParam param = new AccountUpdateParam("updateNickname", "12341234a!", "12341234a!");
+        MockMultipartFile param =
+            new MockMultipartFile("param", "", "application/json",
+                objectMapper.writeValueAsString(
+                    new AccountUpdateParam("updateNickname", "12341234a!", "12341234a!")).getBytes(
+                    StandardCharsets.UTF_8)
+            );
+        MockMultipartFile profileImage =
+            new MockMultipartFile("image", "",
+                "multipart/form-data", "comepet.jpg".getBytes());
+
         // when
-        ResultActions resultActions = mockMvc.perform(patch("/api/v1/me")
+        ResultActions resultActions = mockMvc.perform(multipart("/api/v1/me")
+            .file(profileImage)
+            .file(param)
             .header(HttpHeaders.AUTHORIZATION, getAuthenticationToken())
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(param)));
+            .contentType(MediaType.MULTIPART_FORM_DATA_VALUE));
 
         // then
         resultActions
@@ -251,12 +235,11 @@ class AccountControllerTest extends BaseDocumentationTest {
                 preprocessResponse(prettyPrint()),
                 requestHeaders(
                     headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token"),
-                    headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
+                    headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.MULTIPART_FORM_DATA_VALUE)
                 ),
-                requestFields(
-                    fieldWithPath("nickname").type(STRING).description("닉네임").optional(),
-                    fieldWithPath("newPassword").type(STRING).description("수정 비밀번호").optional(),
-                    fieldWithPath("newPasswordCheck").type(STRING).description("수정 비밀번호 확인").optional()
+                requestParts(
+                    partWithName("image").description("회원 이미지"),
+                    partWithName("param").description("회원 정보 수정 데이터")
                 ))
             );
     }
