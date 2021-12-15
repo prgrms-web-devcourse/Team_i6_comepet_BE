@@ -9,6 +9,8 @@ import com.pet.domains.account.dto.request.AccountAreaUpdateParam;
 import com.pet.domains.account.dto.request.AccountSignUpParam;
 import com.pet.domains.account.dto.request.AccountUpdateParam;
 import com.pet.domains.account.dto.response.AccountAreaReadResults;
+import com.pet.domains.account.dto.response.AccountReadResult;
+import com.pet.domains.account.mapper.AccountMapper;
 import com.pet.domains.account.repository.AccountRepository;
 import com.pet.domains.account.repository.SignEmailRepository;
 import com.pet.domains.area.domain.City;
@@ -65,6 +67,8 @@ public class AccountService {
     private final InterestAreaMapper interestAreaMapper;
 
     private final ImageService imageService;
+
+    private final AccountMapper accountMapper;
 
     @Transactional
     public void sendEmail(String email) {
@@ -203,6 +207,10 @@ public class AccountService {
     public void updateAccountImage(Account account, MultipartFile accountImage) {
         account.updateProfileImage(imageService.createImage(accountImage));
         accountRepository.save(account);
+    }
+
+    public AccountReadResult convertToResult(Account account) {
+        return accountMapper.toReadResult(account);
     }
 
 }

@@ -16,6 +16,7 @@ import com.pet.domains.account.dto.response.AccountBookmarkPostPageResults;
 import com.pet.domains.account.dto.response.AccountCreateResult;
 import com.pet.domains.account.dto.response.AccountLoginResult;
 import com.pet.domains.account.dto.response.AccountMissingPostPageResults;
+import com.pet.domains.account.dto.response.AccountReadResult;
 import com.pet.domains.account.service.AccountService;
 import com.pet.domains.auth.service.AuthenticationService;
 import com.pet.domains.post.domain.SexType;
@@ -89,6 +90,11 @@ public class AccountController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void logout(@LoginAccount Account account) {
         log.debug("account id '{}' is logout", account.getId());
+    }
+
+    @GetMapping("/me")
+    public ApiResponse<AccountReadResult> getAccount(@LoginAccount Account account) {
+        return ApiResponse.ok(accountService.convertToResult(account));
     }
 
     @PatchMapping(path = "/me", consumes = MediaType.APPLICATION_JSON_VALUE)
