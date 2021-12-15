@@ -69,7 +69,7 @@ public class NotificationController {
         @LoginAccount Account account, @PathVariable Long noticeId, @RequestBody NotificationUpdateParam param
     ) {
         if (Objects.nonNull(account)) {
-            notificationService.checkNotification(noticeId, param.isChecked());
+            notificationService.checkNotification(account, noticeId, param.isChecked());
         }
     }
 
