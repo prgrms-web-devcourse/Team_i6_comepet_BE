@@ -19,6 +19,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.pet.domains.account.WithAccount;
 import com.pet.domains.account.dto.request.NotificationUpdateParam;
 import com.pet.domains.docs.BaseDocumentationTest;
 import org.junit.jupiter.api.DisplayName;
@@ -31,6 +32,7 @@ import org.springframework.test.web.servlet.ResultActions;
 class NotificationControllerTest extends BaseDocumentationTest {
 
     @Test
+    @WithAccount
     @DisplayName("알림 조회 요청 테스트")
     void getNotificationTest() throws Exception {
         // given
@@ -61,11 +63,13 @@ class NotificationControllerTest extends BaseDocumentationTest {
     }
 
     @Test
+    @WithAccount
     @DisplayName("알림 삭제 요청 테스트")
     void deleteNotificationTest() throws Exception {
         // given
         // when
-        ResultActions resultActions = mockMvc.perform(delete("/api/v1/notices/{noticeId}", 1L));
+        ResultActions resultActions = mockMvc.perform(delete("/api/v1/notices/{noticeId}", 1L)
+            .header(HttpHeaders.AUTHORIZATION, getAuthenticationToken()));
 
         // then
         resultActions
@@ -73,11 +77,15 @@ class NotificationControllerTest extends BaseDocumentationTest {
             .andExpect(status().isNoContent())
             .andDo(document("delete-notification",
                 preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()))
-            );
+                preprocessResponse(prettyPrint()),
+                requestHeaders(
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
+                )
+            ));
     }
 
     @Test
+    @WithAccount
     @DisplayName("알림 상태 변경 요청 테스트")
     void checkedNotificationTest() throws Exception {
         // given
@@ -85,7 +93,8 @@ class NotificationControllerTest extends BaseDocumentationTest {
         // when
         ResultActions resultActions = mockMvc.perform(patch("/api/v1/notices/{noticeId}", 1L)
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(param)));
+            .content(objectMapper.writeValueAsString(param))
+            .header(HttpHeaders.AUTHORIZATION, getAuthenticationToken()));
 
         // then
         resultActions
@@ -95,6 +104,7 @@ class NotificationControllerTest extends BaseDocumentationTest {
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 requestHeaders(
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token"),
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
                 requestFields(
