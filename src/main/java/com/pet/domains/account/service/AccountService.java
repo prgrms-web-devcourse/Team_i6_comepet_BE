@@ -204,12 +204,6 @@ public class AccountService {
             .collect(Collectors.toList()));
     }
 
-    @Transactional
-    public void updateAccountImage(Account account, MultipartFile accountImage) {
-        account.updateProfileImage(imageService.createImage(accountImage));
-        accountRepository.save(account);
-    }
-
     public AccountReadResult convertToResult(Account account) {
         return accountMapper.toReadResult(account);
     }
