@@ -24,8 +24,10 @@ import org.apache.commons.lang3.ObjectUtils;
 @Entity
 @Table(
     name = "shelter_post_bookmark",
-    uniqueConstraints = @UniqueConstraint(name = "uni_shelter_post_and_account", columnNames = {"shelter_post_id", "account_id"})
-
+    uniqueConstraints = @UniqueConstraint(
+        name = "uni_shelter_post_and_account",
+        columnNames = {"shelter_post_id", "account_id"}
+    )
 )
 public class ShelterPostBookmark extends BaseEntity {
 
