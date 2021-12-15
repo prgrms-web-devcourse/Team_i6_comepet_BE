@@ -204,8 +204,10 @@ public class AccountService {
             .collect(Collectors.toList()));
     }
 
-    public AccountReadResult convertToResult(Account account) {
-        return accountMapper.toReadResult(account);
+    public AccountReadResult getAccount(Account account) {
+        return accountMapper.toReadResult(
+            accountRepository.findByIdAndImage(account.getId())
+                .orElseThrow(ExceptionMessage.NOT_FOUND_ACCOUNT::getException));
     }
 
 }
