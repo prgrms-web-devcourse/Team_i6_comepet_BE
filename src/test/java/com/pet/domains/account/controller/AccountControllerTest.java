@@ -27,6 +27,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -144,6 +145,33 @@ class AccountControllerTest extends BaseDocumentationTest {
                     fieldWithPath("data.id").type(NUMBER).description("회원 id"),
                     fieldWithPath("data.token").type(STRING).description("토큰"),
                     fieldWithPath("serverDateTime").type(STRING).description("서버 응답 시간")
+                ))
+            );
+    }
+
+    @Test
+    @WithAccount
+    @DisplayName("이미지 수정 테스트")
+    void updateProfileImage() throws Exception {
+        // given
+        MockMultipartFile profileImage =
+            new MockMultipartFile("image", "",
+                "multipart/form-data", "comepet.jpg".getBytes());
+        // when
+        ResultActions resultActions = mockMvc.perform(multipart("/api/v1/me/image")
+            .file(profileImage)
+            .header(HttpHeaders.AUTHORIZATION, getAuthenticationToken())
+            .contentType(MediaType.MULTIPART_FORM_DATA_VALUE));
+
+        // then
+        resultActions
+            .andDo(print())
+            .andExpect(status().isNoContent())
+            .andDo(document("update-image",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                requestHeaders(
+                    headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.MULTIPART_FORM_DATA_VALUE)
                 ))
             );
     }
