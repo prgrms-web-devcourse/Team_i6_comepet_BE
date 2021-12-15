@@ -11,7 +11,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import com.pet.common.jwt.JwtAuthentication;
-import com.pet.common.jwt.JwtMockToken;
 import com.pet.domains.account.WithAccount;
 import com.pet.domains.account.domain.SignEmail;
 import com.pet.domains.account.dto.request.AccountAreaUpdateParam;
@@ -22,7 +21,6 @@ import com.pet.domains.account.dto.request.AccountUpdateParam;
 import com.pet.domains.account.dto.response.AccountAreaReadResults;
 import com.pet.domains.docs.BaseDocumentationTest;
 import java.util.List;
-import lombok.With;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
@@ -286,9 +284,7 @@ class AccountControllerTest extends BaseDocumentationTest {
     void getAccountMissingPostsTest() throws Exception {
         // given
         // when
-        ResultActions resultActions = mockMvc.perform(get("/api/v1/me/posts")
-            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN));
-
+        ResultActions resultActions = mockMvc.perform(get("/api/v1/me/posts"));
         // then
         resultActions
             .andDo(print())
@@ -296,9 +292,6 @@ class AccountControllerTest extends BaseDocumentationTest {
             .andDo(document("get-account-missing-posts",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
-                requestHeaders(
-                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
-                ),
                 responseHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
@@ -332,8 +325,7 @@ class AccountControllerTest extends BaseDocumentationTest {
     void getAccountMissingBookmarkPostTest() throws Exception {
         // given
         // when
-        ResultActions resultActions = mockMvc.perform(get("/api/v1/me/bookmarks?status=missing")
-            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN));
+        ResultActions resultActions = mockMvc.perform(get("/api/v1/me/bookmarks?status=missing"));
 
         // then
         resultActions
@@ -342,9 +334,6 @@ class AccountControllerTest extends BaseDocumentationTest {
             .andDo(document("get-account-missing-bookmark-posts",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
-                requestHeaders(
-                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
-                ),
                 responseHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
@@ -376,8 +365,7 @@ class AccountControllerTest extends BaseDocumentationTest {
     void getAccountShelterBookmarkPostTest() throws Exception {
         // given
         // when
-        ResultActions resultActions = mockMvc.perform(get("/api/v1/me/bookmarks?status=shelter")
-            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN));
+        ResultActions resultActions = mockMvc.perform(get("/api/v1/me/bookmarks?status=shelter"));
 
         // then
         resultActions
@@ -386,9 +374,6 @@ class AccountControllerTest extends BaseDocumentationTest {
             .andDo(document("get-account-shelter-bookmark-posts",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
-                requestHeaders(
-                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
-                ),
                 responseHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
                 ),

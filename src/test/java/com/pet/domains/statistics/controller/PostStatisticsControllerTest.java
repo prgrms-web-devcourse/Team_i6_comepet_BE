@@ -15,7 +15,6 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import com.pet.common.jwt.JwtMockToken;
 import com.pet.domains.docs.BaseDocumentationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,8 +31,7 @@ class PostStatisticsControllerTest extends BaseDocumentationTest {
         // given
         // when
         ResultActions resultActions = mockMvc.perform(get("/api/v1/statistics")
-            .accept(MediaType.APPLICATION_JSON_VALUE)
-            .header(HttpHeaders.AUTHORIZATION, JwtMockToken.MOCK_TOKEN));
+            .accept(MediaType.APPLICATION_JSON_VALUE));
 
         // then
         resultActions
@@ -43,7 +41,6 @@ class PostStatisticsControllerTest extends BaseDocumentationTest {
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 requestHeaders(
-                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token"),
                     headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
                 responseHeaders(
