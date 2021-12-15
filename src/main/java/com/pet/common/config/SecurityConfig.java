@@ -79,6 +79,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
             .authorizeRequests()
             .antMatchers("/api/v1/shelter-posts").hasAnyRole("USER", "ANONYMOUS")
+            .antMatchers("/api/v1/send-password").hasRole("USER") // 충돌나면 이 라인 지우면 안되요.
             .anyRequest().permitAll()
             .and()
 
