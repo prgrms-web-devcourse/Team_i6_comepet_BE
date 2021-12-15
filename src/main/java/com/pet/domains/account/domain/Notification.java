@@ -64,4 +64,7 @@ public class Notification extends DeletableEntity {
         this.missingPost = missingPost;
     }
 
+    public void checkReadStatus() {
+        this.checked = true;
+    }
 }
