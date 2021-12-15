@@ -1,5 +1,6 @@
 package com.pet.domains.area.repository;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import com.pet.common.config.JpaAuditingConfig;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.account.repository.AccountRepository;
@@ -21,12 +22,10 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DataJpaTest(includeFilters = @Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JpaAuditingConfig.class))
-@DisplayName("관심 지역 repository 테스트")
+@DisplayName("관심 지역 리포지토리 테스트")
 class InterestAreaRepositoryTest {
 
     @Autowired

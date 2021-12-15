@@ -1,6 +1,6 @@
 package com.pet.domains.account.dto;
 
-import com.pet.domains.account.dto.request.AccountEmailCheck;
+import static org.assertj.core.api.Assertions.assertThat;
 import com.pet.domains.account.dto.request.AccountEmailParam;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -9,12 +9,11 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import static org.assertj.core.api.Assertions.*;
 
-public class AccountValidationTest {
+@DisplayName("회원 dto 유효성 테스트")
+class AccountValidationTest {
 
     private static Validator validator;
 
