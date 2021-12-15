@@ -13,8 +13,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.Validate;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -51,5 +53,15 @@ public class Notification extends DeletableEntity {
         foreignKey = @ForeignKey(name = "fk_notification_to_missing_post")
     )
     private MissingPost missingPost;
+
+    @Builder
+    public Notification(boolean checked, Account account, MissingPost missingPost) {
+        Validate.notNull(account, "account must not be null");
+        Validate.notNull(missingPost, "account must not be null");
+
+        this.checked = checked;
+        this.account = account;
+        this.missingPost = missingPost;
+    }
 
 }
