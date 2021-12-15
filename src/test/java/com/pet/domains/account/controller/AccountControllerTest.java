@@ -325,6 +325,7 @@ class AccountControllerTest extends BaseDocumentationTest {
     }
 
     @Test
+    @WithAccount
     @DisplayName("회원 게시물 조회")
     void getAccountMissingPostsTest() throws Exception {
         // given
@@ -366,6 +367,7 @@ class AccountControllerTest extends BaseDocumentationTest {
     }
 
     @Test
+    @WithAccount
     @DisplayName("회원 북마크(실종/보호) 조회")
     void getAccountMissingBookmarkPostTest() throws Exception {
         // given
@@ -406,6 +408,7 @@ class AccountControllerTest extends BaseDocumentationTest {
     }
 
     @Test
+    @WithAccount
     @DisplayName("회원 북마크(보호소) 조회")
     void getAccountShelterBookmarkPostTest() throws Exception {
         // given
@@ -446,6 +449,7 @@ class AccountControllerTest extends BaseDocumentationTest {
     }
 
     @Test
+    @WithAccount
     @DisplayName("회원 탈퇴 테스트")
     void deleteAccount() throws Exception {
         // given
