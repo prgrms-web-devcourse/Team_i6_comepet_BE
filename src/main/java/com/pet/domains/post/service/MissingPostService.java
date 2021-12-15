@@ -13,6 +13,7 @@ import com.pet.domains.image.repository.PostImageRepository;
 import com.pet.domains.image.service.ImageService;
 import com.pet.domains.post.domain.MissingPost;
 import com.pet.domains.post.dto.request.MissingPostCreateParam;
+import com.pet.domains.post.dto.response.MissingPostReadResults;
 import com.pet.domains.post.mapper.MissingPostMapper;
 import com.pet.domains.post.repository.MissingPostRepository;
 import com.pet.domains.tag.domain.PostTag;
@@ -25,6 +26,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -93,6 +96,19 @@ public class MissingPostService {
         tagService.decreaseTagCount(getPostTags);
 
         missingPostRepository.deleteById(getMissingPost.getId());
+    }
+
+    public MissingPostReadResults getMissingPostsPage(Pageable pageable) {
+        //anonymous 리스트 조회
+        Page<MissingPost> pageResult = missingPostRepository.findAllByDeletedIsFalse(pageable);
+        System.out.println(missingPostMapper.toMissingPostResults(pageResult).toString());
+        return missingPostMapper.toMissingPostResults(pageResult);
+    }
+
+    public MissingPostReadResults getMissingPostsPageWithAccount(Account account, Pageable pageable) {
+        //사용자 포함 리스트 조회
+        //북마크 여부 알려줘야함
+        return null;
     }
 
     private String getThumbnail(List<Image> imageFiles) {

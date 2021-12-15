@@ -1,5 +1,6 @@
 package com.pet.domains.post.repository;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import com.pet.common.config.JpaAuditingConfig;
 import com.pet.common.exception.ExceptionMessage;
 import com.pet.domains.account.domain.Account;
@@ -32,6 +33,7 @@ import com.pet.domains.tag.repository.TagRepository;
 import java.time.LocalDate;
 import java.util.List;
 import org.assertj.core.api.SoftAssertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,6 +42,8 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DataJpaTest(includeFilters = @Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JpaAuditingConfig.class))
@@ -194,6 +198,18 @@ class MissingPostRepositoryTest {
         commentRepository.save(comment);
     }
 
+    @AfterEach
+    void tearDown() {
+        accountRepository.deleteAll();
+        cityRepository.deleteAll();
+        townRepository.deleteAll();
+        ;
+        missingPostRepository.deleteAll();
+        imageRepository.deleteAll();
+        postImageRepository.deleteAll();
+        tagRepository.deleteAll();
+    }
+
     @Test
     @DisplayName("실종/보호 게시물 삭제 테스트")
     void deleteMissingPostTest() {
@@ -229,6 +245,18 @@ class MissingPostRepositoryTest {
                 softAssertions.assertThat(getMissingPosts.size()).isEqualTo(0);
             }
         );
+    }
+
+    @Test
+    @DisplayName("실종/보호 게시물 익명 리스트 조회 테스트")
+    void readMissingPost() {
+        //given
+        //when
+        Page<MissingPost> missingPostReadResultsPage =
+            missingPostRepository.findAllByDeletedIsFalse(PageRequest.of(0, 10));
+
+        //then
+        assertThat(missingPostReadResultsPage.getTotalElements()).isEqualTo(1);
     }
 
 }

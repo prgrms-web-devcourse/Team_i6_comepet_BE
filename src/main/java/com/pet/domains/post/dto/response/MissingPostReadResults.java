@@ -55,11 +55,11 @@ public class MissingPostReadResults {
 
         private final String thumbnail;
 
-        private final List<PostTag> postTags;
+        private final List<MissingPostReadResults.MissingPost.Tag> tags;
 
         public MissingPost(
             Long id, String city, String town, String animalKind, Status status, LocalDateTime createdAt,
-            SexType sex, boolean isBookmark, long bookmarkCount, String thumbnail, List<PostTag> postTag
+            SexType sex, boolean isBookmark, long bookmarkCount, String thumbnail, List<Tag> tags
         ) {
             this.id = id;
             this.city = city;
@@ -71,12 +71,12 @@ public class MissingPostReadResults {
             this.isBookmark = isBookmark;
             this.bookmarkCount = bookmarkCount;
             this.thumbnail = thumbnail;
-            this.postTags = postTag;
+            this.tags = tags;
         }
 
         public static MissingPost of(
             Long id, String city, String town, String animalKind, Status status, LocalDateTime createdAt,
-            SexType sex, boolean isBookmark, long bookmarkCount, String thumbnail, List<PostTag> postTag
+            SexType sex, boolean isBookmark, long bookmarkCount, String thumbnail, List<Tag> postTag
         ) {
             return new MissingPost(
                 id, city, town, animalKind, status, createdAt, sex, isBookmark, bookmarkCount, thumbnail, postTag
@@ -84,23 +84,32 @@ public class MissingPostReadResults {
         }
 
         @Getter
-        public static class PostTag {
+        public static class Tag {
 
             private final Long id;
 
             private final String name;
 
-            public PostTag(Long id, String name) {
+            public Tag(Long id, String name) {
                 this.id = id;
                 this.name = name;
             }
 
-            public static PostTag of(Long id, String name) {
-                return new PostTag(id, name);
+            public static Tag of(Long id, String name) {
+                return new Tag(id, name);
             }
 
         }
 
     }
 
+    @Override
+    public String toString() {
+        return "MissingPostReadResults{" +
+            "missingPosts=" + missingPosts +
+            ", totalElements=" + totalElements +
+            ", last=" + last +
+            ", size=" + size +
+            '}';
+    }
 }
