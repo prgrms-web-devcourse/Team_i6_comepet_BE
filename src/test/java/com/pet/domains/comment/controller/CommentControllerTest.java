@@ -86,7 +86,8 @@ class CommentControllerTest extends BaseDocumentationTest {
     @DisplayName("댓글 수정 테스트")
     void updateCommentTest() throws Exception {
         // given
-        given(commentService.updateComment(anyLong(), any(CommentUpdateParam.class), any(Account.class))).willReturn(1L);
+        given(commentService.updateComment(anyLong(), any(CommentUpdateParam.class), any(Account.class)))
+            .willReturn(1L);
         CommentUpdateParam updateParam = CommentUpdateParam.builder()
             .content("updated content")
             .build();
