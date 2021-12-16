@@ -76,6 +76,7 @@ public class MissingPost extends DeletableEntity {
     @Column(name = "bookmark_count", columnDefinition = "BIGINT default 0", nullable = false)
     private long bookmarkCount;
 
+    // TODO @Version
     @Column(name = "comment_count", columnDefinition = "BIGINT default 0", nullable = false)
     private long commentCount;
 
@@ -147,6 +148,16 @@ public class MissingPost extends DeletableEntity {
     public void decreaseBookCount() {
         if (this.bookmarkCount > 0) {
             this.bookmarkCount -= 1;
+        }
+    }
+
+    public void increaseCommentCount() {
+        this.commentCount += 1;
+    }
+
+    public void decreaseCommentCount() {
+        if (this.commentCount != 0) {
+            this.commentCount -= 1;
         }
     }
 
