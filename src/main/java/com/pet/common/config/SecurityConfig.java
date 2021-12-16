@@ -90,12 +90,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
             .authorizeRequests()
+            .antMatchers("/api/v1/shelter-posts").hasAnyRole("USER", "ANONYMOUS")
 
             // 보호소 게시글
             .antMatchers(GET, v1("/shelter-posts")).hasAnyRole(ROLE_USER, ROLE_ANONYMOUS)
 
             // 회원, 알림
-            .antMatchers(v1("/me/**"), v1("/auth-user"), v1("/notices/**")).hasAnyRole(ROLE_USER)
+            .antMatchers(v1("/me/**"), v1("/auth-user"), v1("/notices/**"),
+                v1("send-password"))
+            .hasAnyRole(ROLE_USER)
 
             .anyRequest().permitAll()
             .and()
