@@ -190,7 +190,7 @@ class ShelterPostControllerTest extends BaseDocumentationTest {
                     fieldWithPath("data.noticeNumber").type(STRING).description("공고 번호"),
                     fieldWithPath("data.managerTelNumber").type(STRING).description("담당자 연락처"),
                     fieldWithPath("data.status").type(STRING).description("공고 상태"),
-                    fieldWithPath("data.sex").type(STRING).description("<<shelterSexType,동물 성별>>"),
+                    fieldWithPath("data.sex").type(STRING).description("<<sexType,동물 성별>>"),
                     fieldWithPath("data.feature").type(STRING).description("동물 특징"),
                     fieldWithPath("data.weight").type(NUMBER).description("동물 체중"),
                     fieldWithPath("data.isBookmark").type(BOOLEAN).description("북마크 여부"),

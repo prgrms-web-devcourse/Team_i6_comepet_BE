@@ -12,7 +12,7 @@ import com.pet.domains.post.dto.response.ShelterPostPageResults;
 import com.pet.domains.post.dto.response.ShelterPostReadResult;
 import com.pet.domains.post.mapper.ShelterPostMapper;
 import com.pet.domains.post.repository.ShelterPostRepository;
-import com.pet.domains.post.repository.ShelterPostWithIsBookmark;
+import com.pet.domains.post.repository.projection.ShelterPostWithIsBookmark;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,8 +36,7 @@ public class ShelterPostService {
     private final ShelterPostMapper shelterPostMapper;
 
     public ShelterPostPageResults getShelterPostsPageWithAccount(Account account, Pageable pageable) {
-        Page<ShelterPostWithIsBookmark> pageResult =
-            shelterPostRepository.findAllWithIsBookmark(account, pageable);
+        Page<ShelterPostWithIsBookmark> pageResult = shelterPostRepository.findAllWithIsBookmark(account, pageable);
         return shelterPostMapper.toShelterPostPageResultsWithAccount(pageResult);
     }
 
@@ -47,11 +46,11 @@ public class ShelterPostService {
     }
 
     public ShelterPostReadResult getShelterPostReadResultWithAccount(Account account, Long postId) {
-        ShelterPostWithIsBookmark shelterPostWithIsBookmark =
-            shelterPostRepository.findByIdWithIsBookmark(account, postId);
+        ShelterPostWithIsBookmark foundShelterPost = shelterPostRepository.findByIdWithIsBookmark(account, postId)
+            .orElseThrow(ExceptionMessage.NOT_FOUND_SHELTER_POST::getException);
         return shelterPostMapper.toShelterPostReadResult(
-            shelterPostWithIsBookmark.getShelterPost(),
-            shelterPostWithIsBookmark.getIsBookmark()
+            foundShelterPost.getShelterPost(),
+            foundShelterPost.isBookmark()
         );
     }
 

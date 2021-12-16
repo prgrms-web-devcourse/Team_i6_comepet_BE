@@ -85,7 +85,6 @@ public class ShelterPostReadResult {
         this.bookmarkCount = bookmarkCount;
     }
 
-
     @JsonProperty("isBookmark")
     public Boolean getBookmark() {
         return isBookmark;

@@ -1,6 +1,8 @@
 package com.pet.domains.account.repository;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import com.pet.common.config.JpaAuditingConfig;
+import com.pet.common.config.QuerydslConfig;
 import com.pet.common.exception.ExceptionMessage;
 import com.pet.domains.account.domain.SignEmail;
 import org.junit.jupiter.api.DisplayName;
@@ -11,11 +13,12 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@DataJpaTest(includeFilters = @Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JpaAuditingConfig.class))
+@DataJpaTest(includeFilters = @Filter(
+    type = FilterType.ASSIGNABLE_TYPE,
+    classes = {JpaAuditingConfig.class, QuerydslConfig.class})
+)
 @DisplayName("인증 이메일 DB 테스트")
 class SignEmailRepositoryTest {
 
