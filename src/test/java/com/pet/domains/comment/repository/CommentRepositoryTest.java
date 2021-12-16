@@ -136,23 +136,4 @@ class CommentRepositoryTest {
         // then
         assertThat(comments).isEmpty();
     }
-
-    @Test
-    @DisplayName("댓글 아이디와 회원값으로 삭제 테스트")
-    void deleteByIdAndAccountTest() {
-        // given
-        Comment comment = Comment.builder()
-            .missingPost(missingPost)
-            .account(account)
-            .content("내용")
-            .build();
-
-        // when
-        commentRepository.deleteByIdAndAccount(comment.getId(), account);
-        List<Comment> comments = commentRepository.findAll();
-
-        // then
-        assertThat(comments).isEmpty();
-    }
-
 }
