@@ -2,6 +2,7 @@ package com.pet.domains.post.repository;
 
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.post.domain.MissingPost;
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -21,5 +22,9 @@ public interface MissingPostRepository extends JpaRepository<MissingPost, Long> 
         + "LEFT OUTER JOIN MissingPostBookmark mpb ON mp.id = mpb.missingPost.id AND mpb.account = :account "
         + "WHERE mp.deleted = false")
     Page<MissingPostWithIsBookmark> findAllWithIsBookmarkAccountByDeletedIsFalse(Account account, Pageable pageable);
+
+    @EntityGraph(attributePaths = {"animalKind", "animalKind.animal", "town", "town.city", "postTags",
+        "postTags.tag", "account", "account.group"}, type = EntityGraphType.LOAD)
+    Optional<MissingPost> findById(Long postId);
 
 }

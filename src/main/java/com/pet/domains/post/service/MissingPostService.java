@@ -13,6 +13,7 @@ import com.pet.domains.image.repository.PostImageRepository;
 import com.pet.domains.image.service.ImageService;
 import com.pet.domains.post.domain.MissingPost;
 import com.pet.domains.post.dto.request.MissingPostCreateParam;
+import com.pet.domains.post.dto.response.MissingPostReadResult;
 import com.pet.domains.post.dto.response.MissingPostReadResults;
 import com.pet.domains.post.mapper.MissingPostMapper;
 import com.pet.domains.post.repository.MissingPostRepository;
@@ -101,13 +102,23 @@ public class MissingPostService {
 
     public MissingPostReadResults getMissingPostsPage(Pageable pageable) {
         Page<MissingPost> pageResult = missingPostRepository.findAllByDeletedIsFalse(pageable);
-        return missingPostMapper.toMissingPostResults(pageResult);
+        return missingPostMapper.toMissingPostsResults(pageResult);
     }
 
     public MissingPostReadResults getMissingPostsPageWithAccount(Account account, Pageable pageable) {
         Page<MissingPostWithIsBookmark> pageResult =
             missingPostRepository.findAllWithIsBookmarkAccountByDeletedIsFalse(account, pageable);
-        return missingPostMapper.toMissingPostWithBookmarkResults(pageResult);
+        return missingPostMapper.toMissingPostsWithBookmarkResults(pageResult);
+    }
+
+    public MissingPostReadResult getMissingPostOne(Long postId) {
+        missingPostRepository.findById(postId);
+        return null;
+    }
+
+    public MissingPostReadResult getMissingPostOneWithAccount(Account account, Long postId) {
+
+        return null;
     }
 
     private String getThumbnail(List<Image> imageFiles) {
