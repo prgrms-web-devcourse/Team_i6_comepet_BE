@@ -8,12 +8,15 @@ public class AccountAreaReadResults {
 
     private final List<AccountAreaReadResults.Area> areas;
 
-    public AccountAreaReadResults(List<AccountAreaReadResults.Area> areas) {
+    private final boolean checked;
+
+    public AccountAreaReadResults(List<AccountAreaReadResults.Area> areas, boolean checked) {
         this.areas = areas;
+        this.checked = checked;
     }
 
-    public static AccountAreaReadResults of(List<AccountAreaReadResults.Area> areas) {
-        return new AccountAreaReadResults(areas);
+    public static AccountAreaReadResults of(List<AccountAreaReadResults.Area> areas, boolean checked) {
+        return new AccountAreaReadResults(areas, checked);
     }
 
     @Getter

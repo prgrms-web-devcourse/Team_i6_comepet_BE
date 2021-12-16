@@ -217,7 +217,7 @@ public class AccountService {
                 City city = town.getCity();
                 return interestAreaMapper.toAreaResult(city, town, interestArea.isSelected());
             })
-            .collect(Collectors.toList()));
+            .collect(Collectors.toList()), account.isNotification());
     }
 
     public AccountReadResult convertToResult(Account account) {

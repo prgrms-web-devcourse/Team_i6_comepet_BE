@@ -8,7 +8,10 @@ import org.springframework.data.repository.query.Param;
 
 public interface InterestAreaRepository extends JpaRepository<InterestArea, Long> {
 
-    @Query("select i from InterestArea i join fetch i.town t left join fetch t.city c where i.account.id = :accountId")
+    @Query("select i from InterestArea i "
+        + "join fetch i.town t "
+        + "left join fetch t.city c "
+        + "where i.account.id = :accountId")
     List<InterestArea> findByAccountId(@Param("accountId") Long accountId);
 
     void deleteAllByAccountId(Long id);

@@ -271,7 +271,7 @@ class AccountControllerTest extends BaseDocumentationTest {
             List.of(
                 AccountAreaReadResults.Area.of(1L, "서울특별시", 1L, "강남구", true),
                 AccountAreaReadResults.Area.of(1L, "서울특별시", 2L, "강동구", false)
-            )
+            ), true
         );
         given(accountService.getInterestArea(any())).willReturn(result);
         // when
@@ -299,6 +299,7 @@ class AccountControllerTest extends BaseDocumentationTest {
                     fieldWithPath("data.areas[0].townId").type(NUMBER).description("시군구 id"),
                     fieldWithPath("data.areas[0].townName").type(STRING).description("시군구 이름"),
                     fieldWithPath("data.areas[0].defaultArea").type(BOOLEAN).description("디폴트 지역 여부"),
+                    fieldWithPath("data.checked").type(BOOLEAN).description("알림 설정 여부"),
                     fieldWithPath("serverDateTime").type(STRING).description("서버 응답 시간")
                 ))
             );
