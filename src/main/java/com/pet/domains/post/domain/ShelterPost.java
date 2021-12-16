@@ -98,9 +98,11 @@ public class ShelterPost extends BaseEntity {
     @Column(name = "notice_number", length = 30)
     private String noticeNumber;
 
-    @Version
     @Column(name = "bookmark_count", columnDefinition = "BIGINT default 0")
     private long bookmarkCount;
+
+    @Version
+    private long version;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(

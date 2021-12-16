@@ -70,20 +70,20 @@ public class MissingPost extends DeletableEntity {
     @Column(name = "tel_number", length = 15, nullable = false)
     private String telNumber;
 
-    @Version
     @Column(name = "view_count", columnDefinition = "BIGINT default 0", nullable = false)
     private long viewCount;
 
-    @Version
     @Column(name = "bookmark_count", columnDefinition = "BIGINT default 0", nullable = false)
     private long bookmarkCount;
 
-    @Version
     @Column(name = "comment_count", columnDefinition = "BIGINT default 0", nullable = false)
     private long commentCount;
 
     @Column(name = "thumbnail")
     private String thumbnail;
+
+    @Version
+    private long version;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(

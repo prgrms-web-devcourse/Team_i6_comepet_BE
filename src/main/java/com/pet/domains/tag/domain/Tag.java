@@ -28,9 +28,11 @@ public class Tag extends BaseEntity {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
-    @Version
     @Column(name = "count", columnDefinition = "BIGINT default 0", nullable = false)
     private long count;
+
+    @Version
+    private long version;
 
     @Builder
     public Tag(String name, long count) {
