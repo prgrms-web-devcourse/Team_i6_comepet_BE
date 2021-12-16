@@ -26,7 +26,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.Validate;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -72,6 +72,7 @@ public class MissingPost extends DeletableEntity {
     @Column(name = "view_count", columnDefinition = "BIGINT default 0", nullable = false)
     private long viewCount;
 
+    // TODO: 2021/12/16  @Version
     @Column(name = "bookmark_count", columnDefinition = "BIGINT default 0", nullable = false)
     private long bookmarkCount;
 
@@ -114,11 +115,13 @@ public class MissingPost extends DeletableEntity {
     public MissingPost(Status status, String detailAddress, LocalDate date, Long age,
         SexType sexType, String chipNumber, String content, String telNumber, long viewCount, long bookmarkCount,
         long commentCount, String thumbnail, Account account, Town town, AnimalKind animalKind) {
-        ObjectUtils.requireNonEmpty(status, "status must not be null");
-        ObjectUtils.requireNonEmpty(date, "date must not be null");
-        ObjectUtils.requireNonEmpty(sexType, "sexType must not be null");
-        ObjectUtils.requireNonEmpty(content, "content must not be null");
-        ObjectUtils.requireNonEmpty(telNumber, "telNumber must not be null");
+        Validate.notNull(status, "status must not be null");
+        Validate.notNull(date, "date must not be null");
+        Validate.notNull(sexType, "sexType must not be null");
+        Validate.notBlank(content, "content must not be null");
+        Validate.notBlank(telNumber, "telNumber must not be null");
+        Validate.notNull(account, "account must not be null");
+        Validate.notNull(town, "town must not be null");
 
         this.status = status;
         this.detailAddress = detailAddress;
@@ -135,6 +138,16 @@ public class MissingPost extends DeletableEntity {
         this.account = account;
         this.town = town;
         this.animalKind = animalKind;
+    }
+
+    public void increaseBookCount() {
+        this.bookmarkCount += 1;
+    }
+
+    public void decreaseBookCount() {
+        if (this.bookmarkCount > 0) {
+            this.bookmarkCount -= 1;
+        }
     }
 
 }
