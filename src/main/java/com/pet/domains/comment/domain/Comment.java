@@ -21,7 +21,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.Validate;
-import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -66,7 +65,6 @@ public class Comment extends DeletableEntity {
     )
     private Account account;
 
-    @BatchSize(size = 20)
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "parentComment")
     private List<Comment> childComments = new ArrayList<>();
 
