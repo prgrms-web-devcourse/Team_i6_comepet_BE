@@ -133,9 +133,9 @@ class ShelterPostRepositoryTest {
         SoftAssertions.assertSoftly(softAssertions -> {
                 softAssertions.assertThat(contents).hasSize(2);
                 softAssertions.assertThat(contents.get(0).getShelterPost().getId()).isEqualTo(nonBookmarkPost.getId());
-                softAssertions.assertThat(contents.get(0).getIsBookmark()).isFalse();
+                softAssertions.assertThat(contents.get(0).isBookmark()).isFalse();
                 softAssertions.assertThat(contents.get(1).getShelterPost().getId()).isEqualTo(bookmarkPost.getId());
-                softAssertions.assertThat(contents.get(1).getIsBookmark()).isTrue();
+                softAssertions.assertThat(contents.get(1).isBookmark()).isTrue();
                 softAssertions.assertThat(pageResult.getTotalElements()).isEqualTo(2L);
             }
         );
