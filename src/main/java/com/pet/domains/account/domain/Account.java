@@ -105,7 +105,7 @@ public class Account extends DeletableEntity {
     }
 
     public void isIdentification(Long accountId) {
-        if (this.id.equals(accountId)) {
+        if (!this.id.equals(accountId)) {
             throw ExceptionMessage.UN_IDENTIFICATION.getException();
         }
     }
