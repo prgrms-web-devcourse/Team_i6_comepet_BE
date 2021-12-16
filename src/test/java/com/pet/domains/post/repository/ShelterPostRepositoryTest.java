@@ -42,8 +42,6 @@ class ShelterPostRepositoryTest {
     @Autowired
     private GroupPermissionRepository groupPermissionRepository;
 
-    private ShelterPost shelterPost;
-
     private Account account;
 
     private Animal animal;
@@ -91,12 +89,6 @@ class ShelterPostRepositoryTest {
             .name("town")
             .build();
         entityManager.persist(town);
-
-        shelterPost = ShelterPost.builder()
-            .animalKind(animalKind)
-            .town(town)
-            .build();
-        entityManager.persist(shelterPost);
         entityManager.flush();
         entityManager.clear();
     }
