@@ -62,6 +62,24 @@ class AccountControllerTest extends BaseDocumentationTest {
     }
 
     @Test
+    @WithAccount
+    @DisplayName("임시 비밀번호 요청 성공 테스트")
+    void sendNewPasswordEmail() throws Exception {
+        // given
+        // when
+        ResultActions resultActions = mockMvc.perform(patch("/api/v1/send-password")
+            .header(HttpHeaders.AUTHORIZATION, getAuthenticationToken()));
+
+        resultActions
+            .andDo(print())
+            .andExpect(status().isNoContent())
+            .andDo(document("send-newPassword",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint())
+            ));
+    }
+
+    @Test
     @DisplayName("회원 가입 요청 성공 테스트")
     void signUpTest() throws Exception {
         // given

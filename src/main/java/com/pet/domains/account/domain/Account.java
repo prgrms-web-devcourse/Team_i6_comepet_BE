@@ -138,4 +138,7 @@ public class Account extends DeletableEntity {
         this.image = image;
     }
 
+    public void updatePassword(String newPassword) {
+        this.password = newPassword;
+    }
 }

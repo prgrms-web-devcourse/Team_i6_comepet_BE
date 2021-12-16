@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import javax.security.auth.login.AccountNotFoundException;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -76,8 +77,17 @@ public class AccountService {
             throw ExceptionMessage.DUPLICATION_EMAIL.getException();
         }
         String verifyKey = UUID.randomUUID().toString();
-        mailSender.send(new EmailMessage(email, verifyKey));
+        mailSender.send(EmailMessage.crateVerifyEmailMessage(email, verifyKey));
         signEmailRepository.save(new SignEmail(email, verifyKey));
+    }
+
+    @Transactional
+    public void sendPassword(Long accountId) {
+        Account account =
+            accountRepository.findById(accountId).orElseThrow(ExceptionMessage.NOT_FOUND_ACCOUNT::getException);
+        String temporaryPassword = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 10);
+        account.updatePassword(passwordEncoder.encode(temporaryPassword));
+        mailSender.send(EmailMessage.crateNewPasswordEmailMessage(account.getEmail(), temporaryPassword));
     }
 
     @Transactional
@@ -209,5 +219,4 @@ public class AccountService {
             accountRepository.findByIdAndImage(account.getId())
                 .orElseThrow(ExceptionMessage.NOT_FOUND_ACCOUNT::getException));
     }
-
 }
