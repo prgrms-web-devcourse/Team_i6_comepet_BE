@@ -69,13 +69,13 @@ public class MissingPost extends DeletableEntity {
     @Column(name = "tel_number", length = 15, nullable = false)
     private String telNumber;
 
-    @Column(name = "view_count", columnDefinition = "BIGINT default 0")
+    @Column(name = "view_count", columnDefinition = "BIGINT default 0", nullable = false)
     private long viewCount;
 
-    @Column(name = "bookmark_count", columnDefinition = "BIGINT default 0")
+    @Column(name = "bookmark_count", columnDefinition = "BIGINT default 0", nullable = false)
     private long bookmarkCount;
 
-    @Column(name = "comment_count", columnDefinition = "BIGINT default 0")
+    @Column(name = "comment_count", columnDefinition = "BIGINT default 0", nullable = false)
     private long commentCount;
 
     @Column(name = "thumbnail")
