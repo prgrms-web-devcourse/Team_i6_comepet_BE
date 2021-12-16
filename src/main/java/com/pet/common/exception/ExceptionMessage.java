@@ -26,6 +26,7 @@ public enum ExceptionMessage {
     INVALID_MAIL_KEY(new BadRequestException("잘못된 이메일 인증번호입니다.", 604)),
     FAIL_TO_EMAIL(new BadRequestException("이메일 전송에 실패했습니다.", 605)),
     INVALID_PASSWORD(new BadRequestException("비밀번호가 일치하지 않습니다.", 606)),
+    INVALID_PASSWORD_REGEX(new BadRequestException("비밀번호가 일치하지 않습니다.", 607)),
 
     // 동물 7xx
     NOT_FOUND_ANIMAL(new NotFoundException("해당하는 동물 종류를 찾을 수 없습니다.", 701)),
@@ -34,6 +35,8 @@ public enum ExceptionMessage {
     // 지역 8xx
     NOT_FOUND_CITY(new NotFoundException("해당하는 시도 지역을 찾을 수 없습니다.", 801)),
     NOT_FOUND_TOWN(new NotFoundException("해당하는 시군구 지역을 찾을 수 없습니다.", 802)),
+    NOT_FOUND_INTEREST_AREA(new NotFoundException("해당하는 관심 지역을 찾을 수 없습니다.", 803)),
+    INVALID_INTEREST_AREA(new NotFoundException("잘못된 관심지역 요청입니다.", 804)),
 
     // 인증 9xx,
     SHOULD_LOGIN(new AuthenticationException("로그인이 필요합니다.", 901)),

@@ -270,9 +270,9 @@ class AccountControllerTest extends BaseDocumentationTest {
         // given
         AccountAreaReadResults result = AccountAreaReadResults.of(
             List.of(
-                AccountAreaReadResults.Area.of(1L, "서울특별시", 1L, "강남구", true),
-                AccountAreaReadResults.Area.of(1L, "서울특별시", 2L, "강동구", false)
-            )
+                AccountAreaReadResults.Area.of(312L, 1L, "서울특별시", 1L, "강남구", true),
+                AccountAreaReadResults.Area.of(213L, 1L, "서울특별시", 2L, "강동구", false)
+            ), true
         );
         given(accountService.getInterestArea(any())).willReturn(result);
         // when
@@ -295,11 +295,13 @@ class AccountControllerTest extends BaseDocumentationTest {
                 responseFields(
                     fieldWithPath("data").type(OBJECT).description("응답 데이터"),
                     fieldWithPath("data.areas").type(ARRAY).description("시도"),
+                    fieldWithPath("data.areas[0].id").type(NUMBER).description("관심 지역 id"),
                     fieldWithPath("data.areas[0].cityId").type(NUMBER).description("시도 id"),
                     fieldWithPath("data.areas[0].cityName").type(STRING).description("시도 이름"),
                     fieldWithPath("data.areas[0].townId").type(NUMBER).description("시군구 id"),
                     fieldWithPath("data.areas[0].townName").type(STRING).description("시군구 이름"),
                     fieldWithPath("data.areas[0].defaultArea").type(BOOLEAN).description("디폴트 지역 여부"),
+                    fieldWithPath("data.checked").type(BOOLEAN).description("알림 설정 여부"),
                     fieldWithPath("serverDateTime").type(STRING).description("서버 응답 시간")
                 ))
             );
