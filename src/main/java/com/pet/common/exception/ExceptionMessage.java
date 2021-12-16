@@ -69,7 +69,7 @@ public enum ExceptionMessage {
     private final RuntimeException exception;
 
     public static int getCode(ExceptionMessage exceptionMessage) {
-        BaseHttpException exception = (BaseHttpException)exceptionMessage.getException();
+        BaseHttpException exception = (BaseHttpException) exceptionMessage.getException();
         return exception.getCode();
     }
 

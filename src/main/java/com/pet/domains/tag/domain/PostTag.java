@@ -2,6 +2,7 @@ package com.pet.domains.tag.domain;
 
 import com.pet.domains.BaseEntity;
 import com.pet.domains.post.domain.MissingPost;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -16,9 +17,11 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.apache.commons.lang3.ObjectUtils;
 
 @Getter
+@Setter(AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "post_tag")
@@ -52,8 +55,16 @@ public class PostTag extends BaseEntity {
         ObjectUtils.requireNonEmpty(missingPost, "missingPost must not be null");
         ObjectUtils.requireNonEmpty(tag, "tag must not be null");
 
-        this.missingPost = missingPost;
+        addMissingPost(missingPost);
         this.tag = tag;
+    }
+
+    private void addMissingPost(MissingPost missingPost) {
+        if (Objects.nonNull(this.missingPost)) {
+            missingPost.getPostTags().remove(this);
+        }
+        this.missingPost = missingPost;
+        missingPost.getPostTags().add(this);
     }
 
 }

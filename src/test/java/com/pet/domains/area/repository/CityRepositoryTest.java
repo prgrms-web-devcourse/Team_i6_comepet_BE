@@ -75,7 +75,6 @@ class CityRepositoryTest {
         Town town4 = Town.builder().city(city2).code("125").name("얼씨구").build();
         Town town5 = Town.builder().city(city2).code("125").name("어디구").build();
 
-
         entityManager.persist(town1);
         entityManager.persist(town2);
         entityManager.persist(town3);
