@@ -59,6 +59,7 @@ public enum ExceptionMessage {
     NOT_FOUND_SHELTER_POST(new NotFoundException("해당하는 보호소 게시글을 찾을 수 없습니다.", 1301)),
 
     // 알림 14xx
+    NOT_FOUND_NOTIFICATION(new NotFoundException("해당하는 알림을 찾을 수 없습니다..", 1401)),
 
     // 태그 15xx
 
