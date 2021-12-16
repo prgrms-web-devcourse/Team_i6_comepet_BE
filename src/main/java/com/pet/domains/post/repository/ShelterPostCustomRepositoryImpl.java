@@ -23,12 +23,14 @@ public class ShelterPostCustomRepositoryImpl implements ShelterPostCustomReposit
 
     @Override
     public Page<ShelterPostWithIsBookmark> findAllWithIsBookmark(Account account, Pageable pageable) {
-        QueryResults<ShelterPostWithIsBookmark> result = jpaQueryFactory.select(new QShelterPostWithIsBookmark(
-            shelterPost,
-            ExpressionUtils.as(shelterPostBookmark.id.isNotNull(), "isBookmark")))
+        QueryResults<ShelterPostWithIsBookmark> result = jpaQueryFactory.select(
+            new QShelterPostWithIsBookmark(
+                shelterPost,
+                ExpressionUtils.as(shelterPostBookmark.id.isNotNull(), "isBookmark")))
             .from(shelterPost)
             .leftJoin(shelterPostBookmark)
-            .on(shelterPost.id.eq(shelterPostBookmark.shelterPost.id).and(shelterPostBookmark.account.id.eq(account.getId())))
+            .on(shelterPost.id.eq(shelterPostBookmark.shelterPost.id)
+                .and(shelterPostBookmark.account.id.eq(account.getId())))
             .limit(pageable.getPageSize())
             .offset(pageable.getPageNumber())
             .fetchResults();
@@ -42,7 +44,8 @@ public class ShelterPostCustomRepositoryImpl implements ShelterPostCustomReposit
             ExpressionUtils.as(shelterPostBookmark.id.isNotNull(), "isBookmark")))
             .from(shelterPost)
             .leftJoin(shelterPostBookmark)
-            .on(shelterPost.id.eq(shelterPostBookmark.shelterPost.id).and(shelterPostBookmark.account.id.eq(account.getId())))
+            .on(shelterPost.id.eq(shelterPostBookmark.shelterPost.id)
+                .and(shelterPostBookmark.account.id.eq(account.getId())))
             .where(shelterPost.id.eq(postId))
             .fetchOne();
         return Optional.ofNullable(result);
