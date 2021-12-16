@@ -9,8 +9,8 @@ import com.pet.domains.post.dto.response.MissingPostReadResults;
 import com.pet.domains.post.repository.MissingPostWithIsBookmark;
 import com.pet.domains.tag.domain.PostTag;
 import com.pet.domains.tag.domain.Tag;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
@@ -69,11 +69,8 @@ public interface MissingPostMapper {
     MissingPostReadResults.MissingPost.Tag toMissingPostTagDto(Tag tag);
 
     default MissingPostReadResults toMissingPostResults(Page<MissingPost> pageResult) {
-        List<MissingPostReadResults.MissingPost> missingPostResults = new ArrayList<>();
-        for (MissingPost missingPost : pageResult.getContent()) {
-            MissingPostReadResults.MissingPost post = toMissingPostDto(missingPost);
-            missingPostResults.add(post);
-        }
+        List<MissingPostReadResults.MissingPost> missingPostResults =
+            pageResult.getContent().stream().map(this::toMissingPostDto).collect(Collectors.toList());
         return MissingPostReadResults.of(
             missingPostResults,
             pageResult.getTotalElements(),
@@ -83,11 +80,8 @@ public interface MissingPostMapper {
     }
 
     default MissingPostReadResults toMissingPostWithBookmarkResults(Page<MissingPostWithIsBookmark> pageResult) {
-        List<MissingPostReadResults.MissingPost> missingPostResults = new ArrayList<>();
-        for (MissingPostWithIsBookmark missingPost : pageResult.getContent()) {
-            MissingPostReadResults.MissingPost post = toMissingPostDto(missingPost);
-            missingPostResults.add(post);
-        }
+        List<MissingPostReadResults.MissingPost> missingPostResults =
+            pageResult.getContent().stream().map(this::toMissingPostDto).collect(Collectors.toList());
         return MissingPostReadResults.of(
             missingPostResults,
             pageResult.getTotalElements(),
@@ -97,12 +91,9 @@ public interface MissingPostMapper {
     }
 
     default List<MissingPostReadResults.MissingPost.Tag> toMissingPostTagResults(List<PostTag> postTags) {
-        List<MissingPostReadResults.MissingPost.Tag> missingPostTagResults = new ArrayList<>();
-        for (PostTag postTag : postTags) {
-            MissingPostReadResults.MissingPost.Tag getTag = toMissingPostTagDto(postTag.getTag());
-            missingPostTagResults.add(getTag);
-        }
-        return missingPostTagResults;
+        return postTags.stream()
+            .map(postTag -> toMissingPostTagDto(postTag.getTag()))
+            .collect(Collectors.toList());
     }
 
 }
