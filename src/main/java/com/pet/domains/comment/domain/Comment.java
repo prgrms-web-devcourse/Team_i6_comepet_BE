@@ -99,4 +99,9 @@ public class Comment extends DeletableEntity {
         this.account.isIdentification(accountId);
         this.content = content;
     }
+
+    public boolean isWriter(Long accountId) {
+        this.account.isIdentification(accountId);
+        return true;
+    }
 }
