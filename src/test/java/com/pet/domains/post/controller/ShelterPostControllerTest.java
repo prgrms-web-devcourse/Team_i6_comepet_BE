@@ -247,4 +247,5 @@ class ShelterPostControllerTest extends BaseDocumentationTest {
                 ))
             );
     }
+
 }

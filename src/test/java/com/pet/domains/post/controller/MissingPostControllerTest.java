@@ -140,16 +140,16 @@ class MissingPostControllerTest extends BaseDocumentationTest {
     void getMissingPostsTest() throws Exception {
         //given
         MissingPostReadResults missingPostReadResults = MissingPostReadResults.of(List.of(
-                MissingPost.of(
-                    1L, "서울특별시", "도봉구", "토이푸들", Status.DETECTION, LocalDateTime.now(),
-                    SexType.FEMALE, true, 2,
-                    "https://post-phinf.pstatic.net/MjAyMTA0MTJfNTAg/MDAxNjE4MjMwNjg1MTEw",
-                    List.of(
-                        MissingPost.Tag.of(1L, "고슴도치"),
-                        MissingPost.Tag.of(2L, "애완동물"),
-                        MissingPost.Tag.of(3L, "반려동물")
-                    )
-                )),
+            MissingPost.of(
+                1L, "서울특별시", "도봉구", "토이푸들", Status.DETECTION, LocalDateTime.now(),
+                SexType.FEMALE, true, 2,
+                "https://post-phinf.pstatic.net/MjAyMTA0MTJfNTAg/MDAxNjE4MjMwNjg1MTEw",
+                List.of(
+                    MissingPost.Tag.of(1L, "고슴도치"),
+                    MissingPost.Tag.of(2L, "애완동물"),
+                    MissingPost.Tag.of(3L, "반려동물")
+                )
+            )),
             10,
             true,
             5
@@ -403,12 +403,32 @@ class MissingPostControllerTest extends BaseDocumentationTest {
     }
 
     @Test
-    @DisplayName("특정 실종게시글의 댓글 리스트 조회 테스트")
-    void getShelterPostsTest() throws Exception {
+    @DisplayName("실종 게시글의 댓글 페이지 조회 테스트")
+    void getMissingPostCommentsTest() throws Exception {
         // given
+        CommentPageResults commentPageResults = new CommentPageResults(
+            LongStream.rangeClosed(1, 2).mapToObj(idx -> new CommentPageResults.Comment(
+                idx,
+                "부모 댓글 #" + idx,
+                LocalDateTime.now(),
+                new Comment.Account(idx, "회원#" + idx, "http://../.jpg"),
+                List.of(new ChildComment(
+                    idx * 3,
+                    "자식 댓글 #" + idx * 3,
+                    LocalDateTime.now(),
+                    new Comment.Account(idx * 3, "회원#" + idx * 3, "http://../.jpg"))
+                )))
+                .collect(Collectors.toList()),
+            2,
+            true,
+            10
+        );
+        given(commentService.getMissingPostComments(anyLong(), any(PageRequest.class))).willReturn(commentPageResults);
+
         // when
         ResultActions resultActions = mockMvc.perform(get("/api/v1/missing-posts/{postId}/comments", 1L)
             .accept(MediaType.APPLICATION_JSON_VALUE));
+
         // then
         resultActions
             .andDo(print())
@@ -416,6 +436,9 @@ class MissingPostControllerTest extends BaseDocumentationTest {
             .andDo(document("get-missing-posts-comments",
                 getDocumentRequest(),
                 getDocumentResponse(),
+                requestHeaders(
+                    headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE)
+                ),
                 pathParameters(
                     parameterWithName("postId").description("실종 게시글 아이디")
                 ),
@@ -428,10 +451,20 @@ class MissingPostControllerTest extends BaseDocumentationTest {
                     fieldWithPath("data.comments[].id").type(NUMBER).description("댓글 아이디"),
                     fieldWithPath("data.comments[].content").type(STRING).description("댓글 내용"),
                     fieldWithPath("data.comments[].createdAt").type(STRING).description("댓글 작성날짜"),
-                    fieldWithPath("data.comments[].user").type(OBJECT).description("댓글 작성자"),
-                    fieldWithPath("data.comments[].user.id").type(NUMBER).description("작성자 아이디"),
-                    fieldWithPath("data.comments[].user.nickname").type(STRING).description("작성자 닉네임"),
-                    fieldWithPath("data.comments[].user.image").type(STRING).description("작성자 프로필 사진"),
+                    fieldWithPath("data.comments[].account").type(OBJECT).description("댓글 작성자"),
+                    fieldWithPath("data.comments[].account.id").type(NUMBER).description("작성자 아이디"),
+                    fieldWithPath("data.comments[].account.nickname").type(STRING).description("작성자 닉네임"),
+                    fieldWithPath("data.comments[].account.image").type(STRING).description("작성자 프로필 사진"),
+                    fieldWithPath("data.comments[].childComments").type(ARRAY).description("댓글의 대댓글 목록"),
+                    fieldWithPath("data.comments[].childComments[].id").type(NUMBER).description("대댓글 아이디"),
+                    fieldWithPath("data.comments[].childComments[].content").type(STRING).description("대댓글 내용"),
+                    fieldWithPath("data.comments[].childComments[].createdAt").type(STRING).description("대댓글 작성날짜"),
+                    fieldWithPath("data.comments[].childComments[].account").type(OBJECT).description("대댓글 작성자"),
+                    fieldWithPath("data.comments[].childComments[].account.id").type(NUMBER).description("작성자 아이디"),
+                    fieldWithPath("data.comments[].childComments[].account.nickname").type(STRING)
+                        .description("작성자 닉네임"),
+                    fieldWithPath("data.comments[].childComments[].account.image").type(STRING)
+                        .description("작성자 프로필 사진"),
                     fieldWithPath("data.totalElements").type(NUMBER).description("전체 결과 수"),
                     fieldWithPath("data.last").type(BOOLEAN).description("마지막 페이지 여부"),
                     fieldWithPath("data.size").type(NUMBER).description("페이지당 요청 수"),
