@@ -55,7 +55,6 @@ endif::[]
 
 |===
 
-[[domain]]
 === Domain
 
 |===
