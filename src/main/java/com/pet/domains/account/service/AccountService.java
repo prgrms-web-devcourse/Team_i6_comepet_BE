@@ -190,6 +190,13 @@ public class AccountService {
                 log.debug("디폴트 지역이 2개입니다.");
                 throw ExceptionMessage.INVALID_INTEREST_AREA.getException();
             }
+
+            long townIdCount = areas.stream().map(AccountAreaUpdateParam.Area::getTownId).distinct().count();
+            if (townIdCount == 2) {
+                log.debug("타운 아이디가 같습니다.");
+                throw ExceptionMessage.INVALID_INTEREST_AREA.getException();
+            }
+
             interestAreaRepository.saveAll(
                 areas.stream()
                     .map(area -> interestAreaMapper.toEntity(account, area, findTownByArea(area)))
