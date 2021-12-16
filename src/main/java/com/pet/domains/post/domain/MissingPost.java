@@ -119,8 +119,8 @@ public class MissingPost extends DeletableEntity {
         Validate.notNull(status, "status must not be null");
         Validate.notNull(date, "date must not be null");
         Validate.notNull(sexType, "sexType must not be null");
-        Validate.notBlank(content, "content must not be null");
-        Validate.notBlank(telNumber, "telNumber must not be null");
+        Validate.notBlank(content, "content must not be blank");
+        Validate.notBlank(telNumber, "telNumber must not be blank");
         Validate.notNull(account, "account must not be null");
         Validate.notNull(town, "town must not be null");
 
