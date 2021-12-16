@@ -69,10 +69,10 @@ public class NotificationController {
     public void checkedNotification(
         @LoginAccount Account account, @PathVariable Long noticeId, @RequestBody NotificationUpdateParam param
     ) {
-        if (Objects.nonNull(account)) {
-            notificationService.checkNotification(account, noticeId, param.isChecked());
+        if (Objects.isNull(account)) {
+            throw ExceptionMessage.NOT_FOUND_JWT.getException();
         }
-        throw ExceptionMessage.NOT_FOUND_JWT.getException();
+        notificationService.checkNotification(account, noticeId, param.isChecked());
     }
 
 }
