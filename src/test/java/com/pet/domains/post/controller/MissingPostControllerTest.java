@@ -433,7 +433,7 @@ class MissingPostControllerTest extends BaseDocumentationTest {
         resultActions
             .andDo(print())
             .andExpect(status().isOk())
-            .andDo(document("get-missing-posts-comments",
+            .andDo(document("get-missing-post-comments",
                 getDocumentRequest(),
                 getDocumentResponse(),
                 requestHeaders(
