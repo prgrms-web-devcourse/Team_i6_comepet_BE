@@ -12,20 +12,20 @@ public class AccountMissingPostPageResults {
 
     private final List<Post> posts;
 
-    private final int totalElements;
+    private final long totalElements;
 
     private final boolean last;
 
     private final int size;
 
-    public AccountMissingPostPageResults(List<Post> posts, int totalElements, boolean last, int size) {
+    public AccountMissingPostPageResults(List<Post> posts, long totalElements, boolean last, int size) {
         this.posts = posts;
         this.totalElements = totalElements;
         this.last = last;
         this.size = size;
     }
 
-    public static AccountMissingPostPageResults of(List<Post> posts, int totalElements, boolean last, int size) {
+    public static AccountMissingPostPageResults of(List<Post> posts, long totalElements, boolean last, int size) {
         return new AccountMissingPostPageResults(posts, totalElements, last, size);
     }
 

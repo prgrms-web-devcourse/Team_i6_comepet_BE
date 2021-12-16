@@ -1,5 +1,6 @@
 package com.pet.domains.account.controller;
 
+import static java.util.stream.Collectors.*;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
@@ -19,10 +20,15 @@ import com.pet.domains.account.dto.request.AccountEmailCheck;
 import com.pet.domains.account.dto.request.AccountLonginParam;
 import com.pet.domains.account.dto.request.AccountUpdateParam;
 import com.pet.domains.account.dto.response.AccountAreaReadResults;
+import com.pet.domains.account.dto.response.AccountMissingPostPageResults;
 import com.pet.domains.account.dto.response.AccountReadResult;
 import com.pet.domains.docs.BaseDocumentationTest;
+import com.pet.domains.post.domain.SexType;
+import com.pet.domains.post.domain.Status;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.LongStream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
@@ -350,6 +356,28 @@ class AccountControllerTest extends BaseDocumentationTest {
     @DisplayName("회원 게시물 조회")
     void getAccountMissingPostsTest() throws Exception {
         // given
+        given(accountService.getAccountPost(any(), any())).willReturn(AccountMissingPostPageResults.of(
+            LongStream.range(1, 9)
+                .mapToObj(index -> AccountMissingPostPageResults.Post.of(
+                    index,
+                    "서울특별시",
+                    "도봉구",
+                    "토이푸들",
+                    Status.DETECTION,
+                    LocalDate.of(2021, 11, 3),
+                    SexType.FEMALE,
+                    true,
+                    2,
+                    List.of(
+                        AccountMissingPostPageResults.Post.Tag.of(123L, "암컷"),
+                        AccountMissingPostPageResults.Post.Tag.of(431L, "5살"),
+                        AccountMissingPostPageResults.Post.Tag.of(256L, "4kg"),
+                        AccountMissingPostPageResults.Post.Tag.of(1246L, "사람 좋아함")
+                    ),
+                    "http://../../97fd3403-7343-497a-82fa-c41d26ccf0f8.png"
+                ))
+                .collect(toList()), 8, true, 1));
+
         // when
         ResultActions resultActions = mockMvc.perform(get("/api/v1/me/posts"));
         // then

@@ -9,6 +9,7 @@ import com.pet.domains.account.dto.request.AccountAreaUpdateParam;
 import com.pet.domains.account.dto.request.AccountSignUpParam;
 import com.pet.domains.account.dto.request.AccountUpdateParam;
 import com.pet.domains.account.dto.response.AccountAreaReadResults;
+import com.pet.domains.account.dto.response.AccountMissingPostPageResults;
 import com.pet.domains.account.dto.response.AccountReadResult;
 import com.pet.domains.account.mapper.AccountMapper;
 import com.pet.domains.account.repository.AccountRepository;
@@ -24,16 +25,21 @@ import com.pet.domains.auth.oauth2.ProviderType;
 import com.pet.domains.auth.repository.GroupRepository;
 import com.pet.domains.image.domain.Image;
 import com.pet.domains.image.service.ImageService;
+import com.pet.domains.post.domain.MissingPost;
+import com.pet.domains.post.repository.MissingPostRepository;
 import com.pet.infra.EmailMessage;
 import com.pet.infra.MailSender;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
@@ -61,6 +67,8 @@ public class AccountService {
     private final TownRepository townRepository;
 
     private final InterestAreaMapper interestAreaMapper;
+
+    private final MissingPostRepository missingPostRepository;
 
     private final ImageService imageService;
 
@@ -264,4 +272,13 @@ public class AccountService {
 
     }
 
+    public AccountMissingPostPageResults getAccountPost(Long id, Pageable pageable) {
+        Page<MissingPost> missingPosts = missingPostRepository.findByAccountId(id, pageable);
+        return AccountMissingPostPageResults.of(missingPosts.stream()
+                .map(accountMapper::toAccountMissingPostPageResults)
+                .collect(Collectors.toList()),
+            missingPosts.getTotalElements(),
+            missingPosts.isLast(),
+            missingPosts.getSize());
+    }
 }

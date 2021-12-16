@@ -22,4 +22,9 @@ public interface MissingPostRepository extends JpaRepository<MissingPost, Long> 
         + "WHERE mp.deleted = false")
     Page<MissingPostWithIsBookmark> findAllWithIsBookmarkAccountByDeletedIsFalse(Account account, Pageable pageable);
 
+    @EntityGraph(attributePaths = {"animalKind", "animalKind.animal", "town", "town.city", "postTags", "postTags.tag"},
+        type = EntityGraph.EntityGraphType.LOAD)
+    // todo 쿼리 수정
+    Page<MissingPost> findByAccountId(Long accountId, Pageable pageable);
+
 }
