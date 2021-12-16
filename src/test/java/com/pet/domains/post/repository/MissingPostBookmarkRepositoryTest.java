@@ -156,7 +156,7 @@ class MissingPostBookmarkRepositoryTest {
         missingPostBookmarkRepository.save(missingPostBookmark);
 
         //when
-        missingPostBookmarkRepository.deleteByMissingPostIdAndAccount(missingPost.getId(), account);
+        missingPostBookmarkRepository.deleteByAccountAndMissingPost(account, missingPost);
 
         //then
         List<MissingPostBookmark> getMissingPostBookmarks = missingPostBookmarkRepository.findAll();
