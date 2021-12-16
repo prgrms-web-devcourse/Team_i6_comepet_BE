@@ -53,13 +53,13 @@ public class MissingPostController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ApiResponse<Map<String, Long>> createMissingPost(
-        @RequestPart(required = false) List<MultipartFile> multipartFiles,
+        @RequestPart(required = false) List<MultipartFile> images,
         @RequestPart(value = "param") @Valid MissingPostCreateParam missingPostCreateParam,
         @LoginAccount Account account
     ) {
         // TODO: 2021/12/10 게시물 등록 안에서 알림전송까지 해야한다.
         return ApiResponse.ok(
-            Map.of(RETURN_KEY, missingPostService.createMissingPost(missingPostCreateParam, multipartFiles, account)));
+            Map.of(RETURN_KEY, missingPostService.createMissingPost(missingPostCreateParam, images, account)));
     }
 
     @ResponseStatus(HttpStatus.OK)
