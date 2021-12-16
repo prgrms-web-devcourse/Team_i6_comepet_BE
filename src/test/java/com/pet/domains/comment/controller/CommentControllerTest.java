@@ -149,4 +149,5 @@ class CommentControllerTest extends BaseDocumentationTest {
                 ))
             );
     }
+
 }
