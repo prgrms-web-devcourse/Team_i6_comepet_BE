@@ -67,10 +67,8 @@ public class MissingPostController {
     public ApiResponse<MissingPostReadResults> getMissingPosts(@LoginAccount Account account, Pageable pageable) {
         log.info("실종/보호 게시물 리스트 조회");
         if (Objects.nonNull(account)) {
-            //로그인 상태 : 북마크를 포함한 목록
             return ApiResponse.ok(missingPostService.getMissingPostsPageWithAccount(account, pageable));
         }
-        //익명 상태 : 북마크를 제외한 목록
         return ApiResponse.ok(missingPostService.getMissingPostsPage(pageable));
     }
 
