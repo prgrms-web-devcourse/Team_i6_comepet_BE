@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ShelterPostBookmarkRepository extends JpaRepository<ShelterPostBookmark, Long> {
 
-    void deleteByShelterPostIdAndAccount(Long postId, Account account);
+    Long deleteByShelterPostIdAndAccount(Long postId, Account account);
 }

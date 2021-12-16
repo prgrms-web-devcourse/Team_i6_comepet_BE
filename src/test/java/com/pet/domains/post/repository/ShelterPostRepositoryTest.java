@@ -105,14 +105,19 @@ class ShelterPostRepositoryTest {
     @DisplayName("북마크 여부를 포함한 조회 테스트")
     void findAllWithIsBookmarkTest() {
         // given
-        ShelterPost bookMarkPost = ShelterPost.builder()
+        ShelterPost nonBookmarkPost = ShelterPost.builder()
+            .animalKind(animalKind)
+            .town(town)
+            .build();
+        entityManager.persist(nonBookmarkPost);
+        ShelterPost bookmarkPost = ShelterPost.builder()
             .animalKind(animalKind)
             .town(town)
             .feature("bookmark post")
             .build();
-        entityManager.persist(bookMarkPost);
+        entityManager.persist(bookmarkPost);
         ShelterPostBookmark postBookmark = ShelterPostBookmark.builder()
-            .shelterPost(bookMarkPost)
+            .shelterPost(bookmarkPost)
             .account(account)
             .build();
         entityManager.persist(postBookmark);
@@ -127,10 +132,10 @@ class ShelterPostRepositoryTest {
         List<ShelterPostWithIsBookmark> contents = pageResult.getContent();
         SoftAssertions.assertSoftly(softAssertions -> {
                 softAssertions.assertThat(contents).hasSize(2);
-                softAssertions.assertThat(contents.get(0).getShelterPost().getId()).isEqualTo(shelterPost.getId());
-                softAssertions.assertThat(contents.get(0).isBookmark()).isFalse();
-                softAssertions.assertThat(contents.get(1).getShelterPost().getId()).isEqualTo(bookMarkPost.getId());
-                softAssertions.assertThat(contents.get(1).isBookmark()).isTrue();
+                softAssertions.assertThat(contents.get(0).getShelterPost().getId()).isEqualTo(nonBookmarkPost.getId());
+                softAssertions.assertThat(contents.get(0).getIsBookmark()).isFalse();
+                softAssertions.assertThat(contents.get(1).getShelterPost().getId()).isEqualTo(bookmarkPost.getId());
+                softAssertions.assertThat(contents.get(1).getIsBookmark()).isTrue();
                 softAssertions.assertThat(pageResult.getTotalElements()).isEqualTo(2L);
             }
         );

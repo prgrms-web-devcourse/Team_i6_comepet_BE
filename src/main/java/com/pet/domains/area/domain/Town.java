@@ -32,7 +32,7 @@ public class Town extends BaseEntity {
     @Column(name = "code", length = 10)
     private String code;
 
-    @Column(name = "name", nullable = false, length = 200)
+    @Column(name = "name", nullable = false, length = 200, unique = true)
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
