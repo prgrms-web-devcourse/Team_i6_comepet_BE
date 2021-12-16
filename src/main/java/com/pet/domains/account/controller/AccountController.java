@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.LongStream;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -100,7 +99,7 @@ public class AccountController {
 
     @GetMapping("/me")
     public ApiResponse<AccountReadResult> getAccount(@LoginAccount Account account) {
-        return ApiResponse.ok(accountService.convertToResult(account));
+        return ApiResponse.ok(accountService.getAccount(account));
     }
 
     @PostMapping(path = "/me", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

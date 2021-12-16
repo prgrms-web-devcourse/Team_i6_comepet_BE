@@ -194,8 +194,8 @@ class AccountControllerTest extends BaseDocumentationTest {
     @DisplayName("회원 정보 조회")
     void getAccount() throws Exception {
         // given
-        given(accountService.convertToResult(any()))
-            .willReturn(new AccountReadResult(1L, "nickname", "tester@email.com"));
+        given(accountService.getAccount(any()))
+            .willReturn(new AccountReadResult(1L, "nickname", "tester@email.com", "image.png"));
         // when
         ResultActions resultActions = mockMvc.perform(get("/api/v1/me")
             .header(HttpHeaders.AUTHORIZATION, getAuthenticationToken())
@@ -217,6 +217,7 @@ class AccountControllerTest extends BaseDocumentationTest {
                     fieldWithPath("data.id").type(NUMBER).description("회원 id"),
                     fieldWithPath("data.nickname").type(STRING).description("닉네임"),
                     fieldWithPath("data.email").type(STRING).description("이메일"),
+                    fieldWithPath("data.image").type(STRING).description("프로필"),
                     fieldWithPath("serverDateTime").type(STRING).description("서버 응답 시간")
                 ))
             );
