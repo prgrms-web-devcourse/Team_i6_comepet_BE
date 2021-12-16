@@ -60,6 +60,12 @@ public class AccountController {
         accountService.sendEmail(accountEmailParam.getEmail());
     }
 
+    @PatchMapping(path = "/send-password")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void sendPassword(@LoginAccount Account account) {
+        accountService.sendPassword(account.getId());
+    }
+
     @PostMapping(path = "/verify-email", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse<Map<String, Long>> verifyEmail(@RequestBody @Valid AccountEmailCheck accountEmailCheck) {

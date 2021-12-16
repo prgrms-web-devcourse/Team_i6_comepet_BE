@@ -134,6 +134,19 @@ include::{snippets}/update-account/http-request.adoc[]
 ==== Http Response
 include::{snippets}/update-account/http-response.adoc[]
 
+
+=== 임시 비밀번호 전송
+
+==== CURL request
+include::{snippets}/send-newPassword/curl-request.adoc[]
+
+==== Http Request
+include::{snippets}/send-newPassword/http-request.adoc[]
+
+==== Http Response
+include::{snippets}/send-newPassword/http-response.adoc[]
+
+
 === 회원의 관심지역 조회
 
 ==== CURL request
