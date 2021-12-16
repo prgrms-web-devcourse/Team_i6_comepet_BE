@@ -30,7 +30,7 @@ public class CommentService {
     private final CommentMapper commentMapper;
 
     public CommentPageResults getMissingPostComments(Long postId, Pageable pageable) {
-        Page<Comment> commentPage = commentRepository.findAllWithFetch(postId, pageable);
+        Page<Comment> commentPage = commentRepository.findAllByMissingPostId(postId, pageable);
         return commentMapper.toCommentPageResults(commentPage);
     }
 

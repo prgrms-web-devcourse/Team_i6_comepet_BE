@@ -202,7 +202,7 @@ class CommentRepositoryTest {
         entityManager.clear();
 
         // when
-        Page<Comment> comments = commentRepository.findAllWithFetch(missingPost.getId(), PageRequest.of(0, 10));
+        Page<Comment> comments = commentRepository.findAllByMissingPostId(missingPost.getId(), PageRequest.of(0, 10));
 
         // then
         SoftAssertions.assertSoftly(softAssertions -> {
