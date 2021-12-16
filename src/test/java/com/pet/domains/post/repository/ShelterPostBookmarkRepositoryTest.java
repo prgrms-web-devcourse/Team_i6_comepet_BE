@@ -22,8 +22,10 @@ import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
 
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@DataJpaTest(includeFilters = @Filter(type = FilterType.ASSIGNABLE_TYPE, classes = { JpaAuditingConfig.class, QuerydslConfig.class }))
-@DisplayName("보호소 게시글 북마크 리포지토리 테스트")
+@DataJpaTest(includeFilters = @Filter(
+    type = FilterType.ASSIGNABLE_TYPE,
+    classes = {JpaAuditingConfig.class, QuerydslConfig.class}
+))@DisplayName("보호소 게시글 북마크 리포지토리 테스트")
 class ShelterPostBookmarkRepositoryTest {
 
     @Autowired

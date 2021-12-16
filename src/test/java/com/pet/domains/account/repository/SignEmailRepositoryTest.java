@@ -15,8 +15,10 @@ import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
 
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@DataJpaTest(includeFilters = @Filter(type = FilterType.ASSIGNABLE_TYPE, classes = { JpaAuditingConfig.class, QuerydslConfig.class }))
-@DisplayName("인증 이메일 DB 테스트")
+@DataJpaTest(includeFilters = @Filter(
+    type = FilterType.ASSIGNABLE_TYPE,
+    classes = {JpaAuditingConfig.class, QuerydslConfig.class}
+))@DisplayName("인증 이메일 DB 테스트")
 class SignEmailRepositoryTest {
 
     @Autowired

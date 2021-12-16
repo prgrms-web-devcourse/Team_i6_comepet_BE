@@ -29,7 +29,10 @@ import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
 
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@DataJpaTest(includeFilters = @Filter(type = FilterType.ASSIGNABLE_TYPE, classes = { JpaAuditingConfig.class, QuerydslConfig.class }))
+@DataJpaTest(includeFilters = @Filter(
+    type = FilterType.ASSIGNABLE_TYPE,
+    classes = {JpaAuditingConfig.class, QuerydslConfig.class}
+))
 @DisplayName("알림 Repository 테스트")
 class NotificationRepositoryTest {
 
