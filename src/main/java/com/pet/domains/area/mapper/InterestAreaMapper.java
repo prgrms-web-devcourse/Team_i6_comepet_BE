@@ -1,8 +1,7 @@
 package com.pet.domains.area.mapper;
 
 import com.pet.domains.account.dto.response.AccountAreaReadResults;
-import com.pet.domains.area.domain.City;
-import com.pet.domains.area.domain.Town;
+import com.pet.domains.area.domain.InterestArea;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
@@ -11,12 +10,13 @@ import org.mapstruct.Mappings;
 public interface InterestAreaMapper {
 
     @Mappings({
-        @Mapping(target = "cityId", source = "city.id"),
-        @Mapping(target = "cityName", source = "city.name"),
-        @Mapping(target = "townId", source = "town.id"),
-        @Mapping(target = "townName", source = "town.name"),
-        @Mapping(target = "defaultArea", source = "town.name"),
+        @Mapping(target = "id", source = "interestArea.id"),
+        @Mapping(target = "cityId", source = "interestArea.town.city.id"),
+        @Mapping(target = "cityName", source = "interestArea.town.city.name"),
+        @Mapping(target = "townId", source = "interestArea.town.id"),
+        @Mapping(target = "townName", source = "interestArea.town.name"),
+        @Mapping(target = "defaultArea", source = "interestArea.selected"),
     })
-    AccountAreaReadResults.Area toAreaResult(City city, Town town, boolean selected);
+    AccountAreaReadResults.Area toAreaResult(InterestArea interestArea, boolean checked);
 
 }

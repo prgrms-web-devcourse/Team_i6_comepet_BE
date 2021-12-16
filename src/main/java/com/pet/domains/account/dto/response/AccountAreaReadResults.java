@@ -22,6 +22,8 @@ public class AccountAreaReadResults {
     @Getter
     public static class Area {
 
+        private final Long id;
+
         private final Long cityId;
 
         private final String cityName;
@@ -32,7 +34,8 @@ public class AccountAreaReadResults {
 
         private final boolean defaultArea;
 
-        public Area(Long cityId, String cityName, Long townId, String townName, boolean defaultArea) {
+        public Area(Long id, Long cityId, String cityName, Long townId, String townName, boolean defaultArea) {
+            this.id = id;
             this.cityId = cityId;
             this.cityName = cityName;
             this.townId = townId;
@@ -40,8 +43,10 @@ public class AccountAreaReadResults {
             this.defaultArea = defaultArea;
         }
 
-        public static Area of(Long cityId, String cityName, Long townId, String townName, boolean defaultArea) {
-            return new Area(cityId, cityName, townId, townName, defaultArea);
+        public static Area of(
+            Long id, Long cityId, String cityName, Long townId, String townName, boolean defaultArea
+        ) {
+            return new Area(id, cityId, cityName, townId, townName, defaultArea);
         }
     }
 

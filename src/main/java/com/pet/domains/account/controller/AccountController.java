@@ -34,6 +34,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -125,6 +126,11 @@ public class AccountController {
         @LoginAccount Account account, @RequestBody @Valid AccountAreaUpdateParam accountAreaUpdateParam
     ) {
         accountService.updateArea(account, accountAreaUpdateParam);
+    }
+
+    @DeleteMapping(path = "/me/areas/{areaId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public void deleteAccountArea(@LoginAccount Account account, @PathVariable Long areaId) {
+        accountService.deleteArea(account, areaId);
     }
 
     @GetMapping(path = "/me/posts", produces = MediaType.APPLICATION_JSON_VALUE)

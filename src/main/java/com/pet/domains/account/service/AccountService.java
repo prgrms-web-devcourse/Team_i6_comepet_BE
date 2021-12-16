@@ -212,11 +212,7 @@ public class AccountService {
     public AccountAreaReadResults getInterestArea(Account account) {
         List<InterestArea> interestAreas = interestAreaRepository.findByAccountId(account.getId());
         return AccountAreaReadResults.of(interestAreas.stream()
-            .map(interestArea -> {
-                Town town = interestArea.getTown();
-                City city = town.getCity();
-                return interestAreaMapper.toAreaResult(city, town, interestArea.isSelected());
-            })
+            .map(interestArea -> interestAreaMapper.toAreaResult(interestArea, account.isCheckedArea()))
             .collect(Collectors.toList()), account.isNotification());
     }
 
