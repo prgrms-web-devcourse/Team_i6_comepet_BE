@@ -2,6 +2,7 @@ package com.pet.domains.comment.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import com.pet.common.config.JpaAuditingConfig;
+import com.pet.common.config.QuerydslConfig;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.animal.domain.Animal;
 import com.pet.domains.animal.domain.AnimalKind;
@@ -31,7 +32,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@DataJpaTest(includeFilters = @Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JpaAuditingConfig.class))
+@DataJpaTest(includeFilters = @Filter(
+    type = FilterType.ASSIGNABLE_TYPE,
+    classes = {JpaAuditingConfig.class, QuerydslConfig.class})
+)
 @DisplayName("Comment Repository 테스트")
 class CommentRepositoryTest {
 

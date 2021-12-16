@@ -57,4 +57,7 @@ public class InterestArea extends BaseEntity {
         this.town = town;
     }
 
+    public void checkSelect() {
+        this.selected = true;
+    }
 }

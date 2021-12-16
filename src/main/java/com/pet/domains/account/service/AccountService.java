@@ -13,7 +13,6 @@ import com.pet.domains.account.dto.response.AccountReadResult;
 import com.pet.domains.account.mapper.AccountMapper;
 import com.pet.domains.account.repository.AccountRepository;
 import com.pet.domains.account.repository.SignEmailRepository;
-import com.pet.domains.area.domain.City;
 import com.pet.domains.area.domain.InterestArea;
 import com.pet.domains.area.domain.Town;
 import com.pet.domains.area.mapper.InterestAreaMapper;
@@ -32,13 +31,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import javax.security.auth.login.AccountNotFoundException;
-import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
@@ -169,32 +164,61 @@ public class AccountService {
 
     @Transactional
     public void updateArea(Account account, AccountAreaUpdateParam accountAreaUpdateParam) {
-        if (!accountAreaUpdateParam.getAreas().isEmpty()) {
-            interestAreaRepository.deleteAllByAccountId(account.getId());
+        interestAreaRepository.deleteAllByAccountId(account.getId());
+
+        List<AccountAreaUpdateParam.Area> areas = accountAreaUpdateParam.getAreas();
+        if (areas.isEmpty()) {
+            log.debug("관심 지역을 0개 입력했습니다.");
+            throw ExceptionMessage.INVALID_INTEREST_AREA.getException();
         }
 
-        interestAreaRepository.saveAll(accountAreaUpdateParam.getAreas().stream()
-            .map(area -> {
-                Long townId = area.getTownId();
-                return InterestArea.builder()
-                    .account(account)
-                    .selected(area.isDefaultArea())
-                    .town(townRepository.getById(townId))
-                    .build();
-            })
-            .distinct()
-            .limit(2)
-            .collect(Collectors.toList()));
+        if (areas.size() > 2) {
+            log.debug("관심 지역이 2개를 넘었습니다.");
+            throw ExceptionMessage.INVALID_INTEREST_AREA.getException();
+        }
+
+        // 관심 지역이 1개인 경우 디폴트 지역으로 저장
+        if (areas.size() == 1) {
+            AccountAreaUpdateParam.Area defaultArea = accountAreaUpdateParam.getAreas().get(0);
+            InterestArea interestArea = interestAreaMapper.toEntity(account, defaultArea, findTownByArea(defaultArea));
+            interestArea.checkSelect();
+        }
+
+        if (areas.size() == 2) {
+            long defaultAreaCount = areas.stream().filter(AccountAreaUpdateParam.Area::isDefaultArea).count();
+            if (defaultAreaCount == 2) {
+                log.debug("디폴트 지역이 2개입니다.");
+                throw ExceptionMessage.INVALID_INTEREST_AREA.getException();
+            }
+
+            long townIdCount = areas.stream().map(AccountAreaUpdateParam.Area::getTownId).distinct().count();
+            if (townIdCount == 1) {
+                log.debug("타운 아이디가 같습니다.");
+                throw ExceptionMessage.INVALID_INTEREST_AREA.getException();
+            }
+
+            interestAreaRepository.saveAll(
+                areas.stream()
+                    .map(area -> interestAreaMapper.toEntity(account, area, findTownByArea(area)))
+                    .collect(Collectors.toList()));
+        }
 
         account.updateNotification(accountAreaUpdateParam.isNotification());
         accountRepository.save(account);
     }
 
+    private Town findTownByArea(AccountAreaUpdateParam.Area area) {
+        return townRepository.findById(area.getTownId())
+            .orElseThrow(ExceptionMessage.NOT_FOUND_TOWN::getException);
+    }
+
     @Transactional
     public void updateAccount(Account account, AccountUpdateParam accountUpdateParam, MultipartFile accountImage) {
         if (!StringUtils.equals(accountUpdateParam.getNewPassword(), accountUpdateParam.getNewPasswordCheck())) {
+            log.debug("새로운 비밀번호의 입력값이 다릅니다.");
             throw ExceptionMessage.INVALID_PASSWORD.getException();
         }
+        validatePassword(accountUpdateParam.getNewPassword());
         account.updateProfile(
             accountUpdateParam.getNickname(),
             passwordEncoder.encode(accountUpdateParam.getNewPassword()),
@@ -203,15 +227,20 @@ public class AccountService {
         accountRepository.save(account);
     }
 
+    private void validatePassword(String newPassword) {
+        if (StringUtils.isNotBlank(newPassword)) {
+            if (!newPassword
+                .matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[~!@#$%^&*()+|=])[A-Za-z\\d~!@#$%^&*()+|=]{8,20}$")) {
+                throw ExceptionMessage.INVALID_PASSWORD_REGEX.getException();
+            }
+        }
+    }
+
     public AccountAreaReadResults getInterestArea(Account account) {
         List<InterestArea> interestAreas = interestAreaRepository.findByAccountId(account.getId());
         return AccountAreaReadResults.of(interestAreas.stream()
-            .map(interestArea -> {
-                Town town = interestArea.getTown();
-                City city = town.getCity();
-                return interestAreaMapper.toAreaResult(city, town, interestArea.isSelected());
-            })
-            .collect(Collectors.toList()));
+            .map(interestArea -> interestAreaMapper.toAreaResult(interestArea, account.isCheckedArea()))
+            .collect(Collectors.toList()), account.isNotification());
     }
 
     public AccountReadResult getAccount(Account account) {
@@ -219,4 +248,20 @@ public class AccountService {
             accountRepository.findByIdAndImage(account.getId())
                 .orElseThrow(ExceptionMessage.NOT_FOUND_ACCOUNT::getException));
     }
+
+    @Transactional
+    public void deleteArea(Account account, Long areaId) {
+        List<InterestArea> interestAreas = interestAreaRepository.findByAccountId(account.getId());
+        interestAreas.remove(interestAreas.stream()
+            .filter(interestArea -> interestArea.getId().equals(areaId))
+            .findAny()
+            .orElseThrow(ExceptionMessage.NOT_FOUND_INTEREST_AREA::getException));
+
+        // 관심 지역을 하나 삭제하고 하나가 더 남아있는 경우 selected == false -> true
+        if (!interestAreas.isEmpty()) {
+            interestAreas.forEach(InterestArea::checkSelect);
+        }
+
+    }
+
 }

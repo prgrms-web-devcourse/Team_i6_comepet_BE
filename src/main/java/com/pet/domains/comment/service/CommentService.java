@@ -1,6 +1,7 @@
 package com.pet.domains.comment.service;
 
 import com.pet.common.exception.ExceptionMessage;
+import com.pet.common.util.OptimisticLockingHandlingUtils;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.comment.domain.Comment;
 import com.pet.domains.comment.dto.request.CommentCreateParam;
@@ -35,7 +36,13 @@ public class CommentService {
 
     @Transactional
     public Long createComment(Account account, CommentCreateParam commentCreateParam) {
-        return commentRepository.save(getNewComment(account, commentCreateParam)).getId();
+        MissingPost missingPost = getMissingPostById(commentCreateParam.getPostId());
+        OptimisticLockingHandlingUtils.handling(
+            missingPost::increaseCommentCount,
+            5,
+            "실종 게시글 댓글 카운트 증가"
+        );
+        return commentRepository.save(getNewComment(account, commentCreateParam, missingPost)).getId();
     }
 
     @Transactional
@@ -48,11 +55,18 @@ public class CommentService {
 
     @Transactional
     public void deleteMyCommentById(Account account, Long commentId) {
-        commentRepository.deleteByIdAndAccount(commentId, account);
+        Comment foundComment = commentRepository.findById(commentId)
+            .filter(comment -> comment.isWriter(account.getId()))
+            .orElseThrow(ExceptionMessage.NOT_FOUND_COMMENT::getException);
+        OptimisticLockingHandlingUtils.handling(
+            foundComment.getMissingPost()::decreaseCommentCount,
+            5,
+            "실종 게시글 댓글 카운트 감소"
+        );
+        commentRepository.delete(foundComment);
     }
 
-    private Comment getNewComment(Account account, CommentCreateParam commentCreateParam) {
-        MissingPost missingPost = getMissingPostById(commentCreateParam.getPostId());
+    private Comment getNewComment(Account account, CommentCreateParam commentCreateParam, MissingPost missingPost) {
         if (Objects.nonNull(commentCreateParam.getParentCommentId())) {
             return Comment.ChildCommentBuilder()
                 .content(commentCreateParam.getContent())
