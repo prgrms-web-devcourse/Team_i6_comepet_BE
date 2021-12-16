@@ -18,12 +18,14 @@ import com.pet.domains.post.domain.SexType;
 import com.pet.domains.post.domain.Status;
 import com.pet.domains.post.repository.MissingPostRepository;
 import java.time.LocalDate;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
 
@@ -50,6 +52,9 @@ class NotificationRepositoryTest {
     @Autowired
     private CityRepository cityRepository;
 
+    @Autowired
+    private TestEntityManager entityManager;
+
     private Group group;
 
     private Account account;
@@ -66,9 +71,29 @@ class NotificationRepositoryTest {
         missingPostRepository.save(missingPost);
     }
 
+    @AfterEach
+    void tearDown() {
+        notificationRepository.deleteAllInBatch();
+    }
+
+    @Test
+    @DisplayName("알림 아이디와 회원 아이디로 알림 조회 테스트")
+    void checkNotificationTest() {
+        Notification save = notificationRepository.save(Notification.builder()
+            .account(account).checked(true).missingPost(missingPost).build());
+
+        entityManager.flush();
+        entityManager.clear();
+
+        Notification findNotification = notificationRepository.findByIdAndAccount(save.getId(), account).get();
+
+        assertThat(findNotification.getAccount()).isEqualTo(account);
+    }
+
+
     @Test
     @DisplayName("알림 삭제 테스트")
-    void deleteNotification() {
+    void deleteNotificationTest() {
         Notification notification =
             Notification.builder().account(account).checked(true).missingPost(missingPost).build();
 
