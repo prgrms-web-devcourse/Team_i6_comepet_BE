@@ -183,29 +183,19 @@ class MissingPostRepositoryTest {
             .missingPost(missingPost)
             .tag(tag)
             .build();
-        missingPostRepository.save(missingPost);
 
         postImage = PostImage.builder()
             .missingPost(missingPost)
             .image(image)
             .build();
-        postImageRepository.save(postImage);
-
-        comment = Comment.builder()
-            .missingPost(missingPost)
-            .content("내용")
-            .account(account)
-            .build();
-        commentRepository.save(comment);
     }
 
     @AfterEach
     void tearDown() {
         commentRepository.deleteAllInBatch();
-        postImageRepository.deleteAllInBatch();
         imageRepository.deleteAllInBatch();
-        missingPostRepository.deleteAllInBatch();
         tagRepository.deleteAllInBatch();
+        missingPostRepository.deleteAllInBatch();
         townRepository.deleteAllInBatch();
         cityRepository.deleteAllInBatch();
         accountRepository.deleteAllInBatch();
@@ -215,6 +205,15 @@ class MissingPostRepositoryTest {
     @DisplayName("실종/보호 게시물 삭제 테스트")
     void deleteMissingPostTest() {
         //given
+        missingPostRepository.save(missingPost);
+
+        comment = Comment.builder()
+            .missingPost(missingPost)
+            .content("내용")
+            .account(account)
+            .build();
+        commentRepository.save(comment);
+
         //when
         MissingPost getMissingPost = missingPostRepository.findById(missingPost.getId())
             .filter(post -> post.getAccount().getId().equals(account.getId()))
@@ -233,18 +232,15 @@ class MissingPostRepositoryTest {
             .forEach(Tag::decreaseCount);
         Tag getTag = tagRepository.findById(tag.getId()).get();
 
-        postTagRepository.deleteAllByMissingPostId(missingPost.getId());
-        List<PostTag> getPostTagsAfterDelete = postTagRepository.findAll();
-
         missingPostRepository.deleteById(missingPost.getId());
         List<MissingPost> getMissingPosts = missingPostRepository.findAll();
 
         //then
         SoftAssertions.assertSoftly(softAssertions -> {
-            softAssertions.assertThat(getMissingPost.getId()).isEqualTo(missingPost.getId());
-            softAssertions.assertThat(getPostImages.isEmpty());
-            softAssertions.assertThat(getComments.isEmpty());
-            softAssertions.assertThat(getPostTags.size()).isEqualTo(1);
+                softAssertions.assertThat(getMissingPost.getId()).isEqualTo(missingPost.getId());
+                softAssertions.assertThat(getPostImages.isEmpty());
+                softAssertions.assertThat(getComments.isEmpty());
+                softAssertions.assertThat(getPostTags.size()).isEqualTo(1);
                 softAssertions.assertThat(getTag.getCount()).isEqualTo(0);
                 softAssertions.assertThat(getMissingPosts.size()).isEqualTo(0);
             }
