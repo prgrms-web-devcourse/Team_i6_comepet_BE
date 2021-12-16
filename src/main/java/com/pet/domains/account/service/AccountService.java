@@ -219,4 +219,20 @@ public class AccountService {
     public AccountReadResult convertToResult(Account account) {
         return accountMapper.toReadResult(account);
     }
+
+    @Transactional
+    public void deleteArea(Account account, Long areaId) {
+        List<InterestArea> interestAreas = interestAreaRepository.findByAccountId(account.getId());
+        interestAreas.remove(interestAreas.stream()
+            .filter(interestArea -> interestArea.getId().equals(areaId))
+            .findAny()
+            .orElseThrow(ExceptionMessage.NOT_FOUND_INTEREST_AREA::getException));
+
+        // 관심 지역을 하나 삭제하고 하나가 더 남아있는 경우 selected == false -> true
+        if (!interestAreas.isEmpty()) {
+            interestAreas.forEach(InterestArea::checkSelect);
+        }
+
+    }
+
 }

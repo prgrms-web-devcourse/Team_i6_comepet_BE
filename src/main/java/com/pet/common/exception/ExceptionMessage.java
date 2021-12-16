@@ -35,6 +35,7 @@ public enum ExceptionMessage {
     // 지역 8xx
     NOT_FOUND_CITY(new NotFoundException("해당하는 시도 지역을 찾을 수 없습니다.", 801)),
     NOT_FOUND_TOWN(new NotFoundException("해당하는 시군구 지역을 찾을 수 없습니다.", 802)),
+    NOT_FOUND_INTEREST_AREA(new NotFoundException("해당하는 관심 지역을 찾을 수 없습니다.", 803)),
 
     // 인증 9xx,
     SHOULD_LOGIN(new AuthenticationException("로그인이 필요합니다.", 901)),
