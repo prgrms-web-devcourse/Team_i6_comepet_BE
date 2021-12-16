@@ -16,7 +16,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
 
     Optional<Notification> findByIdAndAccount(Long noticeId, Account account);
 
-    @EntityGraph(attributePaths = {"account", "missingPost"})
+    @EntityGraph(attributePaths = {"account", "missingPost"}, type = EntityGraphType.LOAD)
     Page<Notification> findAll(Pageable pageable);
 
 }
