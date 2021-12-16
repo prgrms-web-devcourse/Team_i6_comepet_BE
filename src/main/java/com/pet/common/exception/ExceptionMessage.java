@@ -26,6 +26,7 @@ public enum ExceptionMessage {
     INVALID_MAIL_KEY(new BadRequestException("잘못된 이메일 인증번호입니다.", 604)),
     FAIL_TO_EMAIL(new BadRequestException("이메일 전송에 실패했습니다.", 605)),
     INVALID_PASSWORD(new BadRequestException("비밀번호가 일치하지 않습니다.", 606)),
+    INVALID_PASSWORD_REGEX(new BadRequestException("비밀번호가 일치하지 않습니다.", 607)),
 
     // 동물 7xx
     NOT_FOUND_ANIMAL(new NotFoundException("해당하는 동물 종류를 찾을 수 없습니다.", 701)),

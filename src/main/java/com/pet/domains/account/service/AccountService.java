@@ -32,13 +32,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import javax.security.auth.login.AccountNotFoundException;
-import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
@@ -195,12 +191,22 @@ public class AccountService {
         if (!StringUtils.equals(accountUpdateParam.getNewPassword(), accountUpdateParam.getNewPasswordCheck())) {
             throw ExceptionMessage.INVALID_PASSWORD.getException();
         }
+        validatePassword(accountUpdateParam.getNewPassword());
         account.updateProfile(
             accountUpdateParam.getNickname(),
             passwordEncoder.encode(accountUpdateParam.getNewPassword()),
             imageService.createImage(accountImage)
         );
         accountRepository.save(account);
+    }
+
+    private void validatePassword(String newPassword) {
+        if (StringUtils.isNotBlank(newPassword)) {
+            if (!newPassword
+                .matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[~!@#$%^&*()+|=])[A-Za-z\\d~!@#$%^&*()+|=]{8,20}$")) {
+                throw ExceptionMessage.INVALID_PASSWORD_REGEX.getException();
+            }
+        }
     }
 
     public AccountAreaReadResults getInterestArea(Account account) {
