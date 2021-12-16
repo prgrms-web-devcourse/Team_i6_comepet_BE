@@ -41,7 +41,7 @@ public class ShelterPostBookmarkService {
     @Transactional
     public void deletePostBookmark(Long postId, Account account) {
         Long result = shelterPostBookmarkRepository.deleteByShelterPostIdAndAccount(postId, account);
-        if (Objects.nonNull(result) && result.intValue() == 1) {
+        if (Objects.nonNull(result) && result.intValue() == 1L) {
             ShelterPost foundPost = shelterPostRepository.findById(postId)
                 .orElseThrow(ExceptionMessage.NOT_FOUND_SHELTER_POST::getException);
             OptimisticLockingHandlingUtils.handling(
