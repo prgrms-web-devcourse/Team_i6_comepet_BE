@@ -158,7 +158,7 @@ public class MissingPost extends DeletableEntity {
     }
 
     public void decreaseCommentCount() {
-        if (this.commentCount != 0) {
+        if (this.commentCount > 0) {
             this.commentCount -= 1;
         }
     }

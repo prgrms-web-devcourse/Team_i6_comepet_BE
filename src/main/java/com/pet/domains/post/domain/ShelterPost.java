@@ -163,7 +163,7 @@ public class ShelterPost extends BaseEntity {
     }
 
     public void decreaseBookMarkCount() {
-        if (this.bookmarkCount != 0) {
+        if (this.bookmarkCount > 0) {
             this.bookmarkCount -= 1;
         }
     }
