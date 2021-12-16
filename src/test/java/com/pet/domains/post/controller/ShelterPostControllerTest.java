@@ -48,18 +48,18 @@ class ShelterPostControllerTest extends BaseDocumentationTest {
     void getShelterPostsTest() throws Exception {
         // given
         var results = ShelterPostPageResults.of(List.of(
-            ShelterPostPageResults.ShelterPost.builder()
-                .id(1L)
-                .city("서울특별시")
-                .town("광진구")
-                .age(2018L)
-                .thumbnail("http://www.animal.go.kr/files/shelter/2021/11/202112140012452_s.jpg")
-                .animal("개")
-                .animalKind("보더콜리")
-                .foundDate(LocalDate.of(2021, 12, 11))
-                .isBookmark(true)
-                .bookmarkCount(13)
-                .build()),
+                ShelterPostPageResults.ShelterPost.builder()
+                    .id(1L)
+                    .city("서울특별시")
+                    .town("광진구")
+                    .age(2018L)
+                    .thumbnail("http://www.animal.go.kr/files/shelter/2021/11/202112140012452_s.jpg")
+                    .animal("개")
+                    .animalKind("보더콜리")
+                    .foundDate(LocalDate.of(2021, 12, 11))
+                    .isBookmark(true)
+                    .bookmarkCount(13)
+                    .build()),
             1,
             true,
             10

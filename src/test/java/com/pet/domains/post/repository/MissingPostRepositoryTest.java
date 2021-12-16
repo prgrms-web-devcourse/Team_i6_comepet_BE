@@ -32,6 +32,7 @@ import com.pet.domains.tag.repository.TagRepository;
 import java.time.LocalDate;
 import java.util.List;
 import org.assertj.core.api.SoftAssertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -146,6 +147,12 @@ class MissingPostRepositoryTest {
             .build();
         animalKindRepository.save(animalKind);
 
+        tag = Tag.builder()
+            .name("웰시코기")
+            .count(1)
+            .build();
+        tagRepository.save(tag);
+
         missingPost = MissingPost.builder()
             .status(Status.DETECTION)
             .detailAddress("상세주소")
@@ -163,10 +170,16 @@ class MissingPostRepositoryTest {
             .town(town)
             .animalKind(animalKind)
             .build();
-        missingPostRepository.save(missingPost);
 
         image = new Image("awern23kjnr2k3n423.jpg");
         imageRepository.save(image);
+
+        postTag = PostTag
+            .builder()
+            .missingPost(missingPost)
+            .tag(tag)
+            .build();
+        missingPostRepository.save(missingPost);
 
         postImage = PostImage.builder()
             .missingPost(missingPost)
@@ -174,25 +187,24 @@ class MissingPostRepositoryTest {
             .build();
         postImageRepository.save(postImage);
 
-        tag = Tag.builder()
-            .name("웰시코기")
-            .count(1)
-            .build();
-        tagRepository.save(tag);
-
-        postTag = PostTag
-            .builder()
-            .missingPost(missingPost)
-            .tag(tag)
-            .build();
-        postTagRepository.save(postTag);
-
         comment = Comment.builder()
             .missingPost(missingPost)
             .content("내용")
             .account(account)
             .build();
         commentRepository.save(comment);
+    }
+
+    @AfterEach
+    void tearDown() {
+        commentRepository.deleteAllInBatch();
+        postImageRepository.deleteAllInBatch();
+        imageRepository.deleteAllInBatch();
+        missingPostRepository.deleteAllInBatch();
+        tagRepository.deleteAllInBatch();
+        townRepository.deleteAllInBatch();
+        cityRepository.deleteAllInBatch();
+        accountRepository.deleteAllInBatch();
     }
 
     @Test
@@ -225,13 +237,12 @@ class MissingPostRepositoryTest {
 
         //then
         SoftAssertions.assertSoftly(softAssertions -> {
-                softAssertions.assertThat(getMissingPost.getId()).isEqualTo(missingPost.getId());
-                softAssertions.assertThat(getPostImages).isEmpty();
-                softAssertions.assertThat(getComments).isEmpty();
-                softAssertions.assertThat(getPostTags.size()).isEqualTo(1);
-                softAssertions.assertThat(getTag.getCount()).isZero();
-                softAssertions.assertThat(getPostTagsAfterDelete.size()).isZero();
-                softAssertions.assertThat(getMissingPosts.size()).isZero();
+            softAssertions.assertThat(getMissingPost.getId()).isEqualTo(missingPost.getId());
+            softAssertions.assertThat(getPostImages.isEmpty());
+            softAssertions.assertThat(getComments.isEmpty());
+            softAssertions.assertThat(getPostTags.size()).isEqualTo(1);
+                softAssertions.assertThat(getTag.getCount()).isEqualTo(0);
+                softAssertions.assertThat(getMissingPosts.size()).isEqualTo(0);
             }
         );
     }

@@ -123,18 +123,6 @@ include::{snippets}/logout/http-request.adoc[]
 ==== Http Response
 include::{snippets}/logout/http-response.adoc[]
 
-=== 회원정보 조회
-
-==== CURL request
-include::{snippets}/get-account/curl-request.adoc[]
-
-==== Http Request
-include::{snippets}/get-account/http-request.adoc[]
-
-==== Http Response
-include::{snippets}/get-account/http-response.adoc[]
-
-
 === 회원정보 변경
 
 ==== CURL request
@@ -142,9 +130,6 @@ include::{snippets}/update-account/curl-request.adoc[]
 
 ==== Http Request
 include::{snippets}/update-account/http-request.adoc[]
-
-==== Request fields
-include::{snippets}/update-account/request-fields.adoc[]
 
 ==== Http Response
 include::{snippets}/update-account/http-response.adoc[]
