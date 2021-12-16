@@ -111,6 +111,7 @@ public class AccountController {
         @RequestPart @Valid AccountUpdateParam param,
         @RequestPart(required = false) MultipartFile image
     ) {
+        log.debug("회원 정보 수정 null check {}, {}, {}", account, param, image);
         accountService.updateAccount(account, param, image);
     }
 

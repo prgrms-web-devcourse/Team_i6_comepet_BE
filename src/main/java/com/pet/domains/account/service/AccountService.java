@@ -13,7 +13,6 @@ import com.pet.domains.account.dto.response.AccountReadResult;
 import com.pet.domains.account.mapper.AccountMapper;
 import com.pet.domains.account.repository.AccountRepository;
 import com.pet.domains.account.repository.SignEmailRepository;
-import com.pet.domains.area.domain.City;
 import com.pet.domains.area.domain.InterestArea;
 import com.pet.domains.area.domain.Town;
 import com.pet.domains.area.mapper.InterestAreaMapper;
@@ -165,30 +164,51 @@ public class AccountService {
 
     @Transactional
     public void updateArea(Account account, AccountAreaUpdateParam accountAreaUpdateParam) {
-        if (!accountAreaUpdateParam.getAreas().isEmpty()) {
-            interestAreaRepository.deleteAllByAccountId(account.getId());
+        interestAreaRepository.deleteAllByAccountId(account.getId());
+
+        List<AccountAreaUpdateParam.Area> areas = accountAreaUpdateParam.getAreas();
+        if (areas.isEmpty()) {
+            log.debug("관심 지역을 0개 입력했습니다.");
+            throw ExceptionMessage.INVALID_INTEREST_AREA.getException();
         }
 
-        interestAreaRepository.saveAll(accountAreaUpdateParam.getAreas().stream()
-            .map(area -> {
-                Long townId = area.getTownId();
-                return InterestArea.builder()
-                    .account(account)
-                    .selected(area.isDefaultArea())
-                    .town(townRepository.getById(townId))
-                    .build();
-            })
-            .distinct()
-            .limit(2)
-            .collect(Collectors.toList()));
+        if (areas.size() > 2) {
+            log.debug("관심 지역이 2개를 넘었습니다.");
+            throw ExceptionMessage.INVALID_INTEREST_AREA.getException();
+        }
+
+        // 관심 지역이 1개인 경우 디폴트 지역으로 저장
+        if (areas.size() == 1) {
+            AccountAreaUpdateParam.Area defaultArea = accountAreaUpdateParam.getAreas().get(0);
+            InterestArea interestArea = interestAreaMapper.toEntity(account, defaultArea, findTownByArea(defaultArea));
+            interestArea.checkSelect();
+        }
+
+        if (areas.size() == 2) {
+            long defaultAreaCount = areas.stream().filter(AccountAreaUpdateParam.Area::isDefaultArea).count();
+            if (defaultAreaCount == 2) {
+                log.debug("디폴트 지역이 2개입니다.");
+                throw ExceptionMessage.INVALID_INTEREST_AREA.getException();
+            }
+            interestAreaRepository.saveAll(
+                areas.stream()
+                    .map(area -> interestAreaMapper.toEntity(account, area, findTownByArea(area)))
+                    .collect(Collectors.toList()));
+        }
 
         account.updateNotification(accountAreaUpdateParam.isNotification());
         accountRepository.save(account);
     }
 
+    private Town findTownByArea(AccountAreaUpdateParam.Area area) {
+        return townRepository.findById(area.getTownId())
+            .orElseThrow(ExceptionMessage.NOT_FOUND_TOWN::getException);
+    }
+
     @Transactional
     public void updateAccount(Account account, AccountUpdateParam accountUpdateParam, MultipartFile accountImage) {
         if (!StringUtils.equals(accountUpdateParam.getNewPassword(), accountUpdateParam.getNewPasswordCheck())) {
+            log.debug("새로운 비밀번호의 입력값이 다릅니다.");
             throw ExceptionMessage.INVALID_PASSWORD.getException();
         }
         validatePassword(accountUpdateParam.getNewPassword());

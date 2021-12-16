@@ -1,7 +1,10 @@
 package com.pet.domains.area.mapper;
 
+import com.pet.domains.account.domain.Account;
+import com.pet.domains.account.dto.request.AccountAreaUpdateParam;
 import com.pet.domains.account.dto.response.AccountAreaReadResults;
 import com.pet.domains.area.domain.InterestArea;
+import com.pet.domains.area.domain.Town;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
@@ -18,5 +21,8 @@ public interface InterestAreaMapper {
         @Mapping(target = "defaultArea", source = "interestArea.selected"),
     })
     AccountAreaReadResults.Area toAreaResult(InterestArea interestArea, boolean checked);
+
+    @Mapping(target = "selected", source = "area.defaultArea")
+    InterestArea toEntity(Account account, AccountAreaUpdateParam.Area area, Town town);
 
 }
