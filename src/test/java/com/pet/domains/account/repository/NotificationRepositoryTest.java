@@ -1,7 +1,8 @@
 package com.pet.domains.account.repository;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import com.pet.common.config.JpaAuditingConfig;
+import com.pet.common.config.QuerydslConfig;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.account.domain.Notification;
 import com.pet.domains.account.domain.Provider;
@@ -28,7 +29,7 @@ import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
 
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@DataJpaTest(includeFilters = @Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JpaAuditingConfig.class))
+@DataJpaTest(includeFilters = @Filter(type = FilterType.ASSIGNABLE_TYPE, classes = { JpaAuditingConfig.class, QuerydslConfig.class }))
 @DisplayName("알림 Repository 테스트")
 class NotificationRepositoryTest {
 

@@ -1,6 +1,7 @@
 package com.pet.domains.post.repository;
 
 import com.pet.common.config.JpaAuditingConfig;
+import com.pet.common.config.QuerydslConfig;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.animal.domain.Animal;
 import com.pet.domains.animal.domain.AnimalKind;
@@ -12,6 +13,7 @@ import com.pet.domains.auth.domain.Permission;
 import com.pet.domains.auth.repository.GroupPermissionRepository;
 import com.pet.domains.post.domain.ShelterPost;
 import com.pet.domains.post.domain.ShelterPostBookmark;
+import com.pet.domains.post.repository.projection.ShelterPostWithIsBookmark;
 import java.util.List;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +29,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@DataJpaTest(includeFilters = @Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JpaAuditingConfig.class))
+@DataJpaTest(includeFilters = @Filter(type = FilterType.ASSIGNABLE_TYPE, classes = { JpaAuditingConfig.class, QuerydslConfig.class }))
 @DisplayName("보호소 게시글 리포지토리 테스트")
 class ShelterPostRepositoryTest {
 
@@ -126,9 +128,9 @@ class ShelterPostRepositoryTest {
         SoftAssertions.assertSoftly(softAssertions -> {
                 softAssertions.assertThat(contents).hasSize(2);
                 softAssertions.assertThat(contents.get(0).getShelterPost().getId()).isEqualTo(shelterPost.getId());
-                softAssertions.assertThat(contents.get(0).getIsBookmark()).isFalse();
+                softAssertions.assertThat(contents.get(0).isBookmark()).isFalse();
                 softAssertions.assertThat(contents.get(1).getShelterPost().getId()).isEqualTo(bookMarkPost.getId());
-                softAssertions.assertThat(contents.get(1).getIsBookmark()).isTrue();
+                softAssertions.assertThat(contents.get(1).isBookmark()).isTrue();
                 softAssertions.assertThat(pageResult.getTotalElements()).isEqualTo(2L);
             }
         );
@@ -153,12 +155,13 @@ class ShelterPostRepositoryTest {
         entityManager.clear();
 
         // when
-        ShelterPostWithIsBookmark result = shelterPostRepository.findByIdWithIsBookmark(account, bookMarkPost.getId());
+        ShelterPostWithIsBookmark result = shelterPostRepository.findByIdWithIsBookmark(account, bookMarkPost.getId())
+            .get();
 
         // then
         SoftAssertions.assertSoftly(softAssertions -> {
                 softAssertions.assertThat(result.getShelterPost().getId()).isEqualTo(bookMarkPost.getId());
-                softAssertions.assertThat(result.getIsBookmark()).isTrue();
+                softAssertions.assertThat(result.isBookmark()).isTrue();
             }
         );
     }
