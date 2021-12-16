@@ -468,8 +468,10 @@ class MissingPostControllerTest extends BaseDocumentationTest {
                     fieldWithPath("data.comments[].childComments[].createdAt").type(STRING).description("대댓글 작성날짜"),
                     fieldWithPath("data.comments[].childComments[].account").type(OBJECT).description("대댓글 작성자"),
                     fieldWithPath("data.comments[].childComments[].account.id").type(NUMBER).description("작성자 아이디"),
-                    fieldWithPath("data.comments[].childComments[].account.nickname").type(STRING).description("작성자 닉네임"),
-                    fieldWithPath("data.comments[].childComments[].account.image").type(STRING).description("작성자 프로필 사진"),
+                    fieldWithPath("data.comments[].childComments[].account.nickname").type(STRING)
+                        .description("작성자 닉네임"),
+                    fieldWithPath("data.comments[].childComments[].account.image").type(STRING)
+                        .description("작성자 프로필 사진"),
                     fieldWithPath("data.totalElements").type(NUMBER).description("전체 결과 수"),
                     fieldWithPath("data.last").type(BOOLEAN).description("마지막 페이지 여부"),
                     fieldWithPath("data.size").type(NUMBER).description("페이지당 요청 수"),
