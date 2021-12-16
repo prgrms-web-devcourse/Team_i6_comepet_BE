@@ -1,11 +1,10 @@
 package com.pet.domains.account.controller;
 
+import static com.pet.domains.docs.utils.ApiDocumentUtils.getDocumentRequest;
+import static com.pet.domains.docs.utils.ApiDocumentUtils.getDocumentResponse;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.JsonFieldType.ARRAY;
 import static org.springframework.restdocs.payload.JsonFieldType.BOOLEAN;
 import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
@@ -45,8 +44,8 @@ class NotificationControllerTest extends BaseDocumentationTest {
             .andDo(print())
             .andExpect(status().isOk())
             .andDo(document("get-notifications",
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()),
+                getDocumentRequest(),
+                getDocumentResponse(),
                 requestHeaders(
                     headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
@@ -76,8 +75,8 @@ class NotificationControllerTest extends BaseDocumentationTest {
             .andDo(print())
             .andExpect(status().isNoContent())
             .andDo(document("delete-notification",
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()),
+                getDocumentRequest(),
+                getDocumentResponse(),
                 requestHeaders(
                     headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
                 )
@@ -101,8 +100,8 @@ class NotificationControllerTest extends BaseDocumentationTest {
             .andDo(print())
             .andExpect(status().isNoContent())
             .andDo(document("update-notification",
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()),
+                getDocumentRequest(),
+                getDocumentResponse(),
                 requestHeaders(
                     headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token"),
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)

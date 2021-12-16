@@ -1,14 +1,13 @@
 package com.pet.domains.statistics.controller;
 
+import static com.pet.domains.docs.utils.ApiDocumentUtils.getDocumentRequest;
+import static com.pet.domains.docs.utils.ApiDocumentUtils.getDocumentResponse;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
 import static org.springframework.restdocs.payload.JsonFieldType.OBJECT;
 import static org.springframework.restdocs.payload.JsonFieldType.STRING;
@@ -50,8 +49,8 @@ class PostStatisticsControllerTest extends BaseDocumentationTest {
             .andDo(print())
             .andExpect(status().isOk())
             .andDo(document("get-post-statistics",
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()),
+                getDocumentRequest(),
+                getDocumentResponse(),
                 requestHeaders(
                     headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE)
                 ),

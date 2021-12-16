@@ -1,5 +1,7 @@
 package com.pet.domains.comment.controller;
 
+import static com.pet.domains.docs.utils.ApiDocumentUtils.getDocumentRequest;
+import static com.pet.domains.docs.utils.ApiDocumentUtils.getDocumentResponse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -10,9 +12,6 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
 import static org.springframework.restdocs.payload.JsonFieldType.OBJECT;
 import static org.springframework.restdocs.payload.JsonFieldType.STRING;
@@ -60,8 +59,8 @@ class CommentControllerTest extends BaseDocumentationTest {
             .andDo(print())
             .andExpect(status().isCreated())
             .andDo(document("create-comment",
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()),
+                getDocumentRequest(),
+                getDocumentResponse(),
                 requestHeaders(
                     headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token"),
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
@@ -103,8 +102,8 @@ class CommentControllerTest extends BaseDocumentationTest {
             .andDo(print())
             .andExpect(status().isOk())
             .andDo(document("update-comment",
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()),
+                getDocumentRequest(),
+                getDocumentResponse(),
                 pathParameters(
                     parameterWithName("commentId").description("댓글 아이디")
                 ),
@@ -139,8 +138,8 @@ class CommentControllerTest extends BaseDocumentationTest {
             .andDo(print())
             .andExpect(status().isNoContent())
             .andDo(document("delete-comment",
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()),
+                getDocumentRequest(),
+                getDocumentResponse(),
                 pathParameters(
                     parameterWithName("commentId").description("댓글 아이디")
                 ),

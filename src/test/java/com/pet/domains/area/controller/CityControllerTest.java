@@ -1,13 +1,12 @@
 package com.pet.domains.area.controller;
 
-import static org.mockito.BDDMockito.*;
+import static com.pet.domains.docs.utils.ApiDocumentUtils.getDocumentRequest;
+import static com.pet.domains.docs.utils.ApiDocumentUtils.getDocumentResponse;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.JsonFieldType.ARRAY;
 import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
 import static org.springframework.restdocs.payload.JsonFieldType.OBJECT;
@@ -17,7 +16,6 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import com.pet.common.response.ApiResponse;
 import com.pet.domains.area.dto.response.CityReadResults;
 import com.pet.domains.docs.BaseDocumentationTest;
 import java.util.List;
@@ -67,8 +65,8 @@ class CityControllerTest extends BaseDocumentationTest {
             .andDo(print())
             .andExpect(status().isOk())
             .andDo(document("get-cities",
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()),
+                getDocumentRequest(),
+                getDocumentResponse(),
                 requestHeaders(
                     headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
