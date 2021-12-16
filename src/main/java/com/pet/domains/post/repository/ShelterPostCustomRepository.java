@@ -12,5 +12,4 @@ public interface ShelterPostCustomRepository {
 
     Optional<ShelterPostWithIsBookmark> findByIdWithIsBookmark(Account account, Long postId);
 
-
 }
