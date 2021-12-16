@@ -11,10 +11,13 @@ public class AccountReadResult {
 
     private final String email;
 
-    public AccountReadResult(Long id, String nickname, String email) {
+    private final String image;
+
+    public AccountReadResult(Long id, String nickname, String email, String image) {
         this.id = id;
         this.nickname = nickname;
         this.email = email;
+        this.image = image;
     }
 
 }
