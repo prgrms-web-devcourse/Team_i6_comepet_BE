@@ -22,7 +22,10 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     List<Comment> findAllByMissingPostId(Long postId);
 
-    @EntityGraph(attributePaths = {"account", "account.image", "missingPost", "parentComment"}, type = EntityGraphType.LOAD)
+    @EntityGraph(
+        attributePaths = {"account", "account.image", "missingPost", "parentComment"},
+        type = EntityGraphType.LOAD
+    )
     @Query("select c from Comment c where c.missingPost.id = :postId and c.parentComment.id is null")
     Page<Comment> findAllByMissingPostId(Long postId, Pageable pageable);
 
