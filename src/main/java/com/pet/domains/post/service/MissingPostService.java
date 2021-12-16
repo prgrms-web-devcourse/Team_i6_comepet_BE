@@ -13,8 +13,10 @@ import com.pet.domains.image.repository.PostImageRepository;
 import com.pet.domains.image.service.ImageService;
 import com.pet.domains.post.domain.MissingPost;
 import com.pet.domains.post.dto.request.MissingPostCreateParam;
+import com.pet.domains.post.dto.response.MissingPostReadResults;
 import com.pet.domains.post.mapper.MissingPostMapper;
 import com.pet.domains.post.repository.MissingPostRepository;
+import com.pet.domains.post.repository.MissingPostWithIsBookmark;
 import com.pet.domains.tag.domain.PostTag;
 import com.pet.domains.tag.domain.Tag;
 import com.pet.domains.tag.repository.PostTagRepository;
@@ -25,6 +27,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -67,12 +71,14 @@ public class MissingPostService {
         List<Image> imageFiles = uploadAndGetImages(multipartFiles);
         String thumbnail = getThumbnail(imageFiles);
 
-        MissingPost createMissingPost = missingPostRepository.save(
-            missingPostMapper.toEntity(missingPostCreateParam, town, animalKind, thumbnail, account));
+        MissingPost mappingMissingPost =
+            missingPostMapper.toEntity(missingPostCreateParam, town, animalKind, thumbnail, account);
 
         if (!CollectionUtils.isEmpty(tags)) {
-            postTagService.createPostTag(tags, createMissingPost);
+            postTagService.createPostTag(tags, mappingMissingPost);
         }
+
+        MissingPost createMissingPost = missingPostRepository.save(mappingMissingPost);
         createPostImage(imageFiles, createMissingPost);
 
         return createMissingPost.getId();
@@ -89,11 +95,19 @@ public class MissingPostService {
 
         List<PostTag> getPostTags = postTagRepository.getPostTagsByMissingPostId(getMissingPost.getId());
         tagService.decreaseTagCount(getPostTags);
-        if (!CollectionUtils.isEmpty(getPostTags)) {
-            postTagRepository.deleteAllByMissingPostId(getMissingPost.getId());
-        }
 
         missingPostRepository.deleteById(getMissingPost.getId());
+    }
+
+    public MissingPostReadResults getMissingPostsPage(Pageable pageable) {
+        Page<MissingPost> pageResult = missingPostRepository.findAllByDeletedIsFalse(pageable);
+        return missingPostMapper.toMissingPostResults(pageResult);
+    }
+
+    public MissingPostReadResults getMissingPostsPageWithAccount(Account account, Pageable pageable) {
+        Page<MissingPostWithIsBookmark> pageResult =
+            missingPostRepository.findAllWithIsBookmarkAccountByDeletedIsFalse(account, pageable);
+        return missingPostMapper.toMissingPostWithBookmarkResults(pageResult);
     }
 
     private String getThumbnail(List<Image> imageFiles) {

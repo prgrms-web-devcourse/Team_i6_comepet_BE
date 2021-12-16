@@ -1,5 +1,9 @@
 package com.pet.common.config;
 
+import static org.springframework.http.HttpMethod.DELETE;
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.OPTIONS;
+import static org.springframework.http.HttpMethod.POST;
 import com.pet.common.exception.CustomAuthenticationEntryPoint;
 import com.pet.common.jwt.Jwt;
 import com.pet.common.jwt.JwtAuthenticationFilter;
@@ -15,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -29,7 +32,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.context.SecurityContextPersistenceFilter;
-import static org.springframework.http.HttpMethod.*;
 
 @Configuration
 @RequiredArgsConstructor
@@ -90,10 +92,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
             .authorizeRequests()
-            .antMatchers("/api/v1/shelter-posts").hasAnyRole("USER", "ANONYMOUS")
+            .antMatchers(OPTIONS, "/**").permitAll()
 
             // 보호소 게시글
             .antMatchers(GET, v1("/shelter-posts")).hasAnyRole(ROLE_USER, ROLE_ANONYMOUS)
+
+            // 실종/보호 게시글
+            .antMatchers(GET, v1("/missing-posts")).hasAnyRole(ROLE_USER, ROLE_ANONYMOUS)
+            .antMatchers(POST, v1("/missing-posts")).hasAnyRole(ROLE_USER)
+            .antMatchers(DELETE, v1("/missing-posts/{postId}")).hasAnyRole(ROLE_USER)
+            .antMatchers(POST, v1("/missing-posts/{postId}/bookmark")).hasAnyRole(ROLE_USER)
+            .antMatchers(DELETE, v1("/missing-posts/{postId}/bookmark")).hasAnyRole(ROLE_USER)
 
             // 회원, 알림
             .antMatchers(v1("/me/**"), v1("/auth-user"), v1("/notices/**"),

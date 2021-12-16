@@ -25,6 +25,7 @@ public class TagService {
             .orElseGet(() -> tagRepository.save(
                 Tag.builder()
                     .name(tagName)
+                    .count(1)
                     .build())
             );
     }
