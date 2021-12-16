@@ -17,7 +17,7 @@ public class ApiDocumentUtils {
         return preprocessRequest(
             modifyUris()
                 .scheme("http")
-                .host("http://ec2-3-35-254-102.ap-northeast-2.compute.amazonaws.com")
+                .host("ec2-3-35-254-102.ap-northeast-2.compute.amazonaws.com")
                 .port(26134),
             prettyPrint());
     }
