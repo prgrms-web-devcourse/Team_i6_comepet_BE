@@ -22,6 +22,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Version;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -69,14 +70,15 @@ public class MissingPost extends DeletableEntity {
     @Column(name = "tel_number", length = 15, nullable = false)
     private String telNumber;
 
+    @Version
     @Column(name = "view_count", columnDefinition = "BIGINT default 0", nullable = false)
     private long viewCount;
 
-    // TODO: 2021/12/16  @Version
+    @Version
     @Column(name = "bookmark_count", columnDefinition = "BIGINT default 0", nullable = false)
     private long bookmarkCount;
 
-    // TODO @Version
+    @Version
     @Column(name = "comment_count", columnDefinition = "BIGINT default 0", nullable = false)
     private long commentCount;
 
