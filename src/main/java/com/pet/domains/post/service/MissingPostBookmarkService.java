@@ -45,7 +45,7 @@ public class MissingPostBookmarkService {
             .orElseThrow(ExceptionMessage.NOT_FOUND_MISSING_POST::getException);
 
         Long resultCount = missingPostBookmarkRepository.deleteByAccountAndMissingPost(account, getMissingPost);
-        if (Objects.nonNull(resultCount) && resultCount.intValue() == 1L) {
+        if (Objects.nonNull(resultCount) && resultCount == 1L) {
             MissingPost foundPost = missingPostRepository.findById(postId)
                 .orElseThrow(ExceptionMessage.NOT_FOUND_MISSING_POST::getException);
             OptimisticLockingHandlingUtils.handling(
