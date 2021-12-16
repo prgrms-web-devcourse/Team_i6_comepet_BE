@@ -1,5 +1,6 @@
 package com.pet.domains.account.controller;
 
+import com.pet.common.exception.ExceptionMessage;
 import com.pet.common.response.ApiResponse;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.account.domain.LoginAccount;
@@ -8,6 +9,7 @@ import com.pet.domains.account.dto.response.NotificationReadResults;
 import com.pet.domains.account.service.NotificationService;
 import com.pet.domains.post.domain.Status;
 import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -64,8 +66,13 @@ public class NotificationController {
 
     @PatchMapping("/{noticeId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void checkedNotification(@PathVariable Long noticeId, @RequestBody NotificationUpdateParam param) {
-        log.info("success change checked notification id : {}", noticeId);
+    public void checkedNotification(
+        @LoginAccount Account account, @PathVariable Long noticeId, @RequestBody NotificationUpdateParam param
+    ) {
+        if (Objects.isNull(account)) {
+            throw ExceptionMessage.NOT_FOUND_JWT.getException();
+        }
+        notificationService.checkNotification(account, noticeId, param.isChecked());
     }
 
 }

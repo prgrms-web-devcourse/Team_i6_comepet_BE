@@ -6,7 +6,7 @@ import com.pet.domains.post.domain.ShelterPost;
 import com.pet.domains.post.dto.request.ShelterPostCreateParams;
 import com.pet.domains.post.dto.response.ShelterPostPageResults;
 import com.pet.domains.post.dto.response.ShelterPostReadResult;
-import com.pet.domains.post.repository.ShelterPostWithIsBookmark;
+import com.pet.domains.post.repository.projection.ShelterPostWithIsBookmark;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.mapstruct.Mapper;
@@ -27,10 +27,9 @@ public interface ShelterPostMapper {
 
     default ShelterPostPageResults toShelterPostPageResultsWithAccount(Page<ShelterPostWithIsBookmark> pageResult) {
         List<ShelterPostPageResults.ShelterPost> shelterPostResults = pageResult.getContent().stream()
-            .map(shelterPostWithIsBookmark -> {
-                ShelterPost shelterPost = shelterPostWithIsBookmark.getShelterPost();
-                return toShelterPostDto(shelterPost, shelterPostWithIsBookmark.getIsBookmark());
-            })
+            .map(shelterPostWithIsBookmark -> toShelterPostDto(
+                shelterPostWithIsBookmark.getShelterPost(),
+                shelterPostWithIsBookmark.isBookmark()))
             .collect(Collectors.toList());
         return ShelterPostPageResults.of(
             shelterPostResults,
