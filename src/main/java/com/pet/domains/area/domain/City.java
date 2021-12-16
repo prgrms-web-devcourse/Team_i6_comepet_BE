@@ -29,7 +29,7 @@ public class City extends BaseEntity {
     @Column(name = "code", nullable = false, length = 10)
     private String code;
 
-    @Column(name = "name", nullable = false, length = 200)
+    @Column(name = "name", nullable = false, length = 200, unique = true)
     private String name;
 
     @OneToMany(mappedBy = "city")
