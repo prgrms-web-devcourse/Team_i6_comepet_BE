@@ -1,5 +1,6 @@
 package com.pet.domains.account.controller;
 
+import com.pet.common.exception.ExceptionMessage;
 import com.pet.common.response.ApiResponse;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.account.domain.LoginAccount;
@@ -71,6 +72,7 @@ public class NotificationController {
         if (Objects.nonNull(account)) {
             notificationService.checkNotification(account, noticeId, param.isChecked());
         }
+        throw ExceptionMessage.NOT_FOUND_JWT.getException();
     }
 
 }
