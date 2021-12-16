@@ -8,6 +8,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.animal.domain.Animal;
@@ -27,6 +28,7 @@ import com.pet.domains.post.domain.Status;
 import com.pet.domains.post.dto.request.MissingPostCreateParam;
 import com.pet.domains.post.mapper.MissingPostMapper;
 import com.pet.domains.post.repository.MissingPostRepository;
+import com.pet.domains.post.repository.MissingPostWithIsBookmark;
 import com.pet.domains.tag.domain.Tag;
 import com.pet.domains.tag.service.PostTagService;
 import com.pet.domains.tag.service.TagService;
@@ -39,6 +41,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.multipart.MultipartFile;
 
 @DisplayName("실종/보호 게시물 서비스 테스트")
@@ -207,4 +211,31 @@ class MissingPostServiceTest {
         verify(missingPostRepository).deleteById(anyLong());
     }
 
+    @Test
+    @DisplayName("실종/보호 게시물 익명 조회 테스트")
+    void getAnonymousMissingPostTest() {
+        //given
+        given(missingPostRepository.findAllByDeletedIsFalse(any())).willReturn(mock(Page.class));
+
+        //when
+        Page<MissingPost> pageResult = missingPostRepository.findAllByDeletedIsFalse(PageRequest.of(1, 5));
+
+        //then
+        verify(missingPostRepository, times(1)).findAllByDeletedIsFalse(any());
+    }
+
+    @Test
+    @DisplayName("실종/보호 게시물 사용자 조회 테스트")
+    void getUserMissingPostTest() {
+        //given
+        given(missingPostRepository.findAllWithIsBookmarkAccountByDeletedIsFalse(any(), any())).willReturn(
+            mock(Page.class));
+
+        //when
+        Page<MissingPostWithIsBookmark> pageResult =
+            missingPostRepository.findAllWithIsBookmarkAccountByDeletedIsFalse(account, PageRequest.of(1, 5));
+
+        //then
+        verify(missingPostRepository, times(1)).findAllWithIsBookmarkAccountByDeletedIsFalse(any(), any());
+    }
 }
