@@ -19,6 +19,7 @@ import com.pet.domains.post.domain.SexType;
 import com.pet.domains.post.domain.Status;
 import com.pet.domains.post.repository.MissingPostRepository;
 import java.time.LocalDate;
+import java.util.stream.LongStream;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,6 +30,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DataJpaTest(includeFilters = @Filter(
@@ -108,6 +112,18 @@ class NotificationRepositoryTest {
         notificationRepository.deleteByIdAndAccount(save.getId(), account);
 
         assertThat(notificationRepository.findAll().size()).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("알림 페이징 조회")
+    void getNotificationPagingTest() {
+        LongStream.rangeClosed(0, 10)
+            .forEach(index -> notificationRepository
+                .save(Notification.builder().account(account).checked(true).missingPost(missingPost).build()));
+
+        Page<Notification> notifications = notificationRepository.findAll(PageRequest.of(0, 8));
+        assertThat(notifications.getTotalElements()).isEqualTo(11);
+        assertThat(notifications.getContent().size()).isEqualTo(8);
     }
 
     private Account givenAccount(String email, String nickname, Group group) {
