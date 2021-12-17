@@ -23,8 +23,15 @@ public interface MissingPostRepository extends JpaRepository<MissingPost, Long> 
         + "WHERE mp.deleted = false")
     Page<MissingPostWithIsBookmark> findAllWithIsBookmarkAccountByDeletedIsFalse(Account account, Pageable pageable);
 
-    @EntityGraph(attributePaths = {"animalKind", "animalKind.animal", "town", "town.city", "postTags",
-        "postTags.tag", "account", "account.group"}, type = EntityGraphType.LOAD)
+    @Override
+    @EntityGraph(attributePaths = {"animalKind", "animalKind.animal", "town", "town.city",
+        "account"}, type = EntityGraphType.LOAD)
     Optional<MissingPost> findById(Long postId);
+
+    @EntityGraph(attributePaths = {"animalKind", "animalKind.animal", "town", "town.city", "account",
+        "account.group"}, type = EntityGraphType.LOAD)
+    @Query("SELECT mp as missingPost, mpb.id IS NOT NULL as isBookmark FROM MissingPost mp "
+        + "LEFT OUTER JOIN MissingPostBookmark mpb ON :postId = mpb.missingPost.id AND mpb.account = :account")
+    Optional<MissingPostWithIsBookmark> findByIdAndWithIsBookmarkAccount(Account account, Long postId);
 
 }

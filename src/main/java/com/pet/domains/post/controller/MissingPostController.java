@@ -76,8 +76,7 @@ public class MissingPostController {
         if (Objects.nonNull(account)) {
             return ApiResponse.ok(missingPostService.getMissingPostOneWithAccount(account, postId));
         }
-        missingPostService.getMissingPostOne(postId);
-        return null;
+        return ApiResponse.ok(missingPostService.getMissingPostOne(postId));
 //        return ApiResponse.ok(
 //            MissingPostReadResult.of(1L,
 //                MissingPostReadResult.User.of(1L, "짱구",

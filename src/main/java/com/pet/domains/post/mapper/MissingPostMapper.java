@@ -3,10 +3,10 @@ package com.pet.domains.post.mapper;
 import com.pet.domains.animal.domain.AnimalKind;
 import com.pet.domains.area.domain.Town;
 import com.pet.domains.image.domain.Image;
+import com.pet.domains.image.domain.PostImage;
 import com.pet.domains.post.domain.MissingPost;
 import com.pet.domains.post.dto.request.MissingPostCreateParam;
 import com.pet.domains.post.dto.response.MissingPostReadResult;
-import com.pet.domains.post.dto.response.MissingPostReadResult.Account;
 import com.pet.domains.post.dto.response.MissingPostReadResults;
 import com.pet.domains.post.repository.MissingPostWithIsBookmark;
 import com.pet.domains.tag.domain.PostTag;
@@ -98,12 +98,11 @@ public interface MissingPostMapper {
 
 
     @Mappings({
-        @Mapping(target = "id", source = "missingPost.id"),
-        @Mapping(target = "account", source = "missingPost.account"),
+        @Mapping(target = "account", expression = "java(toMissingPostAccountDto(missingPost.getAccount()))"),
         @Mapping(target = "status", source = "missingPost.status"),
         @Mapping(target = "date", source = "missingPost.date"),
-        @Mapping(target = "city", source = "missingPost.town.city.name)"),
-        @Mapping(target = "town", source = "missingPost.town.name)"),
+        @Mapping(target = "city", expression = "java(missingPost.getTown().getCity().getName())"),
+        @Mapping(target = "town", expression = "java(missingPost.getTown().getName())"),
         @Mapping(target = "detailAddress", source = "missingPost.detailAddress"),
         @Mapping(target = "telNumber", source = "missingPost.telNumber"),
         @Mapping(target = "animal", source = "missingPost.animalKind.animal.name"),
@@ -111,19 +110,22 @@ public interface MissingPostMapper {
         @Mapping(target = "age", source = "missingPost.age"),
         @Mapping(target = "sex", source = "missingPost.sexType"),
         @Mapping(target = "chipNumber", source = "missingPost.chipNumber"),
-//        @Mapping(target = "images", expression = "java(toMissingPostImageDto(missingPost.getImages))"),
+        @Mapping(target = "images", expression = "java(toMissingPostImageResult(missingPost.getPostImages()))"),
         @Mapping(target = "tags", expression = "java(toMissingPostTagResult(missingPost.getPostTags()))"),
-        @Mapping(target = "telNumber", source = "missingPost.telNumber"),
-        @Mapping(target = "telNumber", source = "missingPost.telNumber")
+        @Mapping(target = "content", source = "missingPost.content"),
+        @Mapping(target = "viewCount", source = "missingPost.viewCount"),
+        @Mapping(target = "bookmarkCount", source = "missingPost.bookmarkCount"),
+        @Mapping(target = "isBookmark", expression = "java(false)"),
+        @Mapping(target = "createdAt", source = "missingPost.createdAt")
     })
     MissingPostReadResult toMissingPostDto(MissingPost missingPost);
 
     @Mappings({
         @Mapping(target = "id", source = "account.id"),
         @Mapping(target = "nickname", source = "account.nickname"),
-        @Mapping(target = "image", source = "account.image")
+        @Mapping(target = "image", source = "account.image.name")
     })
-    MissingPostReadResult.Account toMissingPostAccountDto(Account account);
+    MissingPostReadResult.Account toMissingPostAccountDto(com.pet.domains.account.domain.Account account);
 
     @Mappings({
         @Mapping(target = "id", source = "image.id"),
@@ -142,5 +144,22 @@ public interface MissingPostMapper {
             .map(postTag -> toMissingPostTagDto(postTag.getTag()))
             .collect(Collectors.toList());
     }
+
+    default List<MissingPostReadResult.Image> toMissingPostImageResult(List<PostImage> postImages) {
+        return postImages.stream()
+            .map(postImage -> toMissingPostImageDto(postImage.getImage()))
+            .collect(Collectors.toList());
+    }
+
+//    default MissingPostReadResult toMissingPostWithBookmarkResult(MissingPostWithIsBookmark missingPost) {
+//        List<MissingPostReadResult> missingPostResults =
+//            pageResult.getContent().stream().map(this::toMissingPostsDto).collect(Collectors.toList());
+//        return MissingPostReadResults.of(
+//            missingPostResults,
+//            pageResult.getTotalElements(),
+//            pageResult.isLast(),
+//            pageResult.getSize()
+//        );
+//    }
 
 }

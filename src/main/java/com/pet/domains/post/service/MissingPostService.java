@@ -108,12 +108,11 @@ public class MissingPostService {
     }
 
     public MissingPostReadResult getMissingPostOne(Long postId) {
-        missingPostRepository.findById(postId);
-        return null;
+        return missingPostMapper.toMissingPostDto(missingPostRepository.findById(postId).get());
     }
 
     public MissingPostReadResult getMissingPostOneWithAccount(Account account, Long postId) {
-
+        missingPostRepository.findByIdAndWithIsBookmarkAccount(account, postId);
         return null;
     }
 

@@ -39,7 +39,7 @@ public class PostImage {
     )
     private MissingPost missingPost;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(
         name = "image_id",
         referencedColumnName = "id",

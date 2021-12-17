@@ -2,7 +2,6 @@ package com.pet.domains.post.dto.response;
 
 import com.pet.domains.post.domain.SexType;
 import com.pet.domains.post.domain.Status;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Getter;
@@ -16,7 +15,7 @@ public class MissingPostReadResult {
 
     private final Status status;
 
-    private final LocalDate date;
+    private final String date;
 
     private final String city;
 
@@ -53,7 +52,7 @@ public class MissingPostReadResult {
     private final LocalDateTime createdAt;
 
     public MissingPostReadResult(
-        Long id, Account account, Status status, LocalDate date, String city, String town, String detailAddress,
+        Long id, Account account, Status status, String date, String city, String town, String detailAddress,
         String telNumber, String animal, String animalKind, int age, SexType sex, String chipNumber,
         List<Image> images, List<Tag> tags, String content, long viewCount, long bookmarkCount,
         Boolean isBookmark, long commentCount, LocalDateTime createdAt
@@ -82,7 +81,7 @@ public class MissingPostReadResult {
     }
 
     public static MissingPostReadResult of(
-        Long id, Account account, Status status, LocalDate date, String city, String town, String detailAddress,
+        Long id, Account account, Status status, String date, String city, String town, String detailAddress,
         String telNumber, String animal, String animalKind, int age, SexType sex, String chipNumber,
         List<Image> images, List<Tag> tags, String content, long viewCount, long bookmarkCount,
         Boolean isBookmark, long commentCount, LocalDateTime createdAt
