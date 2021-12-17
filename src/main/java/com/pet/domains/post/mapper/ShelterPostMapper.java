@@ -60,7 +60,7 @@ public interface ShelterPostMapper {
     }
 
     @Mapping(target = "id", source = "shelterPost.id")
-    @Mapping(target = "animalKind", source = "animalKind.name")
+    @Mapping(target = "animalKindName", source = "animalKind.name")
     @Mapping(target = "animal", source = "animal.name")
     @Mapping(target = "town", source = "town.name")
     @Mapping(target = "city", source = "city.name")
@@ -74,7 +74,7 @@ public interface ShelterPostMapper {
         boolean isBookmark
     );
 
-    @Mapping(target = "animalKind", source = "shelterPost.animalKind.name")
+    @Mapping(target = "animalKindName", source = "shelterPost.animalKind.name")
     @Mapping(target = "animal", source = "shelterPost.animalKind.animal.name")
     @Mapping(target = "town", source = "shelterPost.town.name")
     @Mapping(target = "city", source = "shelterPost.town.city.name")
@@ -82,7 +82,7 @@ public interface ShelterPostMapper {
     ShelterPostPageResults.ShelterPost toShelterPagePostDto(ShelterPost shelterPost);
 
     @Mapping(target = "id", source = "shelterPost.id")
-    @Mapping(target = "animalKind", source = "animalKind.name")
+    @Mapping(target = "animalKindName", source = "animalKind.name")
     @Mapping(target = "animal", source = "animal.name")
     @Mapping(target = "town", source = "town.name")
     @Mapping(target = "city", source = "city.name")
@@ -97,7 +97,7 @@ public interface ShelterPostMapper {
         boolean isBookmark
     );
 
-    @Mapping(target = "animalKind", source = "animalKind.name")
+    @Mapping(target = "animalKindName", source = "animalKind.name")
     @Mapping(target = "animal", source = "animalKind.animal.name")
     @Mapping(target = "town", source = "town.name")
     @Mapping(target = "city", source = "town.city.name")

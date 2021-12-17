@@ -50,7 +50,7 @@ public class ShelterPostPageResults {
 
         private final String animal;
 
-        private final String animalKind;
+        private final String animalKindName;
 
         private final LocalDate foundDate;
 
@@ -62,14 +62,14 @@ public class ShelterPostPageResults {
 
         @Builder
         public ShelterPost(Long id, String city, String town, Long age, String thumbnail, String animal,
-            String animalKind, LocalDate foundDate, SexType sex, boolean isBookmark, long bookmarkCount) {
+            String animalKindName, LocalDate foundDate, SexType sex, boolean isBookmark, long bookmarkCount) {
             this.id = id;
             this.city = city;
             this.town = town;
             this.age = age;
             this.thumbnail = thumbnail;
             this.animal = animal;
-            this.animalKind = animalKind;
+            this.animalKindName = animalKindName;
             this.foundDate = foundDate;
             this.sex = sex;
             this.isBookmark = isBookmark;
