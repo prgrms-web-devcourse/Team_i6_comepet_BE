@@ -28,8 +28,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.pet.domains.account.WithAccount;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.docs.BaseDocumentationTest;
+import com.pet.domains.post.domain.SexType;
 import com.pet.domains.post.dto.response.ShelterPostPageResults;
 import com.pet.domains.post.dto.response.ShelterPostReadResult;
+import com.pet.domains.post.dto.serach.PostSearchParam;
 import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -48,23 +50,25 @@ class ShelterPostControllerTest extends BaseDocumentationTest {
     void getShelterPostsTest() throws Exception {
         // given
         var results = ShelterPostPageResults.of(List.of(
-                ShelterPostPageResults.ShelterPost.builder()
-                    .id(1L)
-                    .city("서울특별시")
-                    .town("광진구")
-                    .age(2018L)
-                    .thumbnail("http://www.animal.go.kr/files/shelter/2021/11/202112140012452_s.jpg")
-                    .animal("개")
-                    .animalKind("보더콜리")
-                    .foundDate(LocalDate.of(2021, 12, 11))
-                    .isBookmark(true)
-                    .bookmarkCount(13)
-                    .build()),
+            ShelterPostPageResults.ShelterPost.builder()
+                .id(1L)
+                .city("서울특별시")
+                .town("광진구")
+                .age(2018L)
+                .sex(SexType.UNKNOWN)
+                .thumbnail("http://www.animal.go.kr/files/shelter/2021/11/202112140012452_s.jpg")
+                .animal("개")
+                .animalKind("보더콜리")
+                .foundDate(LocalDate.of(2021, 12, 11))
+                .isBookmark(true)
+                .bookmarkCount(13)
+                .build()),
             1,
             true,
             10
         );
-        given(shelterPostService.getShelterPostsPageWithAccount(any(Account.class), any(PageRequest.class)))
+        given(shelterPostService.getShelterPostsPageWithAccount(any(Account.class), any(PageRequest.class), any(
+            PostSearchParam.class)))
             .willReturn(results);
 
         // when
@@ -101,6 +105,7 @@ class ShelterPostControllerTest extends BaseDocumentationTest {
                     fieldWithPath("data.shelters[].city").type(STRING).description("시도 이름"),
                     fieldWithPath("data.shelters[].town").type(STRING).description("시군구 이름"),
                     fieldWithPath("data.shelters[].age").type(NUMBER).description("동물 나이"),
+                    fieldWithPath("data.shelters[].sex").type(STRING).description("<<sexType,동물 성별>>>>"),
                     fieldWithPath("data.shelters[].thumbnail").type(STRING).description("동물 사진"),
                     fieldWithPath("data.shelters[].animal").type(STRING).description("동물 종류"),
                     fieldWithPath("data.shelters[].animalKind").type(STRING).description("동물 품종"),
