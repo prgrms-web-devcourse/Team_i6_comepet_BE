@@ -1,7 +1,9 @@
 package com.pet.domains.post.mapper;
 
+import com.pet.domains.account.dto.response.AccountBookmarkPostPageResults;
 import com.pet.domains.animal.domain.AnimalKind;
 import com.pet.domains.area.domain.Town;
+import com.pet.domains.post.domain.MissingPost;
 import com.pet.domains.post.domain.ShelterPost;
 import com.pet.domains.post.dto.request.ShelterPostCreateParams;
 import com.pet.domains.post.dto.response.ShelterPostPageResults;
@@ -11,6 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
 import org.springframework.data.domain.Page;
 
 @Mapper(componentModel = "spring")
@@ -81,4 +84,16 @@ public interface ShelterPostMapper {
     @Mapping(target = "status", source = "postStatus")
     ShelterPostReadResult toShelterPostReadResult(ShelterPost shelterPost);
 
+    @Mappings({
+        @Mapping(target = "animalKind", source = "shelterPost.animalKind.name"),
+        @Mapping(target = "thumbnail", source = "shelterPost.thumbnail"),
+        @Mapping(target = "sexType", source = "shelterPost.sex"),
+        @Mapping(target = "place",
+            expression = "java(joinPlace(shelterPost.getTown().getName(), shelterPost.getTown().getCity().getName()))"),
+    })
+    AccountBookmarkPostPageResults.Post toAccountBookmarkShelterPost(ShelterPost shelterPost);
+
+    default String joinPlace(String city, String town) {
+        return new StringBuilder().append(city).append(" ").append(town).toString();
+    }
 }

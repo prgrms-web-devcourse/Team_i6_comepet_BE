@@ -2,6 +2,7 @@ package com.pet.domains.post.service;
 
 import com.pet.common.exception.ExceptionMessage;
 import com.pet.domains.account.domain.Account;
+import com.pet.domains.account.dto.response.AccountBookmarkPostPageResults;
 import com.pet.domains.animal.domain.AnimalKind;
 import com.pet.domains.animal.service.AnimalKindService;
 import com.pet.domains.area.domain.Town;
@@ -11,6 +12,7 @@ import com.pet.domains.post.dto.request.ShelterPostCreateParams;
 import com.pet.domains.post.dto.response.ShelterPostPageResults;
 import com.pet.domains.post.dto.response.ShelterPostReadResult;
 import com.pet.domains.post.mapper.ShelterPostMapper;
+import com.pet.domains.post.repository.MissingPostWithIsBookmark;
 import com.pet.domains.post.repository.ShelterPostRepository;
 import com.pet.domains.post.repository.projection.ShelterPostWithIsBookmark;
 import java.util.stream.Collectors;
@@ -83,4 +85,16 @@ public class ShelterPostService {
         return townService.getOrCreateTownByName(cityName, townName);
     }
 
+    public AccountBookmarkPostPageResults getBookmarksThumbnailsByAccount(Account account, Pageable pageable) {
+        Page<ShelterPostWithIsBookmark> shelterPostWithIsBookmarks =
+            shelterPostRepository.findAllWithIsBookmark(account, pageable);
+        return AccountBookmarkPostPageResults
+            .of(shelterPostWithIsBookmarks.stream()
+                    .map(missingPostWithIsBookmark -> shelterPostMapper
+                        .toAccountBookmarkShelterPost(missingPostWithIsBookmark.getShelterPost()))
+                    .collect(Collectors.toList()),
+                shelterPostWithIsBookmarks.getTotalElements(),
+                shelterPostWithIsBookmarks.isLast(),
+                shelterPostWithIsBookmarks.getSize());
+    }
 }

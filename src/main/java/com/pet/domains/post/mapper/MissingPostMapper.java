@@ -1,6 +1,7 @@
 package com.pet.domains.post.mapper;
 
 import com.pet.domains.account.domain.Account;
+import com.pet.domains.account.dto.response.AccountBookmarkPostPageResults;
 import com.pet.domains.animal.domain.AnimalKind;
 import com.pet.domains.area.domain.Town;
 import com.pet.domains.post.domain.MissingPost;
@@ -68,6 +69,14 @@ public interface MissingPostMapper {
     })
     MissingPostReadResults.MissingPost.Tag toMissingPostTagDto(Tag tag);
 
+    @Mappings({
+        @Mapping(target = "animalKind", source = "missingPost.animalKind.name"),
+        @Mapping(target = "thumbnail", source = "missingPost.thumbnail"),
+        @Mapping(target = "place",
+            expression = "java(joinPlace(missingPost.getTown().getName(), missingPost.getTown().getCity().getName()))"),
+    })
+    AccountBookmarkPostPageResults.Post toAccountBookmarkMissingPost(MissingPost missingPost);
+
     default MissingPostReadResults toMissingPostResults(Page<MissingPost> pageResult) {
         List<MissingPostReadResults.MissingPost> missingPostResults =
             pageResult.getContent().stream().map(this::toMissingPostDto).collect(Collectors.toList());
@@ -96,4 +105,7 @@ public interface MissingPostMapper {
             .collect(Collectors.toList());
     }
 
+    default String joinPlace(String city, String town) {
+        return new StringBuilder().append(city).append(" ").append(town).toString();
+    }
 }

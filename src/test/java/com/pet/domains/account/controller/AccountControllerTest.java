@@ -2,6 +2,7 @@ package com.pet.domains.account.controller;
 
 import static com.pet.domains.docs.utils.ApiDocumentUtils.getDocumentRequest;
 import static com.pet.domains.docs.utils.ApiDocumentUtils.getDocumentResponse;
+import static java.util.stream.Collectors.*;
 import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.mock;
@@ -40,10 +41,14 @@ import com.pet.domains.account.dto.request.AccountLonginParam;
 import com.pet.domains.account.dto.request.AccountSignUpParam;
 import com.pet.domains.account.dto.request.AccountUpdateParam;
 import com.pet.domains.account.dto.response.AccountAreaReadResults;
+import com.pet.domains.account.dto.response.AccountBookmarkPostPageResults;
 import com.pet.domains.account.dto.response.AccountReadResult;
 import com.pet.domains.docs.BaseDocumentationTest;
+import com.pet.domains.post.domain.SexType;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.LongStream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
@@ -421,6 +426,20 @@ class AccountControllerTest extends BaseDocumentationTest {
     @DisplayName("회원 북마크(실종/보호) 조회")
     void getAccountMissingBookmarkPostTest() throws Exception {
         // given
+        given(missingPostService.getBookmarksThumbnailsByAccount(any(), any())).willReturn(
+            AccountBookmarkPostPageResults.of(
+                LongStream.range(1, 8)
+                    .mapToObj(index -> AccountBookmarkPostPageResults.Post.of(
+                        index,
+                        "포메라니안",
+                        SexType.MALE,
+                        "인천 광역시 미추홀구 용현 1동",
+                        LocalDate.of(2021, 6, 13),
+                        "http://../../97fd3403-7343-497a-82fa-c41d26ccf0f8.png",
+                        3))
+                    .collect(toList()), 15, false, 8
+            )
+        );
         // when
         ResultActions resultActions = mockMvc.perform(get("/api/v1/me/bookmarks?status=missing"));
 
@@ -462,6 +481,20 @@ class AccountControllerTest extends BaseDocumentationTest {
     @DisplayName("회원 북마크(보호소) 조회")
     void getAccountShelterBookmarkPostTest() throws Exception {
         // given
+        given(shelterPostService.getBookmarksThumbnailsByAccount(any(), any())).willReturn(
+            AccountBookmarkPostPageResults.of(
+                LongStream.range(1, 8)
+                    .mapToObj(index -> AccountBookmarkPostPageResults.Post.of(
+                        index,
+                        "포메라니안",
+                        SexType.FEMALE,
+                        "경상남도 진주시 집현면 신당길 207번길 22 (집현면, 지엽농업개발시설)",
+                        LocalDate.of(2021, 4, 11),
+                        "http://../../97fd3403-7343-497a-82fa-c41d26ccf0f8.png",
+                        5))
+                    .collect(toList()), 15, false, 8
+            )
+        );
         // when
         ResultActions resultActions = mockMvc.perform(get("/api/v1/me/bookmarks?status=shelter"));
 
