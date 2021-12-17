@@ -8,12 +8,23 @@ public class NotificationReadResults {
 
     private final List<NotificationReadResults.Notification> notifications;
 
-    public NotificationReadResults(List<NotificationReadResults.Notification> notifications) {
+    private final long totalElements;
+
+    private final boolean last;
+
+    private final long size;
+
+    public NotificationReadResults(List<Notification> notifications, long totalElements, boolean last, long size) {
         this.notifications = notifications;
+        this.totalElements = totalElements;
+        this.last = last;
+        this.size = size;
     }
 
-    public static NotificationReadResults of(List<NotificationReadResults.Notification> notifications) {
-        return new NotificationReadResults(notifications);
+    public static NotificationReadResults of(List<NotificationReadResults.Notification> notifications,
+        long totalElements, boolean last, long size
+    ) {
+        return new NotificationReadResults(notifications, totalElements, last, size);
     }
 
     @Getter

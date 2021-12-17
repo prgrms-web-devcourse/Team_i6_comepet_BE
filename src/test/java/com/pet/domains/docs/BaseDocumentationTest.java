@@ -2,7 +2,6 @@ package com.pet.domains.docs;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pet.common.config.SecurityConfig;
-import com.pet.common.config.WebMvcConfig;
 import com.pet.common.jwt.JwtAuthentication;
 import com.pet.common.property.JwtProperty;
 import com.pet.domains.account.controller.AccountController;
@@ -25,8 +24,8 @@ import com.pet.domains.post.service.MissingPostService;
 import com.pet.domains.post.service.ShelterPostBookmarkService;
 import com.pet.domains.post.service.ShelterPostService;
 import com.pet.domains.statistics.controller.PostStatisticsController;
-import org.junit.jupiter.api.Disabled;
 import com.pet.domains.statistics.service.PostStatisticsService;
+import org.junit.jupiter.api.Disabled;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
@@ -48,8 +47,7 @@ import org.springframework.test.web.servlet.MockMvc;
     ShelterPostController.class,
     PostStatisticsController.class},
     includeFilters = {
-        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class),
-        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = WebMvcConfig.class)
+        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class)
     })
 @AutoConfigureRestDocs
 @EnableConfigurationProperties(value = JwtProperty.class)

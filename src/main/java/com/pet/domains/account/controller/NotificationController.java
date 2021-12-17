@@ -7,11 +7,10 @@ import com.pet.domains.account.domain.LoginAccount;
 import com.pet.domains.account.dto.request.NotificationUpdateParam;
 import com.pet.domains.account.dto.response.NotificationReadResults;
 import com.pet.domains.account.service.NotificationService;
-import com.pet.domains.post.domain.Status;
-import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,29 +32,8 @@ public class NotificationController {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<NotificationReadResults> getNotifications() {
-        return ApiResponse.ok(NotificationReadResults.of(
-            List.of(
-                NotificationReadResults.Notification.of(
-                    "고양이가 멍멍",
-                    "http://../../97fd3403-7343-497a-82fa-c41d26ccf0f8.png",
-                    513L,
-                    Status.DETECTION.name()
-                ),
-                NotificationReadResults.Notification.of(
-                    "야옹이가 멍멍",
-                    "http://../../97fd3403-7343-497a-82fa-c41d26ccf0f8.png",
-                    234L,
-                    Status.DETECTION.name()
-                ),
-                NotificationReadResults.Notification.of(
-                    "나홀로 집사",
-                    "http://../../97fd3403-7343-497a-82fa-c41d26ccf0f8.png",
-                    1231L,
-                    Status.DETECTION.name()
-                )
-            )
-        ));
+    public ApiResponse<NotificationReadResults> getNotifications(@LoginAccount Account account, Pageable pageable) {
+        return ApiResponse.ok(notificationService.getByAccountId(pageable));
     }
 
     @DeleteMapping("/{noticeId}")
