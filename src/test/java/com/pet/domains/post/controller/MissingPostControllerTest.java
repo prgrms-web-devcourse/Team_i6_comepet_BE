@@ -40,8 +40,8 @@ import com.pet.domains.image.domain.Image;
 import com.pet.domains.post.domain.SexType;
 import com.pet.domains.post.domain.Status;
 import com.pet.domains.post.dto.request.MissingPostCreateParam;
-import com.pet.domains.post.dto.request.MissingPostCreateParam.Tag;
 import com.pet.domains.post.dto.request.MissingPostUpdateParam;
+import com.pet.domains.post.dto.request.MissingPostUpdateParam.Tag;
 import com.pet.domains.post.dto.response.MissingPostReadResult;
 import com.pet.domains.post.dto.response.MissingPostReadResults;
 import com.pet.domains.post.dto.response.MissingPostReadResults.MissingPost;
@@ -51,7 +51,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
-import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.PageRequest;
@@ -72,7 +71,7 @@ class MissingPostControllerTest extends BaseDocumentationTest {
             "DETECTION", LocalDate.now(), 1L, 1L, "주민센터 앞 골목 근처",
             "01012343323", 1L, "푸들", 10L, "MALE", "410123456789112",
             "찾아주시면 사례하겠습니다.", List.of(
-                Tag.of("춘식이")
+                MissingPostCreateParam.Tag.of("춘식이")
             )
         );
 
@@ -124,8 +123,8 @@ class MissingPostControllerTest extends BaseDocumentationTest {
                     fieldWithPath("townId").type(NUMBER).description("시군구 id"),
                     fieldWithPath("detailAddress").type(STRING).description("상세 및 추가 주소").optional(),
                     fieldWithPath("telNumber").type(STRING).description("연락처"),
-                    fieldWithPath("animalId").type(NUMBER).description("동물 id").optional(),
-                    fieldWithPath("animalKindName").type(STRING).description("품종 이름").optional(),
+                    fieldWithPath("animalId").type(NUMBER).description("동물 id"),
+                    fieldWithPath("animalKindName").type(STRING).description("품종 이름"),
                     fieldWithPath("age").type(NUMBER).description("나이").optional(),
                     fieldWithPath("sex").type(STRING).description("<<sexType,동물 성별>>"),
                     fieldWithPath("chipNumber").type(STRING).description("칩번호").optional(),
@@ -196,7 +195,7 @@ class MissingPostControllerTest extends BaseDocumentationTest {
                     fieldWithPath("data.missingPosts[].id").type(NUMBER).description("게시글 id"),
                     fieldWithPath("data.missingPosts[].city").type(STRING).description("시도 이름"),
                     fieldWithPath("data.missingPosts[].town").type(STRING).description("시군구 이름"),
-                    fieldWithPath("data.missingPosts[].animalKind").type(STRING).description("동물 품종 이름"),
+                    fieldWithPath("data.missingPosts[].animalKindName").type(STRING).description("동물 품종 이름"),
                     fieldWithPath("data.missingPosts[].status").type(STRING).description("<<status,게시물 상태>>"),
                     fieldWithPath("data.missingPosts[].createdAt").type(STRING).description("게시글 작성날짜"),
                     fieldWithPath("data.missingPosts[].sex").type(STRING).description("<<sexType,동물 성별>>"),
@@ -269,7 +268,7 @@ class MissingPostControllerTest extends BaseDocumentationTest {
                     fieldWithPath("data.detailAddress").type(STRING).description("상세 및 추가 주소"),
                     fieldWithPath("data.telNumber").type(STRING).description("연락처"),
                     fieldWithPath("data.animal").type(STRING).description("동물 종류"),
-                    fieldWithPath("data.animalKind").type(STRING).description("동물 품종 이름"),
+                    fieldWithPath("data.animalKindName").type(STRING).description("동물 품종 이름"),
                     fieldWithPath("data.age").type(NUMBER).description("동물 나이"),
                     fieldWithPath("data.sex").type(STRING).description("<<sexType,동물 성별>>"),
                     fieldWithPath("data.chipNumber").type(STRING).description("칩번호"),
@@ -297,10 +296,9 @@ class MissingPostControllerTest extends BaseDocumentationTest {
             Status.DETECTION, LocalDate.now(), 1L, 1L, "주민센터 앞 골목 근처", "01034231111",
             1L, "푸들", 10, SexType.MALE, "410123456789112",
             List.of(
-                MissingPostUpdateParam.PostTag.of("춘식이")
+                Tag.of("춘식이")
             ),
-            "찾아주시면 반드시 사례하겠습니다. 연락주세요.",
-            Lists.emptyList()
+            "찾아주시면 반드시 사례하겠습니다. 연락주세요."
         );
 
         //when
@@ -335,10 +333,9 @@ class MissingPostControllerTest extends BaseDocumentationTest {
                     fieldWithPath("age").type(NUMBER).description("나이"),
                     fieldWithPath("sex").type(STRING).description("<<sexType,동물 성별>>"),
                     fieldWithPath("chipNumber").type(STRING).description("칩번호"),
-                    fieldWithPath("postTags").type(ARRAY).description("해시태그 배열"),
-                    fieldWithPath("postTags[0].name").type(STRING).description("해시태그 내용"),
-                    fieldWithPath("content").type(STRING).description("실종/보호 내용"),
-                    fieldWithPath("files").type(ARRAY).description("게시글의 이미지들")
+                    fieldWithPath("tags").type(ARRAY).description("해시태그 배열"),
+                    fieldWithPath("tags[0].name").type(STRING).description("해시태그 내용"),
+                    fieldWithPath("content").type(STRING).description("실종/보호 내용")
                 ),
                 responseHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)

@@ -27,7 +27,7 @@ public class MissingPostReadResult {
 
     private final String animal;
 
-    private final String animalKind;
+    private final String animalKindName;
 
     private final int age;
 
@@ -53,7 +53,7 @@ public class MissingPostReadResult {
 
     public MissingPostReadResult(
         Long id, Account account, Status status, String date, String city, String town, String detailAddress,
-        String telNumber, String animal, String animalKind, int age, SexType sex, String chipNumber,
+        String telNumber, String animal, String animalKindName, int age, SexType sex, String chipNumber,
         List<Image> images, List<Tag> tags, String content, long viewCount, long bookmarkCount,
         Boolean isBookmark, long commentCount, LocalDateTime createdAt
     ) {
@@ -66,7 +66,7 @@ public class MissingPostReadResult {
         this.detailAddress = detailAddress;
         this.telNumber = telNumber;
         this.animal = animal;
-        this.animalKind = animalKind;
+        this.animalKindName = animalKindName;
         this.age = age;
         this.sex = sex;
         this.chipNumber = chipNumber;
