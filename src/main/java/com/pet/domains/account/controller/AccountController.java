@@ -60,7 +60,7 @@ public class AccountController {
         accountService.sendEmail(accountEmailParam.getEmail());
     }
 
-    @PatchMapping(path = "/send-password")
+    @PatchMapping(path = "/send-password", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void sendPassword(@Valid @RequestBody AccountEmailParam param) {
         accountService.sendPassword(param.getEmail());
@@ -128,7 +128,7 @@ public class AccountController {
         accountService.updateArea(account, accountAreaUpdateParam);
     }
 
-    @DeleteMapping(path = "/me/areas/{areaId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(path = "/me/areas/{areaId}")
     public void deleteAccountArea(@LoginAccount Account account, @PathVariable Long areaId) {
         accountService.deleteArea(account, areaId);
     }
