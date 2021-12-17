@@ -12,7 +12,6 @@ import com.pet.common.oauth2.OAuth2AuthenticationSuccessHandler;
 import com.pet.common.property.JwtProperty;
 import com.pet.domains.account.service.AccountService;
 import java.io.IOException;
-import java.util.List;
 import java.util.Objects;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -147,9 +146,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(
-            List.of("http://localhost:3000", "http://127.0.0.1:3000")
-        );
+        configuration.addAllowedOrigin("*");
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         configuration.setAllowCredentials(true);
