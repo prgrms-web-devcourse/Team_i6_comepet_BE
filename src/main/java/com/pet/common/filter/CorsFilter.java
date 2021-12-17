@@ -1,4 +1,4 @@
-package com.pet.common.Filter;
+package com.pet.common.filter;
 
 import java.io.IOException;
 import javax.servlet.Filter;
