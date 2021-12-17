@@ -1,5 +1,7 @@
 package com.pet.domains.post.controller;
 
+import static com.pet.domains.docs.utils.ApiDocumentUtils.getDocumentRequest;
+import static com.pet.domains.docs.utils.ApiDocumentUtils.getDocumentResponse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -10,9 +12,6 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.JsonFieldType.ARRAY;
 import static org.springframework.restdocs.payload.JsonFieldType.BOOLEAN;
 import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
@@ -80,8 +79,8 @@ class ShelterPostControllerTest extends BaseDocumentationTest {
             .andDo(print())
             .andExpect(status().isOk())
             .andDo(document("get-shelter-posts",
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()),
+                getDocumentRequest(),
+                getDocumentResponse(),
                 requestHeaders(
                     headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE),
                     headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token - optional").optional()
@@ -158,8 +157,8 @@ class ShelterPostControllerTest extends BaseDocumentationTest {
             .andDo(print())
             .andExpect(status().isOk())
             .andDo(document("get-shelter-post",
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()),
+                getDocumentRequest(),
+                getDocumentResponse(),
                 pathParameters(
                     parameterWithName("postId").description("게시글 아이디")
                 ),
@@ -213,8 +212,8 @@ class ShelterPostControllerTest extends BaseDocumentationTest {
             .andDo(print())
             .andExpect(status().isCreated())
             .andDo(document("create-shelter-post-bookmark",
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()),
+                getDocumentRequest(),
+                getDocumentResponse(),
                 pathParameters(
                     parameterWithName("postId").description("게시글 아이디")
                 ),
@@ -238,8 +237,8 @@ class ShelterPostControllerTest extends BaseDocumentationTest {
             .andDo(print())
             .andExpect(status().isNoContent())
             .andDo(document("delete-shelter-post-bookmark",
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()),
+                getDocumentRequest(),
+                getDocumentResponse(),
                 pathParameters(
                     parameterWithName("postId").description("게시글 아이디")
                 ),
