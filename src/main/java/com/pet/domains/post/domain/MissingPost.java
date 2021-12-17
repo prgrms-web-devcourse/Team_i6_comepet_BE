@@ -23,7 +23,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Version;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -82,9 +81,6 @@ public class MissingPost extends DeletableEntity {
 
     @Column(name = "thumbnail")
     private String thumbnail;
-
-    @Version
-    private long version;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(

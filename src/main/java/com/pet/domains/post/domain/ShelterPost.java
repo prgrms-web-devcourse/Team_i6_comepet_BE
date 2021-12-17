@@ -16,7 +16,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Version;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -100,9 +99,6 @@ public class ShelterPost extends BaseEntity {
 
     @Column(name = "bookmark_count", columnDefinition = "BIGINT default 0")
     private long bookmarkCount;
-
-    @Version
-    private long version;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
