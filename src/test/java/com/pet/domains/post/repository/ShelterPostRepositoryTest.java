@@ -133,8 +133,7 @@ class ShelterPostRepositoryTest {
         Page<ShelterPostWithIsBookmark> pageResult = shelterPostRepository.findAllWithIsBookmark(
             account,
             PageRequest.of(0, 10),
-            PostSearchParam.
-                builder()
+            PostSearchParam.builder()
                 .city(city.getId())
                 .sex(SexType.UNKNOWN)
                 .build()
