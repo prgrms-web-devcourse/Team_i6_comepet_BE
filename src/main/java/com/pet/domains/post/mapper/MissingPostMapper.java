@@ -152,10 +152,12 @@ public interface MissingPostMapper {
     }
 
     @Mappings({
-        @Mapping(target = "account", expression = "java(toMissingPostAccountDto(missingPostWithIsBookmark.getMissingPost().getAccount()))"),
+        @Mapping(target = "account",
+            expression = "java(toMissingPostAccountDto(missingPostWithIsBookmark.getMissingPost().getAccount()))"),
         @Mapping(target = "status", source = "missingPostWithIsBookmark.missingPost.status"),
         @Mapping(target = "date", source = "missingPostWithIsBookmark.missingPost.date"),
-        @Mapping(target = "city", expression = "java(missingPostWithIsBookmark.getMissingPost().getTown().getCity().getName())"),
+        @Mapping(target = "city",
+            expression = "java(missingPostWithIsBookmark.getMissingPost().getTown().getCity().getName())"),
         @Mapping(target = "town", expression = "java(missingPostWithIsBookmark.getMissingPost().getTown().getName())"),
         @Mapping(target = "detailAddress", source = "missingPostWithIsBookmark.missingPost.detailAddress"),
         @Mapping(target = "telNumber", source = "missingPostWithIsBookmark.missingPost.telNumber"),
@@ -164,8 +166,10 @@ public interface MissingPostMapper {
         @Mapping(target = "age", source = "missingPostWithIsBookmark.missingPost.age"),
         @Mapping(target = "sex", source = "missingPostWithIsBookmark.missingPost.sexType"),
         @Mapping(target = "chipNumber", source = "missingPostWithIsBookmark.missingPost.chipNumber"),
-        @Mapping(target = "images", expression = "java(toMissingPostImageResult(missingPostWithIsBookmark.getMissingPost().getPostImages()))"),
-        @Mapping(target = "tags", expression = "java(toMissingPostTagResult(missingPostWithIsBookmark.getMissingPost().getPostTags()))"),
+        @Mapping(target = "images",
+            expression = "java(toMissingPostImageResult(missingPostWithIsBookmark.getMissingPost().getPostImages()))"),
+        @Mapping(target = "tags",
+            expression = "java(toMissingPostTagResult(missingPostWithIsBookmark.getMissingPost().getPostTags()))"),
         @Mapping(target = "content", source = "missingPostWithIsBookmark.missingPost.content"),
         @Mapping(target = "viewCount", source = "missingPostWithIsBookmark.missingPost.viewCount"),
         @Mapping(target = "bookmarkCount", source = "missingPostWithIsBookmark.missingPost.bookmarkCount"),
