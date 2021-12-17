@@ -73,11 +73,9 @@ public class MissingPost extends DeletableEntity {
     @Column(name = "view_count", columnDefinition = "BIGINT default 0", nullable = false)
     private long viewCount;
 
-    // TODO: 2021/12/16  @Version
     @Column(name = "bookmark_count", columnDefinition = "BIGINT default 0", nullable = false)
     private long bookmarkCount;
 
-    // TODO @Version
     @Column(name = "comment_count", columnDefinition = "BIGINT default 0", nullable = false)
     private long commentCount;
 
@@ -160,7 +158,7 @@ public class MissingPost extends DeletableEntity {
     }
 
     public void decreaseCommentCount() {
-        if (this.commentCount != 0) {
+        if (this.commentCount > 0) {
             this.commentCount -= 1;
         }
     }
