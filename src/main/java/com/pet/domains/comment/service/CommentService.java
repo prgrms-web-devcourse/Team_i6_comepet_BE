@@ -6,11 +6,15 @@ import com.pet.domains.account.domain.Account;
 import com.pet.domains.comment.domain.Comment;
 import com.pet.domains.comment.dto.request.CommentCreateParam;
 import com.pet.domains.comment.dto.request.CommentUpdateParam;
+import com.pet.domains.comment.dto.response.CommentPageResults;
+import com.pet.domains.comment.mapper.CommentMapper;
 import com.pet.domains.comment.repository.CommentRepository;
 import com.pet.domains.post.domain.MissingPost;
 import com.pet.domains.post.repository.MissingPostRepository;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +26,13 @@ public class CommentService {
     private final CommentRepository commentRepository;
 
     private final MissingPostRepository missingPostRepository;
+
+    private final CommentMapper commentMapper;
+
+    public CommentPageResults getMissingPostComments(Long postId, Pageable pageable) {
+        Page<Comment> commentPage = commentRepository.findAllByMissingPostId(postId, pageable);
+        return commentMapper.toCommentPageResults(commentPage);
+    }
 
     @Transactional
     public Long createComment(Account account, CommentCreateParam commentCreateParam) {

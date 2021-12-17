@@ -77,11 +77,9 @@ public class MissingPostService {
         if (!CollectionUtils.isEmpty(tags)) {
             postTagService.createPostTag(tags, mappingMissingPost);
         }
+        createPostImage(imageFiles, mappingMissingPost);
 
-        MissingPost createMissingPost = missingPostRepository.save(mappingMissingPost);
-        createPostImage(imageFiles, createMissingPost);
-
-        return createMissingPost.getId();
+        return missingPostRepository.save(mappingMissingPost).getId();
     }
 
     @Transactional
@@ -89,8 +87,6 @@ public class MissingPostService {
         MissingPost getMissingPost = missingPostRepository.findById(postId)
             .filter(post -> post.getAccount().getId().equals(account.getId()))
             .orElseThrow(ExceptionMessage.UN_IDENTIFICATION::getException);
-
-        postImageRepository.deleteAllByMissingPostId(getMissingPost.getId());
         commentRepository.deleteAllByMissingPostId(getMissingPost.getId());
 
         List<PostTag> getPostTags = postTagRepository.getPostTagsByMissingPostId(getMissingPost.getId());
@@ -100,7 +96,7 @@ public class MissingPostService {
     }
 
     public MissingPostReadResults getMissingPostsPage(Pageable pageable) {
-        Page<MissingPost> pageResult = missingPostRepository.findAllByDeletedIsFalse(pageable);
+        Page<MissingPost> pageResult = missingPostRepository.findAlWithFetch(pageable);
         return missingPostMapper.toMissingPostResults(pageResult);
     }
 
@@ -118,13 +114,12 @@ public class MissingPostService {
         return thumbnail;
     }
 
-    private void createPostImage(List<Image> imageFiles, MissingPost createMissingPost) {
+    private void createPostImage(List<Image> imageFiles, MissingPost mappingMissingPost) {
         if (!CollectionUtils.isEmpty(imageFiles)) {
-            imageFiles.stream().map(image -> PostImage.builder()
-                .missingPost(createMissingPost)
+            imageFiles.forEach(image -> PostImage.builder()
+                .missingPost(mappingMissingPost)
                 .image(image)
-                .build()
-            ).forEach(postImageRepository::save);
+                .build());
         }
     }
 

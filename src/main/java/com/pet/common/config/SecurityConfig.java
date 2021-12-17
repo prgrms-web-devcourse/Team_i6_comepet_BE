@@ -32,6 +32,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.context.SecurityContextPersistenceFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.CorsUtils;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @RequiredArgsConstructor
@@ -92,6 +96,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
             .authorizeRequests()
+            .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
             .antMatchers(OPTIONS, "/**").permitAll()
 
             // 보호소 게시글
@@ -103,6 +108,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers(DELETE, v1("/missing-posts/{postId}")).hasAnyRole(ROLE_USER)
             .antMatchers(POST, v1("/missing-posts/{postId}/bookmark")).hasAnyRole(ROLE_USER)
             .antMatchers(DELETE, v1("/missing-posts/{postId}/bookmark")).hasAnyRole(ROLE_USER)
+            .antMatchers(GET, v1("/missing-posts/{postId}/comments")).hasAnyRole(ROLE_ANONYMOUS)
 
             // 회원, 알림
             .antMatchers(v1("/me/**"), v1("/auth-user"), v1("/notices/**"),
@@ -114,7 +120,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
             .formLogin().disable()
             .csrf().disable()
-            .cors().and()
+            .cors().configurationSource(corsConfigurationSource()).and()
             .headers().disable()
             .httpBasic()
             .authenticationEntryPoint(authenticationEntryPoint()).and()
@@ -134,6 +140,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .accessDeniedHandler(accessDeniedHandler()).and()
 
             .addFilterAfter(jwtAuthenticationFilter(), SecurityContextPersistenceFilter.class);
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        configuration.addAllowedOrigin("*");
+        configuration.addAllowedHeader("*");
+        configuration.addAllowedMethod("*");
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
     private String v1(String url) {

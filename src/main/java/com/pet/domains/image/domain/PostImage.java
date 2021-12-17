@@ -1,6 +1,7 @@
 package com.pet.domains.image.domain;
 
 import com.pet.domains.post.domain.MissingPost;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -52,8 +53,16 @@ public class PostImage {
         ObjectUtils.requireNonEmpty(missingPost, "missingPost must not be null");
         ObjectUtils.requireNonEmpty(image, "image must not be null");
 
-        this.missingPost = missingPost;
+        addMissingPost(missingPost);
         this.image = image;
+    }
+
+    private void addMissingPost(MissingPost missingPost) {
+        if (Objects.nonNull(this.missingPost)) {
+            missingPost.getPostImages().remove(this);
+        }
+        this.missingPost = missingPost;
+        missingPost.getPostImages().add(this);
     }
 
 }

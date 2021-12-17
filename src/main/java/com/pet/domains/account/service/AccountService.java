@@ -32,6 +32,7 @@ import com.pet.infra.MailSender;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -85,9 +86,9 @@ public class AccountService {
     }
 
     @Transactional
-    public void sendPassword(Long accountId) {
+    public void sendPassword(String email) {
         Account account =
-            accountRepository.findById(accountId).orElseThrow(ExceptionMessage.NOT_FOUND_ACCOUNT::getException);
+            accountRepository.findByEmail(email).orElseThrow(ExceptionMessage.NOT_FOUND_ACCOUNT::getException);
         String temporaryPassword = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 10);
         account.updatePassword(passwordEncoder.encode(temporaryPassword));
         mailSender.send(EmailMessage.crateNewPasswordEmailMessage(account.getEmail(), temporaryPassword));
@@ -190,6 +191,7 @@ public class AccountService {
             AccountAreaUpdateParam.Area defaultArea = accountAreaUpdateParam.getAreas().get(0);
             InterestArea interestArea = interestAreaMapper.toEntity(account, defaultArea, findTownByArea(defaultArea));
             interestArea.checkSelect();
+            interestAreaRepository.save(interestArea);
         }
 
         if (areas.size() == 2) {
@@ -222,22 +224,37 @@ public class AccountService {
 
     @Transactional
     public void updateAccount(Account account, AccountUpdateParam accountUpdateParam, MultipartFile accountImage) {
-        if (!StringUtils.equals(accountUpdateParam.getNewPassword(), accountUpdateParam.getNewPasswordCheck())) {
-            log.debug("새로운 비밀번호의 입력값이 다릅니다.");
-            throw ExceptionMessage.INVALID_PASSWORD.getException();
-        }
-        validatePassword(accountUpdateParam.getNewPassword());
+        validatePassword(accountUpdateParam.getNewPassword(), accountUpdateParam.getNewPasswordCheck());
         account.updateProfile(
             accountUpdateParam.getNickname(),
-            passwordEncoder.encode(accountUpdateParam.getNewPassword()),
-            imageService.createImage(accountImage)
+            encodePassword(accountUpdateParam.getNewPassword()),
+            checkNullImage(accountImage)
         );
         accountRepository.save(account);
     }
 
-    private void validatePassword(String newPassword) {
-        if (StringUtils.isNotBlank(newPassword)) {
-            if (!newPassword
+    private Image checkNullImage(MultipartFile accountImage) {
+        if (Objects.nonNull(accountImage)) {
+            return imageService.createImage(accountImage);
+        }
+        return null;
+    }
+
+    private String encodePassword(String password) {
+        if (StringUtils.isNotBlank(password)) {
+            return passwordEncoder.encode(password);
+        }
+        return null;
+    }
+
+    private void validatePassword(String password, String passwordCheck) {
+        if (!StringUtils.equals(password, passwordCheck)) {
+            log.debug("새로운 비밀번호의 입력값이 다릅니다.");
+            throw ExceptionMessage.INVALID_PASSWORD.getException();
+        }
+
+        if (StringUtils.isNotBlank(password)) {
+            if (!password
                 .matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[~!@#$%^&*()+|=])[A-Za-z\\d~!@#$%^&*()+|=]{8,20}$")) {
                 throw ExceptionMessage.INVALID_PASSWORD_REGEX.getException();
             }
@@ -260,14 +277,18 @@ public class AccountService {
     @Transactional
     public void deleteArea(Account account, Long areaId) {
         List<InterestArea> interestAreas = interestAreaRepository.findByAccountId(account.getId());
-        interestAreas.remove(interestAreas.stream()
+        InterestArea deletedArea = interestAreas.stream()
             .filter(interestArea -> interestArea.getId().equals(areaId))
             .findAny()
-            .orElseThrow(ExceptionMessage.NOT_FOUND_INTEREST_AREA::getException));
+            .orElseThrow(ExceptionMessage.NOT_FOUND_INTEREST_AREA::getException);
+        interestAreas.remove(deletedArea);
+
+        interestAreaRepository.delete(deletedArea);
 
         // 관심 지역을 하나 삭제하고 하나가 더 남아있는 경우 selected == false -> true
-        if (!interestAreas.isEmpty()) {
-            interestAreas.forEach(InterestArea::checkSelect);
+        if (interestAreas.size() == 1) {
+            InterestArea interestArea = interestAreas.get(0);
+            interestArea.checkSelect();
         }
 
     }

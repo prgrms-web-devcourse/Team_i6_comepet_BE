@@ -135,7 +135,10 @@ public class Account extends DeletableEntity {
         if (StringUtils.isNotBlank(password)) {
             this.password = password;
         }
-        this.image = image;
+
+        if (Objects.nonNull(image)) {
+            this.image = image;
+        }
     }
 
     public void updatePassword(String newPassword) {
