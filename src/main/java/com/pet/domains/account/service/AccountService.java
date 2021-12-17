@@ -183,6 +183,7 @@ public class AccountService {
             AccountAreaUpdateParam.Area defaultArea = accountAreaUpdateParam.getAreas().get(0);
             InterestArea interestArea = interestAreaMapper.toEntity(account, defaultArea, findTownByArea(defaultArea));
             interestArea.checkSelect();
+            interestAreaRepository.save(interestArea);
         }
 
         if (areas.size() == 2) {
@@ -268,14 +269,18 @@ public class AccountService {
     @Transactional
     public void deleteArea(Account account, Long areaId) {
         List<InterestArea> interestAreas = interestAreaRepository.findByAccountId(account.getId());
-        interestAreas.remove(interestAreas.stream()
+        InterestArea deletedArea = interestAreas.stream()
             .filter(interestArea -> interestArea.getId().equals(areaId))
             .findAny()
-            .orElseThrow(ExceptionMessage.NOT_FOUND_INTEREST_AREA::getException));
+            .orElseThrow(ExceptionMessage.NOT_FOUND_INTEREST_AREA::getException);
+        interestAreas.remove(deletedArea);
+
+        interestAreaRepository.delete(deletedArea);
 
         // 관심 지역을 하나 삭제하고 하나가 더 남아있는 경우 selected == false -> true
-        if (!interestAreas.isEmpty()) {
-            interestAreas.forEach(InterestArea::checkSelect);
+        if (interestAreas.size() == 1) {
+            InterestArea interestArea = interestAreas.get(0);
+            interestArea.checkSelect();
         }
 
     }
