@@ -116,11 +116,10 @@ public class MissingPostService {
 
     private void createPostImage(List<Image> imageFiles, MissingPost mappingMissingPost) {
         if (!CollectionUtils.isEmpty(imageFiles)) {
-            imageFiles.stream().map(image -> PostImage.builder()
+            imageFiles.forEach(image -> PostImage.builder()
                 .missingPost(mappingMissingPost)
                 .image(image)
-                .build()
-            ).forEach(postImageRepository::save);
+                .build());
         }
     }
 
