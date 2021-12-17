@@ -14,7 +14,6 @@ import com.pet.domains.post.service.MissingPostService;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.StringJoiner;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -88,11 +87,6 @@ public class MissingPostController {
     public ApiResponse<Map<String, Long>> updateMissingPost(
         @PathVariable Long postId, @RequestBody MissingPostUpdateParam missingPostUpdateParam
     ) {
-        List<MultipartFile> images = missingPostUpdateParam.getFiles();
-        StringJoiner stringJoiner = new StringJoiner(",", "[", "]");
-        images.stream().map(MultipartFile::getName).forEach(stringJoiner::add);
-
-        log.info("post image size: {}, names: {} ", images.size(), stringJoiner);
         return ApiResponse.ok(Map.of(RETURN_KEY, 1L));
     }
 
