@@ -30,7 +30,7 @@ public interface MissingPostRepository extends JpaRepository<MissingPost, Long> 
 
     @EntityGraph(attributePaths = {"animalKind", "animalKind.animal", "town", "town.city", "account",
         "account.group"}, type = EntityGraphType.LOAD)
-    @Query("SELECT mp as missingPost, mpb.id IS NOT NULL as isBookmark FROM MissingPost mp "
+    @Query("SELECT distinct mp as missingPost, mpb.id IS NOT NULL as isBookmark FROM MissingPost mp "
         + "LEFT OUTER JOIN MissingPostBookmark mpb ON :postId = mpb.missingPost.id AND mpb.account = :account")
     Optional<MissingPostWithIsBookmark> findByIdAndWithIsBookmarkAccount(Account account, Long postId);
 

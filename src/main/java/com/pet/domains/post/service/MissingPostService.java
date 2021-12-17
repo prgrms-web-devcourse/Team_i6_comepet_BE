@@ -112,8 +112,8 @@ public class MissingPostService {
     }
 
     public MissingPostReadResult getMissingPostOneWithAccount(Account account, Long postId) {
-        missingPostRepository.findByIdAndWithIsBookmarkAccount(account, postId);
-        return null;
+        return missingPostMapper.toMissingPostDto(
+            missingPostRepository.findByIdAndWithIsBookmarkAccount(account, postId).get());
     }
 
     private String getThumbnail(List<Image> imageFiles) {
