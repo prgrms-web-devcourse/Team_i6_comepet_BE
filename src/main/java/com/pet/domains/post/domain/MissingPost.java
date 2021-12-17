@@ -28,6 +28,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.Validate;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -73,11 +74,9 @@ public class MissingPost extends DeletableEntity {
     @Column(name = "view_count", columnDefinition = "BIGINT default 0", nullable = false)
     private long viewCount;
 
-    // TODO: 2021/12/16  @Version
     @Column(name = "bookmark_count", columnDefinition = "BIGINT default 0", nullable = false)
     private long bookmarkCount;
 
-    // TODO @Version
     @Column(name = "comment_count", columnDefinition = "BIGINT default 0", nullable = false)
     private long commentCount;
 
@@ -110,9 +109,11 @@ public class MissingPost extends DeletableEntity {
     )
     private AnimalKind animalKind;
 
+    @BatchSize(size = 10)
     @OneToMany(mappedBy = "missingPost", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostTag> postTags = new ArrayList<>();
 
+    @BatchSize(size = 5)
     @OneToMany(mappedBy = "missingPost", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostImage> postImages = new ArrayList<>();
 
@@ -145,6 +146,16 @@ public class MissingPost extends DeletableEntity {
         this.animalKind = animalKind;
     }
 
+    public void increaseViewCount() {
+        this.viewCount += 1;
+    }
+
+    public void decreaseViewCount() {
+        if (this.viewCount > 0) {
+            this.viewCount -= 1;
+        }
+    }
+
     public void increaseBookCount() {
         this.bookmarkCount += 1;
     }
@@ -160,7 +171,7 @@ public class MissingPost extends DeletableEntity {
     }
 
     public void decreaseCommentCount() {
-        if (this.commentCount != 0) {
+        if (this.commentCount > 0) {
             this.commentCount -= 1;
         }
     }

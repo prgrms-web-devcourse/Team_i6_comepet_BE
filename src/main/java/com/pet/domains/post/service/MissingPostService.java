@@ -1,6 +1,7 @@
 package com.pet.domains.post.service;
 
 import com.pet.common.exception.ExceptionMessage;
+import com.pet.common.util.OptimisticLockingHandlingUtils;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.animal.domain.AnimalKind;
 import com.pet.domains.animal.service.AnimalKindService;
@@ -13,6 +14,7 @@ import com.pet.domains.image.repository.PostImageRepository;
 import com.pet.domains.image.service.ImageService;
 import com.pet.domains.post.domain.MissingPost;
 import com.pet.domains.post.dto.request.MissingPostCreateParam;
+import com.pet.domains.post.dto.response.MissingPostReadResult;
 import com.pet.domains.post.dto.response.MissingPostReadResults;
 import com.pet.domains.post.mapper.MissingPostMapper;
 import com.pet.domains.post.repository.MissingPostRepository;
@@ -22,11 +24,12 @@ import com.pet.domains.tag.domain.Tag;
 import com.pet.domains.tag.repository.PostTagRepository;
 import com.pet.domains.tag.service.PostTagService;
 import com.pet.domains.tag.service.TagService;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -63,6 +66,9 @@ public class MissingPostService {
     @Transactional
     public Long createMissingPost(MissingPostCreateParam missingPostCreateParam, List<MultipartFile> multipartFiles,
         Account account) {
+        if (multipartFiles.size() > 3) {
+            throw ExceptionMessage.INVALID_IMAGE_COUNT.getException();
+        }
         AnimalKind animalKind = animalKindService.getOrCreateAnimalKind(missingPostCreateParam.getAnimalId(),
             missingPostCreateParam.getAnimalKindName());
         Town town = townRepository.getById(missingPostCreateParam.getTownId());
@@ -90,20 +96,41 @@ public class MissingPostService {
         commentRepository.deleteAllByMissingPostId(getMissingPost.getId());
 
         List<PostTag> getPostTags = postTagRepository.getPostTagsByMissingPostId(getMissingPost.getId());
-        tagService.decreaseTagCount(getPostTags);
+        OptimisticLockingHandlingUtils.handling(
+            () -> tagService.decreaseTagCount(getPostTags),
+            5,
+            "게시글 삭제시 태그 카운트 감소"
+        );
 
         missingPostRepository.deleteById(getMissingPost.getId());
     }
 
     public MissingPostReadResults getMissingPostsPage(Pageable pageable) {
-        Page<MissingPost> pageResult = missingPostRepository.findAlWithFetch(pageable);
-        return missingPostMapper.toMissingPostResults(pageResult);
+        Page<MissingPost> pageResult = missingPostRepository.findAllWithFetch(pageable);
+        return missingPostMapper.toMissingPostsResults(pageResult);
     }
 
     public MissingPostReadResults getMissingPostsPageWithAccount(Account account, Pageable pageable) {
         Page<MissingPostWithIsBookmark> pageResult =
             missingPostRepository.findAllWithIsBookmarkAccountByDeletedIsFalse(account, pageable);
-        return missingPostMapper.toMissingPostWithBookmarkResults(pageResult);
+        return missingPostMapper.toMissingPostsWithBookmarkResults(pageResult);
+    }
+
+    @Transactional
+    public MissingPostReadResult getMissingPostOne(Long postId) {
+        MissingPost missingPost =
+            missingPostRepository.findByMissingPostId(postId)
+                .orElseThrow(ExceptionMessage.NOT_FOUND_MISSING_POST::getException);
+        missingPost.increaseViewCount();
+        return missingPostMapper.toMissingPostDto(missingPost);
+    }
+
+    @Transactional
+    public MissingPostReadResult getMissingPostOneWithAccount(Account account, Long postId) {
+        MissingPostWithIsBookmark missingPostWithIsBookmark =
+            missingPostRepository.findByIdAndWithIsBookmarkAccount(account, postId);
+        missingPostWithIsBookmark.getMissingPost().increaseViewCount();
+        return missingPostMapper.toMissingPostDto(missingPostWithIsBookmark);
     }
 
     private String getThumbnail(List<Image> imageFiles) {
@@ -124,25 +151,16 @@ public class MissingPostService {
     }
 
     private List<Image> uploadAndGetImages(List<MultipartFile> multipartFiles) {
-        List<Image> imageFiles = new ArrayList<>();
-        if (!CollectionUtils.isEmpty(multipartFiles)) {
-            imageFiles = multipartFiles.stream()
-                .map(imageService::createImage)
-                .collect(Collectors.toList());
-        }
-        return imageFiles;
+        return multipartFiles.stream()
+            .filter(multipartFile -> !StringUtils.isEmpty(multipartFile.getOriginalFilename()))
+            .map(imageService::createImage).collect(Collectors.toList());
     }
 
     private List<Tag> getTags(MissingPostCreateParam missingPostCreateParam) {
-        List<Tag> tags = new ArrayList<>();
-        if (!CollectionUtils.isEmpty(missingPostCreateParam.getTags())) {
-            tags =
-                missingPostCreateParam.getTags()
-                    .stream()
-                    .map(tag -> tagService.getOrCreateByTagName(tag.getName()))
-                    .collect(Collectors.toList());
-        }
-        return tags;
+        return Objects.requireNonNull(missingPostCreateParam.getTags())
+            .stream()
+            .map(tag -> tagService.getOrCreateByTagName(tag.getName()))
+            .collect(Collectors.toList());
     }
 
 }
