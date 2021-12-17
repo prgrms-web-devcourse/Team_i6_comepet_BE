@@ -22,7 +22,6 @@ import com.pet.domains.auth.service.AuthenticationService;
 import com.pet.domains.post.domain.SexType;
 import com.pet.domains.post.domain.Status;
 import com.pet.domains.post.service.MissingPostService;
-import com.pet.domains.post.service.ShelterApiService;
 import com.pet.domains.post.service.ShelterPostService;
 import java.time.LocalDate;
 import java.util.List;
@@ -143,31 +142,10 @@ public class AccountController {
 
     @GetMapping(path = "/me/posts", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<AccountMissingPostPageResults> getAccountPosts() {
-        return ApiResponse.ok(
-            AccountMissingPostPageResults.of(
-                LongStream.range(1, 9)
-                    .mapToObj(index -> AccountMissingPostPageResults.Post.of(
-                        index,
-                        "서울특별시",
-                        "도봉구",
-                        "토이푸들",
-                        Status.DETECTION,
-                        LocalDate.of(2021, 11, 3),
-                        SexType.FEMALE,
-                        true,
-                        2,
-                        List.of(
-                            AccountMissingPostPageResults.Post.Tag.of(123L, "암컷"),
-                            AccountMissingPostPageResults.Post.Tag.of(431L, "5살"),
-                            AccountMissingPostPageResults.Post.Tag.of(256L, "4kg"),
-                            AccountMissingPostPageResults.Post.Tag.of(1246L, "사람 좋아함")
-                        ),
-                        "http://../../97fd3403-7343-497a-82fa-c41d26ccf0f8.png"
-                    ))
-                    .collect(toList()), 8, true, 1)
-        );
-
+    public ApiResponse<AccountMissingPostPageResults> getAccountPosts(
+        @LoginAccount Account account, Pageable pageable
+    ) {
+        return ApiResponse.ok(accountService.getAccountPosts(account.getId(), pageable));
     }
 
     @GetMapping(path = "/me/bookmarks", produces = MediaType.APPLICATION_JSON_VALUE)

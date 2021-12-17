@@ -45,6 +45,11 @@ import com.pet.domains.account.dto.response.AccountBookmarkPostPageResults;
 import com.pet.domains.account.dto.response.AccountReadResult;
 import com.pet.domains.docs.BaseDocumentationTest;
 import com.pet.domains.post.domain.SexType;
+import com.pet.domains.account.dto.response.AccountMissingPostPageResults;
+import com.pet.domains.account.dto.response.AccountReadResult;
+import com.pet.domains.docs.BaseDocumentationTest;
+import com.pet.domains.post.domain.SexType;
+import com.pet.domains.post.domain.Status;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
@@ -384,6 +389,26 @@ class AccountControllerTest extends BaseDocumentationTest {
     @DisplayName("회원 게시물 조회")
     void getAccountMissingPostsTest() throws Exception {
         // given
+        given(accountService.getAccountPosts(any(), any())).willReturn(AccountMissingPostPageResults.of(
+            LongStream.range(1, 9)
+                .mapToObj(index -> AccountMissingPostPageResults.Post.of(
+                    index,
+                    "서울특별시",
+                    "도봉구",
+                    "토이푸들",
+                    Status.DETECTION,
+                    LocalDate.of(2021, 11, 3),
+                    SexType.FEMALE,
+                    2,
+                    List.of(
+                        AccountMissingPostPageResults.Post.Tag.of(123L, "암컷"),
+                        AccountMissingPostPageResults.Post.Tag.of(431L, "5살"),
+                        AccountMissingPostPageResults.Post.Tag.of(256L, "4kg"),
+                        AccountMissingPostPageResults.Post.Tag.of(1246L, "사람 좋아함")
+                    ),
+                    "http://../../97fd3403-7343-497a-82fa-c41d26ccf0f8.png"
+                ))
+                .collect(toList()), 8, true, 1));
         // when
         ResultActions resultActions = mockMvc.perform(get("/api/v1/me/posts"));
         // then
@@ -406,7 +431,6 @@ class AccountControllerTest extends BaseDocumentationTest {
                     fieldWithPath("data.posts[0].status").type(STRING).description("게시물 상태"),
                     fieldWithPath("data.posts[0].date").type(STRING).description("게시물 등록 날짜"),
                     fieldWithPath("data.posts[0].sex").type(STRING).description("성별"),
-                    fieldWithPath("data.posts[0].isBookmark").type(BOOLEAN).description("북마크 여부"),
                     fieldWithPath("data.posts[0].bookmarkCount").type(NUMBER).description("북마크 수"),
                     fieldWithPath("data.posts[0].postTags").type(ARRAY).description("게시물 태그"),
                     fieldWithPath("data.posts[0].postTags[0].id").type(NUMBER).description("게시물 태그 id"),

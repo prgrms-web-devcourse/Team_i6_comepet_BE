@@ -28,6 +28,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.Validate;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -108,9 +109,11 @@ public class MissingPost extends DeletableEntity {
     )
     private AnimalKind animalKind;
 
+    @BatchSize(size = 10)
     @OneToMany(mappedBy = "missingPost", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostTag> postTags = new ArrayList<>();
 
+    @BatchSize(size = 5)
     @OneToMany(mappedBy = "missingPost", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostImage> postImages = new ArrayList<>();
 
@@ -141,6 +144,16 @@ public class MissingPost extends DeletableEntity {
         this.account = account;
         this.town = town;
         this.animalKind = animalKind;
+    }
+
+    public void increaseViewCount() {
+        this.viewCount += 1;
+    }
+
+    public void decreaseViewCount() {
+        if (this.viewCount > 0) {
+            this.viewCount -= 1;
+        }
     }
 
     public void increaseBookCount() {

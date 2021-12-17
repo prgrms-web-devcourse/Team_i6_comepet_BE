@@ -41,7 +41,7 @@ public class PostTag extends BaseEntity {
     )
     private MissingPost missingPost;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(
         name = "tag_id",
         referencedColumnName = "id",
