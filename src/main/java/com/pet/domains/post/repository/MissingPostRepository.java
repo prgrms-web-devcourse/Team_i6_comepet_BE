@@ -34,4 +34,8 @@ public interface MissingPostRepository extends JpaRepository<MissingPost, Long> 
         + "WHERE mp.id = :postId")
     MissingPostWithIsBookmark findByIdAndWithIsBookmarkAccount(Account account, Long postId);
 
+    @EntityGraph(attributePaths = {"animalKind", "town", "town.city"},
+        type = EntityGraphType.LOAD)
+    Page<MissingPost> findByAccountId(Long accountId, Pageable pageable);
+
 }
