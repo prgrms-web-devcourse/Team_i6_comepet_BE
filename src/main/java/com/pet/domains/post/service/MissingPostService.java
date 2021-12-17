@@ -96,7 +96,7 @@ public class MissingPostService {
     }
 
     public MissingPostReadResults getMissingPostsPage(Pageable pageable) {
-        Page<MissingPost> pageResult = missingPostRepository.findAllByDeletedIsFalse(pageable);
+        Page<MissingPost> pageResult = missingPostRepository.findAlWithFetch(pageable);
         return missingPostMapper.toMissingPostResults(pageResult);
     }
 
