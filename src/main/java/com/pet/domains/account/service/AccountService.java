@@ -78,9 +78,9 @@ public class AccountService {
     }
 
     @Transactional
-    public void sendPassword(Long accountId) {
+    public void sendPassword(String email) {
         Account account =
-            accountRepository.findById(accountId).orElseThrow(ExceptionMessage.NOT_FOUND_ACCOUNT::getException);
+            accountRepository.findByEmail(email).orElseThrow(ExceptionMessage.NOT_FOUND_ACCOUNT::getException);
         String temporaryPassword = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 10);
         account.updatePassword(passwordEncoder.encode(temporaryPassword));
         mailSender.send(EmailMessage.crateNewPasswordEmailMessage(account.getEmail(), temporaryPassword));

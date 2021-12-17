@@ -62,8 +62,8 @@ public class AccountController {
 
     @PatchMapping(path = "/send-password")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void sendPassword(@LoginAccount Account account) {
-        accountService.sendPassword(account.getId());
+    public void sendPassword(@Valid @RequestBody AccountEmailParam param) {
+        accountService.sendPassword(param.getEmail());
     }
 
     @PostMapping(path = "/verify-email", consumes = MediaType.APPLICATION_JSON_VALUE)
