@@ -41,7 +41,7 @@ public class MissingPostReadResults {
 
         private final String town;
 
-        private final String animalKind;
+        private final String animalKindName;
 
         private final Status status;
 
@@ -58,13 +58,13 @@ public class MissingPostReadResults {
         private final List<MissingPostReadResults.MissingPost.Tag> tags;
 
         public MissingPost(
-            Long id, String city, String town, String animalKind, Status status, LocalDateTime createdAt,
+            Long id, String city, String town, String animalKindName, Status status, LocalDateTime createdAt,
             SexType sex, boolean isBookmark, long bookmarkCount, String thumbnail, List<Tag> tags
         ) {
             this.id = id;
             this.city = city;
             this.town = town;
-            this.animalKind = animalKind;
+            this.animalKindName = animalKindName;
             this.status = status;
             this.createdAt = createdAt;
             this.sex = sex;
@@ -76,10 +76,10 @@ public class MissingPostReadResults {
 
         public static MissingPost of(
             Long id, String city, String town, String animalKind, Status status, LocalDateTime createdAt,
-            SexType sex, boolean isBookmark, long bookmarkCount, String thumbnail, List<Tag> postTag
+            SexType sex, boolean isBookmark, long bookmarkCount, String thumbnail, List<Tag> tags
         ) {
             return new MissingPost(
-                id, city, town, animalKind, status, createdAt, sex, isBookmark, bookmarkCount, thumbnail, postTag
+                id, city, town, animalKind, status, createdAt, sex, isBookmark, bookmarkCount, thumbnail, tags
             );
         }
 

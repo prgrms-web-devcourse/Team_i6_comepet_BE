@@ -1,5 +1,6 @@
 package com.pet.domains.tag.service;
 
+import com.pet.common.util.OptimisticLockingHandlingUtils;
 import com.pet.domains.tag.domain.PostTag;
 import com.pet.domains.tag.domain.Tag;
 import com.pet.domains.tag.repository.TagRepository;
@@ -19,7 +20,11 @@ public class TagService {
     public Tag getOrCreateByTagName(String tagName) {
         return tagRepository.findTagByName(tagName)
             .map(tag -> {
-                tag.increaseCount();
+                OptimisticLockingHandlingUtils.handling(
+                    tag::increaseCount,
+                    5,
+                    "태그 카운트 증가 로직"
+                );
                 return tag;
             })
             .orElseGet(() -> tagRepository.save(

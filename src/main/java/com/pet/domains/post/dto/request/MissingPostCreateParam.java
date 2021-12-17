@@ -28,30 +28,30 @@ public class MissingPostCreateParam {
     @NotNull(message = "시군구를 선택해주세요.")
     private Long townId;
 
-    @Length(max = 255, message = "범위이내의 상세주소를 입력해주세요.")
     @Nullable
+    @Length(max = 255, message = "범위이내의 상세주소를 입력해주세요.")
     private String detailAddress;
 
     @Length(max = 15, message = "범위이내의 전화번호를 입력해주세요.")
     @NotBlank(message = "전화번호를 입력해주세요.")
     private String telNumber;
 
-    @Nullable
+    @NotNull(message = "동물을 선택해주세요.")
     private Long animalId;
 
     @Length(max = 50, message = "범위이내의 품종을 입력해주세요.")
-    @Nullable
+    @NotBlank(message = "품종을 입력해주세요.")
     private String animalKindName;
 
     @Max(value = 500, message = "범위이내의 나이를 입력해주세요.")
-    @Nullable
+    @NotNull(message = "동물을 입력해주세요.")
     private Long age;
 
     @NotBlank(message = "성별을 선택해주세요.")
     private String sex;
 
-    @Length(max = 15, message = "범위이내의 칩번호를 입력해주세요.")
     @Nullable
+    @Length(max = 15, message = "범위이내의 칩번호를 입력해주세요.")
     private String chipNumber;
 
     @Length(max = 255, message = "범위이내의 내용을 입력해주세요.")

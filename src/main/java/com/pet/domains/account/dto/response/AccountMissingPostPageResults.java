@@ -12,20 +12,20 @@ public class AccountMissingPostPageResults {
 
     private final List<Post> posts;
 
-    private final int totalElements;
+    private final long totalElements;
 
     private final boolean last;
 
     private final int size;
 
-    public AccountMissingPostPageResults(List<Post> posts, int totalElements, boolean last, int size) {
+    public AccountMissingPostPageResults(List<Post> posts, long totalElements, boolean last, int size) {
         this.posts = posts;
         this.totalElements = totalElements;
         this.last = last;
         this.size = size;
     }
 
-    public static AccountMissingPostPageResults of(List<Post> posts, int totalElements, boolean last, int size) {
+    public static AccountMissingPostPageResults of(List<Post> posts, long totalElements, boolean last, int size) {
         return new AccountMissingPostPageResults(posts, totalElements, last, size);
     }
 
@@ -46,8 +46,6 @@ public class AccountMissingPostPageResults {
 
         private final SexType sex;
 
-        private final boolean isBookmark;
-
         private final int bookmarkCount;
 
         private final List<Post.Tag> postTags;
@@ -55,7 +53,7 @@ public class AccountMissingPostPageResults {
         private final String thumbnail;
 
         public Post(Long id, String city, String town, String animalKind, Status status, LocalDate date,
-            SexType sex, boolean isBookmark, int bookmarkCount, List<Tag> postTags, String thumbnail) {
+            SexType sex, int bookmarkCount, List<Tag> postTags, String thumbnail) {
             this.id = id;
             this.city = city;
             this.town = town;
@@ -63,7 +61,6 @@ public class AccountMissingPostPageResults {
             this.status = status;
             this.date = date;
             this.sex = sex;
-            this.isBookmark = isBookmark;
             this.bookmarkCount = bookmarkCount;
             this.postTags = postTags;
             this.thumbnail = thumbnail;
@@ -71,16 +68,11 @@ public class AccountMissingPostPageResults {
 
         public static AccountMissingPostPageResults.Post of(
             Long id, String city, String town, String animalKindId, Status status, LocalDate date, SexType sex,
-            boolean isBookmark, int bookmarkCount, List<Tag> posts, String thumbnail
+            int bookmarkCount, List<Tag> posts, String thumbnail
         ) {
             return new AccountMissingPostPageResults.Post(
-                id, city, town, animalKindId, status, date, sex, isBookmark, bookmarkCount, posts, thumbnail
+                id, city, town, animalKindId, status, date, sex, bookmarkCount, posts, thumbnail
             );
-        }
-
-        @JsonProperty("isBookmark")
-        public boolean isBookmark() {
-            return isBookmark;
         }
 
         @Getter

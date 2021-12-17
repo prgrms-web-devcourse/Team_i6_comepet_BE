@@ -7,7 +7,6 @@ import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @NoArgsConstructor
@@ -36,15 +35,13 @@ public class MissingPostUpdateParam {
 
     private String chipNumber;
 
-    private List<PostTag> postTags;
+    private List<Tag> tags;
 
     private String content;
 
-    private List<MultipartFile> files;
-
     public MissingPostUpdateParam(Status status, LocalDate date, Long city, Long town, String detailAddress,
         String telNumber, Long animal, String animalKindName, int age, SexType sex, String chipNumber,
-        List<PostTag> postTags, String content, List<MultipartFile> files) {
+        List<Tag> tags, String content) {
         this.status = status;
         this.date = date;
         this.city = city;
@@ -56,34 +53,32 @@ public class MissingPostUpdateParam {
         this.age = age;
         this.sex = sex;
         this.chipNumber = chipNumber;
-        this.postTags = postTags;
+        this.tags = tags;
         this.content = content;
-        this.files = files;
     }
 
     public static MissingPostUpdateParam of(
         Status status, LocalDate date, Long city, Long town, String detailAddress, String telNumber, Long animal,
-        String animalKindName, int age, SexType sex, String chipNumber, List<PostTag> postTags, String content,
-        List<MultipartFile> files
+        String animalKindName, int age, SexType sex, String chipNumber, List<Tag> tags, String content
     ) {
         return new MissingPostUpdateParam(
-            status, date, city, town, detailAddress, telNumber, animal, animalKindName, age, sex, chipNumber, postTags,
-            content, files
+            status, date, city, town, detailAddress, telNumber, animal, animalKindName, age, sex, chipNumber, tags,
+            content
         );
     }
 
     @Getter
     @NoArgsConstructor
-    public static class PostTag {
+    public static class Tag {
 
         private String name;
 
-        public PostTag(String name) {
+        public Tag(String name) {
             this.name = name;
         }
 
-        public static PostTag of(String name) {
-            return new PostTag(name);
+        public static Tag of(String name) {
+            return new Tag(name);
         }
 
     }
