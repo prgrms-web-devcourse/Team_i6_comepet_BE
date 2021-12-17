@@ -1,15 +1,35 @@
 package com.pet.domains.account.controller;
 
-import static org.mockito.BDDMockito.*;
-import static org.springframework.restdocs.headers.HeaderDocumentation.*;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.restdocs.payload.JsonFieldType.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static com.pet.domains.docs.utils.ApiDocumentUtils.getDocumentRequest;
+import static com.pet.domains.docs.utils.ApiDocumentUtils.getDocumentResponse;
+import static java.util.stream.Collectors.*;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.mock;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
+import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.payload.JsonFieldType.ARRAY;
+import static org.springframework.restdocs.payload.JsonFieldType.BOOLEAN;
+import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
+import static org.springframework.restdocs.payload.JsonFieldType.OBJECT;
+import static org.springframework.restdocs.payload.JsonFieldType.STRING;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParts;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import com.pet.common.jwt.JwtAuthentication;
 import com.pet.domains.account.WithAccount;
 import com.pet.domains.account.domain.SignEmail;
@@ -18,12 +38,18 @@ import com.pet.domains.account.dto.request.AccountEmailParam;
 import com.pet.domains.account.dto.request.AccountSignUpParam;
 import com.pet.domains.account.dto.request.AccountEmailCheck;
 import com.pet.domains.account.dto.request.AccountLonginParam;
+import com.pet.domains.account.dto.request.AccountSignUpParam;
 import com.pet.domains.account.dto.request.AccountUpdateParam;
 import com.pet.domains.account.dto.response.AccountAreaReadResults;
+import com.pet.domains.account.dto.response.AccountMissingPostPageResults;
 import com.pet.domains.account.dto.response.AccountReadResult;
 import com.pet.domains.docs.BaseDocumentationTest;
+import com.pet.domains.post.domain.SexType;
+import com.pet.domains.post.domain.Status;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.LongStream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
@@ -49,8 +75,8 @@ class AccountControllerTest extends BaseDocumentationTest {
             .andDo(print())
             .andExpect(status().isCreated())
             .andDo(document("verify-email",
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()),
+                getDocumentRequest(),
+                getDocumentResponse(),
                 requestHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
@@ -80,8 +106,8 @@ class AccountControllerTest extends BaseDocumentationTest {
             .andDo(print())
             .andExpect(status().isNoContent())
             .andDo(document("send-newPassword",
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()),
+                getDocumentRequest(),
+                getDocumentResponse(),
                 requestFields(
                     fieldWithPath("email").type(STRING).description("이메일")
                 )
@@ -111,8 +137,8 @@ class AccountControllerTest extends BaseDocumentationTest {
             .andDo(print())
             .andExpect(status().isCreated())
             .andDo(document("sign-up",
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()),
+                getDocumentRequest(),
+                getDocumentResponse(),
                 requestHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE),
                     headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE)
@@ -158,8 +184,8 @@ class AccountControllerTest extends BaseDocumentationTest {
             .andDo(print())
             .andExpect(status().isCreated())
             .andDo(document("login",
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()),
+                getDocumentRequest(),
+                getDocumentResponse(),
                 requestHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE),
                     headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE)
@@ -190,8 +216,8 @@ class AccountControllerTest extends BaseDocumentationTest {
             .andDo(print())
             .andExpect(status().isNoContent())
             .andDo(document("logout",
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()),
+                getDocumentRequest(),
+                getDocumentResponse(),
                 requestHeaders(
                     headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
                 ))
@@ -215,8 +241,8 @@ class AccountControllerTest extends BaseDocumentationTest {
             .andDo(print())
             .andExpect(status().isOk())
             .andDo(document("get-account",
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()),
+                getDocumentRequest(),
+                getDocumentResponse(),
                 requestHeaders(
                     headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token"),
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
@@ -259,8 +285,8 @@ class AccountControllerTest extends BaseDocumentationTest {
             .andDo(print())
             .andExpect(status().isNoContent())
             .andDo(document("update-account",
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()),
+                getDocumentRequest(),
+                getDocumentResponse(),
                 requestHeaders(
                     headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token"),
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -293,8 +319,8 @@ class AccountControllerTest extends BaseDocumentationTest {
             .andDo(print())
             .andExpect(status().isOk())
             .andDo(document("get-account-areas",
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()),
+                getDocumentRequest(),
+                getDocumentResponse(),
                 requestHeaders(
                     headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
                 ),
@@ -339,8 +365,8 @@ class AccountControllerTest extends BaseDocumentationTest {
             .andDo(print())
             .andExpect(status().isNoContent())
             .andDo(document("update-account-areas",
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()),
+                getDocumentRequest(),
+                getDocumentResponse(),
                 requestHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE),
                     headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
@@ -359,6 +385,26 @@ class AccountControllerTest extends BaseDocumentationTest {
     @DisplayName("회원 게시물 조회")
     void getAccountMissingPostsTest() throws Exception {
         // given
+        given(accountService.getAccountPosts(any(), any())).willReturn(AccountMissingPostPageResults.of(
+            LongStream.range(1, 9)
+                .mapToObj(index -> AccountMissingPostPageResults.Post.of(
+                    index,
+                    "서울특별시",
+                    "도봉구",
+                    "토이푸들",
+                    Status.DETECTION,
+                    LocalDate.of(2021, 11, 3),
+                    SexType.FEMALE,
+                    2,
+                    List.of(
+                        AccountMissingPostPageResults.Post.Tag.of(123L, "암컷"),
+                        AccountMissingPostPageResults.Post.Tag.of(431L, "5살"),
+                        AccountMissingPostPageResults.Post.Tag.of(256L, "4kg"),
+                        AccountMissingPostPageResults.Post.Tag.of(1246L, "사람 좋아함")
+                    ),
+                    "http://../../97fd3403-7343-497a-82fa-c41d26ccf0f8.png"
+                ))
+                .collect(toList()), 8, true, 1));
         // when
         ResultActions resultActions = mockMvc.perform(get("/api/v1/me/posts"));
         // then
@@ -366,8 +412,8 @@ class AccountControllerTest extends BaseDocumentationTest {
             .andDo(print())
             .andExpect(status().isOk())
             .andDo(document("get-account-missing-posts",
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()),
+                getDocumentRequest(),
+                getDocumentResponse(),
                 responseHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
@@ -381,7 +427,6 @@ class AccountControllerTest extends BaseDocumentationTest {
                     fieldWithPath("data.posts[0].status").type(STRING).description("게시물 상태"),
                     fieldWithPath("data.posts[0].date").type(STRING).description("게시물 등록 날짜"),
                     fieldWithPath("data.posts[0].sex").type(STRING).description("성별"),
-                    fieldWithPath("data.posts[0].isBookmark").type(BOOLEAN).description("북마크 여부"),
                     fieldWithPath("data.posts[0].bookmarkCount").type(NUMBER).description("북마크 수"),
                     fieldWithPath("data.posts[0].postTags").type(ARRAY).description("게시물 태그"),
                     fieldWithPath("data.posts[0].postTags[0].id").type(NUMBER).description("게시물 태그 id"),
@@ -409,8 +454,8 @@ class AccountControllerTest extends BaseDocumentationTest {
             .andDo(print())
             .andExpect(status().isOk())
             .andDo(document("get-account-missing-bookmark-posts",
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()),
+                getDocumentRequest(),
+                getDocumentResponse(),
                 responseHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
@@ -450,8 +495,8 @@ class AccountControllerTest extends BaseDocumentationTest {
             .andDo(print())
             .andExpect(status().isOk())
             .andDo(document("get-account-shelter-bookmark-posts",
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()),
+                getDocumentRequest(),
+                getDocumentResponse(),
                 responseHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
@@ -490,8 +535,8 @@ class AccountControllerTest extends BaseDocumentationTest {
             .andDo(print())
             .andExpect(status().isNoContent())
             .andDo(document("delete-account",
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint())
+                getDocumentRequest(),
+                getDocumentResponse()
             ));
     }
 

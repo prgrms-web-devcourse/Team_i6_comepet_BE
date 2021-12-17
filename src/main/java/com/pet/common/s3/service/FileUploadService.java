@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,10 +18,6 @@ public class FileUploadService {
     private final UploadService uploadService;
 
     public String uploadImage(MultipartFile file) {
-        if (ObjectUtils.isEmpty(file)) {
-            log.info("Image file is null.");
-            return null;
-        }
         String fileName = createFileName(file.getOriginalFilename());
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentLength(file.getSize());

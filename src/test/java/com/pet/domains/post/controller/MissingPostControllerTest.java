@@ -1,8 +1,11 @@
 package com.pet.domains.post.controller;
 
+import static com.pet.domains.docs.utils.ApiDocumentUtils.getDocumentRequest;
+import static com.pet.domains.docs.utils.ApiDocumentUtils.getDocumentResponse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
@@ -11,9 +14,6 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.JsonFieldType.ARRAY;
 import static org.springframework.restdocs.payload.JsonFieldType.BOOLEAN;
 import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
@@ -41,8 +41,9 @@ import com.pet.domains.image.domain.Image;
 import com.pet.domains.post.domain.SexType;
 import com.pet.domains.post.domain.Status;
 import com.pet.domains.post.dto.request.MissingPostCreateParam;
-import com.pet.domains.post.dto.request.MissingPostCreateParam.Tag;
 import com.pet.domains.post.dto.request.MissingPostUpdateParam;
+import com.pet.domains.post.dto.request.MissingPostUpdateParam.Tag;
+import com.pet.domains.post.dto.response.MissingPostReadResult;
 import com.pet.domains.post.dto.response.MissingPostReadResults;
 import com.pet.domains.post.dto.response.MissingPostReadResults.MissingPost;
 import java.nio.charset.StandardCharsets;
@@ -51,7 +52,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
-import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.PageRequest;
@@ -72,7 +72,7 @@ class MissingPostControllerTest extends BaseDocumentationTest {
             "DETECTION", LocalDate.now(), 1L, 1L, "주민센터 앞 골목 근처",
             "01012343323", 1L, "푸들", 10L, "MALE", "410123456789112",
             "찾아주시면 사례하겠습니다.", List.of(
-                Tag.of("춘식이")
+                MissingPostCreateParam.Tag.of("춘식이")
             )
         );
 
@@ -85,7 +85,7 @@ class MissingPostControllerTest extends BaseDocumentationTest {
             new MockMultipartFile("param", "", "application/json", objectMapper.writeValueAsString(param).getBytes(
                 StandardCharsets.UTF_8));
 
-        given(imageService.createImage(firstMultipartFile)).willReturn(new Image("image.jpg"));
+        given(imageService.createImage(firstMultipartFile)).willReturn(mock(Image.class));
 
         ResultActions resultActions = mockMvc.perform(multipart("/api/v1/missing-posts")
             .file(firstMultipartFile)
@@ -102,8 +102,8 @@ class MissingPostControllerTest extends BaseDocumentationTest {
             .andDo(print())
             .andExpect(status().isCreated())
             .andDo(document("create-missing-post",
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()),
+                getDocumentRequest(),
+                getDocumentResponse(),
                 requestHeaders(
                     headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token"),
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE),
@@ -124,8 +124,8 @@ class MissingPostControllerTest extends BaseDocumentationTest {
                     fieldWithPath("townId").type(NUMBER).description("시군구 id"),
                     fieldWithPath("detailAddress").type(STRING).description("상세 및 추가 주소").optional(),
                     fieldWithPath("telNumber").type(STRING).description("연락처"),
-                    fieldWithPath("animalId").type(NUMBER).description("동물 id").optional(),
-                    fieldWithPath("animalKindName").type(STRING).description("품종 이름").optional(),
+                    fieldWithPath("animalId").type(NUMBER).description("동물 id"),
+                    fieldWithPath("animalKindName").type(STRING).description("품종 이름"),
                     fieldWithPath("age").type(NUMBER).description("나이").optional(),
                     fieldWithPath("sex").type(STRING).description("<<sexType,동물 성별>>"),
                     fieldWithPath("chipNumber").type(STRING).description("칩번호").optional(),
@@ -147,16 +147,16 @@ class MissingPostControllerTest extends BaseDocumentationTest {
     void getMissingPostsTest() throws Exception {
         //given
         MissingPostReadResults missingPostReadResults = MissingPostReadResults.of(List.of(
-            MissingPost.of(
-                1L, "서울특별시", "도봉구", "토이푸들", Status.DETECTION, LocalDateTime.now(),
-                SexType.FEMALE, true, 2,
-                "https://post-phinf.pstatic.net/MjAyMTA0MTJfNTAg/MDAxNjE4MjMwNjg1MTEw",
-                List.of(
-                    MissingPost.Tag.of(1L, "고슴도치"),
-                    MissingPost.Tag.of(2L, "애완동물"),
-                    MissingPost.Tag.of(3L, "반려동물")
-                )
-            )),
+                MissingPost.of(
+                    1L, "서울특별시", "도봉구", "토이푸들", Status.DETECTION, LocalDateTime.now(),
+                    SexType.FEMALE, true, 2,
+                    "https://post-phinf.pstatic.net/MjAyMTA0MTJfNTAg/MDAxNjE4MjMwNjg1MTEw",
+                    List.of(
+                        MissingPost.Tag.of(1L, "고슴도치"),
+                        MissingPost.Tag.of(2L, "애완동물"),
+                        MissingPost.Tag.of(3L, "반려동물")
+                    )
+                )),
             10,
             true,
             5
@@ -176,8 +176,8 @@ class MissingPostControllerTest extends BaseDocumentationTest {
         resultActions
             .andExpect(status().isOk())
             .andDo(document("get-missing-posts",
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()),
+                getDocumentRequest(),
+                getDocumentResponse(),
                 requestHeaders(
                     headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE),
                     headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token - optional").optional()
@@ -196,7 +196,7 @@ class MissingPostControllerTest extends BaseDocumentationTest {
                     fieldWithPath("data.missingPosts[].id").type(NUMBER).description("게시글 id"),
                     fieldWithPath("data.missingPosts[].city").type(STRING).description("시도 이름"),
                     fieldWithPath("data.missingPosts[].town").type(STRING).description("시군구 이름"),
-                    fieldWithPath("data.missingPosts[].animalKind").type(STRING).description("동물 품종 이름"),
+                    fieldWithPath("data.missingPosts[].animalKindName").type(STRING).description("동물 품종 이름"),
                     fieldWithPath("data.missingPosts[].status").type(STRING).description("<<status,게시물 상태>>"),
                     fieldWithPath("data.missingPosts[].createdAt").type(STRING).description("게시글 작성날짜"),
                     fieldWithPath("data.missingPosts[].sex").type(STRING).description("<<sexType,동물 성별>>"),
@@ -214,19 +214,41 @@ class MissingPostControllerTest extends BaseDocumentationTest {
     }
 
     @Test
+    @WithAccount
     @DisplayName("실종/보호 게시물 단건 조회 테스트")
     void getMissingPostTest() throws Exception {
         //given
+        MissingPostReadResult missingPostReadResult = MissingPostReadResult.of(1L,
+            MissingPostReadResult.Account.of(1L, "짱구",
+                "https://img.insight.co.kr/static/2021/01/10/700/img_20210110130830_kue82l80.webp"
+            ),
+            Status.DETECTION, "2021-11-11", "경기도", "구리시", "주민센터 앞 골목 근처",
+            "01032430012", "개", "리트리버", 10, SexType.MALE,
+            "410123456789112",
+            List.of(
+                MissingPostReadResult.Image.of(1L, "http://../../97fd3403-7343-497a-82fa-c41d26ccf0f8.png"),
+                MissingPostReadResult.Image.of(2L, "http://../../97fd3403-7343-497a-82fa-c41d26ccf0f8.png")
+            ),
+            List.of(
+                MissingPostReadResult.Tag.of(1L, "해시태그"),
+                MissingPostReadResult.Tag.of(2L, "춘식이")
+            ),
+            "찾아주시면 반드시 사례하겠습니다. 연락주세요", 3, 1, true, 1, LocalDateTime.now()
+        );
+        given(missingPostService.getMissingPostOneWithAccount(any(Account.class), anyLong())).willReturn(
+            missingPostReadResult);
+
         //when
         ResultActions resultActions = mockMvc.perform(get("/api/v1/missing-posts/{postId}", 1L)
-            .accept(MediaType.APPLICATION_JSON));
+            .accept(MediaType.APPLICATION_JSON)
+            .header(HttpHeaders.AUTHORIZATION, getAuthenticationToken()));
 
         // then
         resultActions
             .andExpect(status().isOk())
             .andDo(document("get-missing-post",
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()),
+                getDocumentRequest(),
+                getDocumentResponse(),
                 pathParameters(
                     parameterWithName("postId").description("게시글 id")
                 ),
@@ -236,10 +258,10 @@ class MissingPostControllerTest extends BaseDocumentationTest {
                 responseFields(
                     fieldWithPath("data").type(OBJECT).description("응답 데이터"),
                     fieldWithPath("data.id").type(NUMBER).description("게시글 id"),
-                    fieldWithPath("data.user").type(OBJECT).description("게시글 작성자"),
-                    fieldWithPath("data.user.id").type(NUMBER).description("게시글 작성자 id"),
-                    fieldWithPath("data.user.nickname").type(STRING).description("게시글 작성자 닉네임"),
-                    fieldWithPath("data.user.image").type(STRING).description("게시글 작성자 프로필 url"),
+                    fieldWithPath("data.account").type(OBJECT).description("게시글 작성자"),
+                    fieldWithPath("data.account.id").type(NUMBER).description("게시글 작성자 id"),
+                    fieldWithPath("data.account.nickname").type(STRING).description("게시글 작성자 닉네임"),
+                    fieldWithPath("data.account.image").type(STRING).description("게시글 작성자 프로필 url"),
                     fieldWithPath("data.status").type(STRING).description("<<status,게시물 상태>>"),
                     fieldWithPath("data.date").type(STRING).description("상태 날짜"),
                     fieldWithPath("data.city").type(STRING).description("시도 이름"),
@@ -247,29 +269,21 @@ class MissingPostControllerTest extends BaseDocumentationTest {
                     fieldWithPath("data.detailAddress").type(STRING).description("상세 및 추가 주소"),
                     fieldWithPath("data.telNumber").type(STRING).description("연락처"),
                     fieldWithPath("data.animal").type(STRING).description("동물 종류"),
-                    fieldWithPath("data.animalKind").type(STRING).description("동물 품종 이름"),
+                    fieldWithPath("data.animalKindName").type(STRING).description("동물 품종 이름"),
                     fieldWithPath("data.age").type(NUMBER).description("동물 나이"),
                     fieldWithPath("data.sex").type(STRING).description("<<sexType,동물 성별>>"),
                     fieldWithPath("data.chipNumber").type(STRING).description("칩번호"),
-                    fieldWithPath("data.postImages").type(ARRAY).description("이미지들"),
-                    fieldWithPath("data.postImages[].id").type(NUMBER).description("이미지 id"),
-                    fieldWithPath("data.postImages[].name").type(STRING).description("이미지 url"),
-                    fieldWithPath("data.postTags").type(ARRAY).description("해시태그 배열"),
-                    fieldWithPath("data.postTags[].id").type(NUMBER).description("해시태그 id"),
-                    fieldWithPath("data.postTags[].name").type(STRING).description("해시태그 값"),
+                    fieldWithPath("data.images").type(ARRAY).description("이미지들"),
+                    fieldWithPath("data.images[].id").type(NUMBER).description("이미지 id"),
+                    fieldWithPath("data.images[].name").type(STRING).description("이미지 url"),
+                    fieldWithPath("data.tags").type(ARRAY).description("해시태그 배열"),
+                    fieldWithPath("data.tags[].id").type(NUMBER).description("해시태그 id"),
+                    fieldWithPath("data.tags[].name").type(STRING).description("해시태그 값"),
                     fieldWithPath("data.content").type(STRING).description("게시글 내용"),
                     fieldWithPath("data.viewCount").type(NUMBER).description("조회수"),
                     fieldWithPath("data.bookmarkCount").type(NUMBER).description("북마크 수"),
                     fieldWithPath("data.isBookmark").type(BOOLEAN).description("북마크 여부"),
                     fieldWithPath("data.commentCount").type(NUMBER).description("댓글 수"),
-                    fieldWithPath("data.comments").type(ARRAY).description("댓글들"),
-                    fieldWithPath("data.comments[].id").type(NUMBER).description("댓글 id"),
-                    fieldWithPath("data.comments[].user").type(OBJECT).description("댓글 작성자"),
-                    fieldWithPath("data.comments[].user.id").type(NUMBER).description("댓글 작성자 id"),
-                    fieldWithPath("data.comments[].user.nickname").type(STRING).description("댓글 작성자 닉네임"),
-                    fieldWithPath("data.comments[].user.image").type(STRING).description("댓글 작성자 프로필 url"),
-                    fieldWithPath("data.comments[].content").type(STRING).description("댓글 내용"),
-                    fieldWithPath("data.comments[].createdAt").type(STRING).description("댓글 작성 날짜"),
                     fieldWithPath("data.createdAt").type(STRING).description("게시글 작성날짜"),
                     fieldWithPath("serverDateTime").type(STRING).description("서버 응답 시간")))
             );
@@ -283,10 +297,9 @@ class MissingPostControllerTest extends BaseDocumentationTest {
             Status.DETECTION, LocalDate.now(), 1L, 1L, "주민센터 앞 골목 근처", "01034231111",
             1L, "푸들", 10, SexType.MALE, "410123456789112",
             List.of(
-                MissingPostUpdateParam.PostTag.of("춘식이")
+                Tag.of("춘식이")
             ),
-            "찾아주시면 반드시 사례하겠습니다. 연락주세요.",
-            Lists.emptyList()
+            "찾아주시면 반드시 사례하겠습니다. 연락주세요."
         );
 
         //when
@@ -300,8 +313,8 @@ class MissingPostControllerTest extends BaseDocumentationTest {
             .andDo(print())
             .andExpect(status().isOk())
             .andDo(document("update-missing-post",
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()),
+                getDocumentRequest(),
+                getDocumentResponse(),
                 requestHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE),
                     headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE)
@@ -321,10 +334,9 @@ class MissingPostControllerTest extends BaseDocumentationTest {
                     fieldWithPath("age").type(NUMBER).description("나이"),
                     fieldWithPath("sex").type(STRING).description("<<sexType,동물 성별>>"),
                     fieldWithPath("chipNumber").type(STRING).description("칩번호"),
-                    fieldWithPath("postTags").type(ARRAY).description("해시태그 배열"),
-                    fieldWithPath("postTags[0].name").type(STRING).description("해시태그 내용"),
-                    fieldWithPath("content").type(STRING).description("실종/보호 내용"),
-                    fieldWithPath("files").type(ARRAY).description("게시글의 이미지들")
+                    fieldWithPath("tags").type(ARRAY).description("해시태그 배열"),
+                    fieldWithPath("tags[0].name").type(STRING).description("해시태그 내용"),
+                    fieldWithPath("content").type(STRING).description("실종/보호 내용")
                 ),
                 responseHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
@@ -350,8 +362,8 @@ class MissingPostControllerTest extends BaseDocumentationTest {
         resultActions
             .andExpect(status().isNoContent())
             .andDo(document("delete-missing-post",
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()),
+                getDocumentRequest(),
+                getDocumentResponse(),
                 requestHeaders(
                     headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
                 ),
@@ -374,8 +386,8 @@ class MissingPostControllerTest extends BaseDocumentationTest {
         resultActions
             .andExpect(status().isCreated())
             .andDo(document("create-missing-post-bookmark",
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()),
+                getDocumentRequest(),
+                getDocumentResponse(),
                 requestHeaders(
                     headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
                 ),
@@ -398,8 +410,8 @@ class MissingPostControllerTest extends BaseDocumentationTest {
         resultActions
             .andExpect(status().isNoContent())
             .andDo(document("delete-missing-post-bookmark",
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()),
+                getDocumentRequest(),
+                getDocumentResponse(),
                 requestHeaders(
                     headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
                 ),
@@ -415,16 +427,16 @@ class MissingPostControllerTest extends BaseDocumentationTest {
         // given
         CommentPageResults commentPageResults = new CommentPageResults(
             LongStream.rangeClosed(1, 2).mapToObj(idx -> new CommentPageResults.Comment(
-                idx,
-                "부모 댓글 #" + idx,
-                LocalDateTime.now(),
-                new Comment.Account(idx, "회원#" + idx, "http://../.jpg"),
-                List.of(new ChildComment(
-                    idx * 3,
-                    "자식 댓글 #" + idx * 3,
+                    idx,
+                    "부모 댓글 #" + idx,
                     LocalDateTime.now(),
-                    new Comment.Account(idx * 3, "회원#" + idx * 3, "http://../.jpg"))
-                )))
+                    new Comment.Account(idx, "회원#" + idx, "http://../.jpg"),
+                    List.of(new ChildComment(
+                        idx * 3,
+                        "자식 댓글 #" + idx * 3,
+                        LocalDateTime.now(),
+                        new Comment.Account(idx * 3, "회원#" + idx * 3, "http://../.jpg"))
+                    )))
                 .collect(Collectors.toList()),
             2,
             true,
@@ -441,8 +453,8 @@ class MissingPostControllerTest extends BaseDocumentationTest {
             .andDo(print())
             .andExpect(status().isOk())
             .andDo(document("get-missing-post-comments",
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()),
+                getDocumentRequest(),
+                getDocumentResponse(),
                 requestHeaders(
                     headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
