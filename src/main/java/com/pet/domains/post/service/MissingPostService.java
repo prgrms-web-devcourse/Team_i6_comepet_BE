@@ -64,6 +64,9 @@ public class MissingPostService {
     @Transactional
     public Long createMissingPost(MissingPostCreateParam missingPostCreateParam, List<MultipartFile> multipartFiles,
         Account account) {
+        if (multipartFiles.size() > 3) {
+            throw ExceptionMessage.INVALID_IMAGE_SIZE.getException();
+        }
         AnimalKind animalKind = animalKindService.getOrCreateAnimalKind(missingPostCreateParam.getAnimalId(),
             missingPostCreateParam.getAnimalKindName());
         Town town = townRepository.getById(missingPostCreateParam.getTownId());
@@ -97,7 +100,7 @@ public class MissingPostService {
     }
 
     public MissingPostReadResults getMissingPostsPage(Pageable pageable) {
-        Page<MissingPost> pageResult = missingPostRepository.findAllByDeletedIsFalse(pageable);
+        Page<MissingPost> pageResult = missingPostRepository.findAllWithFetch(pageable);
         return missingPostMapper.toMissingPostsResults(pageResult);
     }
 
@@ -107,13 +110,20 @@ public class MissingPostService {
         return missingPostMapper.toMissingPostsWithBookmarkResults(pageResult);
     }
 
+    @Transactional
     public MissingPostReadResult getMissingPostOne(Long postId) {
-        return missingPostMapper.toMissingPostDto(missingPostRepository.findById(postId).get());
+        MissingPost missingPost =
+            missingPostRepository.findById(postId).orElseThrow(ExceptionMessage.NOT_FOUND_MISSING_POST::getException);
+        missingPost.increaseViewCount();
+        return missingPostMapper.toMissingPostDto(missingPost);
     }
 
+    @Transactional
     public MissingPostReadResult getMissingPostOneWithAccount(Account account, Long postId) {
-        return missingPostMapper.toMissingPostDto(
-            missingPostRepository.findByIdAndWithIsBookmarkAccount(account, postId).get());
+        MissingPostWithIsBookmark missingPostWithIsBookmark =
+            missingPostRepository.findByIdAndWithIsBookmarkAccount(account, postId);
+        missingPostWithIsBookmark.getMissingPost().increaseViewCount();
+        return missingPostMapper.toMissingPostDto(missingPostWithIsBookmark);
     }
 
     private String getThumbnail(List<Image> imageFiles) {
@@ -126,11 +136,10 @@ public class MissingPostService {
 
     private void createPostImage(List<Image> imageFiles, MissingPost mappingMissingPost) {
         if (!CollectionUtils.isEmpty(imageFiles)) {
-            imageFiles.stream().map(image -> PostImage.builder()
+            imageFiles.forEach(image -> PostImage.builder()
                 .missingPost(mappingMissingPost)
                 .image(image)
-                .build()
-            ).forEach(postImageRepository::save);
+                .build());
         }
     }
 

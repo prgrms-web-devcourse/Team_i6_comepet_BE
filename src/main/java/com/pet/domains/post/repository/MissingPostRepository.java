@@ -12,26 +12,26 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface MissingPostRepository extends JpaRepository<MissingPost, Long> {
 
-    @EntityGraph(attributePaths = {"animalKind", "animalKind.animal", "town", "town.city", "postTags",
-        "postTags.tag"}, type = EntityGraphType.LOAD)
-    Page<MissingPost> findAllByDeletedIsFalse(Pageable pageable);
+    @EntityGraph(attributePaths = {"animalKind", "animalKind.animal", "town", "town.city"}, type = EntityGraphType.LOAD)
+    @Query("select mp from MissingPost mp")
+    Page<MissingPost> findAllWithFetch(Pageable pageable);
 
-    @EntityGraph(attributePaths = {"animalKind", "animalKind.animal", "town", "town.city", "postTags",
-        "postTags.tag"}, type = EntityGraphType.LOAD)
-    @Query("SELECT mp as missingPost, mpb.id IS NOT NULL as isBookmark FROM MissingPost mp "
+    @EntityGraph(attributePaths = {"animalKind", "animalKind.animal", "town", "town.city"}, type = EntityGraphType.LOAD)
+    @Query("SELECT DISTINCT mp as missingPost, mpb.id IS NOT NULL as isBookmark FROM MissingPost mp "
         + "LEFT OUTER JOIN MissingPostBookmark mpb ON mp.id = mpb.missingPost.id AND mpb.account = :account "
         + "WHERE mp.deleted = false")
     Page<MissingPostWithIsBookmark> findAllWithIsBookmarkAccountByDeletedIsFalse(Account account, Pageable pageable);
 
-    @Override
     @EntityGraph(attributePaths = {"animalKind", "animalKind.animal", "town", "town.city",
         "account"}, type = EntityGraphType.LOAD)
+    @Override
     Optional<MissingPost> findById(Long postId);
 
-    @EntityGraph(attributePaths = {"animalKind", "animalKind.animal", "town", "town.city", "account",
-        "account.group"}, type = EntityGraphType.LOAD)
-    @Query("SELECT distinct mp as missingPost, mpb.id IS NOT NULL as isBookmark FROM MissingPost mp "
-        + "LEFT OUTER JOIN MissingPostBookmark mpb ON :postId = mpb.missingPost.id AND mpb.account = :account")
-    Optional<MissingPostWithIsBookmark> findByIdAndWithIsBookmarkAccount(Account account, Long postId);
+    @EntityGraph(attributePaths = {"animalKind", "animalKind.animal", "town", "town.city",
+        "account"}, type = EntityGraphType.LOAD)
+    @Query("SELECT DISTINCT mp as missingPost, mpb.id IS NOT NULL as isBookmark FROM MissingPost mp "
+        + "LEFT JOIN MissingPostBookmark mpb ON mp.id = mpb.missingPost.id AND mpb.account = :account "
+        + "WHERE mp.id = :postId")
+    MissingPostWithIsBookmark findByIdAndWithIsBookmarkAccount(Account account, Long postId);
 
 }

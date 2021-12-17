@@ -148,6 +148,16 @@ public class MissingPost extends DeletableEntity {
         this.animalKind = animalKind;
     }
 
+    public void increaseViewCount() {
+        this.viewCount += 1;
+    }
+
+    public void decreaseViewCount() {
+        if (this.viewCount > 0) {
+            this.viewCount -= 1;
+        }
+    }
+
     public void increaseBookCount() {
         this.bookmarkCount += 1;
     }

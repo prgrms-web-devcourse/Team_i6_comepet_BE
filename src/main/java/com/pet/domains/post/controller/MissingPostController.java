@@ -3,9 +3,12 @@ package com.pet.domains.post.controller;
 import com.pet.common.response.ApiResponse;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.account.domain.LoginAccount;
+import com.pet.domains.comment.dto.response.CommentPageResults;
+import com.pet.domains.comment.service.CommentService;
+import com.pet.domains.post.domain.SexType;
+import com.pet.domains.post.domain.Status;
 import com.pet.domains.post.dto.request.MissingPostCreateParam;
 import com.pet.domains.post.dto.request.MissingPostUpdateParam;
-import com.pet.domains.post.dto.response.MissingPostCommentPageResults;
 import com.pet.domains.post.dto.response.MissingPostReadResult;
 import com.pet.domains.post.dto.response.MissingPostReadResults;
 import com.pet.domains.post.service.MissingPostBookmarkService;
@@ -47,10 +50,12 @@ public class MissingPostController {
 
     private final MissingPostBookmarkService missingPostBookmarkService;
 
+    private final CommentService commentService;
+
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ApiResponse<Map<String, Long>> createMissingPost(
-        @RequestPart(required = false) List<MultipartFile> images,
+        @RequestPart(value = "images", required = false) List<MultipartFile> images,
         @RequestPart(value = "param") @Valid MissingPostCreateParam missingPostCreateParam,
         @LoginAccount Account account
     ) {
@@ -144,16 +149,7 @@ public class MissingPostController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(path = "/{postId}/comments", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ApiResponse<MissingPostCommentPageResults> getMissingPostComments(@PathVariable Long postId) {
-        return ApiResponse.ok(MissingPostCommentPageResults.of(LongStream.rangeClosed(1, 10)
-            .mapToObj(iter -> MissingPostCommentPageResults.Comment.of(
-                    iter,
-                    "꼭 찾길 바래요. #" + iter,
-                    LocalDateTime.now(),
-                    MissingPostCommentPageResults.Comment.User.of(
-                        iter, "고양이집사#" + iter, "https://../2021/11/20211189_s.jpg")
-                )
-            ).collect(Collectors.toList()), 24, false, 10
-        ));
+    public ApiResponse<CommentPageResults> getMissingPostComments(@PathVariable Long postId, Pageable pageable) {
+        return ApiResponse.ok(commentService.getMissingPostComments(postId, pageable));
     }
 }

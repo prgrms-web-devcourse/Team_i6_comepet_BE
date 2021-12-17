@@ -368,16 +368,20 @@ include::{snippets}/delete-missing-post/http-response.adoc[]
 === 해당 게시글의 댓글 목록 조회
 
 ==== CURL request
-include::{snippets}/get-missing-posts-comments/curl-request.adoc[]
+
+include::{snippets}/get-missing-post-comments/curl-request.adoc[]
 
 ==== Http Request
-include::{snippets}/get-missing-posts-comments/http-request.adoc[]
+
+include::{snippets}/get-missing-post-comments/http-request.adoc[]
 
 ==== Http Response
-include::{snippets}/get-missing-posts-comments/http-response.adoc[]
+
+include::{snippets}/get-missing-post-comments/http-response.adoc[]
 
 ==== Response fields
-include::{snippets}/get-missing-posts-comments/response-fields.adoc[]
+
+include::{snippets}/get-missing-post-comments/response-fields.adoc[]
 
 === 관심 게시글 설정
 

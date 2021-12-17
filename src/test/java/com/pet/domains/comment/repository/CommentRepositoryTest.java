@@ -18,6 +18,7 @@ import com.pet.domains.post.domain.Status;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.LongStream;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,6 +28,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DataJpaTest(includeFilters = @Filter(
@@ -140,4 +143,76 @@ class CommentRepositoryTest {
         // then
         assertThat(comments).isEmpty();
     }
+
+    @Test
+    @DisplayName("댓글 아이디와 회원값으로 삭제 테스트")
+    void deleteByIdAndAccountTest() {
+        // given
+        Comment comment = Comment.builder()
+            .missingPost(missingPost)
+            .account(account)
+            .content("내용")
+            .build();
+        entityManager.persist(comment);
+        entityManager.flush();
+        entityManager.clear();
+
+        // when
+        commentRepository.deleteByIdAndAccount(comment.getId(), account);
+        List<Comment> comments = commentRepository.findAll();
+
+        // then
+        assertThat(comments).isEmpty();
+    }
+
+    @Test
+    @DisplayName("댓글 목록 조회 테스트")
+    void findAllWithFetchTest() {
+        // given
+        Comment parentComment = Comment.builder()
+            .missingPost(missingPost)
+            .account(account)
+            .content("부모 댓글")
+            .build();
+        entityManager.persist(parentComment);
+
+        Comment parentComment2 = Comment.builder()
+            .missingPost(missingPost)
+            .account(account)
+            .content("부모 댓글2")
+            .build();
+        entityManager.persist(parentComment2);
+
+        Comment childComment = Comment.ChildCommentBuilder()
+            .missingPost(missingPost)
+            .account(account)
+            .parentComment(parentComment)
+            .content("부모1의 대댓글 1")
+            .build();
+        entityManager.persist(childComment);
+
+        Comment childComment2 = Comment.ChildCommentBuilder()
+            .missingPost(missingPost)
+            .account(account)
+            .parentComment(parentComment)
+            .content("부모1의 대댓글 2")
+            .build();
+        entityManager.persist(childComment2);
+        entityManager.flush();
+        entityManager.clear();
+
+        // when
+        Page<Comment> comments = commentRepository.findAllByMissingPostId(missingPost.getId(), PageRequest.of(0, 10));
+
+        // then
+        SoftAssertions.assertSoftly(softAssertions -> {
+                softAssertions.assertThat(comments.getTotalElements()).isEqualTo(2);
+                softAssertions.assertThat(comments.isLast()).isTrue();
+                softAssertions.assertThat(comments.getSize()).isEqualTo(10);
+                softAssertions.assertThat(comments.getContent().get(0).getChildComments()).hasSize(2);
+                softAssertions.assertThat(comments.getContent().get(1).getChildComments()).isEmpty();
+            }
+        );
+    }
+
 }

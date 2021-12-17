@@ -1,13 +1,10 @@
 package com.pet.domains.post.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import com.pet.domains.account.domain.Account;
@@ -25,15 +22,14 @@ import com.pet.domains.image.service.ImageService;
 import com.pet.domains.post.domain.MissingPost;
 import com.pet.domains.post.domain.SexType;
 import com.pet.domains.post.domain.Status;
-import com.pet.domains.post.dto.request.MissingPostCreateParam;
 import com.pet.domains.post.mapper.MissingPostMapper;
 import com.pet.domains.post.repository.MissingPostRepository;
 import com.pet.domains.post.repository.MissingPostWithIsBookmark;
+import com.pet.domains.tag.domain.PostTag;
 import com.pet.domains.tag.domain.Tag;
 import com.pet.domains.tag.service.PostTagService;
 import com.pet.domains.tag.service.TagService;
 import java.time.LocalDate;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,7 +39,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.web.multipart.MultipartFile;
 
 @DisplayName("실종/보호 게시물 서비스 테스트")
 @ExtendWith(MockitoExtension.class)
@@ -92,9 +87,12 @@ class MissingPostServiceTest {
 
     private AnimalKind animalKind;
 
+    private MissingPost missingPost;
+
     private PostImage postImage;
 
-    private MissingPost missingPost;
+    private PostTag postTag;
+
 
     @BeforeEach
     void setUp() {
@@ -151,51 +149,15 @@ class MissingPostServiceTest {
             .animalKind(animalKind)
             .build();
 
+        postTag = PostTag.builder()
+            .missingPost(missingPost)
+            .tag(tag)
+            .build();
+
         postImage = PostImage.builder()
             .missingPost(missingPost)
             .image(image)
             .build();
-    }
-
-    @Test
-    @DisplayName("실종/보호 게시물 생성 테스트")
-    void createMissingPostTest() {
-        //given
-        MissingPostCreateParam param = MissingPostCreateParam.of(
-            String.valueOf(missingPost.getStatus()), missingPost.getDate(), city.getId(), town.getId(),
-            missingPost.getDetailAddress(),
-            missingPost.getTelNumber(), animal.getId(), animalKind.getName(), missingPost.getAge(),
-            String.valueOf(missingPost.getSexType()), missingPost.getChipNumber(), missingPost.getContent(),
-            List.of(
-                MissingPostCreateParam.Tag.of(tag.getName())
-            )
-        );
-        MissingPost spyMissingPost = spy(missingPost);
-        given(spyMissingPost.getId()).willReturn(1L);
-        given(animalKindService.getOrCreateAnimalKind(any(), eq("푸들"))).willReturn(animalKind);
-        given(townRepository.getById(any())).willReturn(town);
-        given(tagService.getOrCreateByTagName(any())).willReturn(tag);
-        doNothing().when(postTagService).createPostTag(any(), any());
-        given(postImageRepository.save(any())).willReturn(postImage);
-        given(missingPostRepository.save(any())).willReturn(spyMissingPost);
-        given(imageService.createImage(any())).willReturn(image);
-        given(missingPostMapper.toEntity(any(), any(), any(), any(), any())).willReturn(missingPost);
-
-        //when
-        Long getMissingPostId =
-            missingPostService.createMissingPost(param, List.of(mock(MultipartFile.class)), account);
-
-        //then
-        assertThat(getMissingPostId).isEqualTo(1L);
-
-        verify(animalKindService).getOrCreateAnimalKind(any(), any());
-        verify(townRepository).getById(any());
-        verify(tagService).getOrCreateByTagName(any());
-        verify(postTagService).createPostTag(any(), any());
-        verify(postImageRepository).save(any());
-        verify(missingPostRepository).save(any());
-        verify(imageService).createImage(any());
-        verify(missingPostMapper).toEntity(any(), any(), any(), any(), any());
     }
 
     @Test
@@ -212,21 +174,21 @@ class MissingPostServiceTest {
     }
 
     @Test
-    @DisplayName("실종/보호 게시물 익명 조회 테스트")
-    void getAnonymousMissingPostTest() {
+    @DisplayName("실종/보호 게시물 리스트 익명 조회 테스트")
+    void getAnonymousMissingPostsTest() {
         //given
-        given(missingPostRepository.findAllByDeletedIsFalse(any())).willReturn(mock(Page.class));
+        given(missingPostRepository.findAllWithFetch(any())).willReturn(mock(Page.class));
 
         //when
-        Page<MissingPost> pageResult = missingPostRepository.findAllByDeletedIsFalse(PageRequest.of(1, 5));
+        Page<MissingPost> pageResult = missingPostRepository.findAllWithFetch(PageRequest.of(1, 5));
 
         //then
-        verify(missingPostRepository, times(1)).findAllByDeletedIsFalse(any());
+        verify(missingPostRepository, times(1)).findAllWithFetch(any());
     }
 
     @Test
-    @DisplayName("실종/보호 게시물 사용자 조회 테스트")
-    void getUserMissingPostTest() {
+    @DisplayName("실종/보호 게시물 리스트 사용자 조회 테스트")
+    void getUserMissingPostsTest() {
         //given
         given(missingPostRepository.findAllWithIsBookmarkAccountByDeletedIsFalse(any(), any())).willReturn(
             mock(Page.class));
@@ -238,4 +200,5 @@ class MissingPostServiceTest {
         //then
         verify(missingPostRepository, times(1)).findAllWithIsBookmarkAccountByDeletedIsFalse(any(), any());
     }
+
 }
