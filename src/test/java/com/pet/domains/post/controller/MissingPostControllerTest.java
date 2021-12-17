@@ -5,6 +5,7 @@ import static com.pet.domains.docs.utils.ApiDocumentUtils.getDocumentResponse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
@@ -84,7 +85,7 @@ class MissingPostControllerTest extends BaseDocumentationTest {
             new MockMultipartFile("param", "", "application/json", objectMapper.writeValueAsString(param).getBytes(
                 StandardCharsets.UTF_8));
 
-        given(imageService.createImage(firstMultipartFile)).willReturn(new Image("image.jpg"));
+        given(imageService.createImage(firstMultipartFile)).willReturn(mock(Image.class));
 
         ResultActions resultActions = mockMvc.perform(multipart("/api/v1/missing-posts")
             .file(firstMultipartFile)

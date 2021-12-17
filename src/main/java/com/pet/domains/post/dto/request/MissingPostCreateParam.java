@@ -34,7 +34,7 @@ public class MissingPostCreateParam {
     @NotBlank(message = "전화번호를 입력해주세요.")
     private String telNumber;
 
-    @NotBlank(message = "동물을 선택해주세요.")
+    @NotNull(message = "동물을 선택해주세요.")
     private Long animalId;
 
     @Length(max = 50, message = "범위이내의 품종을 입력해주세요.")
@@ -42,7 +42,7 @@ public class MissingPostCreateParam {
     private String animalKindName;
 
     @Max(value = 500, message = "범위이내의 나이를 입력해주세요.")
-    @NotBlank(message = "동물을 입력해주세요.")
+    @NotNull(message = "동물을 입력해주세요.")
     private Long age;
 
     @NotBlank(message = "성별을 선택해주세요.")
