@@ -8,6 +8,7 @@ import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.format.annotation.DateTimeFormat;
 import reactor.util.annotation.Nullable;
 
 @Getter
@@ -18,6 +19,7 @@ public class MissingPostCreateParam {
     private String status;
 
     @NotNull(message = "날짜를 입력해주세요.")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
 
     @NotNull(message = "시도를 선택해주세요.")
