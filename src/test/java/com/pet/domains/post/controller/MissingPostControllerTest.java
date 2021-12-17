@@ -42,6 +42,7 @@ import com.pet.domains.post.domain.Status;
 import com.pet.domains.post.dto.request.MissingPostCreateParam;
 import com.pet.domains.post.dto.request.MissingPostCreateParam.Tag;
 import com.pet.domains.post.dto.request.MissingPostUpdateParam;
+import com.pet.domains.post.dto.response.MissingPostReadResult;
 import com.pet.domains.post.dto.response.MissingPostReadResults;
 import com.pet.domains.post.dto.response.MissingPostReadResults.MissingPost;
 import java.nio.charset.StandardCharsets;
@@ -217,6 +218,26 @@ class MissingPostControllerTest extends BaseDocumentationTest {
     @DisplayName("실종/보호 게시물 단건 조회 테스트")
     void getMissingPostTest() throws Exception {
         //given
+        MissingPostReadResult missingPostReadResult = MissingPostReadResult.of(1L,
+            MissingPostReadResult.Account.of(1L, "짱구",
+                "https://img.insight.co.kr/static/2021/01/10/700/img_20210110130830_kue82l80.webp"
+            ),
+            Status.DETECTION, "2021-11-11", "경기도", "구리시", "주민센터 앞 골목 근처",
+            "01032430012", "개", "리트리버", 10, SexType.MALE,
+            "410123456789112",
+            List.of(
+                MissingPostReadResult.Image.of(1L, "http://../../97fd3403-7343-497a-82fa-c41d26ccf0f8.png"),
+                MissingPostReadResult.Image.of(2L, "http://../../97fd3403-7343-497a-82fa-c41d26ccf0f8.png")
+            ),
+            List.of(
+                MissingPostReadResult.Tag.of(1L, "해시태그"),
+                MissingPostReadResult.Tag.of(2L, "춘식이")
+            ),
+            "찾아주시면 반드시 사례하겠습니다. 연락주세요", 3, 1, true, 1, LocalDateTime.now()
+        );
+        given(missingPostService.getMissingPostOneWithAccount(any(Account.class), anyLong())).willReturn(
+            missingPostReadResult);
+
         //when
         ResultActions resultActions = mockMvc.perform(get("/api/v1/missing-posts/{postId}", 1L)
             .accept(MediaType.APPLICATION_JSON)
@@ -237,10 +258,10 @@ class MissingPostControllerTest extends BaseDocumentationTest {
                 responseFields(
                     fieldWithPath("data").type(OBJECT).description("응답 데이터"),
                     fieldWithPath("data.id").type(NUMBER).description("게시글 id"),
-                    fieldWithPath("data.user").type(OBJECT).description("게시글 작성자"),
-                    fieldWithPath("data.user.id").type(NUMBER).description("게시글 작성자 id"),
-                    fieldWithPath("data.user.nickname").type(STRING).description("게시글 작성자 닉네임"),
-                    fieldWithPath("data.user.image").type(STRING).description("게시글 작성자 프로필 url"),
+                    fieldWithPath("data.account").type(OBJECT).description("게시글 작성자"),
+                    fieldWithPath("data.account.id").type(NUMBER).description("게시글 작성자 id"),
+                    fieldWithPath("data.account.nickname").type(STRING).description("게시글 작성자 닉네임"),
+                    fieldWithPath("data.account.image").type(STRING).description("게시글 작성자 프로필 url"),
                     fieldWithPath("data.status").type(STRING).description("<<status,게시물 상태>>"),
                     fieldWithPath("data.date").type(STRING).description("상태 날짜"),
                     fieldWithPath("data.city").type(STRING).description("시도 이름"),
@@ -252,12 +273,12 @@ class MissingPostControllerTest extends BaseDocumentationTest {
                     fieldWithPath("data.age").type(NUMBER).description("동물 나이"),
                     fieldWithPath("data.sex").type(STRING).description("<<sexType,동물 성별>>"),
                     fieldWithPath("data.chipNumber").type(STRING).description("칩번호"),
-                    fieldWithPath("data.postImages").type(ARRAY).description("이미지들"),
-                    fieldWithPath("data.postImages[].id").type(NUMBER).description("이미지 id"),
-                    fieldWithPath("data.postImages[].name").type(STRING).description("이미지 url"),
-                    fieldWithPath("data.postTags").type(ARRAY).description("해시태그 배열"),
-                    fieldWithPath("data.postTags[].id").type(NUMBER).description("해시태그 id"),
-                    fieldWithPath("data.postTags[].name").type(STRING).description("해시태그 값"),
+                    fieldWithPath("data.images").type(ARRAY).description("이미지들"),
+                    fieldWithPath("data.images[].id").type(NUMBER).description("이미지 id"),
+                    fieldWithPath("data.images[].name").type(STRING).description("이미지 url"),
+                    fieldWithPath("data.tags").type(ARRAY).description("해시태그 배열"),
+                    fieldWithPath("data.tags[].id").type(NUMBER).description("해시태그 id"),
+                    fieldWithPath("data.tags[].name").type(STRING).description("해시태그 값"),
                     fieldWithPath("data.content").type(STRING).description("게시글 내용"),
                     fieldWithPath("data.viewCount").type(NUMBER).description("조회수"),
                     fieldWithPath("data.bookmarkCount").type(NUMBER).description("북마크 수"),
