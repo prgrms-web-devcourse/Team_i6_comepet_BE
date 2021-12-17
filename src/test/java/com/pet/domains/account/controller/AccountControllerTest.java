@@ -365,7 +365,7 @@ class AccountControllerTest extends BaseDocumentationTest {
     @DisplayName("회원 게시물 조회")
     void getAccountMissingPostsTest() throws Exception {
         // given
-        given(accountService.getAccountPost(any(), any())).willReturn(AccountMissingPostPageResults.of(
+        given(accountService.getAccountPosts(any(), any())).willReturn(AccountMissingPostPageResults.of(
             LongStream.range(1, 9)
                 .mapToObj(index -> AccountMissingPostPageResults.Post.of(
                     index,

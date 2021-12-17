@@ -293,7 +293,7 @@ public class AccountService {
 
     }
 
-    public AccountMissingPostPageResults getAccountPost(Long id, Pageable pageable) {
+    public AccountMissingPostPageResults getAccountPosts(Long id, Pageable pageable) {
         Page<MissingPost> missingPosts = missingPostRepository.findByAccountId(id, pageable);
         return AccountMissingPostPageResults.of(missingPosts.stream()
                 .map(accountMapper::toAccountMissingPostPageResults)

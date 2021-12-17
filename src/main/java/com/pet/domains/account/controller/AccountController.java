@@ -20,9 +20,7 @@ import com.pet.domains.account.dto.response.AccountReadResult;
 import com.pet.domains.account.service.AccountService;
 import com.pet.domains.auth.service.AuthenticationService;
 import com.pet.domains.post.domain.SexType;
-import com.pet.domains.post.domain.Status;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.LongStream;
 import javax.validation.Valid;
@@ -137,7 +135,7 @@ public class AccountController {
     @GetMapping(path = "/me/posts", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse<AccountMissingPostPageResults> getAccountPosts(@LoginAccount Account account, Pageable pageable) {
-        return ApiResponse.ok(accountService.getAccountPost(account.getId(), pageable));
+        return ApiResponse.ok(accountService.getAccountPosts(account.getId(), pageable));
     }
 
     @GetMapping(path = "/me/bookmarks", produces = MediaType.APPLICATION_JSON_VALUE)
