@@ -112,6 +112,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
             // 회원
             .antMatchers(v1("/me/**"), v1("/auth-user"), v1("send-password")).hasAnyRole(ROLE_USER)
+
+            // 알림
             .antMatchers(v1("/notices/**")).hasAnyRole(ROLE_USER)
 
             // 댓글
