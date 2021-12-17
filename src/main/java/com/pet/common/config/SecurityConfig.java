@@ -103,6 +103,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers(DELETE, v1("/missing-posts/{postId}")).hasAnyRole(ROLE_USER)
             .antMatchers(POST, v1("/missing-posts/{postId}/bookmark")).hasAnyRole(ROLE_USER)
             .antMatchers(DELETE, v1("/missing-posts/{postId}/bookmark")).hasAnyRole(ROLE_USER)
+            .antMatchers(GET, v1("/missing-posts/{postId}/comments")).hasAnyRole(ROLE_ANONYMOUS)
 
             // 회원, 알림
             .antMatchers(v1("/me/**"), v1("/auth-user"), v1("/notices/**"),

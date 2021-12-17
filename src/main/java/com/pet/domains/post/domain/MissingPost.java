@@ -4,6 +4,7 @@ import com.pet.domains.DeletableEntity;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.animal.domain.AnimalKind;
 import com.pet.domains.area.domain.Town;
+import com.pet.domains.image.domain.PostImage;
 import com.pet.domains.tag.domain.PostTag;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -113,6 +114,9 @@ public class MissingPost extends DeletableEntity {
 
     @OneToMany(mappedBy = "missingPost", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostTag> postTags = new ArrayList<>();
+
+    @OneToMany(mappedBy = "missingPost", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PostImage> postImages = new ArrayList<>();
 
     @Builder
     public MissingPost(Status status, String detailAddress, LocalDate date, Long age,
