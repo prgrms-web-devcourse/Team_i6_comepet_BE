@@ -118,7 +118,8 @@ public class MissingPostService {
     @Transactional
     public MissingPostReadResult getMissingPostOne(Long postId) {
         MissingPost missingPost =
-            missingPostRepository.findById(postId).orElseThrow(ExceptionMessage.NOT_FOUND_MISSING_POST::getException);
+            missingPostRepository.findByMissingPostId(postId)
+                .orElseThrow(ExceptionMessage.NOT_FOUND_MISSING_POST::getException);
         missingPost.increaseViewCount();
         return missingPostMapper.toMissingPostDto(missingPost);
     }

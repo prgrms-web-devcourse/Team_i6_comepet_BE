@@ -24,8 +24,8 @@ public interface MissingPostRepository extends JpaRepository<MissingPost, Long> 
 
     @EntityGraph(attributePaths = {"animalKind", "animalKind.animal", "town", "town.city",
         "account"}, type = EntityGraphType.LOAD)
-    @Override
-    Optional<MissingPost> findById(Long postId);
+    @Query("SELECT mp FROM MissingPost mp WHERE mp.id = :postId")
+    Optional<MissingPost> findByMissingPostId(Long postId);
 
     @EntityGraph(attributePaths = {"animalKind", "animalKind.animal", "town", "town.city",
         "account"}, type = EntityGraphType.LOAD)
