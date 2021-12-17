@@ -25,6 +25,7 @@ import com.pet.domains.post.domain.Status;
 import com.pet.domains.post.mapper.MissingPostMapper;
 import com.pet.domains.post.repository.MissingPostRepository;
 import com.pet.domains.post.repository.MissingPostWithIsBookmark;
+import com.pet.domains.tag.domain.PostTag;
 import com.pet.domains.tag.domain.Tag;
 import com.pet.domains.tag.service.PostTagService;
 import com.pet.domains.tag.service.TagService;
@@ -86,9 +87,12 @@ class MissingPostServiceTest {
 
     private AnimalKind animalKind;
 
+    private MissingPost missingPost;
+
     private PostImage postImage;
 
-    private MissingPost missingPost;
+    private PostTag postTag;
+
 
     @BeforeEach
     void setUp() {
@@ -145,48 +149,15 @@ class MissingPostServiceTest {
             .animalKind(animalKind)
             .build();
 
+        postTag = PostTag.builder()
+            .missingPost(missingPost)
+            .tag(tag)
+            .build();
+
         postImage = PostImage.builder()
             .missingPost(missingPost)
             .image(image)
             .build();
-    }
-
-    @Test
-    @DisplayName("실종/보호 게시물 생성 테스트")
-    void createMissingPostTest() {
-        //given
-//        MissingPostCreateParam param = MissingPostCreateParam.of(
-//            String.valueOf(missingPost.getStatus()), missingPost.getDate(), city.getId(), town.getId(),
-//            missingPost.getDetailAddress(),
-//            missingPost.getTelNumber(), animal.getId(), animalKind.getName(), missingPost.getAge(),
-//            String.valueOf(missingPost.getSexType()), missingPost.getChipNumber(), missingPost.getContent(),
-//            List.of(
-//                MissingPostCreateParam.Tag.of(tag.getName())
-//            )
-//        );
-//        MissingPost spyMissingPost = spy(missingPost);
-//        given(spyMissingPost.getId()).willReturn(1L);
-//        given(animalKindService.getOrCreateAnimalKind(any(), eq("푸들"))).willReturn(animalKind);
-//        given(townRepository.getById(any())).willReturn(town);
-//        given(tagService.getOrCreateByTagName(any())).willReturn(tag);
-//        doNothing().when(postTagService).createPostTag(any(), any());
-//        given(imageService.createImage(any())).willReturn(image);
-//        given(missingPostMapper.toEntity(any(), any(), any(), any(), any())).willReturn(missingPost);
-//
-//        //when
-//        Long getMissingPostId =
-//            missingPostService.createMissingPost(param, List.of(mock(MultipartFile.class)), account);
-//
-//        //then
-//        assertThat(getMissingPostId).isEqualTo(1L);
-//
-//        verify(animalKindService).getOrCreateAnimalKind(any(), any());
-//        verify(townRepository).getById(any());
-//        verify(tagService).getOrCreateByTagName(any());
-//        verify(postTagService).createPostTag(any(), any());
-//        verify(missingPostRepository).save(any());
-//        verify(imageService).createImage(any());
-//        verify(missingPostMapper).toEntity(any(), any(), any(), any(), any());
     }
 
     @Test
@@ -203,21 +174,21 @@ class MissingPostServiceTest {
     }
 
     @Test
-    @DisplayName("실종/보호 게시물 익명 조회 테스트")
-    void getAnonymousMissingPostTest() {
+    @DisplayName("실종/보호 게시물 리스트 익명 조회 테스트")
+    void getAnonymousMissingPostsTest() {
         //given
-        given(missingPostRepository.findAlWithFetch(any())).willReturn(mock(Page.class));
+        given(missingPostRepository.findAllWithFetch(any())).willReturn(mock(Page.class));
 
         //when
-        Page<MissingPost> pageResult = missingPostRepository.findAlWithFetch(PageRequest.of(1, 5));
+        Page<MissingPost> pageResult = missingPostRepository.findAllWithFetch(PageRequest.of(1, 5));
 
         //then
-        verify(missingPostRepository, times(1)).findAlWithFetch(any());
+        verify(missingPostRepository, times(1)).findAllWithFetch(any());
     }
 
     @Test
-    @DisplayName("실종/보호 게시물 사용자 조회 테스트")
-    void getUserMissingPostTest() {
+    @DisplayName("실종/보호 게시물 리스트 사용자 조회 테스트")
+    void getUserMissingPostsTest() {
         //given
         given(missingPostRepository.findAllWithIsBookmarkAccountByDeletedIsFalse(any(), any())).willReturn(
             mock(Page.class));
@@ -229,4 +200,5 @@ class MissingPostServiceTest {
         //then
         verify(missingPostRepository, times(1)).findAllWithIsBookmarkAccountByDeletedIsFalse(any(), any());
     }
+
 }

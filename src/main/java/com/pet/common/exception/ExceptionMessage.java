@@ -53,6 +53,7 @@ public enum ExceptionMessage {
     // 이미지 11xx
     FAIL_CHANGE_IMAGE(new BadRequestException("이미지 변환이 실패했습니다.", 1101)),
     INVALID_IMAGE_TYPE(new BadRequestException("잘못된 형식의 타입입니다.", 1102)),
+    INVALID_IMAGE_SIZE(new BadRequestException("이미지가 3개를 초과합니다.", 1103)),
 
 
     // 실종 게시물 12xx

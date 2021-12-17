@@ -1,10 +1,12 @@
 package com.pet.domains.post.mapper;
 
-import com.pet.domains.account.domain.Account;
 import com.pet.domains.animal.domain.AnimalKind;
 import com.pet.domains.area.domain.Town;
+import com.pet.domains.image.domain.Image;
+import com.pet.domains.image.domain.PostImage;
 import com.pet.domains.post.domain.MissingPost;
 import com.pet.domains.post.dto.request.MissingPostCreateParam;
+import com.pet.domains.post.dto.response.MissingPostReadResult;
 import com.pet.domains.post.dto.response.MissingPostReadResults;
 import com.pet.domains.post.repository.MissingPostWithIsBookmark;
 import com.pet.domains.tag.domain.PostTag;
@@ -28,7 +30,7 @@ public interface MissingPostMapper {
         @Mapping(target = "animalKind", source = "animalKindEntity")
     })
     MissingPost toEntity(MissingPostCreateParam param, Town townEntity,
-        AnimalKind animalKindEntity, String thumbnail, Account account);
+        AnimalKind animalKindEntity, String thumbnail, com.pet.domains.account.domain.Account account);
 
     @Mappings({
         @Mapping(target = "town",
@@ -47,7 +49,7 @@ public interface MissingPostMapper {
             expression = "java(toMissingPostTagResults(missingPostWithIsBookmark.getMissingPost().getPostTags()))"),
         @Mapping(target = "id", source = "missingPostWithIsBookmark.missingPost.id")
     })
-    MissingPostReadResults.MissingPost toMissingPostDto(MissingPostWithIsBookmark missingPostWithIsBookmark);
+    MissingPostReadResults.MissingPost toMissingPostsDto(MissingPostWithIsBookmark missingPostWithIsBookmark);
 
     @Mappings({
         @Mapping(target = "town", expression = "java(String.valueOf(missingPost.getTown().getName()))"),
@@ -61,16 +63,14 @@ public interface MissingPostMapper {
         @Mapping(target = "isBookmark", expression = "java(false)"),
         @Mapping(target = "tags", expression = "java(toMissingPostTagResults(missingPost.getPostTags()))")
     })
-    MissingPostReadResults.MissingPost toMissingPostDto(MissingPost missingPost);
+    MissingPostReadResults.MissingPost toMissingPostsDto(MissingPost missingPost);
 
-    @Mappings({
-        @Mapping(target = "name", source = "tag.name")
-    })
-    MissingPostReadResults.MissingPost.Tag toMissingPostTagDto(Tag tag);
+    @Mapping(target = "name", source = "tag.name")
+    MissingPostReadResults.MissingPost.Tag toMissingPostsTagDto(Tag tag);
 
-    default MissingPostReadResults toMissingPostResults(Page<MissingPost> pageResult) {
+    default MissingPostReadResults toMissingPostsResults(Page<MissingPost> pageResult) {
         List<MissingPostReadResults.MissingPost> missingPostResults =
-            pageResult.getContent().stream().map(this::toMissingPostDto).collect(Collectors.toList());
+            pageResult.getContent().stream().map(this::toMissingPostsDto).collect(Collectors.toList());
         return MissingPostReadResults.of(
             missingPostResults,
             pageResult.getTotalElements(),
@@ -79,9 +79,9 @@ public interface MissingPostMapper {
         );
     }
 
-    default MissingPostReadResults toMissingPostWithBookmarkResults(Page<MissingPostWithIsBookmark> pageResult) {
+    default MissingPostReadResults toMissingPostsWithBookmarkResults(Page<MissingPostWithIsBookmark> pageResult) {
         List<MissingPostReadResults.MissingPost> missingPostResults =
-            pageResult.getContent().stream().map(this::toMissingPostDto).collect(Collectors.toList());
+            pageResult.getContent().stream().map(this::toMissingPostsDto).collect(Collectors.toList());
         return MissingPostReadResults.of(
             missingPostResults,
             pageResult.getTotalElements(),
@@ -92,8 +92,92 @@ public interface MissingPostMapper {
 
     default List<MissingPostReadResults.MissingPost.Tag> toMissingPostTagResults(List<PostTag> postTags) {
         return postTags.stream()
+            .map(postTag -> toMissingPostsTagDto(postTag.getTag()))
+            .collect(Collectors.toList());
+    }
+
+
+    @Mappings({
+        @Mapping(target = "account", expression = "java(toMissingPostAccountDto(missingPost.getAccount()))"),
+        @Mapping(target = "status", source = "missingPost.status"),
+        @Mapping(target = "date", source = "missingPost.date"),
+        @Mapping(target = "city", expression = "java(missingPost.getTown().getCity().getName())"),
+        @Mapping(target = "town", expression = "java(missingPost.getTown().getName())"),
+        @Mapping(target = "detailAddress", source = "missingPost.detailAddress"),
+        @Mapping(target = "telNumber", source = "missingPost.telNumber"),
+        @Mapping(target = "animal", source = "missingPost.animalKind.animal.name"),
+        @Mapping(target = "animalKind", source = "missingPost.animalKind.name"),
+        @Mapping(target = "age", source = "missingPost.age"),
+        @Mapping(target = "sex", source = "missingPost.sexType"),
+        @Mapping(target = "chipNumber", source = "missingPost.chipNumber"),
+        @Mapping(target = "images", expression = "java(toMissingPostImageResult(missingPost.getPostImages()))"),
+        @Mapping(target = "tags", expression = "java(toMissingPostTagResult(missingPost.getPostTags()))"),
+        @Mapping(target = "content", source = "missingPost.content"),
+        @Mapping(target = "viewCount", source = "missingPost.viewCount"),
+        @Mapping(target = "bookmarkCount", source = "missingPost.bookmarkCount"),
+        @Mapping(target = "isBookmark", expression = "java(false)"),
+        @Mapping(target = "createdAt", source = "missingPost.createdAt")
+    })
+    MissingPostReadResult toMissingPostDto(MissingPost missingPost);
+
+    @Mappings({
+        @Mapping(target = "id", source = "account.id"),
+        @Mapping(target = "nickname", source = "account.nickname"),
+        @Mapping(target = "image", source = "account.image.name")
+    })
+    MissingPostReadResult.Account toMissingPostAccountDto(com.pet.domains.account.domain.Account account);
+
+    @Mappings({
+        @Mapping(target = "id", source = "image.id"),
+        @Mapping(target = "name", source = "image.name")
+    })
+    MissingPostReadResult.Image toMissingPostImageDto(Image image);
+
+    @Mappings({
+        @Mapping(target = "id", source = "tag.id"),
+        @Mapping(target = "name", source = "tag.name")
+    })
+    MissingPostReadResult.Tag toMissingPostTagDto(Tag tag);
+
+    default List<MissingPostReadResult.Tag> toMissingPostTagResult(List<PostTag> postTags) {
+        return postTags.stream()
             .map(postTag -> toMissingPostTagDto(postTag.getTag()))
             .collect(Collectors.toList());
     }
+
+    default List<MissingPostReadResult.Image> toMissingPostImageResult(List<PostImage> postImages) {
+        return postImages.stream()
+            .map(postImage -> toMissingPostImageDto(postImage.getImage()))
+            .collect(Collectors.toList());
+    }
+
+    @Mappings({
+        @Mapping(target = "account",
+            expression = "java(toMissingPostAccountDto(missingPostWithIsBookmark.getMissingPost().getAccount()))"),
+        @Mapping(target = "status", source = "missingPostWithIsBookmark.missingPost.status"),
+        @Mapping(target = "date", source = "missingPostWithIsBookmark.missingPost.date"),
+        @Mapping(target = "city",
+            expression = "java(missingPostWithIsBookmark.getMissingPost().getTown().getCity().getName())"),
+        @Mapping(target = "town", expression = "java(missingPostWithIsBookmark.getMissingPost().getTown().getName())"),
+        @Mapping(target = "detailAddress", source = "missingPostWithIsBookmark.missingPost.detailAddress"),
+        @Mapping(target = "telNumber", source = "missingPostWithIsBookmark.missingPost.telNumber"),
+        @Mapping(target = "animal", source = "missingPostWithIsBookmark.missingPost.animalKind.animal.name"),
+        @Mapping(target = "animalKind", source = "missingPostWithIsBookmark.missingPost.animalKind.name"),
+        @Mapping(target = "age", source = "missingPostWithIsBookmark.missingPost.age"),
+        @Mapping(target = "sex", source = "missingPostWithIsBookmark.missingPost.sexType"),
+        @Mapping(target = "chipNumber", source = "missingPostWithIsBookmark.missingPost.chipNumber"),
+        @Mapping(target = "images",
+            expression = "java(toMissingPostImageResult(missingPostWithIsBookmark.getMissingPost().getPostImages()))"),
+        @Mapping(target = "tags",
+            expression = "java(toMissingPostTagResult(missingPostWithIsBookmark.getMissingPost().getPostTags()))"),
+        @Mapping(target = "content", source = "missingPostWithIsBookmark.missingPost.content"),
+        @Mapping(target = "viewCount", source = "missingPostWithIsBookmark.missingPost.viewCount"),
+        @Mapping(target = "bookmarkCount", source = "missingPostWithIsBookmark.missingPost.bookmarkCount"),
+        @Mapping(target = "isBookmark", source = "missingPostWithIsBookmark.isBookmark"),
+        @Mapping(target = "createdAt", source = "missingPostWithIsBookmark.missingPost.createdAt"),
+        @Mapping(target = "commentCount", source = "missingPostWithIsBookmark.missingPost.commentCount"),
+        @Mapping(target = "id", source = "missingPostWithIsBookmark.missingPost.id")
+    })
+    MissingPostReadResult toMissingPostDto(MissingPostWithIsBookmark missingPostWithIsBookmark);
 
 }
