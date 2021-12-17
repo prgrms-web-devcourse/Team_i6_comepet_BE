@@ -54,7 +54,7 @@ public class MissingPostController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ApiResponse<Map<String, Long>> createMissingPost(
-        @RequestPart(required = false) List<MultipartFile> images,
+        @RequestPart(value = "images", required = false) List<MultipartFile> images,
         @RequestPart(value = "param") @Valid MissingPostCreateParam missingPostCreateParam,
         @LoginAccount Account account
     ) {
