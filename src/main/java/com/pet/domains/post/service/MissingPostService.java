@@ -1,6 +1,7 @@
 package com.pet.domains.post.service;
 
 import com.pet.common.exception.ExceptionMessage;
+import com.pet.common.util.OptimisticLockingHandlingUtils;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.animal.domain.AnimalKind;
 import com.pet.domains.animal.service.AnimalKindService;
@@ -90,7 +91,12 @@ public class MissingPostService {
         commentRepository.deleteAllByMissingPostId(getMissingPost.getId());
 
         List<PostTag> getPostTags = postTagRepository.getPostTagsByMissingPostId(getMissingPost.getId());
-        tagService.decreaseTagCount(getPostTags);
+        OptimisticLockingHandlingUtils.handling(
+            () -> tagService.decreaseTagCount(getPostTags),
+            5,
+            "게시글 삭제시 태그 카운트 감소"
+        );
+
 
         missingPostRepository.deleteById(getMissingPost.getId());
     }

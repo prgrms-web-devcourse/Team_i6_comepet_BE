@@ -1,5 +1,7 @@
 package com.pet.domains.post.controller;
 
+import static com.pet.domains.docs.utils.ApiDocumentUtils.getDocumentRequest;
+import static com.pet.domains.docs.utils.ApiDocumentUtils.getDocumentResponse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -11,9 +13,6 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.JsonFieldType.ARRAY;
 import static org.springframework.restdocs.payload.JsonFieldType.BOOLEAN;
 import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
@@ -102,8 +101,8 @@ class MissingPostControllerTest extends BaseDocumentationTest {
             .andDo(print())
             .andExpect(status().isCreated())
             .andDo(document("create-missing-post",
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()),
+                getDocumentRequest(),
+                getDocumentResponse(),
                 requestHeaders(
                     headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token"),
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE),
@@ -176,8 +175,8 @@ class MissingPostControllerTest extends BaseDocumentationTest {
         resultActions
             .andExpect(status().isOk())
             .andDo(document("get-missing-posts",
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()),
+                getDocumentRequest(),
+                getDocumentResponse(),
                 requestHeaders(
                     headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE),
                     headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token - optional").optional()
@@ -225,8 +224,8 @@ class MissingPostControllerTest extends BaseDocumentationTest {
         resultActions
             .andExpect(status().isOk())
             .andDo(document("get-missing-post",
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()),
+                getDocumentRequest(),
+                getDocumentResponse(),
                 pathParameters(
                     parameterWithName("postId").description("게시글 id")
                 ),
@@ -300,8 +299,8 @@ class MissingPostControllerTest extends BaseDocumentationTest {
             .andDo(print())
             .andExpect(status().isOk())
             .andDo(document("update-missing-post",
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()),
+                getDocumentRequest(),
+                getDocumentResponse(),
                 requestHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE),
                     headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE)
@@ -350,8 +349,8 @@ class MissingPostControllerTest extends BaseDocumentationTest {
         resultActions
             .andExpect(status().isNoContent())
             .andDo(document("delete-missing-post",
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()),
+                getDocumentRequest(),
+                getDocumentResponse(),
                 requestHeaders(
                     headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
                 ),
@@ -374,8 +373,8 @@ class MissingPostControllerTest extends BaseDocumentationTest {
         resultActions
             .andExpect(status().isCreated())
             .andDo(document("create-missing-post-bookmark",
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()),
+                getDocumentRequest(),
+                getDocumentResponse(),
                 requestHeaders(
                     headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
                 ),
@@ -398,8 +397,8 @@ class MissingPostControllerTest extends BaseDocumentationTest {
         resultActions
             .andExpect(status().isNoContent())
             .andDo(document("delete-missing-post-bookmark",
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()),
+                getDocumentRequest(),
+                getDocumentResponse(),
                 requestHeaders(
                     headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
                 ),
@@ -441,8 +440,8 @@ class MissingPostControllerTest extends BaseDocumentationTest {
             .andDo(print())
             .andExpect(status().isOk())
             .andDo(document("get-missing-post-comments",
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()),
+                getDocumentRequest(),
+                getDocumentResponse(),
                 requestHeaders(
                     headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE)
                 ),

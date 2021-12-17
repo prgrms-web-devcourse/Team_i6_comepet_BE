@@ -55,6 +55,19 @@ endif::[]
 
 |===
 
+=== Domain
+
+|===
+| 환경 | Domain
+
+| 개발서버
+| `http://ec2-3-35-254-102.ap-northeast-2.compute.amazonaws.com:26134`
+
+| 운영서버
+|
+|===
+
+
 == 공통 사항
 
 include::{snippets}/common/custom-response-fields.adoc[]

@@ -54,7 +54,11 @@ public class MissingPostBookmarkService {
                 "실종/보호 게시글 북마크 감소"
             );
         }
-        getMissingPost.decreaseBookCount();
+        OptimisticLockingHandlingUtils.handling(
+            getMissingPost::decreaseBookCount,
+            5,
+            "북마크 카운트 감소 연산"
+        );
     }
 
 }
