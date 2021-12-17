@@ -33,6 +33,8 @@ import com.pet.common.jwt.JwtAuthentication;
 import com.pet.domains.account.WithAccount;
 import com.pet.domains.account.domain.SignEmail;
 import com.pet.domains.account.dto.request.AccountAreaUpdateParam;
+import com.pet.domains.account.dto.request.AccountEmailParam;
+import com.pet.domains.account.dto.request.AccountSignUpParam;
 import com.pet.domains.account.dto.request.AccountEmailCheck;
 import com.pet.domains.account.dto.request.AccountLonginParam;
 import com.pet.domains.account.dto.request.AccountSignUpParam;
@@ -72,6 +74,10 @@ class AccountControllerTest extends BaseDocumentationTest {
                 requestHeaders(
                     headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
+                requestFields(
+                    fieldWithPath("email").type(STRING).description("이메일"),
+                    fieldWithPath("key").type(STRING).description("이메일 인증번호")
+                ),
                 responseFields(
                     fieldWithPath("data").type(OBJECT).description("응답 데이터"),
                     fieldWithPath("data.id").type(NUMBER).description("이메일 인증 id"),
@@ -81,20 +87,24 @@ class AccountControllerTest extends BaseDocumentationTest {
     }
 
     @Test
-    @WithAccount
     @DisplayName("임시 비밀번호 요청 성공 테스트")
     void sendNewPasswordEmail() throws Exception {
         // given
+        AccountEmailParam param = new AccountEmailParam("tester-user@email.com");
         // when
         ResultActions resultActions = mockMvc.perform(patch("/api/v1/send-password")
-            .header(HttpHeaders.AUTHORIZATION, getAuthenticationToken()));
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(param)));
 
         resultActions
             .andDo(print())
             .andExpect(status().isNoContent())
             .andDo(document("send-newPassword",
                 getDocumentRequest(),
-                getDocumentResponse()
+                getDocumentResponse(),
+                requestFields(
+                    fieldWithPath("email").type(STRING).description("이메일")
+                )
             ));
     }
 
