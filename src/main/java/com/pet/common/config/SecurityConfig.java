@@ -12,6 +12,7 @@ import com.pet.common.oauth2.OAuth2AuthenticationSuccessHandler;
 import com.pet.common.property.JwtProperty;
 import com.pet.domains.account.service.AccountService;
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.context.SecurityContextPersistenceFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @RequiredArgsConstructor
@@ -115,7 +119,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
             .formLogin().disable()
             .csrf().disable()
-            .cors().and()
+            .cors().configurationSource(corsConfigurationSource()).and()
             .headers().disable()
             .httpBasic()
             .authenticationEntryPoint(authenticationEntryPoint()).and()
@@ -135,6 +139,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .accessDeniedHandler(accessDeniedHandler()).and()
 
             .addFilterAfter(jwtAuthenticationFilter(), SecurityContextPersistenceFilter.class);
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        configuration.setAllowedOrigins(
+            List.of("http://localhost:3000", "http://127.0.0.1:3000")
+        );
+        configuration.addAllowedHeader("*");
+        configuration.addAllowedMethod("*");
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
     private String v1(String url) {
