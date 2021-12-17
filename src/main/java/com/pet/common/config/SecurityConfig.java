@@ -101,6 +101,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
             // 보호소 게시글
             .antMatchers(GET, v1("/shelter-posts")).hasAnyRole(ROLE_USER, ROLE_ANONYMOUS)
+            .antMatchers(v1("/shelter-posts/{postId}/bookmark")).hasAnyRole(ROLE_USER)
 
             // 실종/보호 게시글
             .antMatchers(GET, v1("/missing-posts")).hasAnyRole(ROLE_USER, ROLE_ANONYMOUS)
@@ -108,12 +109,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers(DELETE, v1("/missing-posts/{postId}")).hasAnyRole(ROLE_USER)
             .antMatchers(POST, v1("/missing-posts/{postId}/bookmark")).hasAnyRole(ROLE_USER)
             .antMatchers(DELETE, v1("/missing-posts/{postId}/bookmark")).hasAnyRole(ROLE_USER)
-            .antMatchers(GET, v1("/missing-posts/{postId}/comments")).hasAnyRole(ROLE_ANONYMOUS)
 
-            // 회원, 알림
-            .antMatchers(v1("/me/**"), v1("/auth-user"), v1("/notices/**"),
-                v1("send-password"))
-            .hasAnyRole(ROLE_USER)
+            // 회원
+            .antMatchers(v1("/me/**"), v1("/auth-user"), v1("send-password")).hasAnyRole(ROLE_USER)
+            .antMatchers(v1("/notices/**")).hasAnyRole(ROLE_USER)
+
+            // 댓글
+            .antMatchers(v1("/comments/**")).hasAnyRole(ROLE_USER)
 
             .anyRequest().permitAll()
             .and()
