@@ -40,7 +40,7 @@ jobs:
 
       # Deploy Shell 파일 복사
       - name: Dev Copy deploy shell
-#        if: ${{ github.ref == 'refs/heads/develop' }}
+        if: ${{ github.ref == 'refs/heads/develop' }}
         run: cp ./deploy-dev.sh ./deploy/deploy.sh
 
       # 파일 압축
@@ -49,7 +49,7 @@ jobs:
 
       # AWS Credential
       - name: Dev AWS Credential
-#        if: ${{ github.ref == 'refs/heads/develop' }}
+        if: ${{ github.ref == 'refs/heads/develop' }}
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
