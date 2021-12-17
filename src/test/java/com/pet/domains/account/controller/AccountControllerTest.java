@@ -395,7 +395,6 @@ class AccountControllerTest extends BaseDocumentationTest {
                     Status.DETECTION,
                     LocalDate.of(2021, 11, 3),
                     SexType.FEMALE,
-                    true,
                     2,
                     List.of(
                         AccountMissingPostPageResults.Post.Tag.of(123L, "암컷"),
@@ -428,7 +427,6 @@ class AccountControllerTest extends BaseDocumentationTest {
                     fieldWithPath("data.posts[0].status").type(STRING).description("게시물 상태"),
                     fieldWithPath("data.posts[0].date").type(STRING).description("게시물 등록 날짜"),
                     fieldWithPath("data.posts[0].sex").type(STRING).description("성별"),
-                    fieldWithPath("data.posts[0].isBookmark").type(BOOLEAN).description("북마크 여부"),
                     fieldWithPath("data.posts[0].bookmarkCount").type(NUMBER).description("북마크 수"),
                     fieldWithPath("data.posts[0].postTags").type(ARRAY).description("게시물 태그"),
                     fieldWithPath("data.posts[0].postTags[0].id").type(NUMBER).description("게시물 태그 id"),

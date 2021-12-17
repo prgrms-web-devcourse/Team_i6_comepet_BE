@@ -134,7 +134,9 @@ public class AccountController {
 
     @GetMapping(path = "/me/posts", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<AccountMissingPostPageResults> getAccountPosts(@LoginAccount Account account, Pageable pageable) {
+    public ApiResponse<AccountMissingPostPageResults> getAccountPosts(
+        @LoginAccount Account account, Pageable pageable
+    ) {
         return ApiResponse.ok(accountService.getAccountPosts(account.getId(), pageable));
     }
 
