@@ -112,7 +112,6 @@ class ShelterPostBookmarkServiceTest {
                     .build())
                 .bookmarkCount(10)
                 .build());
-        given(shelterPostRepository.findById(anyLong())).willReturn(Optional.of(spyShelterPost));
         given(shelterPostBookmarkRepository.deleteByShelterPostIdAndAccount(anyLong(), any(Account.class)))
             .willReturn(1L);
 
