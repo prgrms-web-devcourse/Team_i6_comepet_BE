@@ -229,7 +229,12 @@ public class MissingPostService {
             });
 
         //새로 받아온 이미지들 넣어주기
-        createPostImage(uploadAndGetImages(multipartFiles), getMissingPost);
+        List<Image> imageFiles = uploadAndGetImages(multipartFiles);
+        createPostImage(imageFiles, getMissingPost);
+
+        //썸네일 바뀌는 경우의 수
+        List<PostImage> getPostImages = postImageRepository.findAllByMissingPostId(getMissingPost.getId());
+        String thumbnail = getUpdateThumbnail(getPostImages);
 
         //4. param으로 가져온 값들 넣어주면서 update
         Town getTown =
@@ -238,7 +243,9 @@ public class MissingPostService {
             .orElseThrow(ExceptionMessage.NOT_FOUND_ANIMAL_KIND::getException);
         getMissingPost.changeInfo(param.getStatus(), param.getDate(), getTown, param.getDetailAddress(),
             param.getTelNumber(), getAnimalKind, param.getAge(), param.getSex(), param.getChipNumber(),
-            param.getContent());
+            param.getContent(), thumbnail);
+
+        log.info("complete update missing post");
         return getMissingPost.getId();
     }
 
@@ -298,6 +305,13 @@ public class MissingPostService {
             return null;
         }
         return imageFiles.get(0).getName();
+    }
+
+    private String getUpdateThumbnail(List<PostImage> imageFiles) {
+        if (CollectionUtils.isEmpty(imageFiles)) {
+            return null;
+        }
+        return imageFiles.get(0).getImage().getName();
     }
 
     private void createPostTags(List<Tag> tags, MissingPost newMissingPost) {

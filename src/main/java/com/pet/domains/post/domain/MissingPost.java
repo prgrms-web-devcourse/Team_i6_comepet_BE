@@ -28,6 +28,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.SQLDelete;
@@ -177,25 +179,39 @@ public class MissingPost extends DeletableEntity {
     }
 
     public void changeInfo(Status status, LocalDate date, Town town, String detailAddress, String telNumber, AnimalKind animalKind, Long age, SexType sex,
-        String chipNumber, String content) {
-        Validate.notNull(status, "status must not be null");
-        Validate.notNull(date, "date must not be null");
-        Validate.notNull(town, "town must not be null");
-        Validate.notBlank(telNumber, "telNumber must not be blank");
-        Validate.notNull(animalKind, "animalKind must not be null");
-        Validate.notNull(age, "age must not be null");
-        Validate.notNull(sex, "sex must not be null");
-        Validate.notBlank(content, "content must not be blank");
+        String chipNumber, String content, String thumbnail) {
+        if (ObjectUtils.isNotEmpty(status)) {
+            this.status = status;
+        }
 
-        this.status = status;
-        this.date = date;
-        this.town = town;
-        this.detailAddress = detailAddress;
-        this.telNumber = telNumber;
-        this.animalKind = animalKind;
+        if (ObjectUtils.isNotEmpty(date)) {
+            this.date = date;
+        }
+
+        if (ObjectUtils.isNotEmpty(town)) {
+            this.town = town;
+        }
+
+        if (StringUtils.isNotBlank(telNumber)) {
+            this.telNumber = telNumber;
+        }
+
+        if (ObjectUtils.isNotEmpty(animalKind)) {
+            this.animalKind = animalKind;
+        }
+
         this.age = age;
-        this.sexType = sex;
+
+        if (ObjectUtils.isNotEmpty(sex)) {
+            this.sexType = sex;
+        }
+
+        if (StringUtils.isNotBlank(content)) {
+            this.content = content;
+        }
+
         this.chipNumber = chipNumber;
-        this.content = content;
+        this.detailAddress = detailAddress;
+        this.thumbnail = thumbnail;
     }
 }
