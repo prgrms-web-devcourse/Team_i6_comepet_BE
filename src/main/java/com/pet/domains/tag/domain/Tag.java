@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Version;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,6 +30,9 @@ public class Tag extends BaseEntity {
 
     @Column(name = "count", columnDefinition = "BIGINT default 0", nullable = false)
     private long count;
+
+    @Version
+    private long version;
 
     @Builder
     public Tag(String name, long count) {
