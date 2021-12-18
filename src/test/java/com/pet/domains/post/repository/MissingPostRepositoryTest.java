@@ -153,7 +153,6 @@ class MissingPostRepositoryTest {
 
         tag = Tag.builder()
             .name("웰시코기")
-            .count(1)
             .build();
         tagRepository.save(tag);
 

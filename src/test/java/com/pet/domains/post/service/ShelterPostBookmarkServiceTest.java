@@ -1,6 +1,5 @@
 package com.pet.domains.post.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -74,7 +73,6 @@ class ShelterPostBookmarkServiceTest {
         // then
         ArgumentCaptor<ShelterPostBookmark> captor = ArgumentCaptor.forClass(ShelterPostBookmark.class);
         verify(shelterPostBookmarkRepository, times(1)).save(captor.capture());
-        assertThat(spyShelterPost.getBookmarkCount()).isEqualTo(11);
     }
 
     @Test
@@ -123,8 +121,6 @@ class ShelterPostBookmarkServiceTest {
 
         // then
         verify(shelterPostBookmarkRepository, times(1)).deleteByShelterPostIdAndAccount(anyLong(), any(Account.class));
-        assertThat(spyShelterPost.getBookmarkCount()).isEqualTo(9);
-
     }
 
 }
