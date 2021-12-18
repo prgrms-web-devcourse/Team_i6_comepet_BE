@@ -17,9 +17,12 @@ import com.pet.domains.post.domain.MissingPost;
 import com.pet.domains.post.dto.request.MissingPostCreateParam;
 import com.pet.domains.post.dto.response.MissingPostReadResult;
 import com.pet.domains.post.dto.response.MissingPostReadResults;
+import com.pet.domains.post.dto.serach.PostSearchParam;
 import com.pet.domains.post.mapper.MissingPostMapper;
+import com.pet.domains.post.mapper.MissingPostReadResultMapper;
 import com.pet.domains.post.repository.MissingPostRepository;
 import com.pet.domains.post.repository.MissingPostWithIsBookmark;
+import com.pet.domains.post.repository.projection.MissingPostWithIsBookmarkNew;
 import com.pet.domains.tag.domain.PostTag;
 import com.pet.domains.tag.domain.Tag;
 import com.pet.domains.tag.repository.PostTagRepository;
@@ -61,6 +64,8 @@ public class MissingPostService {
     private final MissingPostMapper missingPostMapper;
 
     private final CommentRepository commentRepository;
+
+    private final MissingPostReadResultMapper missingPostReadResultMapper;
 
     @Transactional
     public Long createMissingPost(MissingPostCreateParam missingPostCreateParam, List<MultipartFile> multipartFiles,
@@ -105,15 +110,16 @@ public class MissingPostService {
         missingPostRepository.deleteById(getMissingPost.getId());
     }
 
-    public MissingPostReadResults getMissingPostsPage(Pageable pageable) {
-        Page<MissingPost> pageResult = missingPostRepository.findAllWithFetch(pageable);
-        return missingPostMapper.toMissingPostsResults(pageResult);
+    public MissingPostReadResults getMissingPostsPage(Pageable pageable, PostSearchParam param) {
+        Page<MissingPost> pageResult = missingPostRepository.findMissingPostAllWithFetch(pageable, param);
+        return missingPostReadResultMapper.toMissingPostPageResults(pageResult);
     }
 
-    public MissingPostReadResults getMissingPostsPageWithAccount(Account account, Pageable pageable) {
-        Page<MissingPostWithIsBookmark> pageResult =
-            missingPostRepository.findAllWithIsBookmarkAccountByDeletedIsFalse(account, pageable);
-        return missingPostMapper.toMissingPostsWithBookmarkResults(pageResult);
+    public MissingPostReadResults getMissingPostsPageWithAccount(Account account, Pageable pageable,
+        PostSearchParam searchParam) {
+        Page<MissingPostWithIsBookmarkNew> pageResult =
+            missingPostRepository.findMissingPostAllWithIsBookmark(account, pageable, searchParam);
+        return missingPostReadResultMapper.toMissingPostPageResultsWithAccount(pageResult);
     }
 
     @Transactional
@@ -127,10 +133,22 @@ public class MissingPostService {
 
     @Transactional
     public MissingPostReadResult getMissingPostOneWithAccount(Account account, Long postId) {
-        MissingPostWithIsBookmark missingPostWithIsBookmark =
-            missingPostRepository.findByIdAndWithIsBookmarkAccount(account, postId);
-        increaseViewCount(missingPostWithIsBookmark.getMissingPost());
-        return missingPostMapper.toMissingPostDto(missingPostWithIsBookmark);
+        MissingPostWithIsBookmarkNew postWithIsBookmarkNew =
+            missingPostRepository.findMissingPostByIdWithIsBookmark(account, postId)
+                .orElseThrow(ExceptionMessage.NOT_FOUND_MISSING_POST::getException);
+
+        increaseViewCount(postWithIsBookmarkNew.getMissingPost());
+
+        return missingPostReadResultMapper.toMissingPostReadResult(
+            postWithIsBookmarkNew.getMissingPost(),
+            postWithIsBookmarkNew.getAnimalKind(),
+            postWithIsBookmarkNew.getAnimal(),
+            postWithIsBookmarkNew.getTown(),
+            postWithIsBookmarkNew.getCity(),
+            postWithIsBookmarkNew.isBookmark(),
+            postWithIsBookmarkNew.getMissingPost().getPostTags(),
+            postWithIsBookmarkNew.getMissingPost().getPostImages()
+        );
     }
 
     public AccountBookmarkPostPageResults getBookmarksThumbnailsByAccount(Account account, Pageable pageable) {

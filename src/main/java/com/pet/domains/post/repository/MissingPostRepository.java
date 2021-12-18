@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.EntityGraph.EntityGraphType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-public interface MissingPostRepository extends JpaRepository<MissingPost, Long> {
+public interface MissingPostRepository extends JpaRepository<MissingPost, Long>, MissingPostCustomRepository {
 
     @EntityGraph(attributePaths = {"animalKind", "animalKind.animal", "town", "town.city"}, type = EntityGraphType.LOAD)
     @Query("select mp from MissingPost mp")
@@ -28,8 +28,10 @@ public interface MissingPostRepository extends JpaRepository<MissingPost, Long> 
         + "LEFT OUTER JOIN MissingPostBookmark mpb ON mp.id = mpb.missingPost.id AND mpb.account = :account")
     Page<MissingPostWithIsBookmark> findThumbnailsAccountByDeletedIsFalse(Account account, Pageable pageable);
 
-    @EntityGraph(attributePaths = {"animalKind", "animalKind.animal", "town", "town.city",
-        "account"}, type = EntityGraphType.LOAD)
+    @EntityGraph(
+        attributePaths = {"animalKind", "animalKind.animal", "town", "town.city", "account"},
+        type = EntityGraphType.LOAD
+    )
     @Query("SELECT mp FROM MissingPost mp WHERE mp.id = :postId")
     Optional<MissingPost> findByMissingPostId(Long postId);
 
