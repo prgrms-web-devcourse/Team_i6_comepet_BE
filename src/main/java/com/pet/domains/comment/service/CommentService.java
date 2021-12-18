@@ -47,23 +47,32 @@ public class CommentService {
 
     @Transactional
     public Long updateComment(Long commentId, CommentUpdateParam commentUpdateParam, Account account) {
-        Comment foundComment = getComment(commentId);
+        Comment foundComment = getMyComment(commentId, account);
         foundComment.updateContent(commentUpdateParam.getContent(), account.getId());
-
         return foundComment.getId();
     }
 
     @Transactional
     public void deleteMyCommentById(Account account, Long commentId) {
-        Comment foundComment = commentRepository.findById(commentId)
-            .filter(comment -> comment.isWriter(account.getId()))
-            .orElseThrow(ExceptionMessage.NOT_FOUND_COMMENT::getException);
+        Comment foundComment = getMyComment(commentId, account);
         OptimisticLockingHandlingUtils.handling(
             foundComment.getMissingPost()::decreaseCommentCount,
             5,
             "실종 게시글 댓글 카운트 감소"
         );
         commentRepository.delete(foundComment);
+    }
+
+    private Comment getComment(Long commentId) {
+        return commentRepository.findByIdAndDeletedWithFetch(commentId, false)
+            .orElseThrow(ExceptionMessage.NOT_FOUND_COMMENT::getException);
+
+    }
+
+    private Comment getMyComment(Long commentId, Account account) {
+        return commentRepository.findByIdAndDeletedWithFetch(commentId, false)
+            .filter(comment -> comment.isWriter(account.getId()))
+            .orElseThrow(ExceptionMessage.NOT_FOUND_COMMENT::getException);
     }
 
     private Comment getNewComment(Account account, CommentCreateParam commentCreateParam, MissingPost missingPost) {
@@ -80,11 +89,6 @@ public class CommentService {
             .missingPost(missingPost)
             .account(account)
             .build();
-    }
-
-    private Comment getComment(Long commentId) {
-        return commentRepository.findById(commentId)
-            .orElseThrow(ExceptionMessage.NOT_FOUND_COMMENT::getException);
     }
 
     private MissingPost getMissingPostById(Long postId) {

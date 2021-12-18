@@ -1,6 +1,5 @@
 package com.pet.domains.comment.repository;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import com.pet.common.config.JpaAuditingConfig;
 import com.pet.common.config.QuerydslConfig;
 import com.pet.domains.account.domain.Account;
@@ -125,7 +124,7 @@ class CommentRepositoryTest {
     @DisplayName("게시글 아이디로 댓글 목록 삭제 테스트")
     void deleteAllByMissingPostIdTest() {
         // given
-        LongStream.rangeClosed(1, 5).forEach(idx ->
+        LongStream.rangeClosed(1, 3).forEach(idx ->
             entityManager.persist(Comment.builder()
                 .missingPost(missingPost)
                 .content("내용")
@@ -141,7 +140,11 @@ class CommentRepositoryTest {
         List<Comment> comments = commentRepository.findAll();
 
         // then
-        assertThat(comments).isEmpty();
+        SoftAssertions.assertSoftly(softAssertions -> {
+                softAssertions.assertThat(comments).hasSize(3);
+                comments.forEach(foundComment -> softAssertions.assertThat(foundComment.isDeleted()).isTrue());
+            }
+        );
     }
 
     @Test
@@ -162,7 +165,34 @@ class CommentRepositoryTest {
         List<Comment> comments = commentRepository.findAll();
 
         // then
-        assertThat(comments).isEmpty();
+        SoftAssertions.assertSoftly(softAssertions -> {
+                softAssertions.assertThat(comments).hasSize(1);
+                comments.forEach(foundComment -> softAssertions.assertThat(foundComment.isDeleted()).isTrue());
+            }
+        );
+    }
+
+    @Test
+    @DisplayName("댓글 아이디로 다른 엔티티 페치해서 가져오기")
+    void findByIdWithFetchTest() {
+        // given
+        Comment comment = Comment.builder()
+            .missingPost(missingPost)
+            .account(account)
+            .content("내용")
+            .build();
+        entityManager.persist(comment);
+        entityManager.flush();
+        entityManager.clear();
+
+        // when
+        Comment foundComment = commentRepository.findByIdAndDeletedWithFetch(comment.getId(), false).get();
+
+        // then
+        SoftAssertions.assertSoftly(softAssertions -> {
+                softAssertions.assertThat(foundComment.getId()).isEqualTo(comment.getId());
+            }
+        );
     }
 
     @Test
@@ -202,6 +232,7 @@ class CommentRepositoryTest {
         entityManager.clear();
 
         // when
+        commentRepository.deleteById(parentComment2.getId());
         Page<Comment> comments = commentRepository.findAllByMissingPostId(missingPost.getId(), PageRequest.of(0, 10));
 
         // then
@@ -210,7 +241,8 @@ class CommentRepositoryTest {
                 softAssertions.assertThat(comments.isLast()).isTrue();
                 softAssertions.assertThat(comments.getSize()).isEqualTo(10);
                 softAssertions.assertThat(comments.getContent().get(0).getChildComments()).hasSize(2);
-                softAssertions.assertThat(comments.getContent().get(1).getChildComments()).isEmpty();
+                softAssertions.assertThat(comments.getContent().get(1).getContent())
+                    .isEqualTo(Comment.COMMENT_DELETED_MESSAGE);
             }
         );
     }
