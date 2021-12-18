@@ -7,7 +7,10 @@ import com.pet.common.exception.httpexception.ForbiddenException;
 import com.pet.common.exception.httpexception.NotFoundException;
 import com.pet.common.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -27,6 +30,14 @@ public class ExceptionHandlerAdvice {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
+        log.warn("MethodArgumentNotValidException", exception);
+        return ErrorResponse.error(HttpStatus.BAD_REQUEST.value(), exception.getMessage());
+    }
+
+    @ExceptionHandler(BindException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleBindException(BindException exception) {
+        log.warn("handleBindException", exception);
         return ErrorResponse.error(HttpStatus.BAD_REQUEST.value(), exception.getMessage());
     }
 
@@ -35,6 +46,14 @@ public class ExceptionHandlerAdvice {
     public ErrorResponse handleNotFoundException(NotFoundException exception) {
         log.warn(exception.getMessage());
         return ErrorResponse.error(exception.getCode(), exception.getMessage());
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+    public ErrorResponse handleHttpRequestMethodNotSupportedException(
+        HttpRequestMethodNotSupportedException exception) {
+        log.warn("handleHttpRequestMethodNotSupportedException", exception);
+        return ErrorResponse.error(HttpStatus.METHOD_NOT_ALLOWED.value(), exception.getMessage());
     }
 
     @ExceptionHandler(AuthenticationException.class)
@@ -55,6 +74,11 @@ public class ExceptionHandlerAdvice {
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleConflictException(ConflictException exception) {
         return ErrorResponse.error(exception.getCode(), exception.getMessage());
+    }
+
+    @ExceptionHandler(DataAccessException.class)
+    public ErrorResponse handleDataAccessException(DataAccessException exception) {
+        return ErrorResponse.error(HttpStatus.BAD_REQUEST.value(), exception.getMessage());
     }
 
     @ExceptionHandler({Exception.class, RuntimeException.class})

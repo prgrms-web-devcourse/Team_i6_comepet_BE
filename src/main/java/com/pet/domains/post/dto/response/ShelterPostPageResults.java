@@ -1,6 +1,7 @@
 package com.pet.domains.post.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.pet.domains.post.domain.SexType;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.Builder;
@@ -49,9 +50,11 @@ public class ShelterPostPageResults {
 
         private final String animal;
 
-        private final String animalKind;
+        private final String animalKindName;
 
         private final LocalDate foundDate;
+
+        private final SexType sex;
 
         private final boolean isBookmark;
 
@@ -59,15 +62,16 @@ public class ShelterPostPageResults {
 
         @Builder
         public ShelterPost(Long id, String city, String town, Long age, String thumbnail, String animal,
-            String animalKind, LocalDate foundDate, boolean isBookmark, long bookmarkCount) {
+            String animalKindName, LocalDate foundDate, SexType sex, boolean isBookmark, long bookmarkCount) {
             this.id = id;
             this.city = city;
             this.town = town;
             this.age = age;
             this.thumbnail = thumbnail;
             this.animal = animal;
-            this.animalKind = animalKind;
+            this.animalKindName = animalKindName;
             this.foundDate = foundDate;
+            this.sex = sex;
             this.isBookmark = isBookmark;
             this.bookmarkCount = bookmarkCount;
         }

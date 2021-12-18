@@ -30,7 +30,7 @@ public class ShelterPostReadResult {
 
     private final String animal;
 
-    private final String animalKind;
+    private final String animalKindName;
 
     private final String neutered;
 
@@ -57,7 +57,7 @@ public class ShelterPostReadResult {
     @Builder
     private ShelterPostReadResult(Long id, Long age, String city, String town, String shelterName,
         String shelterTelNumber, String color, String image, LocalDate foundDate, String foundPlace,
-        String animal, String animalKind, String neutered, LocalDate startDate, LocalDate endDate,
+        String animal, String animalKindName, String neutered, LocalDate startDate, LocalDate endDate,
         String noticeNumber, String managerTelNumber, String status, String sex, String feature, Double weight,
         Boolean isBookmark, Long bookmarkCount) {
         this.id = id;
@@ -71,7 +71,7 @@ public class ShelterPostReadResult {
         this.foundDate = foundDate;
         this.foundPlace = foundPlace;
         this.animal = animal;
-        this.animalKind = animalKind;
+        this.animalKindName = animalKindName;
         this.neutered = neutered;
         this.startDate = startDate;
         this.endDate = endDate;
