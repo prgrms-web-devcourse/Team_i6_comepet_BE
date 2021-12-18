@@ -54,6 +54,7 @@ public enum ExceptionMessage {
     FAIL_CHANGE_IMAGE(new BadRequestException("이미지 변환이 실패했습니다.", 1101)),
     INVALID_IMAGE_TYPE(new BadRequestException("잘못된 형식의 타입입니다.", 1102)),
     INVALID_IMAGE_COUNT(new BadRequestException("이미지 개수가 3개를 초과합니다.", 1103)),
+    NOT_FOUND_POST_IMAGE(new NotFoundException("이전에 등록한 이미지를 찾을 수 없습니다.", 1104)),
 
 
     // 실종 게시물 12xx
@@ -63,9 +64,10 @@ public enum ExceptionMessage {
     NOT_FOUND_SHELTER_POST(new NotFoundException("해당하는 보호소 게시글을 찾을 수 없습니다.", 1301)),
 
     // 알림 14xx
-    NOT_FOUND_NOTIFICATION(new NotFoundException("해당하는 알림을 찾을 수 없습니다..", 1401)),
+    NOT_FOUND_NOTIFICATION(new NotFoundException("해당하는 알림을 찾을 수 없습니다.", 1401)),
 
     // 태그 15xx
+    NOT_FOUND_TAG(new NotFoundException("해당하는 태그를 찾을 수 없습니다.", 1501)),
 
     // 통계 16xx
     NOT_FOUND_POST_STATISTICS(new NotFoundException("해당하는 게시글 통계 데이터를 찾을 수 없습니다.", 1601));
