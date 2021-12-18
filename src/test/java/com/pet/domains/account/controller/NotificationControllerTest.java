@@ -1,14 +1,12 @@
 package com.pet.domains.account.controller;
 
-import static org.mockito.BDDMockito.*;
 import static com.pet.domains.docs.utils.ApiDocumentUtils.getDocumentRequest;
 import static com.pet.domains.docs.utils.ApiDocumentUtils.getDocumentResponse;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.JsonFieldType.ARRAY;
 import static org.springframework.restdocs.payload.JsonFieldType.BOOLEAN;
 import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
@@ -17,13 +15,15 @@ import static org.springframework.restdocs.payload.JsonFieldType.STRING;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import com.pet.domains.account.WithAccount;
+import com.pet.domains.account.domain.Account;
 import com.pet.domains.account.dto.request.NotificationUpdateParam;
 import com.pet.domains.account.dto.response.NotificationReadResults;
 import com.pet.domains.docs.BaseDocumentationTest;
@@ -50,28 +50,35 @@ class NotificationControllerTest extends BaseDocumentationTest {
                     "고양이가 멍멍",
                     "http://../../97fd3403-7343-497a-82fa-c41d26ccf0f8.png",
                     513L,
-                    Status.DETECTION.name()
+                    Status.DETECTION.name(),
+                    "리트리버",
+                    "강남구"
                 ),
                 NotificationReadResults.Notification.of(
                     "야옹이가 멍멍",
                     "http://../../97fd3403-7343-497a-82fa-c41d26ccf0f8.png",
                     234L,
-                    Status.DETECTION.name()
+                    Status.DETECTION.name(),
+                    "리트리버",
+                    "강남구"
                 ),
                 NotificationReadResults.Notification.of(
                     "나홀로 집사",
                     "http://../../97fd3403-7343-497a-82fa-c41d26ccf0f8.png",
                     1231L,
-                    Status.DETECTION.name()
+                    Status.DETECTION.name(),
+                    "리트리버",
+                    "강남구"
                 )
             ), 11, false, 2);
 
-        given(notificationService.getByAccountId(PageRequest.of(0, 8))).willReturn(result);
+        given(notificationService.getByAccountId(any(Account.class), PageRequest.of(0, 8))).willReturn(result);
         // when
         ResultActions resultActions = mockMvc.perform(get("/api/v1/notices")
             .param("page", "0")
             .param("size", "8")
-            .accept(MediaType.APPLICATION_JSON_VALUE));
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .header(HttpHeaders.AUTHORIZATION, getAuthenticationToken()));
 
         // then
         resultActions
@@ -81,6 +88,7 @@ class NotificationControllerTest extends BaseDocumentationTest {
                 getDocumentRequest(),
                 getDocumentResponse(),
                 requestHeaders(
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token"),
                     headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
                 requestParameters(

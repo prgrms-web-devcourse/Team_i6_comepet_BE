@@ -38,15 +38,23 @@ public class NotificationReadResults {
 
         private final String status;
 
-        public Notification(String nickname, String image, Long postId, String status) {
+        private final String animalKindName;
+
+        private final String town;
+
+        public Notification(String nickname, String image, Long postId, String status, String animalKindName,
+            String town) {
             this.nickname = nickname;
             this.image = image;
             this.postId = postId;
             this.status = status;
+            this.animalKindName = animalKindName;
+            this.town = town;
         }
 
-        public static Notification of(String nickname, String image, Long postId, String status) {
-            return new Notification(nickname, image, postId, status);
+        public static Notification of(String nickname, String image, Long postId, String status, String animalKindName,
+            String town) {
+            return new Notification(nickname, image, postId, status, animalKindName, town);
         }
     }
 

@@ -6,7 +6,6 @@ import com.pet.domains.account.domain.Notification;
 import com.pet.domains.account.dto.response.NotificationReadResults;
 import com.pet.domains.account.mapper.NotificationMapper;
 import com.pet.domains.account.repository.NotificationRepository;
-import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -37,13 +36,17 @@ public class NotificationService {
         }
     }
 
-    public NotificationReadResults getByAccountId(Pageable pageable) {
-        Page<Notification> notifications = notificationRepository.findAll(pageable);
-        return NotificationReadResults.of(notifications.stream()
+    public NotificationReadResults getByAccountId(Account account, Pageable pageable) {
+        System.out.println("1");
+        Page<Notification> notifications = notificationRepository.findByAccount(account, pageable);
+        System.out.println("2");
+        return NotificationReadResults.of(
+            notifications.stream()
                 .map(notificationMapper::toNotificationDto)
                 .collect(Collectors.toList()),
             notifications.getTotalElements(),
             notifications.isLast(),
-            notifications.getSize());
+            notifications.getSize()
+        );
     }
 }
