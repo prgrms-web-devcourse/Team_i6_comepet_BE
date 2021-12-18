@@ -35,7 +35,7 @@ import org.hibernate.annotations.Where;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE missing_post SET deleted = true WHERE id=?")
+@SQLDelete(sql = "UPDATE missing_post SET deleted = true WHERE id=? and version = ?")
 @Where(clause = "deleted = false")
 @Entity
 @Table(name = "missing_post")
@@ -152,12 +152,6 @@ public class MissingPost extends DeletableEntity {
 
     public void increaseViewCount() {
         this.viewCount += 1;
-    }
-
-    public void decreaseViewCount() {
-        if (this.viewCount > 0) {
-            this.viewCount -= 1;
-        }
     }
 
     public void increaseBookCount() {
