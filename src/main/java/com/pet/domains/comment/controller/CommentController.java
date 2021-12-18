@@ -6,7 +6,6 @@ import com.pet.domains.account.domain.LoginAccount;
 import com.pet.domains.comment.dto.request.CommentCreateParam;
 import com.pet.domains.comment.dto.request.CommentUpdateParam;
 import com.pet.domains.comment.service.CommentService;
-import java.util.Map;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,9 +37,7 @@ public class CommentController {
         @LoginAccount Account account,
         @RequestBody @Valid CommentCreateParam commentCreateParam
     ) {
-        return ApiResponse.ok(
-            Map.of("id", commentService.createComment(account, commentCreateParam))
-        );
+        return ApiResponse.ok(commentService.createComment(account, commentCreateParam));
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -54,7 +51,7 @@ public class CommentController {
         @RequestBody @Valid CommentUpdateParam commentUpdateParam,
         @LoginAccount Account account
     ) {
-        return ApiResponse.ok(Map.of("id", commentService.updateComment(commentId, commentUpdateParam, account)));
+        return ApiResponse.ok(commentService.updateComment(commentId, commentUpdateParam, account));
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

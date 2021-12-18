@@ -11,8 +11,10 @@ import com.pet.domains.auth.domain.Group;
 import com.pet.domains.auth.domain.GroupPermission;
 import com.pet.domains.auth.domain.Permission;
 import com.pet.domains.auth.repository.GroupPermissionRepository;
+import com.pet.domains.post.domain.SexType;
 import com.pet.domains.post.domain.ShelterPost;
 import com.pet.domains.post.domain.ShelterPostBookmark;
+import com.pet.domains.post.dto.serach.PostSearchParam;
 import com.pet.domains.post.repository.projection.ShelterPostWithIsBookmark;
 import java.util.List;
 import org.assertj.core.api.SoftAssertions;
@@ -97,8 +99,63 @@ class ShelterPostRepositoryTest {
     }
 
     @Test
-    @DisplayName("북마크 여부를 포함한 조회 테스트")
+    @DisplayName("보호소 게시글 페이지 조회 테스트 - 북마크 여부 O")
     void findAllWithIsBookmarkTest() {
+        // given
+        ShelterPost nonBookmarkPost = ShelterPost.builder()
+            .animalKind(animalKind)
+            .town(town)
+            .sex(SexType.FEMALE)
+            .build();
+        entityManager.persist(nonBookmarkPost);
+        ShelterPost nonBookmarkAndUnknownPost = ShelterPost.builder()
+            .animalKind(animalKind)
+            .town(town)
+            .sex(SexType.UNKNOWN)
+            .build();
+        entityManager.persist(nonBookmarkAndUnknownPost);
+        ShelterPost bookmarkPost = ShelterPost.builder()
+            .animalKind(animalKind)
+            .town(town)
+            .sex(SexType.UNKNOWN)
+            .feature("bookmark post")
+            .build();
+        entityManager.persist(bookmarkPost);
+        ShelterPostBookmark postBookmark = ShelterPostBookmark.builder()
+            .shelterPost(bookmarkPost)
+            .account(account)
+            .build();
+        entityManager.persist(postBookmark);
+        entityManager.flush();
+        entityManager.clear();
+
+        // when
+        Page<ShelterPostWithIsBookmark> pageResult = shelterPostRepository.findAllWithIsBookmark(
+            account,
+            PageRequest.of(0, 10),
+            PostSearchParam.builder()
+                .city(city.getId())
+                .sex(SexType.UNKNOWN)
+                .build()
+        );
+
+        // then
+        List<ShelterPostWithIsBookmark> contents = pageResult.getContent();
+        SoftAssertions.assertSoftly(softAssertions -> {
+                softAssertions.assertThat(contents).hasSize(2);
+                softAssertions.assertThat(contents.get(0).getShelterPost().getId())
+                    .isEqualTo(nonBookmarkAndUnknownPost.getId());
+                softAssertions.assertThat(contents.get(0).isBookmark()).isFalse();
+                softAssertions.assertThat(contents.get(1).getShelterPost().getId()).isEqualTo(bookmarkPost.getId());
+                softAssertions.assertThat(contents.get(1).isBookmark()).isTrue();
+                softAssertions.assertThat(pageResult.getTotalElements()).isEqualTo(2L);
+            }
+        );
+    }
+
+    @Test
+    @DisplayName("보호소 게시글 페이지 조회 테스트 - 북마크 여부 X")
+    void findAllWithFetchTest() {
         // given
         ShelterPost nonBookmarkPost = ShelterPost.builder()
             .animalKind(animalKind)
@@ -120,24 +177,22 @@ class ShelterPostRepositoryTest {
         entityManager.clear();
 
         // when
-        Page<ShelterPostWithIsBookmark> pageResult =
-            shelterPostRepository.findAllWithIsBookmark(account, PageRequest.of(0, 10));
+        Page<ShelterPost> pageResult =
+            shelterPostRepository.findAllWithFetch(PageRequest.of(0, 10), PostSearchParam.builder().build());
 
         // then
-        List<ShelterPostWithIsBookmark> contents = pageResult.getContent();
+        List<ShelterPost> contents = pageResult.getContent();
         SoftAssertions.assertSoftly(softAssertions -> {
                 softAssertions.assertThat(contents).hasSize(2);
-                softAssertions.assertThat(contents.get(0).getShelterPost().getId()).isEqualTo(nonBookmarkPost.getId());
-                softAssertions.assertThat(contents.get(0).isBookmark()).isFalse();
-                softAssertions.assertThat(contents.get(1).getShelterPost().getId()).isEqualTo(bookmarkPost.getId());
-                softAssertions.assertThat(contents.get(1).isBookmark()).isTrue();
+                softAssertions.assertThat(contents.get(0).getId()).isEqualTo(nonBookmarkPost.getId());
+                softAssertions.assertThat(contents.get(1).getId()).isEqualTo(bookmarkPost.getId());
                 softAssertions.assertThat(pageResult.getTotalElements()).isEqualTo(2L);
             }
         );
     }
 
     @Test
-    @DisplayName("북마크 여부를 포함한 단건 조회 테스트")
+    @DisplayName("단건 조회 테스트 - 북마크 여부 O")
     void findByIdWithIsBookmarkTest() {
         // given
         ShelterPost bookMarkPost = ShelterPost.builder()
@@ -162,6 +217,34 @@ class ShelterPostRepositoryTest {
         SoftAssertions.assertSoftly(softAssertions -> {
                 softAssertions.assertThat(result.getShelterPost().getId()).isEqualTo(bookMarkPost.getId());
                 softAssertions.assertThat(result.isBookmark()).isTrue();
+            }
+        );
+    }
+
+    @Test
+    @DisplayName("단건 조회 테스트 - 북마크 여부 X")
+    void findByIdWithFetchTest() {
+        // given
+        ShelterPost bookMarkPost = ShelterPost.builder()
+            .animalKind(animalKind)
+            .town(town)
+            .feature("bookmark post")
+            .build();
+        entityManager.persist(bookMarkPost);
+        ShelterPostBookmark postBookmark = ShelterPostBookmark.builder()
+            .shelterPost(bookMarkPost)
+            .account(account)
+            .build();
+        entityManager.persist(postBookmark);
+        entityManager.flush();
+        entityManager.clear();
+
+        // when
+        ShelterPost foundPost = shelterPostRepository.findByIdWithFetch(bookMarkPost.getId()).get();
+
+        // then
+        SoftAssertions.assertSoftly(softAssertions -> {
+                softAssertions.assertThat(foundPost.getId()).isEqualTo(bookMarkPost.getId());
             }
         );
     }

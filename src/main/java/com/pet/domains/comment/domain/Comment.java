@@ -16,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,12 +24,10 @@ import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.Validate;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLDelete(sql = "UPDATE comment SET deleted = true WHERE id=?")
-@Where(clause = "deleted = false")
 @Entity
 @Table(name = "comment")
 public class Comment extends DeletableEntity {
@@ -70,6 +69,9 @@ public class Comment extends DeletableEntity {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "parentComment")
     private List<Comment> childComments = new ArrayList<>();
 
+    @Transient
+    public static final String COMMENT_DELETED_MESSAGE = "작성자가 삭제한 댓글입니다.";
+
     @Builder(builderClassName = "ChildCommentBuilder", builderMethodName = "ChildCommentBuilder")
     public Comment(String content, Comment parentComment, MissingPost missingPost,
         Account account) {
@@ -104,5 +106,12 @@ public class Comment extends DeletableEntity {
     public boolean isWriter(Long accountId) {
         this.account.isIdentification(accountId);
         return true;
+    }
+
+    public String getContent() {
+        if (this.isDeleted()) {
+            return Comment.COMMENT_DELETED_MESSAGE;
+        }
+        return content;
     }
 }
