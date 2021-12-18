@@ -14,6 +14,7 @@ import com.pet.domains.image.repository.PostImageRepository;
 import com.pet.domains.image.service.ImageService;
 import com.pet.domains.post.domain.MissingPost;
 import com.pet.domains.post.dto.request.MissingPostCreateParam;
+import com.pet.domains.post.dto.request.MissingPostUpdateParam;
 import com.pet.domains.post.dto.response.MissingPostReadResult;
 import com.pet.domains.post.dto.response.MissingPostReadResults;
 import com.pet.domains.post.mapper.MissingPostMapper;
@@ -131,6 +132,59 @@ public class MissingPostService {
             missingPostRepository.findByIdAndWithIsBookmarkAccount(account, postId);
         missingPostWithIsBookmark.getMissingPost().increaseViewCount();
         return missingPostMapper.toMissingPostDto(missingPostWithIsBookmark);
+    }
+
+    @Transactional
+    public Long updateMissingPost(Account account, Long postId, MissingPostUpdateParam param,
+        List<MultipartFile> images) {
+        //1. 게시글 조회
+        MissingPost missingPost =
+            missingPostRepository.findById(postId).orElseThrow(ExceptionMessage.NOT_FOUND_MISSING_POST::getException);
+
+        //image
+        //기존에 있는 이미지면 s3 url
+        //multipart에 담는지, url로 주는지
+        //image 2개로
+        //기존거는 body, 새거는 multipart
+
+        //없으면 ""
+        //새로운 이미지면 파일명
+
+
+        //2. param으로 가져온 tag들 현재 list와 비교하기
+        //O
+        List<String> getTagsFromParam =
+            param.getTags().stream().map(MissingPostUpdateParam.Tag::getName).collect(Collectors.toList());
+
+        //비교를 이렇게 하면 안될거같은데
+        List<String> getTagsFromEntity =
+            missingPost.getPostTags().stream().map(postTag -> postTag.getTag().getName()).collect(Collectors.toList());
+
+        //중복 제거
+        //기존 1, 2, 2
+        //새로 2, 4, 5
+
+        //a - b
+        //b - a
+        //collection
+
+
+        //2-1 같으면 교체 없이 그대로 진행
+
+        //2-2 다른 tag가 있다면 기존 태그 posttag와 tag에서 개수 감소하고, 새로운 태그 tag 개수 추가 및 posttag 추가
+
+        //3. param으로 가져온 image들 현재 list와 비교하기
+
+        //3-1 같으면 교체 없이 그대로 진행
+
+        //3-2 다른 image가 있다면 기존 postImage에서 제거하고, 새로운 image 추가 및 postImage 추가
+
+        //4. param으로 가져온 값들 넣가주기
+        missingPost.changeInfo(param.getStatus(), param.getDate(), param.getCity(), param.getTown(),
+            param.getDetailAddress(), param.getTelNumber(), param.getAnimal(), param.getAnimalKindName(),
+            param.getAge(), param.getSex(), param.getChipNumber(), param.getContent());
+
+        return missingPost.getId();
     }
 
     private String getThumbnail(List<Image> imageFiles) {

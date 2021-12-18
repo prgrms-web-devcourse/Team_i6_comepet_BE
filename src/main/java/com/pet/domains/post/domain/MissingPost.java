@@ -105,7 +105,8 @@ public class MissingPost extends DeletableEntity {
     @JoinColumn(
         name = "animal_kind_id",
         referencedColumnName = "id",
-        foreignKey = @ForeignKey(name = "fk_animal_kind_to_missing_post")
+        foreignKey = @ForeignKey(name = "fk_animal_kind_to_missing_post"),
+        nullable = false
     )
     private AnimalKind animalKind;
 
@@ -128,6 +129,7 @@ public class MissingPost extends DeletableEntity {
         Validate.notBlank(telNumber, "telNumber must not be blank");
         Validate.notNull(account, "account must not be null");
         Validate.notNull(town, "town must not be null");
+        Validate.notNull(animalKind, "animalKind must not be null");
 
         this.status = status;
         this.detailAddress = detailAddress;
@@ -176,4 +178,30 @@ public class MissingPost extends DeletableEntity {
         }
     }
 
+    public void changeInfo(Status status, LocalDate date, Long city, Long town, String detailAddress, String telNumber, Long animal, String animalKindName, int age, SexType sex,
+        String chipNumber, String content) {
+        Validate.notNull(status, "status must not be null");
+        Validate.notNull(date, "date must not be null");
+        Validate.notNull(city, "city must not be null");
+        Validate.notNull(town, "town must not be null");
+        Validate.notBlank(telNumber, "telNumber must not be blank");
+        Validate.notNull(animal, "animal must not be null");
+        Validate.notNull(animalKindName, "animalKindName must not be null");
+        Validate.notNull(age, "age must not be null");
+        Validate.notNull(sex, "sex must not be null");
+        Validate.notBlank(content, "content must not be blank");
+
+        this.status = status;
+        this.date = date;
+//        this.city = city;
+//        this.town = town;
+        this.detailAddress = detailAddress;
+        this.telNumber = telNumber;
+//        this.animal = animal;
+//        this.animalKindName = animalKindName;
+//        this.age = age;
+        this.sexType = sex;
+        this.chipNumber = chipNumber;
+        this.content = content;
+    }
 }
