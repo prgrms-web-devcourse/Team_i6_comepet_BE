@@ -3,6 +3,7 @@ package com.pet.domains.post.service;
 import com.pet.common.exception.ExceptionMessage;
 import com.pet.common.util.OptimisticLockingHandlingUtils;
 import com.pet.domains.account.domain.Account;
+import com.pet.domains.account.dto.response.AccountBookmarkPostPageResults;
 import com.pet.domains.account.service.NotificationAsyncService;
 import com.pet.domains.animal.domain.AnimalKind;
 import com.pet.domains.animal.service.AnimalKindService;
@@ -132,6 +133,19 @@ public class MissingPostService {
         return missingPostMapper.toMissingPostDto(missingPostWithIsBookmark);
     }
 
+    public AccountBookmarkPostPageResults getBookmarksThumbnailsByAccount(Account account, Pageable pageable) {
+        Page<MissingPostWithIsBookmark> missingPostWithIsBookmarks =
+            missingPostRepository.findThumbnailsAccountByDeletedIsFalse(account, pageable);
+        return AccountBookmarkPostPageResults
+            .of(missingPostWithIsBookmarks.stream()
+                    .map(missingPostWithIsBookmark -> missingPostMapper
+                        .toAccountBookmarkMissingPost(missingPostWithIsBookmark.getMissingPost()))
+                    .collect(Collectors.toList()),
+                missingPostWithIsBookmarks.getTotalElements(),
+                missingPostWithIsBookmarks.isLast(),
+                missingPostWithIsBookmarks.getSize());
+    }
+
     private void increaseViewCount(MissingPost missingPost) {
         OptimisticLockingHandlingUtils.handling(
             missingPost::increaseViewCount,
@@ -182,5 +196,4 @@ public class MissingPostService {
             .map(tagService::getOrCreateByTagName)
             .collect(Collectors.toList());
     }
-
 }

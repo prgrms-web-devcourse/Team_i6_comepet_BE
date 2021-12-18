@@ -1,6 +1,8 @@
 package com.pet.domains.post.service;
 
 import com.pet.common.property.ShelterProperties;
+import com.pet.domains.account.domain.Account;
+import com.pet.domains.account.dto.response.AccountBookmarkPostPageResults;
 import com.pet.domains.animal.dto.request.AnimalKindCreateParams;
 import com.pet.domains.animal.dto.response.AnimalKindApiPageResults;
 import com.pet.domains.animal.service.AnimalKindService;
@@ -12,6 +14,7 @@ import com.pet.domains.area.dto.response.TownApiPageResults;
 import com.pet.domains.area.service.CityService;
 import com.pet.domains.area.service.TownService;
 import com.pet.domains.post.dto.response.ShelterApiPageResult;
+import com.pet.domains.post.repository.MissingPostWithIsBookmark;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -24,6 +27,8 @@ import java.util.stream.LongStream;
 import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;

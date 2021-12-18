@@ -2,6 +2,7 @@ package com.pet.domains.post.service;
 
 import com.pet.common.exception.ExceptionMessage;
 import com.pet.domains.account.domain.Account;
+import com.pet.domains.account.dto.response.AccountBookmarkPostPageResults;
 import com.pet.domains.animal.domain.AnimalKind;
 import com.pet.domains.animal.service.AnimalKindService;
 import com.pet.domains.area.domain.Town;
@@ -94,4 +95,21 @@ public class ShelterPostService {
         return townService.getOrCreateTownByName(cityName, townName);
     }
 
+    public AccountBookmarkPostPageResults getBookmarksThumbnailsByAccount(Account account, Pageable pageable,
+        PostSearchParam param
+    ) {
+        Page<ShelterPostWithIsBookmark> shelterPostWithIsBookmarks =
+            shelterPostRepository.findAllWithIsBookmark(account, pageable, param);
+        return AccountBookmarkPostPageResults
+            .of(shelterPostWithIsBookmarks.stream()
+                    .map(this::toResults)
+                    .collect(Collectors.toList()),
+                shelterPostWithIsBookmarks.getTotalElements(),
+                shelterPostWithIsBookmarks.isLast(),
+                shelterPostWithIsBookmarks.getSize());
+    }
+
+    private AccountBookmarkPostPageResults.Post toResults(ShelterPostWithIsBookmark missingPostWithIsBookmark) {
+        return shelterPostMapper.toAccountBookmarkShelterPost(missingPostWithIsBookmark.getShelterPost());
+    }
 }
