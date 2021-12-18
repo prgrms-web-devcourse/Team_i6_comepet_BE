@@ -2,6 +2,7 @@ package com.pet.domains.post.repository;
 
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.post.domain.MissingPost;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,4 +39,7 @@ public interface MissingPostRepository extends JpaRepository<MissingPost, Long> 
         type = EntityGraphType.LOAD)
     Page<MissingPost> findByAccountId(Long accountId, Pageable pageable);
 
+    void deleteAllByAccount(Account account);
+
+    List<MissingPost> findAllByAccount(Account account);
 }
