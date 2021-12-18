@@ -72,7 +72,7 @@ class NotificationControllerTest extends BaseDocumentationTest {
                 )
             ), 11, false, 2);
 
-        given(notificationService.getByAccountId(any(Account.class), PageRequest.of(0, 8))).willReturn(result);
+        given(notificationService.getByAccountId(any(Account.class), any(PageRequest.class))).willReturn(result);
         // when
         ResultActions resultActions = mockMvc.perform(get("/api/v1/notices")
             .param("page", "0")
@@ -102,6 +102,8 @@ class NotificationControllerTest extends BaseDocumentationTest {
                     fieldWithPath("data.notifications[0].image").type(STRING).description("유저 프로필 사진"),
                     fieldWithPath("data.notifications[0].postId").type(NUMBER).description("실종/보호 게시물 id"),
                     fieldWithPath("data.notifications[0].status").type(STRING).description("<<status,게시물 상태>>"),
+                    fieldWithPath("data.notifications[0].animalKindName").type(STRING).description("품종 이름"),
+                    fieldWithPath("data.notifications[0].town").type(STRING).description("시군구 이름"),
                     fieldWithPath("data.totalElements").type(NUMBER).description("전체 게시물 수"),
                     fieldWithPath("data.last").type(BOOLEAN).description("마지막 페이지 여부"),
                     fieldWithPath("data.size").type(NUMBER).description("페이지당 요청 수"),
