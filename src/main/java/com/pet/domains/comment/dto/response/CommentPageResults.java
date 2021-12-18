@@ -35,14 +35,17 @@ public class CommentPageResults {
 
         private List<ChildComment> childComments;
 
+        private boolean deleted;
+
         public Comment(long id, String content, LocalDateTime createdAt,
             Account account,
-            List<ChildComment> childComments) {
+            List<ChildComment> childComments, boolean deleted) {
             this.id = id;
             this.content = content;
             this.createdAt = createdAt;
             this.account = account;
             this.childComments = childComments;
+            this.deleted = deleted;
         }
 
         @Getter
