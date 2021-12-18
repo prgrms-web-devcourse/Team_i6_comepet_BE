@@ -40,7 +40,6 @@ public class ShelterPostController {
         @Valid PostSearchParam searchPostRequest,
         Pageable pageable
     ) {
-        System.out.println(searchPostRequest);
         return ApiResponse.ok(getShelterPostPageResults(account, pageable, searchPostRequest));
     }
 
