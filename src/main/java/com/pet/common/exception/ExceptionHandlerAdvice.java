@@ -4,6 +4,7 @@ import com.pet.common.exception.httpexception.AuthenticationException;
 import com.pet.common.exception.httpexception.BadRequestException;
 import com.pet.common.exception.httpexception.ConflictException;
 import com.pet.common.exception.httpexception.ForbiddenException;
+import com.pet.common.exception.httpexception.InternalServerException;
 import com.pet.common.exception.httpexception.NotFoundException;
 import com.pet.common.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -73,6 +74,12 @@ public class ExceptionHandlerAdvice {
     @ExceptionHandler(ConflictException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleConflictException(ConflictException exception) {
+        return ErrorResponse.error(exception.getCode(), exception.getMessage());
+    }
+
+    @ExceptionHandler(InternalServerException.class)
+    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+    public ErrorResponse handleInternalServerException(InternalServerException exception) {
         return ErrorResponse.error(exception.getCode(), exception.getMessage());
     }
 
