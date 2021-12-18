@@ -12,6 +12,7 @@ public interface NotificationMapper {
     @Mapping(target = "nickname", source = "notification.account.nickname")
     @Mapping(target = "image", source = "notification.missingPost.thumbnail")
     @Mapping(target = "postId", source = "notification.missingPost.id")
+    @Mapping(target = "status", source = "notification.missingPost.status")
     @Mapping(target = "animalKindName", source = "notification.missingPost.animalKind.name")
     @Mapping(target = "town", source = "notification.missingPost.town.name")
     NotificationReadResults.Notification toNotificationDto(Notification notification);
