@@ -16,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Version;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -117,6 +118,9 @@ public class ShelterPost extends BaseEntity {
         nullable = false
     )
     private AnimalKind animalKind;
+
+    @Version
+    private long version;
 
     @Builder
     public ShelterPost(int age, String address, String shelterPlace, String shelterName, String shelterTelNumber,

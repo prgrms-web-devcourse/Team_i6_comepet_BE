@@ -5,9 +5,11 @@ import com.pet.domains.account.domain.Account;
 import com.pet.domains.account.domain.LoginAccount;
 import com.pet.domains.post.dto.response.ShelterPostPageResults;
 import com.pet.domains.post.dto.response.ShelterPostReadResult;
+import com.pet.domains.post.dto.serach.PostSearchParam;
 import com.pet.domains.post.service.ShelterPostBookmarkService;
 import com.pet.domains.post.service.ShelterPostService;
 import java.util.Objects;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -33,8 +35,12 @@ public class ShelterPostController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ApiResponse<ShelterPostPageResults> getShelterPosts(@LoginAccount Account account, Pageable pageable) {
-        return ApiResponse.ok(getShelterPostPageResults(account, pageable));
+    public ApiResponse<ShelterPostPageResults> getShelterPosts(
+        @LoginAccount Account account,
+        @Valid PostSearchParam searchPostRequest,
+        Pageable pageable
+    ) {
+        return ApiResponse.ok(getShelterPostPageResults(account, pageable, searchPostRequest));
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -55,11 +61,15 @@ public class ShelterPostController {
         shelterPostBookmarkService.deletePostBookmark(postId, account);
     }
 
-    private ShelterPostPageResults getShelterPostPageResults(Account account, Pageable pageable) {
+    private ShelterPostPageResults getShelterPostPageResults(
+        Account account,
+        Pageable pageable,
+        PostSearchParam postSearchParam
+    ) {
         if (Objects.nonNull(account)) {
-            return shelterPostService.getShelterPostsPageWithAccount(account, pageable);
+            return shelterPostService.getShelterPostsPageWithAccount(account, pageable, postSearchParam);
         }
-        return shelterPostService.getShelterPostsPage(pageable);
+        return shelterPostService.getShelterPostsPage(pageable, postSearchParam);
     }
 
     private ShelterPostReadResult getShelterPostReadResult(Account account, Long postId) {

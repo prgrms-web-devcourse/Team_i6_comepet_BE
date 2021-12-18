@@ -55,11 +55,10 @@ public class Notification extends DeletableEntity {
     private MissingPost missingPost;
 
     @Builder
-    public Notification(boolean checked, Account account, MissingPost missingPost) {
+    public Notification(Account account, MissingPost missingPost) {
         Validate.notNull(account, "account must not be null");
         Validate.notNull(missingPost, "account must not be null");
 
-        this.checked = checked;
         this.account = account;
         this.missingPost = missingPost;
     }

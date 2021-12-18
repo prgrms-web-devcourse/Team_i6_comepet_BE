@@ -4,7 +4,6 @@ import com.pet.domains.account.domain.Account;
 import com.pet.domains.account.dto.response.AccountBookmarkPostPageResults;
 import com.pet.domains.animal.domain.AnimalKind;
 import com.pet.domains.area.domain.Town;
-import com.pet.domains.image.domain.Image;
 import com.pet.domains.image.domain.PostImage;
 import com.pet.domains.post.domain.MissingPost;
 import com.pet.domains.post.dto.request.MissingPostCreateParam;
@@ -138,10 +137,10 @@ public interface MissingPostMapper {
     MissingPostReadResult.Account toMissingPostAccountDto(com.pet.domains.account.domain.Account account);
 
     @Mappings({
-        @Mapping(target = "id", source = "image.id"),
+        @Mapping(target = "id", source = "id"),
         @Mapping(target = "name", source = "image.name")
     })
-    MissingPostReadResult.Image toMissingPostImageDto(Image image);
+    MissingPostReadResult.Image toMissingPostImageDto(PostImage postImage);
 
     @Mappings({
         @Mapping(target = "id", source = "tag.id"),
@@ -161,7 +160,7 @@ public interface MissingPostMapper {
 
     default List<MissingPostReadResult.Image> toMissingPostImageResult(List<PostImage> postImages) {
         return postImages.stream()
-            .map(postImage -> toMissingPostImageDto(postImage.getImage()))
+            .map(this::toMissingPostImageDto)
             .collect(Collectors.toList());
     }
 

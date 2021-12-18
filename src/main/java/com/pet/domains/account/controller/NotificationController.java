@@ -32,8 +32,11 @@ public class NotificationController {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<NotificationReadResults> getNotifications(@LoginAccount Account account, Pageable pageable) {
-        return ApiResponse.ok(notificationService.getByAccountId(pageable));
+    public ApiResponse<NotificationReadResults> getNotifications(
+        @LoginAccount Account account,
+        Pageable pageable
+    ) {
+        return ApiResponse.ok(notificationService.getByAccountId(account, pageable));
     }
 
     @DeleteMapping("/{noticeId}")

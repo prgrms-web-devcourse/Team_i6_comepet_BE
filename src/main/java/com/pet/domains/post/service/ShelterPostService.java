@@ -11,6 +11,7 @@ import com.pet.domains.post.domain.ShelterPost;
 import com.pet.domains.post.dto.request.ShelterPostCreateParams;
 import com.pet.domains.post.dto.response.ShelterPostPageResults;
 import com.pet.domains.post.dto.response.ShelterPostReadResult;
+import com.pet.domains.post.dto.serach.PostSearchParam;
 import com.pet.domains.post.mapper.ShelterPostMapper;
 import com.pet.domains.post.repository.MissingPostWithIsBookmark;
 import com.pet.domains.post.repository.ShelterPostRepository;
@@ -37,27 +38,37 @@ public class ShelterPostService {
 
     private final ShelterPostMapper shelterPostMapper;
 
-    public ShelterPostPageResults getShelterPostsPageWithAccount(Account account, Pageable pageable) {
-        Page<ShelterPostWithIsBookmark> pageResult = shelterPostRepository.findAllWithIsBookmark(account, pageable);
+    public ShelterPostPageResults getShelterPostsPageWithAccount(
+        Account account,
+        Pageable pageable,
+        PostSearchParam postSearchParam
+    ) {
+        Page<ShelterPostWithIsBookmark> pageResult = shelterPostRepository.findAllWithIsBookmark(account, pageable,
+            postSearchParam);
         return shelterPostMapper.toShelterPostPageResultsWithAccount(pageResult);
     }
 
-    public ShelterPostPageResults getShelterPostsPage(Pageable pageable) {
-        Page<ShelterPost> pageResult = shelterPostRepository.findAll(pageable);
+    public ShelterPostPageResults getShelterPostsPage(Pageable pageable, PostSearchParam postSearchParam) {
+        Page<ShelterPost> pageResult = shelterPostRepository.findAllWithFetch(pageable, postSearchParam);
         return shelterPostMapper.toShelterPostPageResults(pageResult);
     }
 
     public ShelterPostReadResult getShelterPostReadResultWithAccount(Account account, Long postId) {
-        ShelterPostWithIsBookmark foundShelterPost = shelterPostRepository.findByIdWithIsBookmark(account, postId)
+        ShelterPostWithIsBookmark postWithIsBookmark = shelterPostRepository.findByIdWithIsBookmark(account, postId)
             .orElseThrow(ExceptionMessage.NOT_FOUND_SHELTER_POST::getException);
+
         return shelterPostMapper.toShelterPostReadResult(
-            foundShelterPost.getShelterPost(),
-            foundShelterPost.isBookmark()
+            postWithIsBookmark.getShelterPost(),
+            postWithIsBookmark.getAnimalKind(),
+            postWithIsBookmark.getAnimal(),
+            postWithIsBookmark.getTown(),
+            postWithIsBookmark.getCity(),
+            postWithIsBookmark.isBookmark()
         );
     }
 
     public ShelterPostReadResult getShelterPostReadResult(Long postId) {
-        return shelterPostMapper.toShelterPostReadResult(getShelterPost(postId));
+        return shelterPostMapper.toShelterPostReadResult(getShelterPostWithFetch(postId));
     }
 
     @Transactional
@@ -70,8 +81,8 @@ public class ShelterPostService {
             )).collect(Collectors.toList()));
     }
 
-    private ShelterPost getShelterPost(Long postId) {
-        return shelterPostRepository.findById(postId)
+    private ShelterPost getShelterPostWithFetch(Long postId) {
+        return shelterPostRepository.findByIdWithFetch(postId)
             .orElseThrow(ExceptionMessage.NOT_FOUND_SHELTER_POST::getException);
     }
 
