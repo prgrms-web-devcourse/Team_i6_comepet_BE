@@ -160,7 +160,6 @@ class MissingPostBookmarkRepositoryTest {
         missingPostBookmarkRepository.save(missingPostBookmark);
 
         //when
-        System.out.println("here");
         missingPostBookmarkRepository.deleteByAccountAndMissingPostId(account, missingPost.getId());
 
         //then

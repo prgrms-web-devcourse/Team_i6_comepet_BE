@@ -125,14 +125,12 @@ public class MissingPostController {
 
     private Optional<MissingPostReadResult> getMissingPostOneResult(Account account, Long postId) {
         if (Objects.nonNull(account)) {
-            System.out.println("1");
             return OptimisticLockingHandlingUtils.handling(
                 () -> missingPostService.getMissingPostOneWithAccount(account, postId),
                 10,
                 "실종/보호 게시물 단건 조회 with jwt"
             );
         }
-        System.out.println("2");
         return OptimisticLockingHandlingUtils.handling(
             () -> missingPostService.getMissingPostOne(postId),
             10,
