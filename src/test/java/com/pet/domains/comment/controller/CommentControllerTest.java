@@ -13,6 +13,7 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.JsonFieldType.ARRAY;
+import static org.springframework.restdocs.payload.JsonFieldType.BOOLEAN;
 import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
 import static org.springframework.restdocs.payload.JsonFieldType.OBJECT;
 import static org.springframework.restdocs.payload.JsonFieldType.STRING;
@@ -60,7 +61,8 @@ class CommentControllerTest extends BaseDocumentationTest {
                 "자식 댓글",
                 LocalDateTime.now(),
                 new CommentWriteResult.Account(154L, "대댓글 회원", "http://../.jpg"))
-            )
+            ),
+            false
         );
         given(commentService.createComment(any(Account.class), any(CommentCreateParam.class))).willReturn(createResult);
 
@@ -94,6 +96,7 @@ class CommentControllerTest extends BaseDocumentationTest {
                     fieldWithPath("data.id").type(NUMBER).description("댓글 아이디"),
                     fieldWithPath("data.content").type(STRING).description("댓글 내용"),
                     fieldWithPath("data.createdAt").type(STRING).description("댓글 작성날짜"),
+                    fieldWithPath("data.deleted").type(BOOLEAN).description("삭제된 댓글 여부"),
                     fieldWithPath("data.account").type(OBJECT).description("댓글 작성자"),
                     fieldWithPath("data.account.id").type(NUMBER).description("작성자 아이디"),
                     fieldWithPath("data.account.nickname").type(STRING).description("작성자 닉네임"),
@@ -130,7 +133,8 @@ class CommentControllerTest extends BaseDocumentationTest {
                 "자식 댓글",
                 LocalDateTime.now(),
                 new CommentWriteResult.Account(154L, "대댓글 회원", "http://../.jpg"))
-            )
+            ),
+            false
         );
         given(commentService.updateComment(anyLong(), any(CommentUpdateParam.class), any(Account.class)))
             .willReturn(updateResult);
@@ -166,6 +170,7 @@ class CommentControllerTest extends BaseDocumentationTest {
                     fieldWithPath("data.id").type(NUMBER).description("댓글 아이디"),
                     fieldWithPath("data.content").type(STRING).description("댓글 내용"),
                     fieldWithPath("data.createdAt").type(STRING).description("댓글 작성날짜"),
+                    fieldWithPath("data.deleted").type(BOOLEAN).description("삭제된 댓글 여부"),
                     fieldWithPath("data.account").type(OBJECT).description("댓글 작성자"),
                     fieldWithPath("data.account.id").type(NUMBER).description("작성자 아이디"),
                     fieldWithPath("data.account.nickname").type(STRING).description("작성자 닉네임"),

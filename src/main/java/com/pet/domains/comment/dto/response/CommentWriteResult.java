@@ -17,14 +17,16 @@ public class CommentWriteResult {
 
     private List<ChildComment> childComments;
 
+    private boolean deleted;
+
     public CommentWriteResult(long id, String content, LocalDateTime createdAt,
-        Account account,
-        List<ChildComment> childComments) {
+        Account account, List<ChildComment> childComments, boolean deleted) {
         this.id = id;
         this.content = content;
         this.createdAt = createdAt;
         this.account = account;
         this.childComments = childComments;
+        this.deleted = deleted;
     }
 
     @Getter
