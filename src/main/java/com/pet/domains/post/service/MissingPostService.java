@@ -120,7 +120,7 @@ public class MissingPostService {
         MissingPost missingPost =
             missingPostRepository.findByMissingPostId(postId)
                 .orElseThrow(ExceptionMessage.NOT_FOUND_MISSING_POST::getException);
-        missingPost.increaseViewCount();
+        increaseViewCount(missingPost);
         return missingPostMapper.toMissingPostDto(missingPost);
     }
 
@@ -128,12 +128,16 @@ public class MissingPostService {
     public MissingPostReadResult getMissingPostOneWithAccount(Account account, Long postId) {
         MissingPostWithIsBookmark missingPostWithIsBookmark =
             missingPostRepository.findByIdAndWithIsBookmarkAccount(account, postId);
+        increaseViewCount(missingPostWithIsBookmark.getMissingPost());
+        return missingPostMapper.toMissingPostDto(missingPostWithIsBookmark);
+    }
+
+    private void increaseViewCount(MissingPost missingPost) {
         OptimisticLockingHandlingUtils.handling(
-            () -> missingPostWithIsBookmark.getMissingPost().increaseViewCount(),
+            missingPost::increaseViewCount,
             5,
             "실종 게시글 조회수 증감 로직"
         );
-        return missingPostMapper.toMissingPostDto(missingPostWithIsBookmark);
     }
 
     private String getThumbnail(List<Image> imageFiles) {
