@@ -7,6 +7,7 @@ import com.pet.domains.comment.domain.Comment;
 import com.pet.domains.comment.dto.request.CommentCreateParam;
 import com.pet.domains.comment.dto.request.CommentUpdateParam;
 import com.pet.domains.comment.dto.response.CommentPageResults;
+import com.pet.domains.comment.dto.response.CommentWriteResult;
 import com.pet.domains.comment.mapper.CommentMapper;
 import com.pet.domains.comment.repository.CommentRepository;
 import com.pet.domains.post.domain.MissingPost;
@@ -35,21 +36,24 @@ public class CommentService {
     }
 
     @Transactional
-    public Long createComment(Account account, CommentCreateParam commentCreateParam) {
+    public CommentWriteResult createComment(Account account, CommentCreateParam commentCreateParam) {
         MissingPost missingPost = getMissingPostById(commentCreateParam.getPostId());
         OptimisticLockingHandlingUtils.handling(
             missingPost::increaseCommentCount,
             5,
             "실종 게시글 댓글 카운트 증가"
         );
-        return commentRepository.save(getNewComment(account, commentCreateParam, missingPost)).getId();
+        return commentMapper.toCommentWriteResult(
+            commentRepository.save(getNewComment(account, commentCreateParam, missingPost))
+        );
     }
 
     @Transactional
-    public Long updateComment(Long commentId, CommentUpdateParam commentUpdateParam, Account account) {
+    public CommentWriteResult updateComment(Long commentId, CommentUpdateParam commentUpdateParam, Account account) {
         Comment foundComment = getMyComment(commentId, account);
         foundComment.updateContent(commentUpdateParam.getContent(), account.getId());
-        return foundComment.getId();
+
+        return commentMapper.toCommentWriteResult(foundComment);
     }
 
     @Transactional
