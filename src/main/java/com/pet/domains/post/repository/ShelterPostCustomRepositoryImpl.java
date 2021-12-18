@@ -55,6 +55,16 @@ public class ShelterPostCustomRepositoryImpl implements ShelterPostCustomReposit
     }
 
     @Override
+    public Page<ShelterPostWithIsBookmark> findAllWithIsBookmark(Account account, Pageable pageable) {
+        QueryResults<ShelterPostWithIsBookmark> queryResults = getShelterPostWithIsBookmarkQuery(account)
+            .limit(pageable.getPageSize())
+            .offset(pageable.getPageNumber())
+            .fetchResults();
+
+        return new PageImpl<>(queryResults.getResults(), pageable, queryResults.getTotal());
+    }
+
+    @Override
     public Page<ShelterPostWithIsBookmark> findAllWithIsBookmark(Account account, Pageable pageable,
         PostSearchParam postSearchParam) {
         QueryResults<ShelterPostWithIsBookmark> queryResults = getShelterPostWithIsBookmarkQuery(account)
@@ -81,6 +91,7 @@ public class ShelterPostCustomRepositoryImpl implements ShelterPostCustomReposit
 
         return Optional.ofNullable(result);
     }
+
 
     private JPAQuery<ShelterPostWithIsBookmark> getShelterPostWithIsBookmarkQuery(Account account) {
         return jpaQueryFactory.select(

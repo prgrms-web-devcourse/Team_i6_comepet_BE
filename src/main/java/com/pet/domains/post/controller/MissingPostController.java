@@ -67,7 +67,6 @@ public class MissingPostController {
     ) {
         log.info("실종/보호 게시물 리스트 조회");
         if (Objects.nonNull(account)) {
-            log.info("with bookmark boolean");
             return ApiResponse.ok(missingPostService.getMissingPostsPageWithAccount(account, pageable, searchParam));
         }
         return ApiResponse.ok(missingPostService.getMissingPostsPage(pageable, searchParam));

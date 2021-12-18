@@ -60,7 +60,6 @@ public class MissingPostCustomRepositoryImpl implements MissingPostCustomReposit
     @Override
     public Page<MissingPostWithIsBookmarkNew> findMissingPostAllWithIsBookmark(Account account,
         Pageable pageable, PostSearchParam postSearchParam) {
-        System.out.println("here!!!");
         QueryResults<MissingPostWithIsBookmarkNew> queryResults = getMissingPostWithIsBookmarkQuery(account)
             .limit(pageable.getPageSize())
             .offset(pageable.getPageNumber())
@@ -73,6 +72,16 @@ public class MissingPostCustomRepositoryImpl implements MissingPostCustomReposit
                 eqSexType(postSearchParam.getSex()),
                 goeFoundDate(postSearchParam.getStart()),
                 loeFoundDate(postSearchParam.getEnd()))
+            .fetchResults();
+
+        return new PageImpl<>(queryResults.getResults(), pageable, queryResults.getTotal());
+    }
+
+    @Override
+    public Page<MissingPostWithIsBookmarkNew> findMissingPostAllWithIsBookmark(Account account, Pageable pageable) {
+        QueryResults<MissingPostWithIsBookmarkNew> queryResults = getMissingPostWithIsBookmarkQuery(account)
+            .limit(pageable.getPageSize())
+            .offset(pageable.getPageNumber())
             .fetchResults();
 
         return new PageImpl<>(queryResults.getResults(), pageable, queryResults.getTotal());

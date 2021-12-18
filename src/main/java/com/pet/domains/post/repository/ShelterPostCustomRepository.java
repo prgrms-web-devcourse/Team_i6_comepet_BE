@@ -17,4 +17,5 @@ public interface ShelterPostCustomRepository {
 
     Optional<ShelterPostWithIsBookmark> findByIdWithIsBookmark(Account account, Long postId);
 
+    Page<ShelterPostWithIsBookmark> findAllWithIsBookmark(Account account, Pageable pageable);
 }

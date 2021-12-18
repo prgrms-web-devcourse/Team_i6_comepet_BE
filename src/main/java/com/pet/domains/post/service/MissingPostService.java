@@ -21,7 +21,6 @@ import com.pet.domains.post.dto.serach.PostSearchParam;
 import com.pet.domains.post.mapper.MissingPostMapper;
 import com.pet.domains.post.mapper.MissingPostReadResultMapper;
 import com.pet.domains.post.repository.MissingPostRepository;
-import com.pet.domains.post.repository.MissingPostWithIsBookmark;
 import com.pet.domains.post.repository.projection.MissingPostWithIsBookmarkNew;
 import com.pet.domains.tag.domain.PostTag;
 import com.pet.domains.tag.domain.Tag;
@@ -152,8 +151,8 @@ public class MissingPostService {
     }
 
     public AccountBookmarkPostPageResults getBookmarksThumbnailsByAccount(Account account, Pageable pageable) {
-        Page<MissingPostWithIsBookmark> missingPostWithIsBookmarks =
-            missingPostRepository.findThumbnailsAccountByDeletedIsFalse(account, pageable);
+        Page<MissingPostWithIsBookmarkNew> missingPostWithIsBookmarks =
+            missingPostRepository.findMissingPostAllWithIsBookmark(account, pageable);
         return AccountBookmarkPostPageResults
             .of(missingPostWithIsBookmarks.stream()
                     .map(missingPostWithIsBookmark -> missingPostMapper

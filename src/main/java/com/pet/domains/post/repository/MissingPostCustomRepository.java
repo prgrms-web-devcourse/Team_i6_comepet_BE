@@ -18,6 +18,8 @@ public interface MissingPostCustomRepository {
         PostSearchParam postSearchParam
     );
 
+    Page<MissingPostWithIsBookmarkNew> findMissingPostAllWithIsBookmark(Account account, Pageable pageable);
+
     Optional<MissingPostWithIsBookmarkNew> findMissingPostByIdWithIsBookmark(Account account, Long postId);
 
 }
