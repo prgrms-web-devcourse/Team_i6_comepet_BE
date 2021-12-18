@@ -21,7 +21,7 @@ import com.pet.domains.post.dto.serach.PostSearchParam;
 import com.pet.domains.post.mapper.MissingPostMapper;
 import com.pet.domains.post.mapper.MissingPostReadResultMapper;
 import com.pet.domains.post.repository.MissingPostRepository;
-import com.pet.domains.post.repository.projection.MissingPostWithIsBookmarkNew;
+import com.pet.domains.post.repository.projection.MissingPostWithIsBookmark;
 import com.pet.domains.tag.domain.PostTag;
 import com.pet.domains.tag.domain.Tag;
 import com.pet.domains.tag.repository.PostTagRepository;
@@ -116,7 +116,7 @@ public class MissingPostService {
 
     public MissingPostReadResults getMissingPostsPageWithAccount(Account account, Pageable pageable,
         PostSearchParam searchParam) {
-        Page<MissingPostWithIsBookmarkNew> pageResult =
+        Page<MissingPostWithIsBookmark> pageResult =
             missingPostRepository.findMissingPostAllWithIsBookmark(account, pageable, searchParam);
         return missingPostReadResultMapper.toMissingPostPageResultsWithAccount(pageResult);
     }
@@ -132,7 +132,7 @@ public class MissingPostService {
 
     @Transactional
     public MissingPostReadResult getMissingPostOneWithAccount(Account account, Long postId) {
-        MissingPostWithIsBookmarkNew postWithIsBookmarkNew =
+        MissingPostWithIsBookmark postWithIsBookmarkNew =
             missingPostRepository.findMissingPostByIdWithIsBookmark(account, postId)
                 .orElseThrow(ExceptionMessage.NOT_FOUND_MISSING_POST::getException);
 
@@ -151,7 +151,7 @@ public class MissingPostService {
     }
 
     public AccountBookmarkPostPageResults getBookmarksThumbnailsByAccount(Account account, Pageable pageable) {
-        Page<MissingPostWithIsBookmarkNew> missingPostWithIsBookmarks =
+        Page<MissingPostWithIsBookmark> missingPostWithIsBookmarks =
             missingPostRepository.findMissingPostAllWithIsBookmark(account, pageable);
         return AccountBookmarkPostPageResults
             .of(missingPostWithIsBookmarks.stream()

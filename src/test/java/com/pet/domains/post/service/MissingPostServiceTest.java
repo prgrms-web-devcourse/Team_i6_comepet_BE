@@ -24,7 +24,7 @@ import com.pet.domains.post.domain.SexType;
 import com.pet.domains.post.domain.Status;
 import com.pet.domains.post.mapper.MissingPostMapper;
 import com.pet.domains.post.repository.MissingPostRepository;
-import com.pet.domains.post.repository.MissingPostWithIsBookmark;
+import com.pet.domains.post.repository.projection.MissingPostWithIsBookmark;
 import com.pet.domains.tag.domain.PostTag;
 import com.pet.domains.tag.domain.Tag;
 import com.pet.domains.tag.service.TagService;
@@ -173,28 +173,28 @@ class MissingPostServiceTest {
     @DisplayName("실종/보호 게시물 리스트 익명 조회 테스트")
     void getAnonymousMissingPostsTest() {
         //given
-        given(missingPostRepository.findAllWithFetch(any())).willReturn(mock(Page.class));
+        given(missingPostRepository.findMissingPostAllWithFetch(any(), any())).willReturn(mock(Page.class));
 
         //when
-        Page<MissingPost> pageResult = missingPostRepository.findAllWithFetch(PageRequest.of(1, 5));
+        Page<MissingPost> pageResult = missingPostRepository.findMissingPostAllWithFetch(any(), any());
 
         //then
-        verify(missingPostRepository, times(1)).findAllWithFetch(any());
+        verify(missingPostRepository, times(1)).findMissingPostAllWithFetch(any(), any());
     }
 
     @Test
     @DisplayName("실종/보호 게시물 리스트 사용자 조회 테스트")
     void getUserMissingPostsTest() {
         //given
-        given(missingPostRepository.findAllWithIsBookmarkAccountByDeletedIsFalse(any(), any())).willReturn(
+        given(missingPostRepository.findMissingPostAllWithIsBookmark(any(), any())).willReturn(
             mock(Page.class));
 
         //when
         Page<MissingPostWithIsBookmark> pageResult =
-            missingPostRepository.findAllWithIsBookmarkAccountByDeletedIsFalse(account, PageRequest.of(1, 5));
+            missingPostRepository.findMissingPostAllWithIsBookmark(account, PageRequest.of(1, 5));
 
         //then
-        verify(missingPostRepository, times(1)).findAllWithIsBookmarkAccountByDeletedIsFalse(any(), any());
+        verify(missingPostRepository, times(1)).findMissingPostAllWithIsBookmark(any(), any());
     }
 
 }

@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class MissingPostWithIsBookmarkNew {
+public class MissingPostWithIsBookmark {
 
     private MissingPost missingPost;
 
@@ -27,7 +27,7 @@ public class MissingPostWithIsBookmarkNew {
     private boolean isBookmark;
 
     @QueryProjection
-    public MissingPostWithIsBookmarkNew(MissingPost missingPost, Animal animal,
+    public MissingPostWithIsBookmark(MissingPost missingPost, Animal animal,
         AnimalKind animalKind, City city, Town town, boolean isBookmark) {
         this.missingPost = missingPost;
         this.animal = animal;

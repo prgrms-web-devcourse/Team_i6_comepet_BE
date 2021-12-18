@@ -11,8 +11,8 @@ import com.pet.domains.post.domain.MissingPost;
 import com.pet.domains.post.domain.SexType;
 import com.pet.domains.post.domain.Status;
 import com.pet.domains.post.dto.serach.PostSearchParam;
-import com.pet.domains.post.repository.projection.MissingPostWithIsBookmarkNew;
-import com.pet.domains.post.repository.projection.QMissingPostWithIsBookmarkNew;
+import com.pet.domains.post.repository.projection.MissingPostWithIsBookmark;
+import com.pet.domains.post.repository.projection.QMissingPostWithIsBookmark;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -58,9 +58,9 @@ public class MissingPostCustomRepositoryImpl implements MissingPostCustomReposit
     }
 
     @Override
-    public Page<MissingPostWithIsBookmarkNew> findMissingPostAllWithIsBookmark(Account account,
+    public Page<MissingPostWithIsBookmark> findMissingPostAllWithIsBookmark(Account account,
         Pageable pageable, PostSearchParam postSearchParam) {
-        QueryResults<MissingPostWithIsBookmarkNew> queryResults = getMissingPostWithIsBookmarkQuery(account)
+        QueryResults<MissingPostWithIsBookmark> queryResults = getMissingPostWithIsBookmarkQuery(account)
             .limit(pageable.getPageSize())
             .offset(pageable.getPageNumber())
             .where(
@@ -78,8 +78,8 @@ public class MissingPostCustomRepositoryImpl implements MissingPostCustomReposit
     }
 
     @Override
-    public Page<MissingPostWithIsBookmarkNew> findMissingPostAllWithIsBookmark(Account account, Pageable pageable) {
-        QueryResults<MissingPostWithIsBookmarkNew> queryResults = getMissingPostWithIsBookmarkQuery(account)
+    public Page<MissingPostWithIsBookmark> findMissingPostAllWithIsBookmark(Account account, Pageable pageable) {
+        QueryResults<MissingPostWithIsBookmark> queryResults = getMissingPostWithIsBookmarkQuery(account)
             .limit(pageable.getPageSize())
             .offset(pageable.getPageNumber())
             .fetchResults();
@@ -88,17 +88,17 @@ public class MissingPostCustomRepositoryImpl implements MissingPostCustomReposit
     }
 
     @Override
-    public Optional<MissingPostWithIsBookmarkNew> findMissingPostByIdWithIsBookmark(Account account, Long postId) {
-        MissingPostWithIsBookmarkNew result = getMissingPostWithIsBookmarkQuery(account)
+    public Optional<MissingPostWithIsBookmark> findMissingPostByIdWithIsBookmark(Account account, Long postId) {
+        MissingPostWithIsBookmark result = getMissingPostWithIsBookmarkQuery(account)
             .where(missingPost.id.eq(postId))
             .fetchOne();
 
         return Optional.ofNullable(result);
     }
 
-    private JPAQuery<MissingPostWithIsBookmarkNew> getMissingPostWithIsBookmarkQuery(Account account) {
+    private JPAQuery<MissingPostWithIsBookmark> getMissingPostWithIsBookmarkQuery(Account account) {
         return jpaQueryFactory.select(
-            new QMissingPostWithIsBookmarkNew(
+            new QMissingPostWithIsBookmark(
                 missingPost,
                 animal,
                 animalKind,

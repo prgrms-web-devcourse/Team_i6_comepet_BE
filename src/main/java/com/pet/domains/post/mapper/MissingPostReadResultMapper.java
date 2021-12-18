@@ -8,7 +8,7 @@ import com.pet.domains.image.domain.PostImage;
 import com.pet.domains.post.domain.MissingPost;
 import com.pet.domains.post.dto.response.MissingPostReadResult;
 import com.pet.domains.post.dto.response.MissingPostReadResults;
-import com.pet.domains.post.repository.projection.MissingPostWithIsBookmarkNew;
+import com.pet.domains.post.repository.projection.MissingPostWithIsBookmark;
 import com.pet.domains.tag.domain.PostTag;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,7 +19,7 @@ import org.springframework.data.domain.Page;
 @Mapper(componentModel = "spring")
 public interface MissingPostReadResultMapper {
 
-    default MissingPostReadResults toMissingPostPageResultsWithAccount(Page<MissingPostWithIsBookmarkNew> pageResult) {
+    default MissingPostReadResults toMissingPostPageResultsWithAccount(Page<MissingPostWithIsBookmark> pageResult) {
         List<MissingPostReadResults.MissingPost> missingPosts = pageResult.getContent().stream()
             .map(missingPostWithIsBookmark -> toMissingPagePostDtoWithIsBookmark(
                 missingPostWithIsBookmark.getMissingPost(),
