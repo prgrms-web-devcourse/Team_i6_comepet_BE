@@ -14,6 +14,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.Validate;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -37,6 +38,9 @@ public class City extends BaseEntity {
 
     @Builder
     public City(String code, String name) {
+        Validate.notBlank(code, "code must not be blank");
+        Validate.notBlank(name, "code must not be blank");
+
         this.code = code;
         this.name = name;
     }

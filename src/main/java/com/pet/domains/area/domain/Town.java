@@ -15,7 +15,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.Validate;
 
 
 @Getter
@@ -45,8 +45,8 @@ public class Town extends BaseEntity {
 
     @Builder
     public Town(String code, String name, City city) {
-        ObjectUtils.requireNonEmpty(name, "name must not be null");
-        ObjectUtils.requireNonEmpty(city, "city must not be null");
+        Validate.notBlank(name, "name must not be null");
+        Validate.notNull(city, "city must not be null");
 
         this.code = code;
         this.name = name;

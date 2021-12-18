@@ -32,7 +32,6 @@ import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DataJpaTest(includeFilters = @Filter(
@@ -87,8 +86,12 @@ class NotificationRepositoryTest {
     @Test
     @DisplayName("알림 아이디와 회원 아이디로 알림 조회 테스트")
     void checkNotificationTest() {
-        Notification save = notificationRepository.save(Notification.builder()
-            .account(account).checked(true).missingPost(missingPost).build());
+        Notification save = notificationRepository.save(
+            Notification.builder()
+                .account(account)
+                .missingPost(missingPost)
+                .build()
+        );
 
         entityManager.flush();
         entityManager.clear();
@@ -102,16 +105,16 @@ class NotificationRepositoryTest {
     @Test
     @DisplayName("알림 삭제 테스트")
     void deleteNotificationTest() {
-        Notification notification =
-            Notification.builder().account(account).checked(true).missingPost(missingPost).build();
+        Notification notification = Notification.builder()
+            .account(account)
+            .missingPost(missingPost)
+            .build();
 
         Notification save = notificationRepository.save(notification);
 
         assertThat(notificationRepository.findAll().size()).isEqualTo(1);
-
         notificationRepository.deleteByIdAndAccount(save.getId(), account);
-
-        assertThat(notificationRepository.findAll().size()).isEqualTo(0);
+        assertThat(notificationRepository.findAll().size()).isZero();
     }
 
     @Test
@@ -119,7 +122,7 @@ class NotificationRepositoryTest {
     void getNotificationPagingTest() {
         LongStream.rangeClosed(0, 10)
             .forEach(index -> notificationRepository
-                .save(Notification.builder().account(account).checked(true).missingPost(missingPost).build()));
+                .save(Notification.builder().account(account).missingPost(missingPost).build()));
 
         Page<Notification> notifications = notificationRepository.findAll(PageRequest.of(0, 8));
         assertThat(notifications.getTotalElements()).isEqualTo(11);
