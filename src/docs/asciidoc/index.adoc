@@ -257,6 +257,19 @@ include::{snippets}/update-notification/request-fields.adoc[]
 ==== Http Response
 include::{snippets}/update-notification/http-response.adoc[]
 
+
+=== 알림 전체 삭제 처리
+
+==== CURL request
+include::{snippets}/delete-notifications/curl-request.adoc[]
+
+==== Http Request
+include::{snippets}/delete-notifications/http-request.adoc[]
+
+==== Http Response
+include::{snippets}/delete-notifications/http-response.adoc[]
+
+
 === 알림 삭제 처리
 
 ==== CURL request

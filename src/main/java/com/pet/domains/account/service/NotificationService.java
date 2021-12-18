@@ -47,4 +47,10 @@ public class NotificationService {
             notifications.getSize()
         );
     }
+
+    @Transactional
+    public void deleteAllByAccount(Account account) {
+        notificationRepository.deleteAllInBatchByAccount(account);
+    }
+
 }
