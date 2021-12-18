@@ -9,12 +9,12 @@ import org.mapstruct.Mapping;
 public interface NotificationMapper {
 
 
-    @Mapping(target = "nickname", source = "notification.account.nickname")
-    @Mapping(target = "image", source = "notification.missingPost.thumbnail")
-    @Mapping(target = "postId", source = "notification.missingPost.id")
-    @Mapping(target = "status", source = "notification.missingPost.status")
-    @Mapping(target = "animalKindName", source = "notification.missingPost.animalKind.name")
-    @Mapping(target = "town", source = "notification.missingPost.town.name")
+    @Mapping(target = "nickname", source = "account.nickname")
+    @Mapping(target = "image", source = "missingPost.thumbnail")
+    @Mapping(target = "postId", source = "missingPost.id")
+    @Mapping(target = "status", source = "missingPost.status")
+    @Mapping(target = "animalKindName", source = "missingPost.animalKind.name")
+    @Mapping(target = "town", source = "missingPost.town.name")
     NotificationReadResults.Notification toNotificationDto(Notification notification);
 
 }

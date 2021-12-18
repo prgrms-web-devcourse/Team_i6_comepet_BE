@@ -42,19 +42,22 @@ public class NotificationReadResults {
 
         private final String town;
 
+        private final boolean checked;
+
         public Notification(String nickname, String image, Long postId, String status, String animalKindName,
-            String town) {
+            String town, boolean checked) {
             this.nickname = nickname;
             this.image = image;
             this.postId = postId;
             this.status = status;
             this.animalKindName = animalKindName;
             this.town = town;
+            this.checked = checked;
         }
 
         public static Notification of(String nickname, String image, Long postId, String status, String animalKindName,
-            String town) {
-            return new Notification(nickname, image, postId, status, animalKindName, town);
+            String town, boolean checked) {
+            return new Notification(nickname, image, postId, status, animalKindName, town, checked);
         }
     }
 
