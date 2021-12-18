@@ -95,11 +95,9 @@ public class ShelterPostService {
         return townService.getOrCreateTownByName(cityName, townName);
     }
 
-    public AccountBookmarkPostPageResults getBookmarksThumbnailsByAccount(Account account, Pageable pageable,
-        PostSearchParam param
-    ) {
+    public AccountBookmarkPostPageResults getBookmarksThumbnailsByAccount(Account account, Pageable pageable) {
         Page<ShelterPostWithIsBookmark> shelterPostWithIsBookmarks =
-            shelterPostRepository.findAllWithIsBookmark(account, pageable, param);
+            shelterPostRepository.findAllWithIsBookmark(account, pageable);
         return AccountBookmarkPostPageResults
             .of(shelterPostWithIsBookmarks.stream()
                     .map(this::toResults)
