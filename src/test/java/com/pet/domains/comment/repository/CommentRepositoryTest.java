@@ -186,7 +186,7 @@ class CommentRepositoryTest {
         entityManager.clear();
 
         // when
-        Comment foundComment = commentRepository.findByIdWithFetch(comment.getId()).get();
+        Comment foundComment = commentRepository.findByIdAndDeletedWithFetch(comment.getId(), false).get();
 
         // then
         SoftAssertions.assertSoftly(softAssertions -> {
@@ -232,6 +232,7 @@ class CommentRepositoryTest {
         entityManager.clear();
 
         // when
+        commentRepository.deleteById(parentComment2.getId());
         Page<Comment> comments = commentRepository.findAllByMissingPostId(missingPost.getId(), PageRequest.of(0, 10));
 
         // then
@@ -240,7 +241,8 @@ class CommentRepositoryTest {
                 softAssertions.assertThat(comments.isLast()).isTrue();
                 softAssertions.assertThat(comments.getSize()).isEqualTo(10);
                 softAssertions.assertThat(comments.getContent().get(0).getChildComments()).hasSize(2);
-                softAssertions.assertThat(comments.getContent().get(1).getChildComments()).isEmpty();
+                softAssertions.assertThat(comments.getContent().get(1).getContent())
+                    .isEqualTo(Comment.COMMENT_DELETED_MESSAGE);
             }
         );
     }

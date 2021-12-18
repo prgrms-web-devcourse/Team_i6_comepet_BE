@@ -23,16 +23,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.Validate;
 import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Filter;
-import org.hibernate.annotations.FilterDef;
-import org.hibernate.annotations.ParamDef;
 import org.hibernate.annotations.SQLDelete;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLDelete(sql = "UPDATE comment SET deleted = true WHERE id=?")
-@FilterDef(name = "commentDeletedFilter", parameters = @ParamDef(name = "deleted", type = "boolean"))
-@Filter(name = "commentDeletedFilter", condition = "deleted = :deleted")
 @Entity
 @Table(name = "comment")
 public class Comment extends DeletableEntity {
@@ -73,12 +68,6 @@ public class Comment extends DeletableEntity {
     @BatchSize(size = 20)
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "parentComment")
     private List<Comment> childComments = new ArrayList<>();
-
-    @Transient
-    public static final String COMMENT_DELETED_FILTER = "commentDeletedFilter";
-
-    @Transient
-    public static final String COMMENT_DELETED_PARAM = "deleted";
 
     @Transient
     public static final String COMMENT_DELETED_MESSAGE = "작성자가 삭제한 댓글입니다.";

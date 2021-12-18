@@ -14,8 +14,8 @@ import org.springframework.data.jpa.repository.Query;
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     @EntityGraph(attributePaths = {"account", "missingPost"}, type = EntityGraphType.LOAD)
-    @Query("select c from Comment c where c.id = :commentId")
-    Optional<Comment> findByIdWithFetch(Long commentId);
+    @Query("select c from Comment c where c.id = :commentId and c.deleted = :deleted")
+    Optional<Comment> findByIdAndDeletedWithFetch(Long commentId, boolean deleted);
 
     void deleteAllByMissingPostId(Long postId);
 

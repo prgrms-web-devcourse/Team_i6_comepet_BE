@@ -12,10 +12,7 @@ import com.pet.domains.comment.repository.CommentRepository;
 import com.pet.domains.post.domain.MissingPost;
 import com.pet.domains.post.repository.MissingPostRepository;
 import java.util.Objects;
-import javax.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.Filter;
-import org.hibernate.Session;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -25,8 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Service
 public class CommentService {
-
-    private final EntityManager entityManager;
 
     private final CommentRepository commentRepository;
 
@@ -68,38 +63,16 @@ public class CommentService {
         commentRepository.delete(foundComment);
     }
 
+    private Comment getComment(Long commentId) {
+        return commentRepository.findByIdAndDeletedWithFetch(commentId, false)
+            .orElseThrow(ExceptionMessage.NOT_FOUND_COMMENT::getException);
+
+    }
+
     private Comment getMyComment(Long commentId, Account account) {
-        Session session = getSession();
-        Filter filter = getCommentDeletedFilter(session);
-        filter.setParameter(Comment.COMMENT_DELETED_PARAM, false);
-        Comment foundComment = commentRepository.findByIdWithFetch(commentId)
+        return commentRepository.findByIdAndDeletedWithFetch(commentId, false)
             .filter(comment -> comment.isWriter(account.getId()))
             .orElseThrow(ExceptionMessage.NOT_FOUND_COMMENT::getException);
-        disableFilter(session);
-        return foundComment;
-    }
-
-    private Comment getComment(Long commentId) {
-        Session session = getSession();
-        Filter filter = getCommentDeletedFilter(session);
-        filter.setParameter(Comment.COMMENT_DELETED_PARAM, false);
-        Comment foundComment = commentRepository.findByIdWithFetch(commentId)
-            .orElseThrow(ExceptionMessage.NOT_FOUND_COMMENT::getException);
-        disableFilter(session);
-
-        return foundComment;
-    }
-
-    private Session getSession() {
-        return entityManager.unwrap(Session.class);
-    }
-
-    private Filter getCommentDeletedFilter(Session session) {
-        return session.enableFilter(Comment.COMMENT_DELETED_FILTER);
-    }
-
-    private void disableFilter(Session session) {
-        session.disableFilter(Comment.COMMENT_DELETED_FILTER);
     }
 
     private Comment getNewComment(Account account, CommentCreateParam commentCreateParam, MissingPost missingPost) {
