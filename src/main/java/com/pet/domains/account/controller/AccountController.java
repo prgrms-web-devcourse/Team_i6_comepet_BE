@@ -21,6 +21,7 @@ import com.pet.domains.account.service.AccountService;
 import com.pet.domains.auth.service.AuthenticationService;
 import com.pet.domains.post.domain.SexType;
 import com.pet.domains.post.domain.Status;
+import com.pet.domains.post.dto.serach.PostSearchParam;
 import com.pet.domains.post.service.MissingPostService;
 import com.pet.domains.post.service.ShelterPostService;
 import java.time.LocalDate;
@@ -151,10 +152,11 @@ public class AccountController {
     @GetMapping(path = "/me/bookmarks", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse<AccountBookmarkPostPageResults> getAccountBookmarks(
-        @LoginAccount Account account, @RequestParam(defaultValue = "missing") String status, Pageable pageable
+        @LoginAccount Account account, @RequestParam(defaultValue = "missing") String status, Pageable pageable,
+        @Valid PostSearchParam param
     ) {
         if (status.equals("shelter")) {
-            return ApiResponse.ok(shelterPostService.getBookmarksThumbnailsByAccount(account, pageable));
+            return ApiResponse.ok(shelterPostService.getBookmarksThumbnailsByAccount(account, pageable, param));
         }
         return ApiResponse.ok(missingPostService.getBookmarksThumbnailsByAccount(account, pageable));
     }

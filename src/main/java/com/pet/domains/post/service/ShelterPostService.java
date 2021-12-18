@@ -13,7 +13,6 @@ import com.pet.domains.post.dto.response.ShelterPostPageResults;
 import com.pet.domains.post.dto.response.ShelterPostReadResult;
 import com.pet.domains.post.dto.serach.PostSearchParam;
 import com.pet.domains.post.mapper.ShelterPostMapper;
-import com.pet.domains.post.repository.MissingPostWithIsBookmark;
 import com.pet.domains.post.repository.ShelterPostRepository;
 import com.pet.domains.post.repository.projection.ShelterPostWithIsBookmark;
 import java.util.stream.Collectors;
@@ -96,16 +95,21 @@ public class ShelterPostService {
         return townService.getOrCreateTownByName(cityName, townName);
     }
 
-    public AccountBookmarkPostPageResults getBookmarksThumbnailsByAccount(Account account, Pageable pageable) {
+    public AccountBookmarkPostPageResults getBookmarksThumbnailsByAccount(Account account, Pageable pageable,
+        PostSearchParam param
+    ) {
         Page<ShelterPostWithIsBookmark> shelterPostWithIsBookmarks =
-            shelterPostRepository.findAllWithIsBookmark(account, pageable);
+            shelterPostRepository.findAllWithIsBookmark(account, pageable, param);
         return AccountBookmarkPostPageResults
             .of(shelterPostWithIsBookmarks.stream()
-                    .map(missingPostWithIsBookmark -> shelterPostMapper
-                        .toAccountBookmarkShelterPost(missingPostWithIsBookmark.getShelterPost()))
+                    .map(this::toResults)
                     .collect(Collectors.toList()),
                 shelterPostWithIsBookmarks.getTotalElements(),
                 shelterPostWithIsBookmarks.isLast(),
                 shelterPostWithIsBookmarks.getSize());
+    }
+
+    private AccountBookmarkPostPageResults.Post toResults(ShelterPostWithIsBookmark missingPostWithIsBookmark) {
+        return shelterPostMapper.toAccountBookmarkShelterPost(missingPostWithIsBookmark.getShelterPost());
     }
 }

@@ -505,7 +505,7 @@ class AccountControllerTest extends BaseDocumentationTest {
     @DisplayName("회원 북마크(보호소) 조회")
     void getAccountShelterBookmarkPostTest() throws Exception {
         // given
-        given(shelterPostService.getBookmarksThumbnailsByAccount(any(), any())).willReturn(
+        given(shelterPostService.getBookmarksThumbnailsByAccount(any(), any(), any())).willReturn(
             AccountBookmarkPostPageResults.of(
                 LongStream.range(1, 8)
                     .mapToObj(index -> AccountBookmarkPostPageResults.Post.of(
