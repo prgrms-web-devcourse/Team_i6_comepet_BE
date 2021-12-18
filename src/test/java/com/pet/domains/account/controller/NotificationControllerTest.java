@@ -47,6 +47,7 @@ class NotificationControllerTest extends BaseDocumentationTest {
         NotificationReadResults result = NotificationReadResults.of(
             List.of(
                 NotificationReadResults.Notification.of(
+                    1L,
                     "고양이가 멍멍",
                     "http://../../97fd3403-7343-497a-82fa-c41d26ccf0f8.png",
                     513L,
@@ -56,6 +57,7 @@ class NotificationControllerTest extends BaseDocumentationTest {
                     true
                 ),
                 NotificationReadResults.Notification.of(
+                    2L,
                     "야옹이가 멍멍",
                     "http://../../97fd3403-7343-497a-82fa-c41d26ccf0f8.png",
                     234L,
@@ -65,6 +67,7 @@ class NotificationControllerTest extends BaseDocumentationTest {
                     true
                 ),
                 NotificationReadResults.Notification.of(
+                    3L,
                     "나홀로 집사",
                     "http://../../97fd3403-7343-497a-82fa-c41d26ccf0f8.png",
                     1231L,
@@ -101,6 +104,7 @@ class NotificationControllerTest extends BaseDocumentationTest {
                 responseFields(
                     fieldWithPath("data").type(OBJECT).description("응답 데이터"),
                     fieldWithPath("data.notifications").type(ARRAY).description("알림"),
+                    fieldWithPath("data.notifications[0].id").type(NUMBER).description("알림 id"),
                     fieldWithPath("data.notifications[0].nickname").type(STRING).description("유저 닉네임"),
                     fieldWithPath("data.notifications[0].image").type(STRING).description("유저 프로필 사진"),
                     fieldWithPath("data.notifications[0].postId").type(NUMBER).description("실종/보호 게시물 id"),
