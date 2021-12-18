@@ -302,4 +302,10 @@ public class AccountService {
             missingPosts.isLast(),
             missingPosts.getSize());
     }
+
+    @Transactional
+    public void deleteAccount(Account account) {
+        missingPostRepository.deleteAllByAccount(account);
+        accountRepository.delete(account);
+    }
 }
