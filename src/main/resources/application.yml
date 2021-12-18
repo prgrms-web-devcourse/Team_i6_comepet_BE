@@ -103,7 +103,7 @@ logging.level:
   org.hibernate.SQL: debug
 
 jwt:
-  header: authorization
-  issuer: compet
-  client-secret: N4VZuLd3A47Y6lhISWAl4XTS6nB4GFncraNDdAUq+uA=
-  expiry-seconds: 6000
+  header: ${AUTHORIZATION}
+  issuer: ${ISSUER}
+  client-secret: ${CLIENT-SECRET}
+  expiry-seconds: ${EXPIRY-SECONDS}
