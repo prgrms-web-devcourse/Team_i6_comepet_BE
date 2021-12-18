@@ -1,6 +1,8 @@
 package com.pet.domains.post.controller;
 
+import com.pet.common.exception.ExceptionMessage;
 import com.pet.common.response.ApiResponse;
+import com.pet.common.util.OptimisticLockingHandlingUtils;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.account.domain.LoginAccount;
 import com.pet.domains.comment.dto.response.CommentPageResults;
@@ -15,6 +17,7 @@ import com.pet.domains.post.service.MissingPostService;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -76,10 +79,9 @@ public class MissingPostController {
     @GetMapping(path = "/{postId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ApiResponse<MissingPostReadResult> getMissingPost(@LoginAccount Account account, @PathVariable Long postId) {
         log.info("실종/보호 게시물 단건 조회");
-        if (Objects.nonNull(account)) {
-            return ApiResponse.ok(missingPostService.getMissingPostOneWithAccount(account, postId));
-        }
-        return ApiResponse.ok(missingPostService.getMissingPostOne(postId));
+        MissingPostReadResult result = getMissingPostOneResult(account, postId)
+            .orElseThrow(ExceptionMessage.SERVICE_UNAVAILABLE::getException);
+        return ApiResponse.ok(result);
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -119,5 +121,22 @@ public class MissingPostController {
     @GetMapping(path = "/{postId}/comments", produces = MediaType.APPLICATION_JSON_VALUE)
     public ApiResponse<CommentPageResults> getMissingPostComments(@PathVariable Long postId, Pageable pageable) {
         return ApiResponse.ok(commentService.getMissingPostComments(postId, pageable));
+    }
+
+    private Optional<MissingPostReadResult> getMissingPostOneResult(Account account, Long postId) {
+        if (Objects.nonNull(account)) {
+            System.out.println("1");
+            return OptimisticLockingHandlingUtils.handling(
+                () -> missingPostService.getMissingPostOneWithAccount(account, postId),
+                10,
+                "실종/보호 게시물 단건 조회 with jwt"
+            );
+        }
+        System.out.println("2");
+        return OptimisticLockingHandlingUtils.handling(
+            () -> missingPostService.getMissingPostOne(postId),
+            10,
+            "실종/보호 게시물 단건 조회"
+        );
     }
 }

@@ -30,6 +30,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.Validate;
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -75,10 +76,10 @@ public class MissingPost extends DeletableEntity {
     @Column(name = "view_count", columnDefinition = "BIGINT default 0", nullable = false)
     private long viewCount;
 
-    @Column(name = "bookmark_count", columnDefinition = "BIGINT default 0", nullable = false)
+    @Formula("(select count(*) from missing_post_bookmark mpb where mpb.missing_post_id = id)")
     private long bookmarkCount;
 
-    @Column(name = "comment_count", columnDefinition = "BIGINT default 0", nullable = false)
+    @Formula("(select count(*) from comment c where c.missing_post_id = id)")
     private long commentCount;
 
     @Column(name = "thumbnail")
@@ -152,26 +153,6 @@ public class MissingPost extends DeletableEntity {
 
     public void increaseViewCount() {
         this.viewCount += 1;
-    }
-
-    public void increaseBookCount() {
-        this.bookmarkCount += 1;
-    }
-
-    public void decreaseBookCount() {
-        if (this.bookmarkCount > 0) {
-            this.bookmarkCount -= 1;
-        }
-    }
-
-    public void increaseCommentCount() {
-        this.commentCount += 1;
-    }
-
-    public void decreaseCommentCount() {
-        if (this.commentCount > 0) {
-            this.commentCount -= 1;
-        }
     }
 
 }

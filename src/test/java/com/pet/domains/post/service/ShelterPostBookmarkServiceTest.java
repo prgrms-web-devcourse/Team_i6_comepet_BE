@@ -74,7 +74,6 @@ class ShelterPostBookmarkServiceTest {
         // then
         ArgumentCaptor<ShelterPostBookmark> captor = ArgumentCaptor.forClass(ShelterPostBookmark.class);
         verify(shelterPostBookmarkRepository, times(1)).save(captor.capture());
-        verify(spyShelterPost).increaseBookMarkCount();
         assertThat(spyShelterPost.getBookmarkCount()).isEqualTo(11);
     }
 
@@ -124,7 +123,6 @@ class ShelterPostBookmarkServiceTest {
 
         // then
         verify(shelterPostBookmarkRepository, times(1)).deleteByShelterPostIdAndAccount(anyLong(), any(Account.class));
-        verify(spyShelterPost).decreaseBookMarkCount();
         assertThat(spyShelterPost.getBookmarkCount()).isEqualTo(9);
 
     }
