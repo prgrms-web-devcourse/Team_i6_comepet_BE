@@ -52,7 +52,8 @@ class NotificationControllerTest extends BaseDocumentationTest {
                     513L,
                     Status.DETECTION.name(),
                     "리트리버",
-                    "강남구"
+                    "강남구",
+                    true
                 ),
                 NotificationReadResults.Notification.of(
                     "야옹이가 멍멍",
@@ -60,7 +61,8 @@ class NotificationControllerTest extends BaseDocumentationTest {
                     234L,
                     Status.DETECTION.name(),
                     "리트리버",
-                    "강남구"
+                    "강남구",
+                    true
                 ),
                 NotificationReadResults.Notification.of(
                     "나홀로 집사",
@@ -68,7 +70,8 @@ class NotificationControllerTest extends BaseDocumentationTest {
                     1231L,
                     Status.DETECTION.name(),
                     "리트리버",
-                    "강남구"
+                    "강남구",
+                    false
                 )
             ), 11, false, 2);
 
@@ -104,6 +107,7 @@ class NotificationControllerTest extends BaseDocumentationTest {
                     fieldWithPath("data.notifications[0].status").type(STRING).description("<<status,게시물 상태>>"),
                     fieldWithPath("data.notifications[0].animalKindName").type(STRING).description("품종 이름"),
                     fieldWithPath("data.notifications[0].town").type(STRING).description("시군구 이름"),
+                    fieldWithPath("data.notifications[0].checked").type(BOOLEAN).description("알림 읽음 여부"),
                     fieldWithPath("data.totalElements").type(NUMBER).description("전체 게시물 수"),
                     fieldWithPath("data.last").type(BOOLEAN).description("마지막 페이지 여부"),
                     fieldWithPath("data.size").type(NUMBER).description("페이지당 요청 수"),
