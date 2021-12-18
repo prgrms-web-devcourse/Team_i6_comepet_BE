@@ -159,8 +159,8 @@ public class AccountController {
 
     @DeleteMapping("/me")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteAccount() {
-        log.info("success deleted account");
+    public void deleteAccount(@LoginAccount Account account) {
+        accountService.deleteAccount(account);
     }
 
     private ApiResponse<AccountBookmarkPostPageResults> getAccountShelterBookmarkPosts() {
