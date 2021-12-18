@@ -27,7 +27,6 @@ import com.pet.domains.post.repository.MissingPostRepository;
 import com.pet.domains.post.repository.MissingPostWithIsBookmark;
 import com.pet.domains.tag.domain.PostTag;
 import com.pet.domains.tag.domain.Tag;
-import com.pet.domains.tag.service.PostTagService;
 import com.pet.domains.tag.service.TagService;
 import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeEach;
@@ -58,9 +57,6 @@ class MissingPostServiceTest {
 
     @Mock
     private PostImageRepository postImageRepository;
-
-    @Mock
-    private PostTagService postTagService;
 
     @Mock
     private TagService tagService;
