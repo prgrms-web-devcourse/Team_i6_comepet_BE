@@ -23,6 +23,11 @@ public interface MissingPostRepository extends JpaRepository<MissingPost, Long> 
         + "WHERE mp.deleted = false")
     Page<MissingPostWithIsBookmark> findAllWithIsBookmarkAccountByDeletedIsFalse(Account account, Pageable pageable);
 
+    @EntityGraph(attributePaths = {"animalKind", "town", "town.city"}, type = EntityGraphType.LOAD)
+    @Query("SELECT DISTINCT mp as missingPost, mpb.id IS NOT NULL as isBookmark FROM MissingPost mp "
+        + "LEFT OUTER JOIN MissingPostBookmark mpb ON mp.id = mpb.missingPost.id AND mpb.account = :account")
+    Page<MissingPostWithIsBookmark> findThumbnailsAccountByDeletedIsFalse(Account account, Pageable pageable);
+
     @EntityGraph(attributePaths = {"animalKind", "animalKind.animal", "town", "town.city",
         "account"}, type = EntityGraphType.LOAD)
     @Query("SELECT mp FROM MissingPost mp WHERE mp.id = :postId")

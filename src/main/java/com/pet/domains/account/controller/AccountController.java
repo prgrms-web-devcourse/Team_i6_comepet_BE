@@ -20,7 +20,12 @@ import com.pet.domains.account.dto.response.AccountReadResult;
 import com.pet.domains.account.service.AccountService;
 import com.pet.domains.auth.service.AuthenticationService;
 import com.pet.domains.post.domain.SexType;
+import com.pet.domains.post.domain.Status;
+import com.pet.domains.post.dto.serach.PostSearchParam;
+import com.pet.domains.post.service.MissingPostService;
+import com.pet.domains.post.service.ShelterPostService;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.LongStream;
 import javax.validation.Valid;
@@ -51,7 +56,11 @@ public class AccountController {
 
     private final AccountService accountService;
 
+    private final MissingPostService missingPostService;
+
     private final AuthenticationService authenticationService;
+
+    private final ShelterPostService shelterPostService;
 
     @PostMapping(path = "/send-email", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -143,18 +152,13 @@ public class AccountController {
     @GetMapping(path = "/me/bookmarks", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse<AccountBookmarkPostPageResults> getAccountBookmarks(
-        @RequestParam(defaultValue = "missing") String status
+        @LoginAccount Account account, @RequestParam(defaultValue = "missing") String status, Pageable pageable,
+        @Valid PostSearchParam param
     ) {
-        /** RequestParam 우선 하드코딩 */
         if (status.equals("shelter")) {
-            return getAccountShelterBookmarkPosts();
+            return ApiResponse.ok(shelterPostService.getBookmarksThumbnailsByAccount(account, pageable, param));
         }
-
-        if (status.equals("missing")) {
-            return getAccountMissingBookmarkPosts();
-        }
-
-        throw new IllegalArgumentException();
+        return ApiResponse.ok(missingPostService.getBookmarksThumbnailsByAccount(account, pageable));
     }
 
     @DeleteMapping("/me")
@@ -163,37 +167,4 @@ public class AccountController {
         accountService.deleteAccount(account);
     }
 
-    private ApiResponse<AccountBookmarkPostPageResults> getAccountShelterBookmarkPosts() {
-        return ApiResponse.ok(
-            AccountBookmarkPostPageResults.of(
-                LongStream.range(1, 8)
-                    .mapToObj(index -> AccountBookmarkPostPageResults.Post.of(
-                        index,
-                        "포메라니안",
-                        SexType.FEMALE,
-                        "경상남도 진주시 집현면 신당길 207번길 22 (집현면, 지엽농업개발시설)",
-                        LocalDate.of(2021, 4, 11),
-                        "http://../../97fd3403-7343-497a-82fa-c41d26ccf0f8.png",
-                        5))
-                    .collect(toList()), 15, false, 8
-            )
-        );
-    }
-
-    private ApiResponse<AccountBookmarkPostPageResults> getAccountMissingBookmarkPosts() {
-        return ApiResponse.ok(
-            AccountBookmarkPostPageResults.of(
-                LongStream.range(1, 8)
-                    .mapToObj(index -> AccountBookmarkPostPageResults.Post.of(
-                        index,
-                        "포메라니안",
-                        SexType.MALE,
-                        "인천 광역시 미추홀구 용현 1동",
-                        LocalDate.of(2021, 6, 13),
-                        "http://../../97fd3403-7343-497a-82fa-c41d26ccf0f8.png",
-                        3))
-                    .collect(toList()), 15, false, 8
-            )
-        );
-    }
 }
