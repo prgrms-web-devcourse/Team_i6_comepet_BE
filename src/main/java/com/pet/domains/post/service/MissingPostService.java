@@ -6,6 +6,7 @@ import com.pet.domains.account.domain.Account;
 import com.pet.domains.account.dto.response.AccountBookmarkPostPageResults;
 import com.pet.domains.account.service.NotificationAsyncService;
 import com.pet.domains.animal.domain.AnimalKind;
+import com.pet.domains.animal.repository.AnimalKindRepository;
 import com.pet.domains.animal.service.AnimalKindService;
 import com.pet.domains.area.domain.Town;
 import com.pet.domains.area.repository.TownRepository;
@@ -24,7 +25,9 @@ import com.pet.domains.post.repository.MissingPostWithIsBookmark;
 import com.pet.domains.tag.domain.PostTag;
 import com.pet.domains.tag.domain.Tag;
 import com.pet.domains.tag.repository.PostTagRepository;
+import com.pet.domains.tag.repository.TagRepository;
 import com.pet.domains.tag.service.TagService;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -55,7 +58,11 @@ public class MissingPostService {
 
     private final MissingPostRepository missingPostRepository;
 
+    private final AnimalKindRepository animalKindRepository;
+
     private final TownRepository townRepository;
+
+    private final TagRepository tagRepository;
 
     private final PostTagRepository postTagRepository;
 
@@ -159,40 +166,58 @@ public class MissingPostService {
     public Long updateMissingPost(Account account, Long postId, MissingPostUpdateParam param,
         List<MultipartFile> images) {
         //1. 게시글 조회
-        MissingPost missingPost =
-            missingPostRepository.findById(postId).orElseThrow(ExceptionMessage.NOT_FOUND_MISSING_POST::getException);
-
-        //image
-        //기존에 있는 이미지면 s3 url
-        //multipart에 담는지, url로 주는지
-        //image 2개로
-        //기존거는 body, 새거는 multipart
-
-        //없으면 ""
-        //새로운 이미지면 파일명
-
+        MissingPost getMissingPost = missingPostRepository.findById(postId)
+            .filter(post -> post.getAccount().getId().equals(account.getId()))
+            .orElseThrow(ExceptionMessage.UN_IDENTIFICATION::getException);
 
         //2. param으로 가져온 tag들 현재 list와 비교하기
-        //O
-        List<String> getTagsFromParam =
-            param.getTags().stream().map(MissingPostUpdateParam.Tag::getName).collect(Collectors.toList());
+        //tag 이름들 가져오기 - O
+        List<String> getParamTags =
+            param.getTags()
+                .stream()
+                .map(MissingPostUpdateParam.Tag::getName)
+                .collect(Collectors.toList());
 
-        //비교를 이렇게 하면 안될거같은데
-        List<String> getTagsFromEntity =
-            missingPost.getPostTags().stream().map(postTag -> postTag.getTag().getName()).collect(Collectors.toList());
+        //기존 태그 리스트 가져오기
+        List<String> getEntityTags =
+            getMissingPost.getPostTags()
+                .stream()
+                .map(postTag -> postTag.getTag().getName())
+                .collect(Collectors.toList());
 
-        //중복 제거
-        //기존 1, 2, 2
-        //새로 2, 4, 5
+        //변경되지 않은 태그
+        List<String> getUsedTags = new ArrayList<>();
+        for (String getParamTag : getParamTags) {
+            if (getEntityTags.contains(getParamTag)) {
+                //겹치면 사용중인 태그
+                getUsedTags.add(getParamTag);
+            } else {
+                //겹치지 않으면 새로운 태그
+                PostTag build = PostTag.builder()
+                    .missingPost(getMissingPost)
+                    .tag(tagService.getOrCreateByTagName(getParamTag))
+                    .build();
+            }
+        }
 
-        //a - b
-        //b - a
-        //collection
+        //tag 개수 -1
+        List<PostTag> getPostTags = postTagRepository.getPostTagsByMissingPostId(getMissingPost.getId());
+        List<PostTag> notUsedPostTags =
+            getPostTags.stream()
+                .filter(getPostTag -> !getUsedTags.contains(getPostTag))
+                .collect(Collectors.toList());
+        tagService.decreaseTagCount(notUsedPostTags);
 
-
-        //2-1 같으면 교체 없이 그대로 진행
-
-        //2-2 다른 tag가 있다면 기존 태그 posttag와 tag에서 개수 감소하고, 새로운 태그 tag 개수 추가 및 posttag 추가
+        //삭제된 태그 삭제
+        //1. 리스트 삭제
+        //2. postTag 삭제 - dirty checking
+        getEntityTags.stream()
+            .filter(getEntityTag -> !getUsedTags.contains(getEntityTag)).map(
+            getEntityTag -> postTagRepository.findByMissingPostAndTag(getMissingPost,
+                tagRepository.findTagByName(getEntityTag).get())).forEach(postTag -> {
+            postTagRepository.deleteById(postTag.getId());
+            getMissingPost.getPostTags().remove(postTag);
+        });
 
         //3. param으로 가져온 image들 현재 list와 비교하기
 
@@ -201,11 +226,11 @@ public class MissingPostService {
         //3-2 다른 image가 있다면 기존 postImage에서 제거하고, 새로운 image 추가 및 postImage 추가
 
         //4. param으로 가져온 값들 넣가주기
-        missingPost.changeInfo(param.getStatus(), param.getDate(), param.getCity(), param.getTown(),
-            param.getDetailAddress(), param.getTelNumber(), param.getAnimal(), param.getAnimalKindName(),
+        getMissingPost.changeInfo(param.getStatus(), param.getDate(), townRepository.findById(param.getTownId()).get(),
+            param.getDetailAddress(), param.getTelNumber(), animalKindRepository.findByName(param.getAnimalKindName()).get(),
             param.getAge(), param.getSex(), param.getChipNumber(), param.getContent());
 
-        return missingPost.getId();
+        return getMissingPost.getId();
     }
 
     private String getThumbnail(List<Image> imageFiles) {

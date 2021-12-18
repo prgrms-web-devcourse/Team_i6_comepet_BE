@@ -67,4 +67,12 @@ public class PostTag extends BaseEntity {
         missingPost.getPostTags().add(this);
     }
 
+    private void removeMissingPost(MissingPost missingPost) {
+        if (Objects.nonNull(this.missingPost)) {
+            missingPost.getPostTags().remove(this);
+        }
+        this.missingPost = missingPost;
+        missingPost.getPostTags().remove(this);
+    }
+
 }

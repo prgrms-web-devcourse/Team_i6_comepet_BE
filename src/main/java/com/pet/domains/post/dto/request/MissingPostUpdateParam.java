@@ -17,9 +17,9 @@ public class MissingPostUpdateParam {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
 
-    private Long city;
+    private Long cityId;
 
-    private Long town;
+    private Long townId;
 
     private String detailAddress;
 
@@ -29,23 +29,25 @@ public class MissingPostUpdateParam {
 
     private String animalKindName;
 
-    private int age;
+    private Long age;
 
     private SexType sex;
 
     private String chipNumber;
 
-    private List<Tag> tags;
+    private List<MissingPostUpdateParam.Tag> tags;
 
     private String content;
 
-    public MissingPostUpdateParam(Status status, LocalDate date, Long city, Long town, String detailAddress,
-        String telNumber, Long animal, String animalKindName, int age, SexType sex, String chipNumber,
-        List<Tag> tags, String content) {
+    private List<MissingPostUpdateParam.Image> images;
+
+    public MissingPostUpdateParam(Status status, LocalDate date, Long cityId, Long townId, String detailAddress,
+        String telNumber, Long animal, String animalKindName, Long age, SexType sex, String chipNumber,
+        List<Tag> tags, String content, List<Image> images) {
         this.status = status;
         this.date = date;
-        this.city = city;
-        this.town = town;
+        this.cityId = cityId;
+        this.townId = townId;
         this.detailAddress = detailAddress;
         this.telNumber = telNumber;
         this.animal = animal;
@@ -55,15 +57,17 @@ public class MissingPostUpdateParam {
         this.chipNumber = chipNumber;
         this.tags = tags;
         this.content = content;
+        this.images = images;
     }
 
     public static MissingPostUpdateParam of(
-        Status status, LocalDate date, Long city, Long town, String detailAddress, String telNumber, Long animal,
-        String animalKindName, int age, SexType sex, String chipNumber, List<Tag> tags, String content
+        Status status, LocalDate date, Long cityId, Long townId, String detailAddress, String telNumber, Long animal,
+        String animalKindName, Long age, SexType sex, String chipNumber, List<Tag> tags, String content,
+        List<Image> images
     ) {
         return new MissingPostUpdateParam(
-            status, date, city, town, detailAddress, telNumber, animal, animalKindName, age, sex, chipNumber, tags,
-            content
+            status, date, cityId, townId, detailAddress, telNumber, animal, animalKindName, age, sex, chipNumber, tags,
+            content, images
         );
     }
 
@@ -79,6 +83,25 @@ public class MissingPostUpdateParam {
 
         public static Tag of(String name) {
             return new Tag(name);
+        }
+
+    }
+
+    @Getter
+    @NoArgsConstructor
+    public static class Image {
+
+        private Long id;
+
+        private String name;
+
+        public Image(Long id, String name) {
+            this.id = id;
+            this.name = name;
+        }
+
+        public static Image of(Long id, String name) {
+            return new Image(id, name);
         }
 
     }

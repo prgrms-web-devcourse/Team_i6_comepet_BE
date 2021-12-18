@@ -1,6 +1,5 @@
 package com.pet.domains.post.mapper;
 
-import com.pet.domains.account.domain.Account;
 import com.pet.domains.account.dto.response.AccountBookmarkPostPageResults;
 import com.pet.domains.animal.domain.AnimalKind;
 import com.pet.domains.area.domain.Town;
