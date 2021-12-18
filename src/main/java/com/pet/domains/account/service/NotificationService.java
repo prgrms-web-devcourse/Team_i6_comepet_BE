@@ -50,7 +50,7 @@ public class NotificationService {
 
     @Transactional
     public void deleteAllByAccount(Account account) {
-        notificationRepository.deleteAllByAccount(account);
+        notificationRepository.deleteAllInBatchByAccount(account);
     }
 
 }
