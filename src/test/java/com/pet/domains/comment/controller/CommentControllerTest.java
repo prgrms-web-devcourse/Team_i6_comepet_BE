@@ -12,6 +12,8 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.payload.JsonFieldType.ARRAY;
+import static org.springframework.restdocs.payload.JsonFieldType.BOOLEAN;
 import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
 import static org.springframework.restdocs.payload.JsonFieldType.OBJECT;
 import static org.springframework.restdocs.payload.JsonFieldType.STRING;
@@ -26,7 +28,10 @@ import com.pet.domains.account.WithAccount;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.comment.dto.request.CommentCreateParam;
 import com.pet.domains.comment.dto.request.CommentUpdateParam;
+import com.pet.domains.comment.dto.response.CommentWriteResult;
 import com.pet.domains.docs.BaseDocumentationTest;
+import java.time.LocalDateTime;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
@@ -41,12 +46,25 @@ class CommentControllerTest extends BaseDocumentationTest {
     @DisplayName("댓글 생성 테스트")
     void createCommentTest() throws Exception {
         // given
-        given(commentService.createComment(any(Account.class), any(CommentCreateParam.class))).willReturn(1L);
         CommentCreateParam createParam = CommentCreateParam.builder()
             .postId(1L)
             .content("content")
             .parentCommentId(13L)
             .build();
+        CommentWriteResult createResult = new CommentWriteResult(
+            123L,
+            createParam.getContent(),
+            LocalDateTime.now(),
+            new CommentWriteResult.Account(12L, "회원", "http://../.jpg"),
+            List.of(new CommentWriteResult.ChildComment(
+                13L,
+                "자식 댓글",
+                LocalDateTime.now(),
+                new CommentWriteResult.Account(154L, "대댓글 회원", "http://../.jpg"))
+            ),
+            false
+        );
+        given(commentService.createComment(any(Account.class), any(CommentCreateParam.class))).willReturn(createResult);
 
         // when
         ResultActions resultActions = mockMvc.perform(post("/api/v1/comments")
@@ -76,6 +94,23 @@ class CommentControllerTest extends BaseDocumentationTest {
                 responseFields(
                     fieldWithPath("data").type(OBJECT).description("응답 데이터"),
                     fieldWithPath("data.id").type(NUMBER).description("댓글 아이디"),
+                    fieldWithPath("data.content").type(STRING).description("댓글 내용"),
+                    fieldWithPath("data.createdAt").type(STRING).description("댓글 작성날짜"),
+                    fieldWithPath("data.deleted").type(BOOLEAN).description("삭제된 댓글 여부"),
+                    fieldWithPath("data.account").type(OBJECT).description("댓글 작성자"),
+                    fieldWithPath("data.account.id").type(NUMBER).description("작성자 아이디"),
+                    fieldWithPath("data.account.nickname").type(STRING).description("작성자 닉네임"),
+                    fieldWithPath("data.account.image").type(STRING).description("작성자 프로필 사진"),
+                    fieldWithPath("data.childComments").type(ARRAY).description("댓글의 대댓글 목록"),
+                    fieldWithPath("data.childComments[].id").type(NUMBER).description("대댓글 아이디"),
+                    fieldWithPath("data.childComments[].content").type(STRING).description("대댓글 내용"),
+                    fieldWithPath("data.childComments[].createdAt").type(STRING).description("대댓글 작성날짜"),
+                    fieldWithPath("data.childComments[].account").type(OBJECT).description("대댓글 작성자"),
+                    fieldWithPath("data.childComments[].account.id").type(NUMBER).description("작성자 아이디"),
+                    fieldWithPath("data.childComments[].account.nickname").type(STRING)
+                        .description("작성자 닉네임"),
+                    fieldWithPath("data.childComments[].account.image").type(STRING)
+                        .description("작성자 프로필 사진"),
                     fieldWithPath("serverDateTime").type(STRING).description("서버 응답 시간")))
             );
     }
@@ -85,11 +120,24 @@ class CommentControllerTest extends BaseDocumentationTest {
     @DisplayName("댓글 수정 테스트")
     void updateCommentTest() throws Exception {
         // given
-        given(commentService.updateComment(anyLong(), any(CommentUpdateParam.class), any(Account.class)))
-            .willReturn(1L);
         CommentUpdateParam updateParam = CommentUpdateParam.builder()
             .content("updated content")
             .build();
+        CommentWriteResult updateResult = new CommentWriteResult(
+            123L,
+            updateParam.getContent(),
+            LocalDateTime.now(),
+            new CommentWriteResult.Account(12L, "회원", "http://../.jpg"),
+            List.of(new CommentWriteResult.ChildComment(
+                13L,
+                "자식 댓글",
+                LocalDateTime.now(),
+                new CommentWriteResult.Account(154L, "대댓글 회원", "http://../.jpg"))
+            ),
+            false
+        );
+        given(commentService.updateComment(anyLong(), any(CommentUpdateParam.class), any(Account.class)))
+            .willReturn(updateResult);
 
         // when
         ResultActions resultActions = mockMvc.perform(patch("/api/v1/comments/{commentId}", 1L)
@@ -120,6 +168,23 @@ class CommentControllerTest extends BaseDocumentationTest {
                 responseFields(
                     fieldWithPath("data").type(OBJECT).description("응답 데이터"),
                     fieldWithPath("data.id").type(NUMBER).description("댓글 아이디"),
+                    fieldWithPath("data.content").type(STRING).description("댓글 내용"),
+                    fieldWithPath("data.createdAt").type(STRING).description("댓글 작성날짜"),
+                    fieldWithPath("data.deleted").type(BOOLEAN).description("삭제된 댓글 여부"),
+                    fieldWithPath("data.account").type(OBJECT).description("댓글 작성자"),
+                    fieldWithPath("data.account.id").type(NUMBER).description("작성자 아이디"),
+                    fieldWithPath("data.account.nickname").type(STRING).description("작성자 닉네임"),
+                    fieldWithPath("data.account.image").type(STRING).description("작성자 프로필 사진"),
+                    fieldWithPath("data.childComments").type(ARRAY).description("댓글의 대댓글 목록"),
+                    fieldWithPath("data.childComments[].id").type(NUMBER).description("대댓글 아이디"),
+                    fieldWithPath("data.childComments[].content").type(STRING).description("대댓글 내용"),
+                    fieldWithPath("data.childComments[].createdAt").type(STRING).description("대댓글 작성날짜"),
+                    fieldWithPath("data.childComments[].account").type(OBJECT).description("대댓글 작성자"),
+                    fieldWithPath("data.childComments[].account.id").type(NUMBER).description("작성자 아이디"),
+                    fieldWithPath("data.childComments[].account.nickname").type(STRING)
+                        .description("작성자 닉네임"),
+                    fieldWithPath("data.childComments[].account.image").type(STRING)
+                        .description("작성자 프로필 사진"),
                     fieldWithPath("serverDateTime").type(STRING).description("서버 응답 시간")))
             );
     }

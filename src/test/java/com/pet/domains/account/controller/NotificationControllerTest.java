@@ -1,14 +1,12 @@
 package com.pet.domains.account.controller;
 
-import static org.mockito.BDDMockito.*;
 import static com.pet.domains.docs.utils.ApiDocumentUtils.getDocumentRequest;
 import static com.pet.domains.docs.utils.ApiDocumentUtils.getDocumentResponse;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.JsonFieldType.ARRAY;
 import static org.springframework.restdocs.payload.JsonFieldType.BOOLEAN;
 import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
@@ -17,13 +15,15 @@ import static org.springframework.restdocs.payload.JsonFieldType.STRING;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import com.pet.domains.account.WithAccount;
+import com.pet.domains.account.domain.Account;
 import com.pet.domains.account.dto.request.NotificationUpdateParam;
 import com.pet.domains.account.dto.response.NotificationReadResults;
 import com.pet.domains.docs.BaseDocumentationTest;
@@ -47,31 +47,44 @@ class NotificationControllerTest extends BaseDocumentationTest {
         NotificationReadResults result = NotificationReadResults.of(
             List.of(
                 NotificationReadResults.Notification.of(
+                    1L,
                     "고양이가 멍멍",
                     "http://../../97fd3403-7343-497a-82fa-c41d26ccf0f8.png",
                     513L,
-                    Status.DETECTION.name()
+                    Status.DETECTION.name(),
+                    "리트리버",
+                    "강남구",
+                    true
                 ),
                 NotificationReadResults.Notification.of(
+                    2L,
                     "야옹이가 멍멍",
                     "http://../../97fd3403-7343-497a-82fa-c41d26ccf0f8.png",
                     234L,
-                    Status.DETECTION.name()
+                    Status.DETECTION.name(),
+                    "리트리버",
+                    "강남구",
+                    true
                 ),
                 NotificationReadResults.Notification.of(
+                    3L,
                     "나홀로 집사",
                     "http://../../97fd3403-7343-497a-82fa-c41d26ccf0f8.png",
                     1231L,
-                    Status.DETECTION.name()
+                    Status.DETECTION.name(),
+                    "리트리버",
+                    "강남구",
+                    false
                 )
             ), 11, false, 2);
 
-        given(notificationService.getByAccountId(PageRequest.of(0, 8))).willReturn(result);
+        given(notificationService.getByAccountId(any(Account.class), any(PageRequest.class))).willReturn(result);
         // when
         ResultActions resultActions = mockMvc.perform(get("/api/v1/notices")
             .param("page", "0")
             .param("size", "8")
-            .accept(MediaType.APPLICATION_JSON_VALUE));
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .header(HttpHeaders.AUTHORIZATION, getAuthenticationToken()));
 
         // then
         resultActions
@@ -81,6 +94,7 @@ class NotificationControllerTest extends BaseDocumentationTest {
                 getDocumentRequest(),
                 getDocumentResponse(),
                 requestHeaders(
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token"),
                     headerWithName(HttpHeaders.ACCEPT).description(MediaType.APPLICATION_JSON_VALUE)
                 ),
                 requestParameters(
@@ -90,10 +104,14 @@ class NotificationControllerTest extends BaseDocumentationTest {
                 responseFields(
                     fieldWithPath("data").type(OBJECT).description("응답 데이터"),
                     fieldWithPath("data.notifications").type(ARRAY).description("알림"),
+                    fieldWithPath("data.notifications[0].id").type(NUMBER).description("알림 id"),
                     fieldWithPath("data.notifications[0].nickname").type(STRING).description("유저 닉네임"),
                     fieldWithPath("data.notifications[0].image").type(STRING).description("유저 프로필 사진"),
                     fieldWithPath("data.notifications[0].postId").type(NUMBER).description("실종/보호 게시물 id"),
                     fieldWithPath("data.notifications[0].status").type(STRING).description("<<status,게시물 상태>>"),
+                    fieldWithPath("data.notifications[0].animalKindName").type(STRING).description("품종 이름"),
+                    fieldWithPath("data.notifications[0].town").type(STRING).description("시군구 이름"),
+                    fieldWithPath("data.notifications[0].checked").type(BOOLEAN).description("알림 읽음 여부"),
                     fieldWithPath("data.totalElements").type(NUMBER).description("전체 게시물 수"),
                     fieldWithPath("data.last").type(BOOLEAN).description("마지막 페이지 여부"),
                     fieldWithPath("data.size").type(NUMBER).description("페이지당 요청 수"),

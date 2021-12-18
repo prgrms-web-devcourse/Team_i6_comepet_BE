@@ -147,16 +147,16 @@ class MissingPostControllerTest extends BaseDocumentationTest {
     void getMissingPostsTest() throws Exception {
         //given
         MissingPostReadResults missingPostReadResults = MissingPostReadResults.of(List.of(
-                MissingPost.of(
-                    1L, "서울특별시", "도봉구", "토이푸들", Status.DETECTION, LocalDateTime.now(),
-                    SexType.FEMALE, true, 2,
-                    "https://post-phinf.pstatic.net/MjAyMTA0MTJfNTAg/MDAxNjE4MjMwNjg1MTEw",
-                    List.of(
-                        MissingPost.Tag.of(1L, "고슴도치"),
-                        MissingPost.Tag.of(2L, "애완동물"),
-                        MissingPost.Tag.of(3L, "반려동물")
-                    )
-                )),
+            MissingPost.of(
+                1L, "서울특별시", "도봉구", "토이푸들", Status.DETECTION, LocalDateTime.now(),
+                SexType.FEMALE, true, 2,
+                "https://post-phinf.pstatic.net/MjAyMTA0MTJfNTAg/MDAxNjE4MjMwNjg1MTEw",
+                List.of(
+                    MissingPost.Tag.of(1L, "고슴도치"),
+                    MissingPost.Tag.of(2L, "애완동물"),
+                    MissingPost.Tag.of(3L, "반려동물")
+                )
+            )),
             10,
             true,
             5
@@ -427,16 +427,17 @@ class MissingPostControllerTest extends BaseDocumentationTest {
         // given
         CommentPageResults commentPageResults = new CommentPageResults(
             LongStream.rangeClosed(1, 2).mapToObj(idx -> new CommentPageResults.Comment(
-                    idx,
-                    "부모 댓글 #" + idx,
+                idx,
+                "부모 댓글 #" + idx,
+                LocalDateTime.now(),
+                new Comment.Account(idx, "회원#" + idx, "http://../.jpg"),
+                List.of(new ChildComment(
+                    idx * 3,
+                    "자식 댓글 #" + idx * 3,
                     LocalDateTime.now(),
-                    new Comment.Account(idx, "회원#" + idx, "http://../.jpg"),
-                    List.of(new ChildComment(
-                        idx * 3,
-                        "자식 댓글 #" + idx * 3,
-                        LocalDateTime.now(),
-                        new Comment.Account(idx * 3, "회원#" + idx * 3, "http://../.jpg"))
-                    )))
+                    new Comment.Account(idx * 3, "회원#" + idx * 3, "http://../.jpg"))
+                ),
+                false))
                 .collect(Collectors.toList()),
             2,
             true,
@@ -470,6 +471,7 @@ class MissingPostControllerTest extends BaseDocumentationTest {
                     fieldWithPath("data.comments[].id").type(NUMBER).description("댓글 아이디"),
                     fieldWithPath("data.comments[].content").type(STRING).description("댓글 내용"),
                     fieldWithPath("data.comments[].createdAt").type(STRING).description("댓글 작성날짜"),
+                    fieldWithPath("data.comments[].deleted").type(BOOLEAN).description("삭제된 댓글 여부"),
                     fieldWithPath("data.comments[].account").type(OBJECT).description("댓글 작성자"),
                     fieldWithPath("data.comments[].account.id").type(NUMBER).description("작성자 아이디"),
                     fieldWithPath("data.comments[].account.nickname").type(STRING).description("작성자 닉네임"),

@@ -30,6 +30,8 @@ public class NotificationReadResults {
     @Getter
     public static class Notification {
 
+        private final Long id;
+
         private final String nickname;
 
         private final String image;
@@ -38,15 +40,27 @@ public class NotificationReadResults {
 
         private final String status;
 
-        public Notification(String nickname, String image, Long postId, String status) {
+        private final String animalKindName;
+
+        private final String town;
+
+        private final boolean checked;
+
+        public Notification(Long id, String nickname, String image, Long postId, String status, String animalKindName,
+            String town, boolean checked) {
+            this.id = id;
             this.nickname = nickname;
             this.image = image;
             this.postId = postId;
             this.status = status;
+            this.animalKindName = animalKindName;
+            this.town = town;
+            this.checked = checked;
         }
 
-        public static Notification of(String nickname, String image, Long postId, String status) {
-            return new Notification(nickname, image, postId, status);
+        public static Notification of(Long id, String nickname, String image, Long postId,
+            String status, String animalKindName, String town, boolean checked) {
+            return new Notification(id, nickname, image, postId, status, animalKindName, town, checked);
         }
     }
 

@@ -23,6 +23,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Version;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -34,7 +35,7 @@ import org.hibernate.annotations.Where;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE missing_post SET deleted = true WHERE id=?")
+@SQLDelete(sql = "UPDATE missing_post SET deleted = true WHERE id=? and version = ?")
 @Where(clause = "deleted = false")
 @Entity
 @Table(name = "missing_post")
@@ -114,9 +115,12 @@ public class MissingPost extends DeletableEntity {
     @OneToMany(mappedBy = "missingPost", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostTag> postTags = new ArrayList<>();
 
-    @BatchSize(size = 5)
+    @BatchSize(size = 10)
     @OneToMany(mappedBy = "missingPost", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostImage> postImages = new ArrayList<>();
+
+    @Version
+    private long version;
 
     @Builder
     public MissingPost(Status status, String detailAddress, LocalDate date, Long age,
@@ -150,12 +154,6 @@ public class MissingPost extends DeletableEntity {
 
     public void increaseViewCount() {
         this.viewCount += 1;
-    }
-
-    public void decreaseViewCount() {
-        if (this.viewCount > 0) {
-            this.viewCount -= 1;
-        }
     }
 
     public void increaseBookCount() {

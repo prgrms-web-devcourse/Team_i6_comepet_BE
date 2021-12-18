@@ -4,17 +4,17 @@ import com.pet.domains.account.domain.Notification;
 import com.pet.domains.account.dto.response.NotificationReadResults;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
 
 @Mapper(componentModel = "spring")
 public interface NotificationMapper {
 
-    @Mappings({
-        @Mapping(target = "nickname", source = "notification.account.nickname"),
-        @Mapping(target = "image", source = "notification.missingPost.thumbnail"),
-        @Mapping(target = "postId", source = "notification.missingPost.id"),
-        @Mapping(target = "status", source = "notification.missingPost.status")
-    })
+
+    @Mapping(target = "nickname", source = "account.nickname")
+    @Mapping(target = "image", source = "missingPost.thumbnail")
+    @Mapping(target = "postId", source = "missingPost.id")
+    @Mapping(target = "status", source = "missingPost.status")
+    @Mapping(target = "animalKindName", source = "missingPost.animalKind.name")
+    @Mapping(target = "town", source = "missingPost.town.name")
     NotificationReadResults.Notification toNotificationDto(Notification notification);
 
 }

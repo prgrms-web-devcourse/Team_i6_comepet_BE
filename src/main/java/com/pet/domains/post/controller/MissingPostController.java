@@ -52,7 +52,6 @@ public class MissingPostController {
         @RequestPart(value = "param") @Valid MissingPostCreateParam missingPostCreateParam,
         @LoginAccount Account account
     ) {
-        // TODO: 2021/12/10 게시물 등록 안에서 알림전송까지 해야한다.
         return ApiResponse.ok(
             Map.of(RETURN_KEY, missingPostService.createMissingPost(missingPostCreateParam, images, account)));
     }

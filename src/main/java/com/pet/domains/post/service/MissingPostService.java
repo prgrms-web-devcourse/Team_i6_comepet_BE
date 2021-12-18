@@ -3,6 +3,8 @@ package com.pet.domains.post.service;
 import com.pet.common.exception.ExceptionMessage;
 import com.pet.common.util.OptimisticLockingHandlingUtils;
 import com.pet.domains.account.domain.Account;
+import com.pet.domains.account.dto.response.AccountBookmarkPostPageResults;
+import com.pet.domains.account.service.NotificationAsyncService;
 import com.pet.domains.animal.domain.AnimalKind;
 import com.pet.domains.animal.service.AnimalKindService;
 import com.pet.domains.area.domain.Town;
@@ -10,7 +12,6 @@ import com.pet.domains.area.repository.TownRepository;
 import com.pet.domains.comment.repository.CommentRepository;
 import com.pet.domains.image.domain.Image;
 import com.pet.domains.image.domain.PostImage;
-import com.pet.domains.image.repository.PostImageRepository;
 import com.pet.domains.image.service.ImageService;
 import com.pet.domains.post.domain.MissingPost;
 import com.pet.domains.post.dto.request.MissingPostCreateParam;
@@ -23,8 +24,8 @@ import com.pet.domains.post.repository.MissingPostWithIsBookmark;
 import com.pet.domains.tag.domain.PostTag;
 import com.pet.domains.tag.domain.Tag;
 import com.pet.domains.tag.repository.PostTagRepository;
-import com.pet.domains.tag.service.PostTagService;
 import com.pet.domains.tag.service.TagService;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -44,30 +45,29 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public class MissingPostService {
 
-    private final MissingPostRepository missingPostRepository;
-
     private final AnimalKindService animalKindService;
 
-    private final TownRepository townRepository;
-
-    private final PostImageRepository postImageRepository;
-
-    private final PostTagService postTagService;
-
-    private final PostTagRepository postTagRepository;
+    private final ImageService imageService;
 
     private final TagService tagService;
 
-    private final MissingPostMapper missingPostMapper;
+    private final NotificationAsyncService notificationAsyncService;
 
-    private final ImageService imageService;
+    private final MissingPostRepository missingPostRepository;
+
+    private final TownRepository townRepository;
+
+    private final PostTagRepository postTagRepository;
+
+    private final MissingPostMapper missingPostMapper;
 
     private final CommentRepository commentRepository;
 
     @Transactional
     public Long createMissingPost(MissingPostCreateParam missingPostCreateParam, List<MultipartFile> multipartFiles,
         Account account) {
-        if (multipartFiles.size() > 3) {
+        log.info("start create missing post");
+        if (Objects.nonNull(multipartFiles) && multipartFiles.size() > 3) {
             throw ExceptionMessage.INVALID_IMAGE_COUNT.getException();
         }
         AnimalKind animalKind = animalKindService.getOrCreateAnimalKind(missingPostCreateParam.getAnimalId(),
@@ -77,16 +77,16 @@ public class MissingPostService {
         List<Tag> tags = getTags(missingPostCreateParam);
         List<Image> imageFiles = uploadAndGetImages(multipartFiles);
         String thumbnail = getThumbnail(imageFiles);
-
-        MissingPost mappingMissingPost =
+        MissingPost newMissingPost =
             missingPostMapper.toEntity(missingPostCreateParam, town, animalKind, thumbnail, account);
+        createPostTags(tags, newMissingPost);
+        createPostImage(imageFiles, newMissingPost);
 
-        if (!CollectionUtils.isEmpty(tags)) {
-            postTagService.createPostTag(tags, mappingMissingPost);
-        }
-        createPostImage(imageFiles, mappingMissingPost);
+        MissingPost savedMissingPost = missingPostRepository.save(newMissingPost);
+        notificationAsyncService.createNotifications(savedMissingPost);
+        log.info("complete create missing post");
 
-        return missingPostRepository.save(mappingMissingPost).getId();
+        return savedMissingPost.getId();
     }
 
     @Transactional
@@ -122,7 +122,7 @@ public class MissingPostService {
         MissingPost missingPost =
             missingPostRepository.findByMissingPostId(postId)
                 .orElseThrow(ExceptionMessage.NOT_FOUND_MISSING_POST::getException);
-        missingPost.increaseViewCount();
+        increaseViewCount(missingPost);
         return missingPostMapper.toMissingPostDto(missingPost);
     }
 
@@ -130,8 +130,29 @@ public class MissingPostService {
     public MissingPostReadResult getMissingPostOneWithAccount(Account account, Long postId) {
         MissingPostWithIsBookmark missingPostWithIsBookmark =
             missingPostRepository.findByIdAndWithIsBookmarkAccount(account, postId);
-        missingPostWithIsBookmark.getMissingPost().increaseViewCount();
+        increaseViewCount(missingPostWithIsBookmark.getMissingPost());
         return missingPostMapper.toMissingPostDto(missingPostWithIsBookmark);
+    }
+
+    public AccountBookmarkPostPageResults getBookmarksThumbnailsByAccount(Account account, Pageable pageable) {
+        Page<MissingPostWithIsBookmark> missingPostWithIsBookmarks =
+            missingPostRepository.findThumbnailsAccountByDeletedIsFalse(account, pageable);
+        return AccountBookmarkPostPageResults
+            .of(missingPostWithIsBookmarks.stream()
+                    .map(missingPostWithIsBookmark -> missingPostMapper
+                        .toAccountBookmarkMissingPost(missingPostWithIsBookmark.getMissingPost()))
+                    .collect(Collectors.toList()),
+                missingPostWithIsBookmarks.getTotalElements(),
+                missingPostWithIsBookmarks.isLast(),
+                missingPostWithIsBookmarks.getSize());
+    }
+
+    private void increaseViewCount(MissingPost missingPost) {
+        OptimisticLockingHandlingUtils.handling(
+            missingPost::increaseViewCount,
+            5,
+            "실종 게시글 조회수 증감 로직"
+        );
     }
 
     @Transactional
@@ -188,11 +209,19 @@ public class MissingPostService {
     }
 
     private String getThumbnail(List<Image> imageFiles) {
-        String thumbnail = null;
-        if (!CollectionUtils.isEmpty(imageFiles)) {
-            thumbnail = imageFiles.get(0).getName();
+        if (CollectionUtils.isEmpty(imageFiles)) {
+            return null;
         }
-        return thumbnail;
+        return imageFiles.get(0).getName();
+    }
+
+    private void createPostTags(List<Tag> tags, MissingPost newMissingPost) {
+        if (!CollectionUtils.isEmpty(tags)) {
+            tags.forEach(tag -> PostTag.builder()
+                .missingPost(newMissingPost)
+                .tag(tag)
+                .build());
+        }
     }
 
     private void createPostImage(List<Image> imageFiles, MissingPost mappingMissingPost) {
@@ -205,6 +234,9 @@ public class MissingPostService {
     }
 
     private List<Image> uploadAndGetImages(List<MultipartFile> multipartFiles) {
+        if (Objects.isNull(multipartFiles)) {
+            return Collections.emptyList();
+        }
         return multipartFiles.stream()
             .filter(multipartFile -> !StringUtils.isEmpty(multipartFile.getOriginalFilename()))
             .map(imageService::createImage).collect(Collectors.toList());
@@ -213,8 +245,9 @@ public class MissingPostService {
     private List<Tag> getTags(MissingPostCreateParam missingPostCreateParam) {
         return Objects.requireNonNull(missingPostCreateParam.getTags())
             .stream()
-            .map(tag -> tagService.getOrCreateByTagName(tag.getName()))
+            .map(MissingPostCreateParam.Tag::getName)
+            .distinct()
+            .map(tagService::getOrCreateByTagName)
             .collect(Collectors.toList());
     }
-
 }

@@ -1,8 +1,9 @@
 package com.pet.domains.post.mapper;
 
+import com.pet.domains.account.domain.Account;
+import com.pet.domains.account.dto.response.AccountBookmarkPostPageResults;
 import com.pet.domains.animal.domain.AnimalKind;
 import com.pet.domains.area.domain.Town;
-import com.pet.domains.image.domain.Image;
 import com.pet.domains.image.domain.PostImage;
 import com.pet.domains.post.domain.MissingPost;
 import com.pet.domains.post.dto.request.MissingPostCreateParam;
@@ -68,6 +69,14 @@ public interface MissingPostMapper {
     @Mapping(target = "name", source = "tag.name")
     MissingPostReadResults.MissingPost.Tag toMissingPostsTagDto(Tag tag);
 
+    @Mappings({
+        @Mapping(target = "animalKind", source = "missingPost.animalKind.name"),
+        @Mapping(target = "thumbnail", source = "missingPost.thumbnail"),
+        @Mapping(target = "place",
+            expression = "java(joinPlace(missingPost.getTown().getName(), missingPost.getTown().getCity().getName()))"),
+    })
+    AccountBookmarkPostPageResults.Post toAccountBookmarkMissingPost(MissingPost missingPost);
+
     default MissingPostReadResults toMissingPostsResults(Page<MissingPost> pageResult) {
         List<MissingPostReadResults.MissingPost> missingPostResults =
             pageResult.getContent().stream().map(this::toMissingPostsDto).collect(Collectors.toList());
@@ -128,10 +137,10 @@ public interface MissingPostMapper {
     MissingPostReadResult.Account toMissingPostAccountDto(com.pet.domains.account.domain.Account account);
 
     @Mappings({
-        @Mapping(target = "id", source = "image.id"),
+        @Mapping(target = "id", source = "id"),
         @Mapping(target = "name", source = "image.name")
     })
-    MissingPostReadResult.Image toMissingPostImageDto(Image image);
+    MissingPostReadResult.Image toMissingPostImageDto(PostImage postImage);
 
     @Mappings({
         @Mapping(target = "id", source = "tag.id"),
@@ -145,9 +154,13 @@ public interface MissingPostMapper {
             .collect(Collectors.toList());
     }
 
+    default String joinPlace(String city, String town) {
+        return new StringBuilder().append(city).append(" ").append(town).toString();
+    }
+
     default List<MissingPostReadResult.Image> toMissingPostImageResult(List<PostImage> postImages) {
         return postImages.stream()
-            .map(postImage -> toMissingPostImageDto(postImage.getImage()))
+            .map(this::toMissingPostImageDto)
             .collect(Collectors.toList());
     }
 
