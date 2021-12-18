@@ -122,6 +122,29 @@ class NotificationControllerTest extends BaseDocumentationTest {
 
     @Test
     @WithAccount
+    @DisplayName("알림 전체 삭제 요청 테스트")
+    void deleteAllNotificationTest() throws Exception {
+        // given
+        // when
+        ResultActions resultActions = mockMvc.perform(delete("/api/v1/notices")
+            .header(HttpHeaders.AUTHORIZATION, getAuthenticationToken()));
+
+        // then
+        resultActions
+            .andDo(print())
+            .andExpect(status().isNoContent())
+            .andDo(document("delete-notifications",
+                getDocumentRequest(),
+                getDocumentResponse(),
+                requestHeaders(
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("jwt token")
+                )
+            ));
+    }
+
+
+    @Test
+    @WithAccount
     @DisplayName("알림 삭제 요청 테스트")
     void deleteNotificationTest() throws Exception {
         // given

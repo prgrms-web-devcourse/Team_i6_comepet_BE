@@ -39,6 +39,12 @@ public class NotificationController {
         return ApiResponse.ok(notificationService.getByAccountId(account, pageable));
     }
 
+    @DeleteMapping
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteAll(@LoginAccount Account account) {
+        notificationService.deleteAllByAccount(account);
+    }
+
     @DeleteMapping("/{noticeId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteNotification(@LoginAccount Account account, @PathVariable Long noticeId) {
