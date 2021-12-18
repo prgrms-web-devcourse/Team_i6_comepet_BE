@@ -37,9 +37,7 @@ public class NotificationService {
     }
 
     public NotificationReadResults getByAccountId(Account account, Pageable pageable) {
-        System.out.println("1");
         Page<Notification> notifications = notificationRepository.findByAccount(account, pageable);
-        System.out.println("2");
         return NotificationReadResults.of(
             notifications.stream()
                 .map(notificationMapper::toNotificationDto)
