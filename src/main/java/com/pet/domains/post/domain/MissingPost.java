@@ -110,11 +110,11 @@ public class MissingPost extends DeletableEntity {
     )
     private AnimalKind animalKind;
 
-    @BatchSize(size = 10)
+    @BatchSize(size = 20)
     @OneToMany(mappedBy = "missingPost", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostTag> postTags = new ArrayList<>();
 
-    @BatchSize(size = 10)
+    @BatchSize(size = 20)
     @OneToMany(mappedBy = "missingPost", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostImage> postImages = new ArrayList<>();
 

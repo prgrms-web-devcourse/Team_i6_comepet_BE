@@ -1,15 +1,14 @@
 package com.pet.domains.account.controller;
 
-import static java.util.stream.Collectors.*;
 import com.pet.common.jwt.JwtAuthentication;
 import com.pet.common.response.ApiResponse;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.account.domain.LoginAccount;
 import com.pet.domains.account.dto.request.AccountAreaUpdateParam;
-import com.pet.domains.account.dto.request.AccountEmailParam;
-import com.pet.domains.account.dto.request.AccountSignUpParam;
 import com.pet.domains.account.dto.request.AccountEmailCheck;
+import com.pet.domains.account.dto.request.AccountEmailParam;
 import com.pet.domains.account.dto.request.AccountLonginParam;
+import com.pet.domains.account.dto.request.AccountSignUpParam;
 import com.pet.domains.account.dto.request.AccountUpdateParam;
 import com.pet.domains.account.dto.response.AccountAreaReadResults;
 import com.pet.domains.account.dto.response.AccountBookmarkPostPageResults;
@@ -19,15 +18,9 @@ import com.pet.domains.account.dto.response.AccountMissingPostPageResults;
 import com.pet.domains.account.dto.response.AccountReadResult;
 import com.pet.domains.account.service.AccountService;
 import com.pet.domains.auth.service.AuthenticationService;
-import com.pet.domains.post.domain.SexType;
-import com.pet.domains.post.domain.Status;
-import com.pet.domains.post.dto.serach.PostSearchParam;
 import com.pet.domains.post.service.MissingPostService;
 import com.pet.domains.post.service.ShelterPostService;
-import java.time.LocalDate;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.LongStream;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -152,11 +145,12 @@ public class AccountController {
     @GetMapping(path = "/me/bookmarks", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse<AccountBookmarkPostPageResults> getAccountBookmarks(
-        @LoginAccount Account account, @RequestParam(defaultValue = "missing") String status, Pageable pageable,
-        @Valid PostSearchParam param
+        @LoginAccount Account account,
+        @RequestParam(defaultValue = "missing") String status,
+        Pageable pageable
     ) {
         if (status.equals("shelter")) {
-            return ApiResponse.ok(shelterPostService.getBookmarksThumbnailsByAccount(account, pageable, param));
+            return ApiResponse.ok(shelterPostService.getBookmarksThumbnailsByAccount(account, pageable));
         }
         return ApiResponse.ok(missingPostService.getBookmarksThumbnailsByAccount(account, pageable));
     }

@@ -9,6 +9,7 @@ import com.pet.domains.post.dto.request.MissingPostCreateParam;
 import com.pet.domains.post.dto.request.MissingPostUpdateParam;
 import com.pet.domains.post.dto.response.MissingPostReadResult;
 import com.pet.domains.post.dto.response.MissingPostReadResults;
+import com.pet.domains.post.dto.serach.PostSearchParam;
 import com.pet.domains.post.service.MissingPostBookmarkService;
 import com.pet.domains.post.service.MissingPostService;
 import java.util.List;
@@ -59,12 +60,16 @@ public class MissingPostController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ApiResponse<MissingPostReadResults> getMissingPosts(@LoginAccount Account account, Pageable pageable) {
+    public ApiResponse<MissingPostReadResults> getMissingPosts(
+        @LoginAccount Account account,
+        Pageable pageable,
+        @Valid PostSearchParam searchParam
+    ) {
         log.info("실종/보호 게시물 리스트 조회");
         if (Objects.nonNull(account)) {
-            return ApiResponse.ok(missingPostService.getMissingPostsPageWithAccount(account, pageable));
+            return ApiResponse.ok(missingPostService.getMissingPostsPageWithAccount(account, pageable, searchParam));
         }
-        return ApiResponse.ok(missingPostService.getMissingPostsPage(pageable));
+        return ApiResponse.ok(missingPostService.getMissingPostsPage(pageable, searchParam));
     }
 
     @ResponseStatus(HttpStatus.OK)
