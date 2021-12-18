@@ -23,6 +23,7 @@ import com.pet.domains.tag.domain.PostTag;
 import com.pet.domains.tag.domain.Tag;
 import com.pet.domains.tag.repository.PostTagRepository;
 import com.pet.domains.tag.service.TagService;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -64,7 +65,7 @@ public class MissingPostService {
     public Long createMissingPost(MissingPostCreateParam missingPostCreateParam, List<MultipartFile> multipartFiles,
         Account account) {
         log.info("start create missing post");
-        if (multipartFiles.size() > 3) {
+        if (Objects.nonNull(multipartFiles) && multipartFiles.size() > 3) {
             throw ExceptionMessage.INVALID_IMAGE_COUNT.getException();
         }
         AnimalKind animalKind = animalKindService.getOrCreateAnimalKind(missingPostCreateParam.getAnimalId(),
@@ -127,7 +128,11 @@ public class MissingPostService {
     public MissingPostReadResult getMissingPostOneWithAccount(Account account, Long postId) {
         MissingPostWithIsBookmark missingPostWithIsBookmark =
             missingPostRepository.findByIdAndWithIsBookmarkAccount(account, postId);
-        missingPostWithIsBookmark.getMissingPost().increaseViewCount();
+        OptimisticLockingHandlingUtils.handling(
+            () -> missingPostWithIsBookmark.getMissingPost().increaseViewCount(),
+            5,
+            "실종 게시글 조회수 증감 로직"
+        );
         return missingPostMapper.toMissingPostDto(missingPostWithIsBookmark);
     }
 
@@ -157,6 +162,9 @@ public class MissingPostService {
     }
 
     private List<Image> uploadAndGetImages(List<MultipartFile> multipartFiles) {
+        if (Objects.isNull(multipartFiles)) {
+            return Collections.emptyList();
+        }
         return multipartFiles.stream()
             .filter(multipartFile -> !StringUtils.isEmpty(multipartFile.getOriginalFilename()))
             .map(imageService::createImage).collect(Collectors.toList());
