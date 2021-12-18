@@ -105,5 +105,5 @@ logging.level:
 jwt:
   header: ${AUTHORIZATION}
   issuer: ${ISSUER}
-  client-secret: ${CLIENT-SECRET}
-  expiry-seconds: ${EXPIRY-SECONDS}
+  client-secret: ${CLIENT_SECRET}
+  expiry-seconds: ${EXPIRY_SECONDS}
