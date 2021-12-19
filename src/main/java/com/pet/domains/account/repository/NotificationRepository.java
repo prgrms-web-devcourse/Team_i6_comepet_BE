@@ -20,4 +20,6 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     )
     Page<Notification> findByAccount(Account account, Pageable pageable);
 
+    void deleteAllInBatchByAccount(Account account);
+
 }

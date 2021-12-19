@@ -44,6 +44,7 @@ import com.pet.domains.post.dto.request.MissingPostUpdateParam.Tag;
 import com.pet.domains.post.dto.response.MissingPostReadResult;
 import com.pet.domains.post.dto.response.MissingPostReadResults;
 import com.pet.domains.post.dto.response.MissingPostReadResults.MissingPost;
+import com.pet.domains.post.dto.serach.PostSearchParam;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -159,7 +160,8 @@ class MissingPostControllerTest extends BaseDocumentationTest {
             true,
             5
         );
-        given(missingPostService.getMissingPostsPageWithAccount(any(Account.class), any(PageRequest.class))).willReturn(
+        given(missingPostService.getMissingPostsPageWithAccount(any(Account.class), any(PageRequest.class), any(
+            PostSearchParam.class))).willReturn(
             missingPostReadResults);
 
         //when

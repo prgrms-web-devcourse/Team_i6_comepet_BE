@@ -1,6 +1,7 @@
 package com.pet.domains.post.dto.serach;
 
 import com.pet.domains.post.domain.SexType;
+import com.pet.domains.post.domain.Status;
 import java.time.LocalDate;
 import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Positive;
@@ -34,9 +35,11 @@ public class PostSearchParam {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate end;
 
+    private Status status;
+
     @Builder
     public PostSearchParam(Long city, Long town, Long animal, Long animalKind, SexType sex, LocalDate start,
-        LocalDate end) {
+        LocalDate end, Status status) {
         this.city = city;
         this.town = town;
         this.animal = animal;
@@ -44,5 +47,6 @@ public class PostSearchParam {
         this.sex = sex;
         this.start = start;
         this.end = end;
+        this.status = status;
     }
 }

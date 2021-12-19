@@ -2,7 +2,7 @@ package com.pet.domains.account.controller;
 
 import static com.pet.domains.docs.utils.ApiDocumentUtils.getDocumentRequest;
 import static com.pet.domains.docs.utils.ApiDocumentUtils.getDocumentResponse;
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toList;
 import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.mock;
@@ -34,17 +34,13 @@ import com.pet.common.jwt.JwtAuthentication;
 import com.pet.domains.account.WithAccount;
 import com.pet.domains.account.domain.SignEmail;
 import com.pet.domains.account.dto.request.AccountAreaUpdateParam;
-import com.pet.domains.account.dto.request.AccountEmailParam;
-import com.pet.domains.account.dto.request.AccountSignUpParam;
 import com.pet.domains.account.dto.request.AccountEmailCheck;
+import com.pet.domains.account.dto.request.AccountEmailParam;
 import com.pet.domains.account.dto.request.AccountLonginParam;
 import com.pet.domains.account.dto.request.AccountSignUpParam;
 import com.pet.domains.account.dto.request.AccountUpdateParam;
 import com.pet.domains.account.dto.response.AccountAreaReadResults;
 import com.pet.domains.account.dto.response.AccountBookmarkPostPageResults;
-import com.pet.domains.account.dto.response.AccountReadResult;
-import com.pet.domains.docs.BaseDocumentationTest;
-import com.pet.domains.post.domain.SexType;
 import com.pet.domains.account.dto.response.AccountMissingPostPageResults;
 import com.pet.domains.account.dto.response.AccountReadResult;
 import com.pet.domains.docs.BaseDocumentationTest;
@@ -505,7 +501,7 @@ class AccountControllerTest extends BaseDocumentationTest {
     @DisplayName("회원 북마크(보호소) 조회")
     void getAccountShelterBookmarkPostTest() throws Exception {
         // given
-        given(shelterPostService.getBookmarksThumbnailsByAccount(any(), any(), any())).willReturn(
+        given(shelterPostService.getBookmarksThumbnailsByAccount(any(), any())).willReturn(
             AccountBookmarkPostPageResults.of(
                 LongStream.range(1, 8)
                     .mapToObj(index -> AccountBookmarkPostPageResults.Post.of(
