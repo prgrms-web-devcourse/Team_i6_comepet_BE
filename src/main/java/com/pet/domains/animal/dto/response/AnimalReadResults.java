@@ -47,4 +47,9 @@ public class AnimalReadResults {
             }
         }
     }
+
+    @Override
+    public String toString() {
+        return "animals";
+    }
 }

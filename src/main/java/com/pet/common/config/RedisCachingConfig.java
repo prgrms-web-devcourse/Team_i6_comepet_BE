@@ -1,10 +1,7 @@
 package com.pet.common.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.CollectionType;
-import com.pet.domains.animal.domain.AnimalKind;
 import java.time.Duration;
-import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
@@ -13,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
@@ -28,9 +25,6 @@ public class RedisCachingConfig {
 
     @Bean
     public CacheManager redisCacheManager() {
-        CollectionType collectionType = objectMapper.getTypeFactory()
-            .constructCollectionType(ArrayList.class, AnimalKind.class);
-
         RedisCacheConfiguration redisCachingConfiguration = RedisCacheConfiguration
             .defaultCacheConfig()
             .serializeKeysWith(
@@ -38,7 +32,7 @@ public class RedisCachingConfig {
             )
             .serializeValuesWith(
                 RedisSerializationContext.SerializationPair.fromSerializer(
-                    new Jackson2JsonRedisSerializer<>(collectionType)
+                    new GenericJackson2JsonRedisSerializer()
                 )
             )
             .entryTtl(Duration.ofHours(1));
