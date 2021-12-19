@@ -21,28 +21,30 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Optional;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
-@RequiredArgsConstructor
 @Repository
-public class MissingPostCustomRepositoryImpl implements MissingPostCustomRepository {
+public class MissingPostCustomRepositoryImpl extends QuerydslRepositorySupport implements MissingPostCustomRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
+    public MissingPostCustomRepositoryImpl(JPAQueryFactory jpaQueryFactory) {
+        super(MissingPost.class);
+        this.jpaQueryFactory = jpaQueryFactory;
+    }
+
     @Override
     public Page<MissingPost> findMissingPostAllWithFetch(Pageable pageable, PostSearchParam postSearchParam) {
-        QueryResults<MissingPost> queryResults = jpaQueryFactory.select(missingPost)
+        JPAQuery<MissingPost> query = jpaQueryFactory.select(missingPost)
             .from(missingPost)
             .innerJoin(missingPost.animalKind, animalKind).fetchJoin()
             .innerJoin(animalKind.animal, animal).fetchJoin()
             .innerJoin(missingPost.town, town).fetchJoin()
             .innerJoin(town.city, city).fetchJoin()
-            .limit(pageable.getPageSize())
-            .offset(pageable.getPageNumber())
             .where(
                 eqStatus(postSearchParam.getStatus()),
                 eqTown(postSearchParam.getTown()),
@@ -51,7 +53,8 @@ public class MissingPostCustomRepositoryImpl implements MissingPostCustomReposit
                 eqAnimalKind(postSearchParam.getAnimalKind()),
                 eqSexType(postSearchParam.getSex()),
                 goeFoundDate(postSearchParam.getStart()),
-                loeFoundDate(postSearchParam.getEnd()))
+                loeFoundDate(postSearchParam.getEnd()));
+        QueryResults<MissingPost> queryResults = Objects.requireNonNull(getQuerydsl()).applyPagination(pageable, query)
             .fetchResults();
 
         return new PageImpl<>(queryResults.getResults(), pageable, queryResults.getTotal());
@@ -60,9 +63,7 @@ public class MissingPostCustomRepositoryImpl implements MissingPostCustomReposit
     @Override
     public Page<MissingPostWithIsBookmark> findMissingPostAllWithIsBookmark(Account account,
         Pageable pageable, PostSearchParam postSearchParam) {
-        QueryResults<MissingPostWithIsBookmark> queryResults = getMissingPostWithIsBookmarkQuery(account)
-            .limit(pageable.getPageSize())
-            .offset(pageable.getPageNumber())
+        JPAQuery<MissingPostWithIsBookmark> query = getMissingPostWithIsBookmarkQuery(account)
             .where(
                 eqStatus(postSearchParam.getStatus()),
                 eqTown(postSearchParam.getTown()),
@@ -71,7 +72,9 @@ public class MissingPostCustomRepositoryImpl implements MissingPostCustomReposit
                 eqAnimalKind(postSearchParam.getAnimalKind()),
                 eqSexType(postSearchParam.getSex()),
                 goeFoundDate(postSearchParam.getStart()),
-                loeFoundDate(postSearchParam.getEnd()))
+                loeFoundDate(postSearchParam.getEnd()));
+        QueryResults<MissingPostWithIsBookmark> queryResults = Objects.requireNonNull(getQuerydsl())
+            .applyPagination(pageable, query)
             .fetchResults();
 
         return new PageImpl<>(queryResults.getResults(), pageable, queryResults.getTotal());
@@ -79,10 +82,10 @@ public class MissingPostCustomRepositoryImpl implements MissingPostCustomReposit
 
     @Override
     public Page<MissingPostWithIsBookmark> findMissingPostAllWithIsBookmark(Account account, Pageable pageable) {
-        QueryResults<MissingPostWithIsBookmark> queryResults = getMissingPostWithIsBookmarkQuery(account)
-            .limit(pageable.getPageSize())
-            .offset(pageable.getPageNumber())
-            .fetchResults();
+        JPAQuery<MissingPostWithIsBookmark> query = getMissingPostWithIsBookmarkQuery(account);
+        QueryResults<MissingPostWithIsBookmark> queryResults =
+            Objects.requireNonNull(getQuerydsl()).applyPagination(pageable, query)
+                .fetchResults();
 
         return new PageImpl<>(queryResults.getResults(), pageable, queryResults.getTotal());
     }

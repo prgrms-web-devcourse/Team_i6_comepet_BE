@@ -20,27 +20,29 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Optional;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
-@RequiredArgsConstructor
 @Repository
-public class ShelterPostCustomRepositoryImpl implements ShelterPostCustomRepository {
+public class ShelterPostCustomRepositoryImpl extends QuerydslRepositorySupport implements ShelterPostCustomRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
+    public ShelterPostCustomRepositoryImpl(JPAQueryFactory jpaQueryFactory) {
+        super(ShelterPost.class);
+        this.jpaQueryFactory = jpaQueryFactory;
+    }
+
     public Page<ShelterPost> findAllWithFetch(Pageable pageable, PostSearchParam postSearchParam) {
-        QueryResults<ShelterPost> queryResults = jpaQueryFactory.select(shelterPost)
+        JPAQuery<ShelterPost> query = jpaQueryFactory.select(shelterPost)
             .from(shelterPost)
             .innerJoin(shelterPost.animalKind, animalKind).fetchJoin()
             .innerJoin(animalKind.animal, animal).fetchJoin()
             .innerJoin(shelterPost.town, town).fetchJoin()
             .innerJoin(town.city, city).fetchJoin()
-            .limit(pageable.getPageSize())
-            .offset(pageable.getPageNumber())
             .where(
                 eqTown(postSearchParam.getTown()),
                 eqCity(postSearchParam.getCity()),
@@ -48,7 +50,9 @@ public class ShelterPostCustomRepositoryImpl implements ShelterPostCustomReposit
                 eqAnimalKind(postSearchParam.getAnimalKind()),
                 eqSexType(postSearchParam.getSex()),
                 goeFoundDate(postSearchParam.getStart()),
-                loeFoundDate(postSearchParam.getEnd()))
+                loeFoundDate(postSearchParam.getEnd()));
+        QueryResults<ShelterPost> queryResults = Objects.requireNonNull(getQuerydsl())
+            .applyPagination(pageable, query)
             .fetchResults();
 
         return new PageImpl<>(queryResults.getResults(), pageable, queryResults.getTotal());
@@ -56,9 +60,9 @@ public class ShelterPostCustomRepositoryImpl implements ShelterPostCustomReposit
 
     @Override
     public Page<ShelterPostWithIsBookmark> findAllWithIsBookmark(Account account, Pageable pageable) {
-        QueryResults<ShelterPostWithIsBookmark> queryResults = getShelterPostWithIsBookmarkQuery(account)
-            .limit(pageable.getPageSize())
-            .offset(pageable.getPageNumber())
+        JPAQuery<ShelterPostWithIsBookmark> query = getShelterPostWithIsBookmarkQuery(account);
+        QueryResults<ShelterPostWithIsBookmark> queryResults = Objects.requireNonNull(getQuerydsl())
+            .applyPagination(pageable, query)
             .fetchResults();
 
         return new PageImpl<>(queryResults.getResults(), pageable, queryResults.getTotal());
@@ -67,9 +71,7 @@ public class ShelterPostCustomRepositoryImpl implements ShelterPostCustomReposit
     @Override
     public Page<ShelterPostWithIsBookmark> findAllWithIsBookmark(Account account, Pageable pageable,
         PostSearchParam postSearchParam) {
-        QueryResults<ShelterPostWithIsBookmark> queryResults = getShelterPostWithIsBookmarkQuery(account)
-            .limit(pageable.getPageSize())
-            .offset(pageable.getPageNumber())
+        JPAQuery<ShelterPostWithIsBookmark> query = getShelterPostWithIsBookmarkQuery(account)
             .where(
                 eqTown(postSearchParam.getTown()),
                 eqCity(postSearchParam.getCity()),
@@ -77,7 +79,9 @@ public class ShelterPostCustomRepositoryImpl implements ShelterPostCustomReposit
                 eqAnimalKind(postSearchParam.getAnimalKind()),
                 eqSexType(postSearchParam.getSex()),
                 goeFoundDate(postSearchParam.getStart()),
-                loeFoundDate(postSearchParam.getEnd()))
+                loeFoundDate(postSearchParam.getEnd()));
+        QueryResults<ShelterPostWithIsBookmark>
+            queryResults = Objects.requireNonNull(getQuerydsl()).applyPagination(pageable, query)
             .fetchResults();
 
         return new PageImpl<>(queryResults.getResults(), pageable, queryResults.getTotal());
