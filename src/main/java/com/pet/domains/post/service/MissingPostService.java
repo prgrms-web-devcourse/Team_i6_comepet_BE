@@ -190,7 +190,8 @@ public class MissingPostService {
                 .map(postTag -> postTag.getTag().getName())
                 .collect(Collectors.toList());
 
-        List<String> getUsedTags = getOrCreateUsedTags(getMissingPost, getParamTags, getEntityTags);
+        List<String> getUsedTags =
+            getOrCreateUsedTags(getMissingPost, Objects.requireNonNull(getParamTags), getEntityTags);
         deleteNotUsedTags(getMissingPost, getEntityTags, getUsedTags);
 
         List<Long> getParamImagesId =
