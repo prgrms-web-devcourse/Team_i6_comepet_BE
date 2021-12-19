@@ -91,7 +91,7 @@ public class ExceptionHandlerAdvice {
 
     @ExceptionHandler({
         MissingServletRequestParameterException.class, HttpMessageNotReadableException.class,
-        TypeMismatchException.class, MultipartException.class, IllegalStateException.class
+        TypeMismatchException.class, MultipartException.class
     })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleBadRequestException(Exception exception) {
@@ -107,12 +107,6 @@ public class ExceptionHandlerAdvice {
     @ExceptionHandler(HttpMediaTypeException.class)
     @ResponseStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
     public ErrorResponse handleHttpMediaTypeException(HttpMediaTypeException exception) {
-        return ErrorResponse.error(415, exception.getMessage());
-    }
-
-    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
-    public ErrorResponse handleMethodNotSupportedException(HttpRequestMethodNotSupportedException exception) {
         return ErrorResponse.error(415, exception.getMessage());
     }
 
