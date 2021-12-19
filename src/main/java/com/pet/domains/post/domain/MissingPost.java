@@ -178,8 +178,8 @@ public class MissingPost extends DeletableEntity {
         }
     }
 
-    public void changeInfo(Status status, LocalDate date, Town town, String detailAddress, String telNumber, AnimalKind animalKind, Long age, SexType sex,
-        String chipNumber, String content, String thumbnail) {
+    public void changeInfo(Status status, LocalDate date, Town town, String detailAddress, String telNumber,
+        AnimalKind animalKind, Long age, SexType sex, String chipNumber, String content, String thumbnail) {
         if (ObjectUtils.isNotEmpty(status)) {
             this.status = status;
         }

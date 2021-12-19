@@ -6,6 +6,10 @@ import com.pet.common.config.QuerydslConfig;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.account.domain.Notification;
 import com.pet.domains.account.domain.Provider;
+import com.pet.domains.animal.domain.Animal;
+import com.pet.domains.animal.domain.AnimalKind;
+import com.pet.domains.animal.repository.AnimalKindRepository;
+import com.pet.domains.animal.repository.AnimalRepository;
 import com.pet.domains.area.domain.City;
 import com.pet.domains.area.domain.Town;
 import com.pet.domains.area.repository.CityRepository;
@@ -58,6 +62,12 @@ class NotificationRepositoryTest {
 
     @Autowired
     private CityRepository cityRepository;
+
+    @Autowired
+    private AnimalKindRepository animalKindRepository;
+
+    @Autowired
+    private AnimalRepository animalRepository;
 
     @Autowired
     private TestEntityManager entityManager;
@@ -145,6 +155,9 @@ class NotificationRepositoryTest {
     private MissingPost givenPost(Account account) {
         City city = cityRepository.save(City.builder().name("서울시").code("111").build());
         Town town = townRepository.save(Town.builder().city(city).name("도봉구").code("31231").build());
+        Animal animal = animalRepository.save(Animal.builder().name("개").code("001").build());
+        AnimalKind animalKind =
+            animalKindRepository.save(AnimalKind.builder().name("비숑").code("001").animal(animal).build());
         return MissingPost.builder()
             .status(Status.DETECTION)
             .date(LocalDate.now())
@@ -154,6 +167,7 @@ class NotificationRepositoryTest {
             .account(account)
             .viewCount(4)
             .town(town)
+            .animalKind(animalKind)
             .build();
     }
 
