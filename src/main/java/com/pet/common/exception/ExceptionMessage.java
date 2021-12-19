@@ -18,6 +18,7 @@ public enum ExceptionMessage {
 
     // 서버 관련
     INTERNAL_SERVER(new InternalServerException("서버 에러입니다. 서버 관리자에게 문의주세요.", 500)),
+    SERVICE_UNAVAILABLE(new InternalServerException("접속자가 많습니다. 다시 시도해주세요.", 503)),
 
     // 회원 6xx
     NOT_FOUND_ACCOUNT(new NotFoundException("해당하는 유저를 찾을 수 없습니다.", 601)),

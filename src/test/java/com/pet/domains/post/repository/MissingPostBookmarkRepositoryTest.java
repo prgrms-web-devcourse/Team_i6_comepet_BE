@@ -160,11 +160,11 @@ class MissingPostBookmarkRepositoryTest {
         missingPostBookmarkRepository.save(missingPostBookmark);
 
         //when
-        missingPostBookmarkRepository.deleteByAccountAndMissingPost(account, missingPost);
+        missingPostBookmarkRepository.deleteByAccountAndMissingPostId(account, missingPost.getId());
 
         //then
         List<MissingPostBookmark> getMissingPostBookmarks = missingPostBookmarkRepository.findAll();
-        assertThat(getMissingPostBookmarks.size()).isEqualTo(0);
+        assertThat(getMissingPostBookmarks).isEmpty();
     }
 
 }

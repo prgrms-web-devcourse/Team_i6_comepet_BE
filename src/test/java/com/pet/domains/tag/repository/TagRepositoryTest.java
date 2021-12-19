@@ -33,7 +33,6 @@ class TagRepositoryTest {
         // given
         Tag tag = Tag.builder()
             .name("웰시코기")
-            .count(0)
             .build();
         entityManager.persist(tag);
 

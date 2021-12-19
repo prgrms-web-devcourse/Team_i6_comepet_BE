@@ -1,7 +1,6 @@
 package com.pet.domains.post.service;
 
 import com.pet.common.exception.ExceptionMessage;
-import com.pet.common.util.OptimisticLockingHandlingUtils;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.account.dto.response.AccountBookmarkPostPageResults;
 import com.pet.domains.account.service.NotificationAsyncService;
@@ -24,7 +23,6 @@ import com.pet.domains.post.repository.MissingPostRepository;
 import com.pet.domains.post.repository.projection.MissingPostWithIsBookmark;
 import com.pet.domains.tag.domain.PostTag;
 import com.pet.domains.tag.domain.Tag;
-import com.pet.domains.tag.repository.PostTagRepository;
 import com.pet.domains.tag.service.TagService;
 import java.util.Collections;
 import java.util.List;
@@ -57,8 +55,6 @@ public class MissingPostService {
     private final MissingPostRepository missingPostRepository;
 
     private final TownRepository townRepository;
-
-    private final PostTagRepository postTagRepository;
 
     private final MissingPostMapper missingPostMapper;
 
@@ -98,14 +94,6 @@ public class MissingPostService {
             .filter(post -> post.getAccount().getId().equals(account.getId()))
             .orElseThrow(ExceptionMessage.UN_IDENTIFICATION::getException);
         commentRepository.deleteAllByMissingPostId(getMissingPost.getId());
-
-        List<PostTag> getPostTags = postTagRepository.getPostTagsByMissingPostId(getMissingPost.getId());
-        OptimisticLockingHandlingUtils.handling(
-            () -> tagService.decreaseTagCount(getPostTags),
-            5,
-            "게시글 삭제시 태그 카운트 감소"
-        );
-
         missingPostRepository.deleteById(getMissingPost.getId());
     }
 
@@ -126,27 +114,27 @@ public class MissingPostService {
         MissingPost missingPost =
             missingPostRepository.findByMissingPostId(postId)
                 .orElseThrow(ExceptionMessage.NOT_FOUND_MISSING_POST::getException);
-        increaseViewCount(missingPost);
+        missingPost.increaseViewCount();
         return missingPostMapper.toMissingPostDto(missingPost);
     }
 
     @Transactional
     public MissingPostReadResult getMissingPostOneWithAccount(Account account, Long postId) {
-        MissingPostWithIsBookmark postWithIsBookmarkNew =
+        MissingPostWithIsBookmark missingPostWithIsBookmark =
             missingPostRepository.findMissingPostByIdWithIsBookmark(account, postId)
                 .orElseThrow(ExceptionMessage.NOT_FOUND_MISSING_POST::getException);
-
-        increaseViewCount(postWithIsBookmarkNew.getMissingPost());
+        MissingPost missingPost = missingPostWithIsBookmark.getMissingPost();
+        missingPost.increaseViewCount();
 
         return missingPostReadResultMapper.toMissingPostReadResult(
-            postWithIsBookmarkNew.getMissingPost(),
-            postWithIsBookmarkNew.getAnimalKind(),
-            postWithIsBookmarkNew.getAnimal(),
-            postWithIsBookmarkNew.getTown(),
-            postWithIsBookmarkNew.getCity(),
-            postWithIsBookmarkNew.isBookmark(),
-            postWithIsBookmarkNew.getMissingPost().getPostTags(),
-            postWithIsBookmarkNew.getMissingPost().getPostImages()
+            missingPost,
+            missingPostWithIsBookmark.getAnimalKind(),
+            missingPostWithIsBookmark.getAnimal(),
+            missingPostWithIsBookmark.getTown(),
+            missingPostWithIsBookmark.getCity(),
+            missingPostWithIsBookmark.isBookmark(),
+            missingPost.getPostTags(),
+            missingPost.getPostImages()
         );
     }
 
@@ -161,14 +149,6 @@ public class MissingPostService {
                 missingPostWithIsBookmarks.getTotalElements(),
                 missingPostWithIsBookmarks.isLast(),
                 missingPostWithIsBookmarks.getSize());
-    }
-
-    private void increaseViewCount(MissingPost missingPost) {
-        OptimisticLockingHandlingUtils.handling(
-            missingPost::increaseViewCount,
-            5,
-            "실종 게시글 조회수 증감 로직"
-        );
     }
 
     private String getThumbnail(List<Image> imageFiles) {
