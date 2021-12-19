@@ -20,7 +20,11 @@ public class AnimalService {
 
     private final AnimalMapper animalMapper;
 
-    @Cacheable(cacheNames = "animals", unless = "#result == null || #result.getAnimals().isEmpty()")
+    @Cacheable(
+        cacheNames = "animals",
+        key = "#result.toString()",
+        unless = "#result == null || #result.getAnimals().isEmpty()"
+    )
     public AnimalReadResults getAnimals() {
         List<AnimalReadResults.Animal> result =
             animalMapper.toAnimalReadResult(animalRepository.findAllWithAnimalKinds());
