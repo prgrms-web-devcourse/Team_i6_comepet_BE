@@ -22,7 +22,6 @@ public class AnimalService {
 
     @Cacheable(
         cacheNames = "animals",
-        key = "animals",
         unless = "#result == null || #result.getAnimals().isEmpty()"
     )
     public AnimalReadResults getAnimals() {
