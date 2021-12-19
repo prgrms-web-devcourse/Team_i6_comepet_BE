@@ -28,6 +28,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Formula;
@@ -107,7 +109,8 @@ public class MissingPost extends DeletableEntity {
     @JoinColumn(
         name = "animal_kind_id",
         referencedColumnName = "id",
-        foreignKey = @ForeignKey(name = "fk_animal_kind_to_missing_post")
+        foreignKey = @ForeignKey(name = "fk_animal_kind_to_missing_post"),
+        nullable = false
     )
     private AnimalKind animalKind;
 
@@ -133,6 +136,7 @@ public class MissingPost extends DeletableEntity {
         Validate.notBlank(telNumber, "telNumber must not be blank");
         Validate.notNull(account, "account must not be null");
         Validate.notNull(town, "town must not be null");
+        Validate.notNull(animalKind, "animalKind must not be null");
 
         this.status = status;
         this.detailAddress = detailAddress;
@@ -155,4 +159,39 @@ public class MissingPost extends DeletableEntity {
         this.viewCount += 1;
     }
 
+    public void changeInfo(Status status, LocalDate date, Town town, String detailAddress, String telNumber,
+        AnimalKind animalKind, Long age, SexType sex, String chipNumber, String content, String thumbnail) {
+        if (ObjectUtils.isNotEmpty(status)) {
+            this.status = status;
+        }
+
+        if (ObjectUtils.isNotEmpty(date)) {
+            this.date = date;
+        }
+
+        if (ObjectUtils.isNotEmpty(town)) {
+            this.town = town;
+        }
+
+        if (StringUtils.isNotBlank(telNumber)) {
+            this.telNumber = telNumber;
+        }
+
+        if (ObjectUtils.isNotEmpty(animalKind)) {
+            this.animalKind = animalKind;
+        }
+
+        if (ObjectUtils.isNotEmpty(sex)) {
+            this.sexType = sex;
+        }
+
+        if (StringUtils.isNotBlank(content)) {
+            this.content = content;
+        }
+
+        this.age = age;
+        this.chipNumber = chipNumber;
+        this.detailAddress = detailAddress;
+        this.thumbnail = thumbnail;
+    }
 }

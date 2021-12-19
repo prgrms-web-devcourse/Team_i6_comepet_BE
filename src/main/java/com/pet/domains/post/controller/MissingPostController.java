@@ -28,8 +28,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -85,15 +83,15 @@ public class MissingPostController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PutMapping(
-        path = "/{postId}",
-        consumes = MediaType.APPLICATION_JSON_VALUE,
-        produces = MediaType.APPLICATION_JSON_VALUE
-    )
+    @PostMapping(path = "/{postId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ApiResponse<Map<String, Long>> updateMissingPost(
-        @PathVariable Long postId, @RequestBody MissingPostUpdateParam missingPostUpdateParam
+        @PathVariable Long postId,
+        @RequestPart(value = "images", required = false) List<MultipartFile> images,
+        @RequestPart(value = "param") @Valid MissingPostUpdateParam missingPostUpdateParam,
+        @LoginAccount Account account
     ) {
-        return ApiResponse.ok(Map.of(RETURN_KEY, 1L));
+        return ApiResponse.ok(
+            Map.of(RETURN_KEY, missingPostService.updateMissingPost(account, postId, missingPostUpdateParam, images)));
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

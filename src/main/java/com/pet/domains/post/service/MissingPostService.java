@@ -5,15 +5,18 @@ import com.pet.domains.account.domain.Account;
 import com.pet.domains.account.dto.response.AccountBookmarkPostPageResults;
 import com.pet.domains.account.service.NotificationAsyncService;
 import com.pet.domains.animal.domain.AnimalKind;
+import com.pet.domains.animal.repository.AnimalKindRepository;
 import com.pet.domains.animal.service.AnimalKindService;
 import com.pet.domains.area.domain.Town;
 import com.pet.domains.area.repository.TownRepository;
 import com.pet.domains.comment.repository.CommentRepository;
 import com.pet.domains.image.domain.Image;
 import com.pet.domains.image.domain.PostImage;
+import com.pet.domains.image.repository.PostImageRepository;
 import com.pet.domains.image.service.ImageService;
 import com.pet.domains.post.domain.MissingPost;
 import com.pet.domains.post.dto.request.MissingPostCreateParam;
+import com.pet.domains.post.dto.request.MissingPostUpdateParam;
 import com.pet.domains.post.dto.response.MissingPostReadResult;
 import com.pet.domains.post.dto.response.MissingPostReadResults;
 import com.pet.domains.post.dto.serach.PostSearchParam;
@@ -23,7 +26,10 @@ import com.pet.domains.post.repository.MissingPostRepository;
 import com.pet.domains.post.repository.projection.MissingPostWithIsBookmark;
 import com.pet.domains.tag.domain.PostTag;
 import com.pet.domains.tag.domain.Tag;
+import com.pet.domains.tag.repository.PostTagRepository;
+import com.pet.domains.tag.repository.TagRepository;
 import com.pet.domains.tag.service.TagService;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -54,7 +60,15 @@ public class MissingPostService {
 
     private final MissingPostRepository missingPostRepository;
 
+    private final AnimalKindRepository animalKindRepository;
+
     private final TownRepository townRepository;
+
+    private final TagRepository tagRepository;
+
+    private final PostTagRepository postTagRepository;
+
+    private final PostImageRepository postImageRepository;
 
     private final MissingPostMapper missingPostMapper;
 
@@ -151,11 +165,123 @@ public class MissingPostService {
                 missingPostWithIsBookmarks.getSize());
     }
 
+    @Transactional
+    public Long updateMissingPost(Account account, Long postId, MissingPostUpdateParam param,
+        List<MultipartFile> multipartFiles) {
+        log.info("start update missing post");
+        if (Objects.nonNull(param.getImages()) && (multipartFiles.size() + param.getImages().size()) > 3
+            || (Objects.nonNull(multipartFiles) && multipartFiles.size() > 3)) {
+            throw ExceptionMessage.INVALID_IMAGE_COUNT.getException();
+        }
+
+        MissingPost getMissingPost = missingPostRepository.findById(postId)
+            .filter(post -> post.getAccount().getId().equals(account.getId()))
+            .orElseThrow(ExceptionMessage.UN_IDENTIFICATION::getException);
+
+        List<String> getParamTags =
+            param.getTags() != null ? param.getTags()
+                .stream()
+                .map(MissingPostUpdateParam.Tag::getName)
+                .collect(Collectors.toList()) : null;
+
+        List<String> getEntityTags =
+            getMissingPost.getPostTags()
+                .stream()
+                .map(postTag -> postTag.getTag().getName())
+                .collect(Collectors.toList());
+
+        List<String> getUsedTags =
+            getOrCreateUsedTags(getMissingPost, Objects.requireNonNull(getParamTags), getEntityTags);
+        deleteNotUsedTags(getMissingPost, getEntityTags, getUsedTags);
+
+        List<Long> getParamImagesId =
+            Objects.requireNonNull(param.getImages()).stream()
+                .map(MissingPostUpdateParam.Image::getId)
+                .collect(Collectors.toList());
+
+        List<Long> getEntityImagesId =
+            getMissingPost.getPostImages().stream()
+                .map(PostImage::getId)
+                .collect(Collectors.toList());
+
+        List<Long> getRemovedImages = getRemovedImages(getMissingPost, getParamImagesId, getEntityImagesId);
+
+        getRemovedImages.stream()
+            .map(getRemovedImage -> postImageRepository.findById(getRemovedImage)
+                .orElseThrow(ExceptionMessage.NOT_FOUND_POST_IMAGE::getException))
+            .forEach(getPostImage -> {
+                getMissingPost.getPostImages().remove(getPostImage);
+                postImageRepository.deleteById(getPostImage.getId());
+            });
+
+        List<Image> imageFiles = uploadAndGetImages(multipartFiles);
+        createPostImage(imageFiles, getMissingPost);
+
+        String thumbnail = getUpdateThumbnail(getMissingPost.getPostImages());
+
+        Town getTown =
+            townRepository.findById(param.getTownId()).orElseThrow(ExceptionMessage.NOT_FOUND_TOWN::getException);
+        AnimalKind getAnimalKind = animalKindRepository.findByName(param.getAnimalKindName())
+            .orElseThrow(ExceptionMessage.NOT_FOUND_ANIMAL_KIND::getException);
+        getMissingPost.changeInfo(param.getStatus(), param.getDate(), getTown, param.getDetailAddress(),
+            param.getTelNumber(), getAnimalKind, param.getAge(), param.getSex(), param.getChipNumber(),
+            param.getContent(), thumbnail);
+
+        log.info("complete update missing post");
+        return getMissingPost.getId();
+    }
+
+    private List<Long> getRemovedImages(MissingPost getMissingPost, List<Long> getParamImagesId,
+        List<Long> getEntityImagesId) {
+        List<Long> getRemovedImages = new ArrayList<>();
+        getEntityImagesId.stream()
+            .filter(imageId -> !getParamImagesId.contains(imageId))
+            .forEach(imageId -> {
+                getMissingPost.getPostImages().remove(postImageRepository.findById(imageId)
+                    .orElseThrow(ExceptionMessage.NOT_FOUND_POST_IMAGE::getException));
+                getRemovedImages.add(imageId);
+            });
+        return getRemovedImages;
+    }
+
+    private void deleteNotUsedTags(MissingPost getMissingPost, List<String> getEntityTags, List<String> getUsedTags) {
+        getEntityTags.stream().filter(getEntityTag -> !getUsedTags.contains(getEntityTag))
+            .map(getEntityTag -> postTagRepository.findByMissingPostAndTag(getMissingPost,
+                tagRepository.findTagByName(getEntityTag)
+                    .orElseThrow(ExceptionMessage.NOT_FOUND_TAG::getException)))
+            .forEach(postTag -> {
+                getMissingPost.getPostTags().remove(postTag);
+            });
+    }
+
+    private List<String> getOrCreateUsedTags(MissingPost getMissingPost, List<String> getParamTags,
+        List<String> getEntityTags) {
+        List<String> getUsedTags = new ArrayList<>();
+        getParamTags.forEach(getParamTag -> {
+            if (!getEntityTags.contains(getParamTag)) {
+                PostTag.builder()
+                    .missingPost(getMissingPost)
+                    .tag(tagService.getOrCreateByTagName(getParamTag))
+                    .build();
+            } else {
+                getUsedTags.add(getParamTag);
+            }
+        });
+        return getUsedTags;
+    }
+
     private String getThumbnail(List<Image> imageFiles) {
         if (CollectionUtils.isEmpty(imageFiles)) {
             return null;
         }
         return imageFiles.get(0).getName();
+    }
+
+    private String getUpdateThumbnail(List<PostImage> imageFiles) {
+        if (CollectionUtils.isEmpty(imageFiles)) {
+            return null;
+        }
+        return imageFiles.get(0).getImage().getName();
     }
 
     private void createPostTags(List<Tag> tags, MissingPost newMissingPost) {
