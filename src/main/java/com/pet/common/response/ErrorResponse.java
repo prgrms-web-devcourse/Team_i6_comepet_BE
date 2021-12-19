@@ -14,7 +14,7 @@ public class ErrorResponse {
         this.message = message;
     }
 
-    public static ErrorResponse error(int code, String message) {
+    public static ErrorResponse error(int code, Object message) {
         return new ErrorResponse(code, message);
     }
 

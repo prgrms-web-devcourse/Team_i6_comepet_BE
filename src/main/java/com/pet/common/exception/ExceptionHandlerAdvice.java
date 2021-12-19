@@ -7,15 +7,24 @@ import com.pet.common.exception.httpexception.ForbiddenException;
 import com.pet.common.exception.httpexception.InternalServerException;
 import com.pet.common.exception.httpexception.NotFoundException;
 import com.pet.common.response.ErrorResponse;
+import java.util.stream.Collectors;
+import javax.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.TypeMismatchException;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.HttpMediaTypeException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MultipartException;
 
 @Slf4j
 @RestControllerAdvice
@@ -32,7 +41,10 @@ public class ExceptionHandlerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
         log.warn("MethodArgumentNotValidException", exception);
-        return ErrorResponse.error(HttpStatus.BAD_REQUEST.value(), exception.getMessage());
+        BindingResult result = exception.getBindingResult();
+        return ErrorResponse.error(HttpStatus.BAD_REQUEST.value(), result.getFieldErrors().stream()
+            .map(DefaultMessageSourceResolvable::getDefaultMessage)
+            .collect(Collectors.toList()));
     }
 
     @ExceptionHandler(BindException.class)
@@ -75,6 +87,28 @@ public class ExceptionHandlerAdvice {
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleConflictException(ConflictException exception) {
         return ErrorResponse.error(exception.getCode(), exception.getMessage());
+    }
+
+    @ExceptionHandler({
+        MissingServletRequestParameterException.class, HttpMessageNotReadableException.class,
+        TypeMismatchException.class, MultipartException.class, IllegalStateException.class,
+        IllegalArgumentException.class
+    })
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleBadRequestException(Exception exception) {
+        return ErrorResponse.error(400, exception.getMessage());
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleConstraintViolation(ConstraintViolationException exception) {
+        return ErrorResponse.error(400, exception.getMessage());
+    }
+
+    @ExceptionHandler(HttpMediaTypeException.class)
+    @ResponseStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
+    public ErrorResponse handleHttpMediaTypeException(HttpMediaTypeException exception) {
+        return ErrorResponse.error(415, exception.getMessage());
     }
 
     @ExceptionHandler(InternalServerException.class)
