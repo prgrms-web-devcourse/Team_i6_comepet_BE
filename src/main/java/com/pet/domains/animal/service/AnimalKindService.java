@@ -9,6 +9,7 @@ import com.pet.domains.animal.repository.AnimalRepository;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +25,7 @@ public class AnimalKindService {
 
     private final AnimalRepository animalRepository;
 
+    @CacheEvict(cacheNames = "animals", allEntries  = true)
     @Transactional
     public void bulkCreateAnimalKind(String animalCode, AnimalKindCreateParams animalKindCreateParams) {
         animalKindRepository.saveAll(
@@ -37,7 +39,6 @@ public class AnimalKindService {
         );
     }
 
-    @Transactional
     public AnimalKind getOrCreateAnimalKind(Long animalId, String animalKindName) {
         return animalKindRepository.findByName(animalKindName)
             .orElseGet(() -> createAnimalKindByName(animalKindName, getAnimalById(animalId)));
@@ -53,7 +54,9 @@ public class AnimalKindService {
         return createAnimalKindByName(animalKindName, getAnimalByName(ETC_ANIMAL_NAME));
     }
 
-    private AnimalKind createAnimalKindByName(String animalKindName, Animal animal) {
+    @CacheEvict(cacheNames = "animals", allEntries  = true)
+    @Transactional
+    public AnimalKind createAnimalKindByName(String animalKindName, Animal animal) {
         return animalKindRepository.save(
             AnimalKind.builder()
                 .animal(animal)
