@@ -200,8 +200,6 @@ public class MissingPost extends DeletableEntity {
             this.animalKind = animalKind;
         }
 
-        this.age = age;
-
         if (ObjectUtils.isNotEmpty(sex)) {
             this.sexType = sex;
         }
@@ -210,6 +208,7 @@ public class MissingPost extends DeletableEntity {
             this.content = content;
         }
 
+        this.age = age;
         this.chipNumber = chipNumber;
         this.detailAddress = detailAddress;
         this.thumbnail = thumbnail;

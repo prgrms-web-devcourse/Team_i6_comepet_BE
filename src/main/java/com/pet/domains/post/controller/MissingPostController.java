@@ -81,11 +81,11 @@ public class MissingPostController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PostMapping(path = "/{postId}")
+    @PostMapping(path = "/{postId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ApiResponse<Map<String, Long>> updateMissingPost(
         @PathVariable Long postId,
         @RequestPart(value = "images", required = false) List<MultipartFile> images,
-        @RequestPart(value = "param") MissingPostUpdateParam missingPostUpdateParam,
+        @RequestPart(value = "param") @Valid MissingPostUpdateParam missingPostUpdateParam,
         @LoginAccount Account account
     ) {
         return ApiResponse.ok(
