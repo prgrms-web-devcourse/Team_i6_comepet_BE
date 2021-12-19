@@ -16,12 +16,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Version;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.Validate;
+import org.hibernate.annotations.Formula;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -98,7 +98,7 @@ public class ShelterPost extends BaseEntity {
     @Column(name = "notice_number", length = 30)
     private String noticeNumber;
 
-    @Column(name = "bookmark_count", columnDefinition = "BIGINT default 0")
+    @Formula("(select count(*) from shelter_post_bookmark spb where spb.shelter_post_id = id)")
     private long bookmarkCount;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -118,9 +118,6 @@ public class ShelterPost extends BaseEntity {
         nullable = false
     )
     private AnimalKind animalKind;
-
-    @Version
-    private long version;
 
     @Builder
     public ShelterPost(int age, String address, String shelterPlace, String shelterName, String shelterTelNumber,
@@ -156,16 +153,6 @@ public class ShelterPost extends BaseEntity {
         this.bookmarkCount = bookmarkCount;
         this.town = town;
         this.animalKind = animalKind;
-    }
-
-    public void increaseBookMarkCount() {
-        this.bookmarkCount += 1;
-    }
-
-    public void decreaseBookMarkCount() {
-        if (this.bookmarkCount > 0) {
-            this.bookmarkCount -= 1;
-        }
     }
 
 }

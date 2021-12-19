@@ -59,10 +59,10 @@ class MissingPostBookmarkServiceTest {
     @DisplayName("실종/보호 게시물 북마크 삭제 테스트")
     void deleteMissingPostBookmarkTest() {
         //given
-        given(missingPostBookmarkRepository.deleteByAccountAndMissingPost(any(), any())).willReturn(null);
+        given(missingPostBookmarkRepository.deleteByAccountAndMissingPostId(any(), any())).willReturn(null);
 
         //when
-        missingPostBookmarkRepository.deleteByAccountAndMissingPost(
+        missingPostBookmarkRepository.deleteByAccountAndMissingPostId(
             Account.builder()
                 .nickname("nickname")
                 .password("123123123")
@@ -85,11 +85,11 @@ class MissingPostBookmarkServiceTest {
                 .account(mock(Account.class))
                 .town(mock(Town.class))
                 .animalKind(mock(AnimalKind.class))
-                .build()
+                .build().getId()
         );
 
         //then
-        verify(missingPostBookmarkRepository, times(1)).deleteByAccountAndMissingPost(any(), any());
+        verify(missingPostBookmarkRepository, times(1)).deleteByAccountAndMissingPostId(any(), any());
     }
 
 }

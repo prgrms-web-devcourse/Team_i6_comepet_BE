@@ -10,24 +10,18 @@ import static org.mockito.Mockito.verify;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.animal.domain.Animal;
 import com.pet.domains.animal.domain.AnimalKind;
-import com.pet.domains.animal.service.AnimalKindService;
 import com.pet.domains.area.domain.City;
 import com.pet.domains.area.domain.Town;
-import com.pet.domains.area.repository.TownRepository;
 import com.pet.domains.auth.domain.Group;
 import com.pet.domains.image.domain.Image;
 import com.pet.domains.image.domain.PostImage;
-import com.pet.domains.image.repository.PostImageRepository;
-import com.pet.domains.image.service.ImageService;
 import com.pet.domains.post.domain.MissingPost;
 import com.pet.domains.post.domain.SexType;
 import com.pet.domains.post.domain.Status;
-import com.pet.domains.post.mapper.MissingPostMapper;
 import com.pet.domains.post.repository.MissingPostRepository;
 import com.pet.domains.post.repository.projection.MissingPostWithIsBookmark;
 import com.pet.domains.tag.domain.PostTag;
 import com.pet.domains.tag.domain.Tag;
-import com.pet.domains.tag.service.TagService;
 import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -49,23 +43,6 @@ class MissingPostServiceTest {
     @Mock
     private MissingPostRepository missingPostRepository;
 
-    @Mock
-    private AnimalKindService animalKindService;
-
-    @Mock
-    private TownRepository townRepository;
-
-    @Mock
-    private PostImageRepository postImageRepository;
-
-    @Mock
-    private TagService tagService;
-
-    @Mock
-    private ImageService imageService;
-
-    @Mock
-    private MissingPostMapper missingPostMapper;
 
     private Group group;
 
@@ -113,7 +90,6 @@ class MissingPostServiceTest {
 
         tag = Tag.builder()
             .name("웰시코기")
-            .count(0)
             .build();
 
         animal = Animal.builder()
