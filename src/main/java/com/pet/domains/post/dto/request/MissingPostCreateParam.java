@@ -44,7 +44,7 @@ public class MissingPostCreateParam {
     private String animalKindName;
 
     @Max(value = 500, message = "범위이내의 나이를 입력해주세요.")
-    @NotNull(message = "동물을 입력해주세요.")
+    @NotNull(message = "나이를 입력해주세요.")
     private Long age;
 
     @NotBlank(message = "성별을 선택해주세요.")
