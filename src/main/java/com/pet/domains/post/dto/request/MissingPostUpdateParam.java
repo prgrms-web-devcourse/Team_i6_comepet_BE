@@ -39,7 +39,7 @@ public class MissingPostUpdateParam {
     private String telNumber;
 
     @NotNull(message = "동물을 선택해주세요.")
-    private Long animal;
+    private Long animalId;
 
     @Length(max = 50, message = "범위이내의 품종을 입력해주세요.")
     @NotBlank(message = "품종을 입력해주세요.")
@@ -67,7 +67,7 @@ public class MissingPostUpdateParam {
     private List<MissingPostUpdateParam.Image> images;
 
     public MissingPostUpdateParam(Status status, LocalDate date, Long cityId, Long townId, String detailAddress,
-        String telNumber, Long animal, String animalKindName, Long age, SexType sex, String chipNumber,
+        String telNumber, Long animalId, String animalKindName, Long age, SexType sex, String chipNumber,
         List<Tag> tags, String content, List<Image> images) {
         this.status = status;
         this.date = date;
@@ -75,7 +75,7 @@ public class MissingPostUpdateParam {
         this.townId = townId;
         this.detailAddress = detailAddress;
         this.telNumber = telNumber;
-        this.animal = animal;
+        this.animalId = animalId;
         this.animalKindName = animalKindName;
         this.age = age;
         this.sex = sex;
