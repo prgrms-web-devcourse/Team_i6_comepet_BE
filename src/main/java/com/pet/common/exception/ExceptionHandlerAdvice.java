@@ -91,7 +91,7 @@ public class ExceptionHandlerAdvice {
 
     @ExceptionHandler({
         MissingServletRequestParameterException.class, HttpMessageNotReadableException.class,
-        TypeMismatchException.class, MultipartException.class
+        TypeMismatchException.class, MultipartException.class, IllegalStateException.class
     })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleBadRequestException(Exception exception) {
