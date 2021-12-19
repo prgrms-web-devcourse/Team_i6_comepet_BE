@@ -208,11 +208,10 @@ public class MissingPostService {
                 .collect(Collectors.toList());
 
         List<String> getUsedTags = getOrCreateUsedTags(getMissingPost, getParamTags, getEntityTags);
-
         deleteNotUsedTags(getMissingPost, getEntityTags, getUsedTags);
 
         List<Long> getParamImagesId =
-            param.getImages().stream()
+            Objects.requireNonNull(param.getImages()).stream()
                 .map(MissingPostUpdateParam.Image::getId)
                 .collect(Collectors.toList());
 
