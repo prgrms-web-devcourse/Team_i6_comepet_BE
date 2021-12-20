@@ -19,8 +19,8 @@ public interface AccountMapper {
     AccountReadResult toReadResult(Account account);
 
     @Mappings({
-        @Mapping(target = "city", source = "missingPost.town.name"),
-        @Mapping(target = "town", source = "missingPost.town.city.name"),
+        @Mapping(target = "town", source = "missingPost.town.name"),
+        @Mapping(target = "city", source = "missingPost.town.city.name"),
         @Mapping(target = "animalKind", source = "missingPost.animalKind.name"),
         @Mapping(target = "sex", source = "missingPost.sexType"),
         @Mapping(target = "postTags", expression = "java(toMissingPostTagResults(missingPost.getPostTags()))"),
