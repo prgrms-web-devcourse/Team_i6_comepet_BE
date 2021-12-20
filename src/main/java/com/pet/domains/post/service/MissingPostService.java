@@ -80,7 +80,7 @@ public class MissingPostService {
     @Transactional
     public Long createMissingPost(MissingPostCreateParam missingPostCreateParam, List<MultipartFile> multipartFiles,
         Account account) {
-        log.info("start create missing post");
+        log.debug("start create missing post");
         if (Objects.nonNull(multipartFiles) && multipartFiles.size() > 3) {
             throw ExceptionMessage.INVALID_IMAGE_COUNT.getException();
         }
@@ -100,7 +100,7 @@ public class MissingPostService {
 
         MissingPost savedMissingPost = missingPostRepository.save(newMissingPost);
         notificationAsyncService.createNotifications(savedMissingPost);
-        log.info("complete create missing post");
+        log.debug("complete create missing post");
 
         return savedMissingPost.getId();
     }
@@ -109,9 +109,9 @@ public class MissingPostService {
         if (!CollectionUtils.isEmpty(multipartFiles)) {
             StringJoiner stringJoiner = new StringJoiner(",", "[", "]");
             multipartFiles.stream().map(MultipartFile::getName).forEach(stringJoiner::add);
-            log.info("post image size: {}, names: {} ", multipartFiles.size(), stringJoiner);
+            log.debug("post image size: {}, names: {} ", multipartFiles.size(), stringJoiner);
         } else {
-            log.info("post image size: 0");
+            log.debug("post image size is empty");
         }
     }
 
@@ -185,7 +185,7 @@ public class MissingPostService {
     @Transactional
     public Long updateMissingPost(Account account, Long postId, MissingPostUpdateParam param,
         List<MultipartFile> multipartFiles) {
-        log.info("start update missing post");
+        log.debug("start update missing post");
         if (Objects.nonNull(param.getImages()) && Objects.nonNull(multipartFiles)
             && (multipartFiles.size() + param.getImages().size()) > 3
             || (Objects.nonNull(multipartFiles) && multipartFiles.size() > 3)) {
@@ -245,7 +245,7 @@ public class MissingPostService {
             param.getTelNumber(), getAnimalKind, param.getAge(), param.getSex(), param.getChipNumber(),
             param.getContent(), thumbnail);
 
-        log.info("complete update missing post");
+        log.debug("complete update missing post");
         return getMissingPost.getId();
     }
 
