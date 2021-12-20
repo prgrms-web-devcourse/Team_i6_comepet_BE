@@ -28,8 +28,15 @@ public class OAuth2AuthenticationSuccessHandler extends SavedRequestAwareAuthent
     ) throws ServletException, IOException {
         if (authentication instanceof OAuth2AuthenticationToken) {
             Account account = processUserOAuth2UserJoin((OAuth2AuthenticationToken) authentication);
-            String loginSuccessJson = generateLoginSuccessJson(account);
-            setResponse(response, loginSuccessJson);
+            String token = generateToken(account);
+            String loginSuccessJson =  "{\"username\": \"" + account.getId() + "\", \"token\":\""
+                + token + "\"}";
+            // setResponse(response, loginSuccessJson);
+
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            response.setContentLength(loginSuccessJson.getBytes(StandardCharsets.UTF_8).length);
+            response.getWriter().write(loginSuccessJson);
+            response.sendRedirect("http://comepet.netlify.app/oauth/redirect?token=" + token);
             return;
         }
         super.onAuthenticationSuccess(request, response, authentication);
@@ -49,10 +56,11 @@ public class OAuth2AuthenticationSuccessHandler extends SavedRequestAwareAuthent
         return "{\"username\": \"" + account.getId() + "\", \"token\":\"" + generateToken(account) + "\"}";
     }
 
-    private void setResponse(HttpServletResponse response, String loginSuccessJson) throws IOException {
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.setContentLength(loginSuccessJson.getBytes(StandardCharsets.UTF_8).length);
-        response.getWriter().write(loginSuccessJson);
-    }
+    // private void setResponse(HttpServletResponse response, String loginSuccessJson) throws IOException {
+    //     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+    //     response.setContentLength(loginSuccessJson.getBytes(StandardCharsets.UTF_8).length);
+    //     response.getWriter().write(loginSuccessJson);
+    //     response.sendRedirect("http://comepet.netlify.app/oauth/" + );
+    // }
 
 }
