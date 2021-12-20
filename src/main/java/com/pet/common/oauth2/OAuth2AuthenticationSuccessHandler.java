@@ -4,7 +4,6 @@ import com.pet.common.jwt.Jwt;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.account.service.AccountService;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
