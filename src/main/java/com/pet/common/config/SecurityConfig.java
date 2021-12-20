@@ -8,6 +8,7 @@ import com.pet.common.exception.CustomAuthenticationEntryPoint;
 import com.pet.common.jwt.Jwt;
 import com.pet.common.jwt.JwtAuthenticationFilter;
 import com.pet.common.jwt.JwtAuthenticationProvider;
+import com.pet.common.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
 import com.pet.common.oauth2.OAuth2AuthenticationSuccessHandler;
 import com.pet.common.property.JwtProperty;
 import com.pet.domains.account.service.AccountService;
@@ -78,6 +79,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
         return new JwtAuthenticationFilter(jwt());
+    }
+
+    @Bean
+    public HttpCookieOAuth2AuthorizationRequestRepository authorizationRequestRepository() {
+        return new HttpCookieOAuth2AuthorizationRequestRepository();
     }
 
     @Bean
