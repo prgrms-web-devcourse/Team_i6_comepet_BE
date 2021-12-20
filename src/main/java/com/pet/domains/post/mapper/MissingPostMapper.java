@@ -55,8 +55,8 @@ public interface MissingPostMapper {
     @Mappings({
         @Mapping(target = "animalKind", source = "missingPost.animalKind.name"),
         @Mapping(target = "thumbnail", source = "missingPost.thumbnail"),
-        @Mapping(target = "place",
-            expression = "java(joinPlace(missingPost.getTown().getName(), missingPost.getTown().getCity().getName()))"),
+        @Mapping(target = "city", source = "missingPost.town.city.name"),
+        @Mapping(target = "town", source = "missingPost.town.name")
     })
     AccountBookmarkPostPageResults.Post toAccountBookmarkMissingPost(MissingPost missingPost);
 

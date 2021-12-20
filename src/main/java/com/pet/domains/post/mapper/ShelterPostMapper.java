@@ -112,12 +112,9 @@ public interface ShelterPostMapper {
         @Mapping(target = "animalKind", source = "shelterPost.animalKind.name"),
         @Mapping(target = "thumbnail", source = "shelterPost.thumbnail"),
         @Mapping(target = "sexType", source = "shelterPost.sex"),
-        @Mapping(target = "place",
-            expression = "java(joinPlace(shelterPost.getTown().getName(), shelterPost.getTown().getCity().getName()))"),
+        @Mapping(target = "city", source = "shelterPost.town.city.name"),
+        @Mapping(target = "town", source = "shelterPost.town.name")
     })
     AccountBookmarkPostPageResults.Post toAccountBookmarkShelterPost(ShelterPost shelterPost);
 
-    default String joinPlace(String city, String town) {
-        return new StringBuilder().append(city).append(" ").append(town).toString();
-    }
 }
