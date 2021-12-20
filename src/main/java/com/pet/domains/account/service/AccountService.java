@@ -200,6 +200,10 @@ public class AccountService {
                 log.debug("디폴트 지역이 2개입니다.");
                 throw ExceptionMessage.INVALID_INTEREST_AREA.getException();
             }
+            if (defaultAreaCount == 0) {
+                log.debug("디폴트 지역이 0개입니다.");
+                throw ExceptionMessage.INVALID_INTEREST_AREA.getException();
+            }
 
             long townIdCount = areas.stream().map(AccountAreaUpdateParam.Area::getTownId).distinct().count();
             if (townIdCount == 1) {

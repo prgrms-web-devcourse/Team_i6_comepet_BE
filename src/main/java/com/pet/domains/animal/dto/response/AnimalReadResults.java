@@ -1,13 +1,16 @@
 package com.pet.domains.animal.dto.response;
 
 import java.util.List;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AnimalReadResults {
 
-    private final List<Animal> animals;
+    private List<Animal> animals;
 
     private AnimalReadResults(List<AnimalReadResults.Animal> animals) {
         this.animals = animals;
@@ -18,13 +21,14 @@ public class AnimalReadResults {
     }
 
     @Getter
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Animal {
 
-        private final Long id;
+        private Long id;
 
-        private final String name;
+        private String name;
 
-        private final List<Animal.AnimalKind> kinds;
+        private List<Animal.AnimalKind> kinds;
 
         @Builder
         public Animal(Long id, String name, List<Animal.AnimalKind> kinds) {
@@ -34,11 +38,12 @@ public class AnimalReadResults {
         }
 
         @Getter
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
         public static class AnimalKind {
 
-            private final Long id;
+            private Long id;
 
-            private final String name;
+            private String name;
 
             @Builder
             public AnimalKind(Long id, String name) {
@@ -46,5 +51,10 @@ public class AnimalReadResults {
                 this.name = name;
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        return "animals";
     }
 }
