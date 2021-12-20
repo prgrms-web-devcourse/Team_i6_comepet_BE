@@ -160,7 +160,7 @@ public class ShelterApiService {
     }
 
     public void saveAllCities() {
-         log.info("saveAllCities() cron task start");
+        log.info("saveAllCities() cron task start");
         CityCreateParams createParams = getCityCreateParams();
         cityService.createCites(createParams);
     }

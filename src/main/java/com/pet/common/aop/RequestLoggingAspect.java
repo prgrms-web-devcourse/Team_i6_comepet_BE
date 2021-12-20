@@ -30,10 +30,12 @@ public class RequestLoggingAspect {
 
     // 모든 컨트롤러 요청에 대한 처리
     @Pointcut("within(com.pet.*.*.controller..*)")
-    public void onRequest() {}
+    public void onRequest() {
+
+    }
 
     @Around("com.pet.common.aop.RequestLoggingAspect.onRequest()")
-    public Object doLogging(ProceedingJoinPoint pjp) throws Throwable {
+    public Object doLogging(ProceedingJoinPoint joinPoint) throws Throwable {
         HttpServletRequest request = ((ServletRequestAttributes) currentRequestAttributes()).getRequest();
         Map<String, String[]> paramMap = request.getParameterMap();
 
@@ -44,7 +46,7 @@ public class RequestLoggingAspect {
 
         long start = System.currentTimeMillis();
         try {
-            return pjp.proceed(pjp.getArgs());
+            return joinPoint.proceed(joinPoint.getArgs());
         } finally {
             long end = System.currentTimeMillis();
             log.info("Request: {} {}{} < {} ({}ms)", request.getMethod(), request.getRequestURI(),

@@ -26,7 +26,7 @@ public class NotificationAsyncService {
     @Async
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void createNotifications(MissingPost triggerMissingPost) {
-        log.debug("start async createNotifications task");
+        log.info("start async createNotifications task");
         List<Account> subscribers =
             accountRepository.findAllByNotificationSubscribers(triggerMissingPost.getTown().getId());
         List<Notification> notifications = subscribers.stream()
@@ -37,6 +37,6 @@ public class NotificationAsyncService {
             .collect(Collectors.toList());
 
         notificationRepository.saveAll(notifications);
-        log.debug("complete async createNotifications task");
+        log.info("complete async createNotifications task");
     }
 }
