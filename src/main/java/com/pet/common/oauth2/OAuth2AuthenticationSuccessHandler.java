@@ -1,10 +1,14 @@
 package com.pet.common.oauth2;
 
+import com.pet.common.config.CookieUtil;
 import com.pet.common.jwt.Jwt;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.account.service.AccountService;
 import java.io.IOException;
+import java.util.Base64;
+import java.util.Optional;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -33,28 +37,19 @@ public class OAuth2AuthenticationSuccessHandler extends SavedRequestAwareAuthent
             String targetUrl = UriComponentsBuilder
                 .fromUriString(redirectUri).queryParam("token", token)
                 .build().toUriString();
-            getRedirectStrategy().sendRedirect(request, response, targetUrl);
-
-            // String loginSuccessJson =  "{\"username\": \"" + account.getId() + "\", \"token\":\""
-            //     + token + "\"}";
-            // setResponse(response, loginSuccessJson);
-
-            // response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-            // response.setContentLength(loginSuccessJson.getBytes(StandardCharsets.UTF_8).length);
-            // response.getWriter().write(loginSuccessJson);
-            // response.sendRedirect("https://comepet.netlify.app/oauth/redirect?token=" + token);
+            getRedirectStrategy().sendRedirect(request, response, "https://comepet.netlify.app/oauth/redirect");
             return;
         }
         super.onAuthenticationSuccess(request, response, authentication);
     }
 
-    // @Override
-    // protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response,
-    //     Authentication authentication) {
-    //     Optional<String> redirectUri = CookieUtil.getCookie(request, REDIRECT_URI_PARAM_COOKIE_NAME)
-    //         .map(Cookie::getValue);
-    //     return redirectUri.orElse(getDefaultTargetUrl());
-    // }
+    @Override
+    protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response,
+        Authentication authentication) {
+        Optional<String> redirectUri = CookieUtil.getCookie(request, "OAUTH2_AUTHORIZATION_REQUEST")
+            .map(Cookie::getValue);
+        return redirectUri.orElse(getDefaultTargetUrl());
+    }
 
     private Account processUserOAuth2UserJoin(OAuth2AuthenticationToken authentication) {
         OAuth2User oAuth2User = authentication.getPrincipal();
@@ -64,10 +59,6 @@ public class OAuth2AuthenticationSuccessHandler extends SavedRequestAwareAuthent
 
     private String generateToken(Account account) {
         return jwt.sign(Jwt.Claims.from(account.getId(), new String[] {"ROLE_USER"}));
-    }
-
-    private String generateLoginSuccessJson(Account account) {
-        return "{\"username\": \"" + account.getId() + "\", \"token\":\"" + generateToken(account) + "\"}";
     }
 
     // protected void clearAuthenticationAttributes(HttpServletRequest request, HttpServletResponse response) {
