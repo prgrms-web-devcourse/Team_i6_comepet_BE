@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -83,6 +84,8 @@ public class MissingPostService {
         if (Objects.nonNull(multipartFiles) && multipartFiles.size() > 3) {
             throw ExceptionMessage.INVALID_IMAGE_COUNT.getException();
         }
+        checkImageSizeAndName(multipartFiles);
+
         AnimalKind animalKind = animalKindService.getOrCreateAnimalKind(missingPostCreateParam.getAnimalId(),
             missingPostCreateParam.getAnimalKindName());
         Town town = townRepository.getById(missingPostCreateParam.getTownId());
@@ -100,6 +103,16 @@ public class MissingPostService {
         log.info("complete create missing post");
 
         return savedMissingPost.getId();
+    }
+
+    private void checkImageSizeAndName(List<MultipartFile> multipartFiles) {
+        if (!CollectionUtils.isEmpty(multipartFiles)) {
+            StringJoiner stringJoiner = new StringJoiner(",", "[", "]");
+            multipartFiles.stream().map(MultipartFile::getName).forEach(stringJoiner::add);
+            log.info("post image size: {}, names: {} ", multipartFiles.size(), stringJoiner);
+        } else {
+            log.info("post image size: 0");
+        }
     }
 
     @Transactional
@@ -178,6 +191,8 @@ public class MissingPostService {
             || (Objects.nonNull(multipartFiles) && multipartFiles.size() > 3)) {
             throw ExceptionMessage.INVALID_IMAGE_COUNT.getException();
         }
+
+        checkImageSizeAndName(multipartFiles);
 
         MissingPost getMissingPost = checkPostAccount(postId, account);
 
