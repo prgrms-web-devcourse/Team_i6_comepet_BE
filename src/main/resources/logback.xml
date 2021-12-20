@@ -1,4 +1,3 @@
-<!-- to allow the queue to flush on exit -->
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <springProfile name="!(dev | prod)">
