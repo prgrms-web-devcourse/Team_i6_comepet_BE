@@ -25,9 +25,9 @@ public class AnimalController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/evict", produces = MediaType.APPLICATION_JSON_VALUE)
     public ApiResponse<Object> evicAnimals() {
-
+        animalService.evicTest();
         return ApiResponse.ok("evic");
     }
 
