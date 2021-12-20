@@ -9,7 +9,7 @@ import javax.validation.Payload;
 
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = {ImageFileValidator.class})
+@Constraint(validatedBy = {ImageContentTypeValidator.class})
 public @interface ValidImage {
 
     String message() default "Invalid image file";

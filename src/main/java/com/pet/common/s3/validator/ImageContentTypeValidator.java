@@ -5,11 +5,7 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import org.springframework.web.multipart.MultipartFile;
 
-public class ImageFileValidator implements ConstraintValidator<ValidImage, MultipartFile> {
-
-    @Override
-    public void initialize(ValidImage constraintAnnotation) {
-    }
+public class ImageContentTypeValidator implements ConstraintValidator<ValidImage, MultipartFile> {
 
     @Override
     public boolean isValid(MultipartFile multipartFile, ConstraintValidatorContext context) {
