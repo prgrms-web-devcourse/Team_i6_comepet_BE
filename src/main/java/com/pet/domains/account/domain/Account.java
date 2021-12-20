@@ -82,7 +82,6 @@ public class Account extends DeletableEntity {
         Image profileImage, Group group, Provider provider
     ) {
         Validate.notBlank(email, "email must not be null");
-        Validate.notBlank(password, "password must not be null");
         Validate.notBlank(nickname, "nickname must not be null");
         Validate.notNull(group, "group must not be null");
 
