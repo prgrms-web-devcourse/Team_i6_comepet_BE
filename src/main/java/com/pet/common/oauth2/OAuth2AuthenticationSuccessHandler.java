@@ -36,7 +36,7 @@ public class OAuth2AuthenticationSuccessHandler extends SavedRequestAwareAuthent
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             response.setContentLength(loginSuccessJson.getBytes(StandardCharsets.UTF_8).length);
             response.getWriter().write(loginSuccessJson);
-            response.sendRedirect("http://comepet.netlify.app/oauth/redirect?token=" + token);
+            response.sendRedirect("https://comepet.netlify.app/oauth/redirect?token=" + token);
             return;
         }
         super.onAuthenticationSuccess(request, response, authentication);
