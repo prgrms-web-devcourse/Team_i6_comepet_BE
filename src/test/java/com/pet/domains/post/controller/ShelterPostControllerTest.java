@@ -145,6 +145,7 @@ class ShelterPostControllerTest extends BaseDocumentationTest {
             .noticeNumber("전남-화순-2021-00262")
             .sex("MALE")
             .status("보호중")
+            .shelterPlace("경상북도 경주시 천북면 천북로 8-4  경주시 동물사랑보호센터")
             .weight(15.0)
             .shelterTelNumber("055-749-6134")
             .isBookmark(true)
@@ -182,6 +183,7 @@ class ShelterPostControllerTest extends BaseDocumentationTest {
                     fieldWithPath("data.town").type(STRING).description("시군구 이름"),
                     fieldWithPath("data.shelterName").type(STRING).description("보호소 이름"),
                     fieldWithPath("data.shelterTelNumber").type(STRING).description("보호소 전화번호"),
+                    fieldWithPath("data.shelterPlace").type(STRING).description("보호 장소"),
                     fieldWithPath("data.color").type(STRING).description("동물 색상"),
                     fieldWithPath("data.image").type(STRING).description("동물 사진"),
                     fieldWithPath("data.foundDate").type(STRING).description("접수일"),
