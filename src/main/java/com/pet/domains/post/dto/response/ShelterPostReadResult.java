@@ -50,16 +50,18 @@ public class ShelterPostReadResult {
 
     private final Double weight;
 
+    private final String shelterPlace;
+
     private final Boolean isBookmark;
 
     private final Long bookmarkCount;
 
     @Builder
-    private ShelterPostReadResult(Long id, Long age, String city, String town, String shelterName,
+    public ShelterPostReadResult(Long id, Long age, String city, String town, String shelterName,
         String shelterTelNumber, String color, String image, LocalDate foundDate, String foundPlace,
         String animal, String animalKindName, String neutered, LocalDate startDate, LocalDate endDate,
         String noticeNumber, String managerTelNumber, String status, String sex, String feature, Double weight,
-        Boolean isBookmark, Long bookmarkCount) {
+        String shelterPlace, Boolean isBookmark, Long bookmarkCount) {
         this.id = id;
         this.age = age;
         this.city = city;
@@ -81,6 +83,7 @@ public class ShelterPostReadResult {
         this.sex = sex;
         this.feature = feature;
         this.weight = weight;
+        this.shelterPlace = shelterPlace;
         this.isBookmark = isBookmark;
         this.bookmarkCount = bookmarkCount;
     }
