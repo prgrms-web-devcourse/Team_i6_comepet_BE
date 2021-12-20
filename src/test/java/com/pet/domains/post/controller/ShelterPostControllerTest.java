@@ -182,6 +182,7 @@ class ShelterPostControllerTest extends BaseDocumentationTest {
                     fieldWithPath("data.town").type(STRING).description("시군구 이름"),
                     fieldWithPath("data.shelterName").type(STRING).description("보호소 이름"),
                     fieldWithPath("data.shelterTelNumber").type(STRING).description("보호소 전화번호"),
+                    fieldWithPath("data.shelterPlace").type(STRING).description("보호 장소"),
                     fieldWithPath("data.color").type(STRING).description("동물 색상"),
                     fieldWithPath("data.image").type(STRING).description("동물 사진"),
                     fieldWithPath("data.foundDate").type(STRING).description("접수일"),
