@@ -33,14 +33,14 @@ public class ExceptionHandlerAdvice {
     @ExceptionHandler(BadRequestException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleAuthenticationException(BadRequestException exception) {
-        log.warn(exception.getMessage());
+        log.warn("BadRequestException {}", exception.getMessage(), exception);
         return ErrorResponse.error(exception.getCode(), exception.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
-        log.warn("MethodArgumentNotValidException", exception);
+        log.warn("MethodArgumentNotValidException {}", exception.getMessage(), exception);
         BindingResult result = exception.getBindingResult();
         return ErrorResponse.error(HttpStatus.BAD_REQUEST.value(), result.getFieldErrors().stream()
             .map(DefaultMessageSourceResolvable::getDefaultMessage)
@@ -50,14 +50,14 @@ public class ExceptionHandlerAdvice {
     @ExceptionHandler(BindException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleBindException(BindException exception) {
-        log.warn("handleBindException", exception);
+        log.warn("BindException {}", exception.getMessage(), exception);
         return ErrorResponse.error(HttpStatus.BAD_REQUEST.value(), exception.getMessage());
     }
 
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFoundException(NotFoundException exception) {
-        log.warn(exception.getMessage());
+        log.warn("NotFoundException {}", exception.getMessage(), exception);
         return ErrorResponse.error(exception.getCode(), exception.getMessage());
     }
 
@@ -65,27 +65,28 @@ public class ExceptionHandlerAdvice {
     @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
     public ErrorResponse handleHttpRequestMethodNotSupportedException(
         HttpRequestMethodNotSupportedException exception) {
-        log.warn("handleHttpRequestMethodNotSupportedException", exception);
+        log.warn("HttpRequestMethodNotSupportedException {}", exception.getMessage(), exception);
         return ErrorResponse.error(HttpStatus.METHOD_NOT_ALLOWED.value(), exception.getMessage());
     }
 
     @ExceptionHandler(AuthenticationException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ErrorResponse handleUnauthorizedException(AuthenticationException exception) {
-        log.warn(exception.getMessage());
+        log.warn("AuthenticationException {}", exception.getMessage(), exception);
         return ErrorResponse.error(exception.getCode(), exception.getMessage());
     }
 
     @ExceptionHandler(ForbiddenException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse handleForbiddenException(ForbiddenException exception) {
-        log.warn(exception.getMessage());
+        log.warn("ForbiddenException {}", exception.getMessage(), exception);
         return ErrorResponse.error(exception.getCode(), exception.getMessage());
     }
 
     @ExceptionHandler(ConflictException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleConflictException(ConflictException exception) {
+        log.warn("ConflictException {}", exception.getMessage(), exception);
         return ErrorResponse.error(exception.getCode(), exception.getMessage());
     }
 
@@ -96,36 +97,41 @@ public class ExceptionHandlerAdvice {
     })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleBadRequestException(Exception exception) {
+        log.warn("handleBadRequestException {}", exception.getMessage(), exception);
         return ErrorResponse.error(400, exception.getMessage());
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleConstraintViolation(ConstraintViolationException exception) {
+        log.warn("ConstraintViolationException {}", exception.getMessage(), exception);
         return ErrorResponse.error(400, exception.getMessage());
     }
 
     @ExceptionHandler(HttpMediaTypeException.class)
     @ResponseStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
     public ErrorResponse handleHttpMediaTypeException(HttpMediaTypeException exception) {
+        log.warn("HttpMediaTypeException {}", exception.getMessage(), exception);
         return ErrorResponse.error(415, exception.getMessage());
     }
 
     @ExceptionHandler(InternalServerException.class)
     @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
     public ErrorResponse handleInternalServerException(InternalServerException exception) {
+        log.warn("InternalServerException {}", exception.getMessage(), exception);
         return ErrorResponse.error(exception.getCode(), exception.getMessage());
     }
 
     @ExceptionHandler(DataAccessException.class)
     public ErrorResponse handleDataAccessException(DataAccessException exception) {
+        log.warn("DataAccessException {}", exception.getMessage(), exception);
         return ErrorResponse.error(HttpStatus.BAD_REQUEST.value(), exception.getMessage());
     }
 
     @ExceptionHandler({Exception.class, RuntimeException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleAuthenticationException(Exception exception) {
-        log.error(exception.getMessage());
+        log.error("Exception/RuntimeException {}", exception.getMessage(), exception);
         return ErrorResponse.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.getMessage());
     }
 }
