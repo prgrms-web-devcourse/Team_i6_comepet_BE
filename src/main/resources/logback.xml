@@ -55,7 +55,7 @@
         </root>
     </springProfile>
 
-    <springProfile name="(local | dev | prod)">
+    <springProfile name="(dev | prod)">
         <springProperty name="SLACK_WEBHOOK_URI" source="logging.slack.webhook-uri"/>
         <appender name="SLACK" class="com.github.maricn.logback.SlackAppender">
             <webhookUri>${SLACK_WEBHOOK_URI}</webhookUri>
