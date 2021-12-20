@@ -12,6 +12,9 @@
     <springProfile name="dev">
         <root level="info">
             <appender name="CLOUDWATCH_LOG" class="ca.pjer.logback.AwsLogsAppender">
+                <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+                    <level>INFO</level>
+                </filter>
                 <layout>
                     <pattern>[traceId=%X{traceId}] %-5level %logger{36}.%M - %msg%n</pattern>
                 </layout>
@@ -28,6 +31,9 @@
     <springProfile name="prod">
         <root level="info">
             <appender name="CLOUDWATCH_LOG" class="ca.pjer.logback.AwsLogsAppender">
+                <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+                    <level>INFO</level>
+                </filter>
                 <layout>
                     <pattern>[traceId=%X{traceId}] %-5level %logger{36}.%M - %msg%n</pattern>
                 </layout>
