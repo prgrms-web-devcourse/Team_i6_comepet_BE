@@ -66,7 +66,6 @@ public class MissingPostController {
         Pageable pageable,
         @Valid PostSearchParam searchParam
     ) {
-        log.info("실종/보호 게시물 리스트 조회");
         if (Objects.nonNull(account)) {
             return ApiResponse.ok(missingPostService.getMissingPostsPageWithAccount(account, pageable, searchParam));
         }
@@ -76,7 +75,6 @@ public class MissingPostController {
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(path = "/{postId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ApiResponse<MissingPostReadResult> getMissingPost(@LoginAccount Account account, @PathVariable Long postId) {
-        log.info("실종/보호 게시물 단건 조회");
         MissingPostReadResult result = getMissingPostOneResult(account, postId)
             .orElseThrow(ExceptionMessage.SERVICE_UNAVAILABLE::getException);
         return ApiResponse.ok(result);
@@ -97,21 +95,18 @@ public class MissingPostController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(path = "/{postId}")
     public void deleteMissingPost(@PathVariable Long postId, @LoginAccount Account account) {
-        log.info("실종/보호 게시물 삭제 call for {}", postId);
         missingPostService.deleteMissingPost(postId, account);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(path = "/{postId}/bookmark")
     public void createMissingPostBookmark(@PathVariable Long postId, @LoginAccount Account account) {
-        log.info("실종/보호 북마크 생성 call for {}", postId);
         missingPostBookmarkService.createMissingPostBookmark(postId, account);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(path = "/{postId}/bookmark")
     public void deleteMissingPostBookmark(@PathVariable Long postId, @LoginAccount Account account) {
-        log.info("실종/보호 북마크 삭제 call for {}", postId);
         missingPostBookmarkService.deleteMissingPostBookmark(postId, account);
     }
 
