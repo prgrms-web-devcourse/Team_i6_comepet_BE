@@ -2,11 +2,13 @@ package com.pet.domains.area.dto.response;
 
 import java.util.List;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class CityReadResults {
 
-    private final List<CityReadResults.City> cities;
+    private List<CityReadResults.City> cities;
 
     public CityReadResults(List<CityReadResults.City> cities) {
         this.cities = cities;
@@ -17,13 +19,14 @@ public class CityReadResults {
     }
 
     @Getter
+    @NoArgsConstructor
     public static class City {
 
-        private final Long id;
+        private Long id;
 
-        private final String name;
+        private String name;
 
-        private final List<City.Town> towns;
+        private List<City.Town> towns;
 
         public City(Long id, String name, List<City.Town> towns) {
             this.id = id;
@@ -36,11 +39,12 @@ public class CityReadResults {
         }
 
         @Getter
+        @NoArgsConstructor
         public static class Town {
 
-            private final Long id;
+            private Long id;
 
-            private final String name;
+            private String name;
 
             public Town(Long id, String name) {
                 this.id = id;
