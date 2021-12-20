@@ -5,7 +5,6 @@ import com.pet.common.jwt.Jwt;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.account.service.AccountService;
 import java.io.IOException;
-import java.util.Base64;
 import java.util.Optional;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -38,6 +37,14 @@ public class OAuth2AuthenticationSuccessHandler extends SavedRequestAwareAuthent
                 .fromUriString(redirectUri).queryParam("token", token)
                 .build().toUriString();
             getRedirectStrategy().sendRedirect(request, response, "https://comepet.netlify.app/oauth/redirect");
+            // String loginSuccessJson =  "{\"username\": \"" + account.getId() + "\", \"token\":\""
+            //     + token + "\"}";
+            // setResponse(response, loginSuccessJson);
+
+            // response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            // response.setContentLength(loginSuccessJson.getBytes(StandardCharsets.UTF_8).length);
+            // response.getWriter().write(loginSuccessJson);
+            // response.sendRedirect("https://comepet.netlify.app/oauth/redirect?token=" + token);
             return;
         }
         super.onAuthenticationSuccess(request, response, authentication);
