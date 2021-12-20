@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+    <shutdownHook class="ch.qos.logback.core.hook.DelayingShutdownHook"/>
+
+    <!-- Timestamp used into the Log Stream Name -->
+    <timestamp key="timestamp" datePattern="yyyyMMddHHmmssSSS"/>
+
     <springProfile name="!(dev | prod)">
         <root level="debug">
             <appender name="CONSOLE_LOG" class="ch.qos.logback.core.ConsoleAppender">
@@ -19,7 +24,7 @@
                     <pattern>[traceId=%X{traceId}] %-5level %logger{36}.%M - %msg%n</pattern>
                 </layout>
                 <logGroupName>comepet-dev-log</logGroupName>
-                <logStreamUuidPrefix>프리픽스(Optional)</logStreamUuidPrefix>
+                <logStreamUuidPrefix></logStreamUuidPrefix>
                 <logRegion>ap-northeast-2</logRegion>
                 <maxBatchLogEvents>50</maxBatchLogEvents>
                 <maxFlushTimeMillis>30000</maxFlushTimeMillis>
@@ -38,7 +43,7 @@
                     <pattern>[traceId=%X{traceId}] %-5level %logger{36}.%M - %msg%n</pattern>
                 </layout>
                 <logGroupName>comepet-prod-log</logGroupName>
-                <logStreamUuidPrefix>프리픽스(Optional)</logStreamUuidPrefix>
+                <logStreamUuidPrefix></logStreamUuidPrefix>
                 <logRegion>ap-northeast-2</logRegion>
                 <maxBatchLogEvents>50</maxBatchLogEvents>
                 <maxFlushTimeMillis>30000</maxFlushTimeMillis>
