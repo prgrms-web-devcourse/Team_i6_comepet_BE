@@ -1,11 +1,12 @@
 package com.pet.domains.area.dto.response;
 
 import java.util.List;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CityReadResults {
 
     private List<CityReadResults.City> cities;
@@ -19,7 +20,7 @@ public class CityReadResults {
     }
 
     @Getter
-    @NoArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class City {
 
         private Long id;
@@ -39,7 +40,7 @@ public class CityReadResults {
         }
 
         @Getter
-        @NoArgsConstructor
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
         public static class Town {
 
             private Long id;
@@ -57,6 +58,10 @@ public class CityReadResults {
 
         }
 
+    }
+    @Override
+    public String toString() {
+        return "cities";
     }
 
 }
