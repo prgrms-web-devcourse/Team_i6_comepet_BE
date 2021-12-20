@@ -66,6 +66,11 @@ spring:
           timeout: 5000
           starttls:
             enable: true
+  redis:
+    host: ${REDIS_HOST:default}
+    port: ${REDIS_PORT:1234}
+
+
 server:
   servlet:
     encoding:
