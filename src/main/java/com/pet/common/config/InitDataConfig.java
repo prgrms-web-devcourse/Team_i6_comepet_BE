@@ -35,7 +35,6 @@ public class InitDataConfig implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        log.info("runner start");
         String email = "test-user@email.com";
         Group group = new Group("USER_GROUP");
         Permission permission = new Permission("ROLE_USER");
@@ -49,7 +48,7 @@ public class InitDataConfig implements ApplicationRunner {
         accountRepository.findByEmail(email)
             .ifPresent(account -> {
                 accountRepository.deleteById(account.getId());
-                log.info("임시 회원이 정상적으로 삭제되었습니다.");
+                log.debug("임시 회원이 정상적으로 삭제되었습니다.");
             });
         accountRepository.save(tester);
 
@@ -65,16 +64,16 @@ public class InitDataConfig implements ApplicationRunner {
             + "       (NOW(), NOW(), '429900','기타');";
         jdbcTemplate.execute(sql);
 
-        log.info("saveAllAnimalKinds start..");
+        log.debug("saveAllAnimalKinds start..");
         shelterApiService.saveAllAnimalKinds();
 
-        log.info("saveAllCities start..");
+        log.debug("saveAllCities start..");
         shelterApiService.saveAllCities();
 
-        log.info("saveAllTowns start..");
+        log.debug("saveAllTowns start..");
         shelterApiService.saveAllTowns();
 
-        log.info("shelterPostDailyCronJob start..");
+        log.debug("shelterPostDailyCronJob start..");
         shelterApiService.shelterPostDailyCronJob();
     }
 

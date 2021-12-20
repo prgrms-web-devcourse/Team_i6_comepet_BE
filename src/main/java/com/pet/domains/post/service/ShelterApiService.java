@@ -81,8 +81,8 @@ public class ShelterApiService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         String yesterday = now.minusDays(1).format(formatter);
 
-        ShelterApiPageResult firstPageResult = getShelterApiPageResults(yesterday, yesterday, 1)
-            .block();
+        ShelterApiPageResult firstPageResult = getShelterApiPageResults(yesterday, yesterday, 1).block();
+
         long totalCount = insertShelterPostFromFirstPageResults(firstPageResult);
 
         List<Long> remainingPageNums = LongStream.rangeClosed(2, getLastPageNumber(totalCount))
@@ -93,8 +93,8 @@ public class ShelterApiService {
 
     public long insertShelterPostFromFirstPageResults(ShelterApiPageResult result) {
         log.info("보호소 동물 게시글 api 첫번째 페이지 응답 데이터 테이블에 삽입 시작");
-        shelterPostService
-            .bulkCreateShelterPost(Objects.requireNonNull(result, "보호소 게시글 api 응답이 널입니다.").getBodyItems());
+        Objects.requireNonNull(result, "보호소 게시글 api 응답이 널입니다.");
+        shelterPostService.bulkCreateShelterPost(result.getBodyItems());
         return result.getBody().getTotalCount();
     }
 
@@ -111,7 +111,7 @@ public class ShelterApiService {
         List<Long> pageNumbers) {
         return Flux.fromIterable(pageNumbers)
             .flatMap(pageNumber -> getShelterApiPageResults(start, end, pageNumber))
-            .doOnComplete(() -> log.info("complete"));
+            .doOnComplete(() -> log.info("보호소 동물 게시글 api 나머지 페이지들의 응답 데이터 complete"));
     }
 
     public Mono<ShelterApiPageResult> getShelterApiPageResults(
