@@ -4,12 +4,12 @@ import com.pet.common.exception.ExceptionMessage;
 import com.pet.domains.area.domain.City;
 import com.pet.domains.area.domain.Town;
 import com.pet.domains.area.dto.request.TownCreateParams;
-import com.pet.domains.area.dto.response.CityReadResults;
 import com.pet.domains.area.repository.CityRepository;
 import com.pet.domains.area.repository.TownRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +22,7 @@ public class TownService {
 
     private final TownRepository townRepository;
 
+    @CacheEvict(cacheNames = "cities", allEntries = true)
     @Transactional
     public void bulkCreateTowns(String cityCode, TownCreateParams townCreateParams) {
         City city = getCityByCode(cityCode);
@@ -35,6 +36,7 @@ public class TownService {
         townRepository.saveAll(towns);
     }
 
+    @CacheEvict(cacheNames = "cities", allEntries = true)
     @Transactional
     public Town getOrCreateTownByName(String cityName, String townName) {
         City foundCity = getCityByName(cityName);
