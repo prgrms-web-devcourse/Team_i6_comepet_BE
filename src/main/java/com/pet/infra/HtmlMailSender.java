@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-@Profile("dev")
+@Profile({"dev", "prod"})
 public class HtmlMailSender implements MailSender {
 
     private final JavaMailSender javaMailSender;
