@@ -11,7 +11,8 @@ import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequ
 import org.springframework.web.util.WebUtils;
 import static java.util.Optional.*;
 
-public class HttpCookieOAuth2AuthorizationRequestRepository implements AuthorizationRequestRepository<OAuth2AuthorizationRequest> {
+public class HttpCookieOAuth2AuthorizationRequestRepository
+    implements AuthorizationRequestRepository<OAuth2AuthorizationRequest> {
 
     private static final String OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME = "OAUTH2_AUTHORIZATION_REQUEST";
 
@@ -36,7 +37,9 @@ public class HttpCookieOAuth2AuthorizationRequestRepository implements Authoriza
     }
 
     @Override
-    public void saveAuthorizationRequest(OAuth2AuthorizationRequest authorizationRequest, HttpServletRequest request, HttpServletResponse response) {
+    public void saveAuthorizationRequest(
+        OAuth2AuthorizationRequest authorizationRequest, HttpServletRequest request, HttpServletResponse response
+    ) {
         if (authorizationRequest == null) {
             getCookie(request).ifPresent(cookie -> clear(cookie, response));
         } else {
@@ -55,7 +58,9 @@ public class HttpCookieOAuth2AuthorizationRequestRepository implements Authoriza
     }
 
     @Override
-    public OAuth2AuthorizationRequest removeAuthorizationRequest(HttpServletRequest request, HttpServletResponse response) {
+    public OAuth2AuthorizationRequest removeAuthorizationRequest(
+        HttpServletRequest request, HttpServletResponse response
+    ) {
         return getCookie(request)
             .map(cookie -> {
                 OAuth2AuthorizationRequest oauth2Request = getOAuth2AuthorizationRequest(cookie);
