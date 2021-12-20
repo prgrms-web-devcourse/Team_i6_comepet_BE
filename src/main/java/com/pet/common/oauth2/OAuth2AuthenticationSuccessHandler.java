@@ -34,7 +34,7 @@ public class OAuth2AuthenticationSuccessHandler extends SavedRequestAwareAuthent
 
             String redirectUri = determineTargetUrl(request, response, authentication);
             String targetUrl = UriComponentsBuilder
-                .fromUriString("https://localhost:3000/oauth/redirect?").queryParam("token", token)
+                .fromUriString("http://localhost:3000/oauth/redirect?").queryParam("token", token)
                 .build().toUriString();
             getRedirectStrategy().sendRedirect(request, response, targetUrl);
             // String loginSuccessJson =  "{\"username\": \"" + account.getId() + "\", \"token\":\""
