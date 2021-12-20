@@ -3,8 +3,6 @@ package com.pet.domains.area.controller;
 import com.pet.common.response.ApiResponse;
 import com.pet.domains.area.dto.response.CityReadResults;
 import com.pet.domains.area.service.CityService;
-import com.pet.domains.area.service.TownService;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

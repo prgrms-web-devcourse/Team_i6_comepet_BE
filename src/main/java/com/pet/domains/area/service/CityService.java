@@ -8,6 +8,8 @@ import com.pet.domains.area.repository.CityRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +22,7 @@ public class CityService {
 
     private final CityMapper cityMapper;
 
+    @CacheEvict(cacheNames = "cities", allEntries = true)
     @Transactional
     public void createCites(CityCreateParams cityCreateParams) {
         List<City> cities = cityCreateParams.getCities().stream()
@@ -28,7 +31,10 @@ public class CityService {
         cityRepository.saveAll(cities);
     }
 
-//    @Cacheable(cacheNames = "cities", unless = "#result == null || #result.empty")
+    @Cacheable(
+        cacheNames = "cities",
+        unless = "#result == null || #result.getCities().isEmpty()"
+    )
     public CityReadResults getAllTownAndCity() {
         List<City> result = cityRepository.findAll();
         return CityReadResults.of(result.stream()

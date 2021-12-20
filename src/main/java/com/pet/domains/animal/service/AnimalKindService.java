@@ -25,7 +25,7 @@ public class AnimalKindService {
 
     private final AnimalRepository animalRepository;
 
-    @CacheEvict(cacheNames = "animals", allEntries  = true)
+    @CacheEvict(cacheNames = "animals", allEntries = true)
     @Transactional
     public void bulkCreateAnimalKind(String animalCode, AnimalKindCreateParams animalKindCreateParams) {
         animalKindRepository.saveAll(
@@ -39,30 +39,27 @@ public class AnimalKindService {
         );
     }
 
+    @CacheEvict(cacheNames = "animals", allEntries = true)
+    @Transactional
     public AnimalKind getOrCreateAnimalKind(Long animalId, String animalKindName) {
         return animalKindRepository.findByName(animalKindName)
-            .orElseGet(() -> createAnimalKindByName(animalKindName, getAnimalById(animalId)));
+            .orElseGet(() -> animalKindRepository.save(
+                AnimalKind.builder()
+                    .animal(getAnimalById(animalId))
+                    .name(animalKindName)
+                    .build())
+            );
     }
 
+    @CacheEvict(cacheNames = "animals", allEntries = true)
     @Transactional
     public AnimalKind getOrCreateAnimalKindByEtcAnimal(String animalKindName) {
         return animalKindRepository.findByName(animalKindName)
-            .orElseGet(() -> createAnimalKindByEtcAnimal(animalKindName));
-    }
-
-    private AnimalKind createAnimalKindByEtcAnimal(String animalKindName) {
-        return createAnimalKindByName(animalKindName, getAnimalByName(ETC_ANIMAL_NAME));
-    }
-
-    @CacheEvict(cacheNames = "animals", allEntries  = true)
-    @Transactional
-    public AnimalKind createAnimalKindByName(String animalKindName, Animal animal) {
-        return animalKindRepository.save(
-            AnimalKind.builder()
-                .animal(animal)
-                .name(animalKindName)
-                .build()
-        );
+            .orElseGet(() -> animalKindRepository.save(
+                AnimalKind.builder()
+                    .animal(getAnimalByName(ETC_ANIMAL_NAME))
+                    .name(animalKindName)
+                    .build()));
     }
 
     private Animal getAnimalByCode(String animalCode) {

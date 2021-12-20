@@ -24,11 +24,4 @@ public class AnimalController {
         return ApiResponse.ok(animalService.getAnimals());
     }
 
-    @ResponseStatus(HttpStatus.OK)
-    @GetMapping(path = "/evict", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ApiResponse<Object> evicAnimals() {
-        animalService.evicTest();
-        return ApiResponse.ok("evic");
-    }
-
 }

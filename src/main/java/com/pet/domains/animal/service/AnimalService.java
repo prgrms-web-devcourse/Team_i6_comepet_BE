@@ -6,7 +6,6 @@ import com.pet.domains.animal.repository.AnimalRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,11 +28,6 @@ public class AnimalService {
         List<AnimalReadResults.Animal> result =
             animalMapper.toAnimalReadResult(animalRepository.findAllWithAnimalKinds());
         return animalMapper.toAnimalReadResults(result);
-    }
-
-    @CacheEvict(cacheNames = "animals", allEntries  = true)
-    public void evicTest() {
-        log.info("evic animals");
     }
 
 }
