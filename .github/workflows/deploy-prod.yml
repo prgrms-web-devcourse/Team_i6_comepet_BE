@@ -1,0 +1,62 @@
+name: Prod CD with Gradle
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    name: production deploy
+    runs-on: ubuntu-latest
+    steps:
+      # Gradle build
+      - uses: actions/checkout@v2
+      - name: Set up JDK 14
+        uses: actions/setup-java@v2
+        with:
+          java-version: '14'
+          distribution: 'adopt'
+          cache: gradle
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Build with Gradle
+        run: ./gradlew clean build
+
+      # 디렉토리 생성
+      - name: Make Directory
+        run: mkdir -p deploy
+
+      # Jar 파일 복사
+      - name: Copy Jar
+        run: cp ./build/libs/*.jar ./deploy
+
+      # Appspec 파일 복사
+      - name: Copy appspec
+        run: cp ./appspec.yml ./deploy
+
+      # Deploy Shell 파일 복사
+      - name: Dev Copy deploy shell
+        run: cp ./deploy-prod.sh ./deploy/deploy.sh
+
+      # 파일 압축
+      - name: Make zip file
+        run: zip -r ./compet.zip ./deploy
+
+      # AWS Credential
+      - name: Dev AWS Credential
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: Upload to S3
+        run: aws s3 cp --region ap-northeast-2 --acl private ./compet.zip s3://compet-dev-deploy/compet/
+
+      - name: code deploy
+        run: |
+          aws deploy create-deployment --application-name compet-dev-deploy \
+          --deployment-config-name CodeDeployDefault.AllAtOnce \
+          --deployment-group-name compet-dev-deploy-group \
+          --file-exists-behavior OVERWRITE \
+          --s3-location bucket=compet-dev-deploy,bundleType=zip,key=compet/compet.zip
