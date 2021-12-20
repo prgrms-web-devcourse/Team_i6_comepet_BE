@@ -30,4 +30,5 @@ public class ImageContentTypeValidator implements ConstraintValidator<ValidImage
             || contentType.equals("image/gif")
             || contentType.equals("image/tiff");
     }
+
 }
