@@ -103,6 +103,9 @@ logging:
       amazonaws:
         util:
           EC2MetadataUtils: error
+  slack:
+    webhook-uri: ${WEBHOOK_URI}
+    config: classpath:logback.xml
 
 logging.level:
   org.hibernate.SQL: debug
