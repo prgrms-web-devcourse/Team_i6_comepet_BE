@@ -24,4 +24,11 @@ public class AnimalController {
         return ApiResponse.ok(animalService.getAnimals());
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ApiResponse<Object> evicAnimals() {
+
+        return ApiResponse.ok("evic");
+    }
+
 }
