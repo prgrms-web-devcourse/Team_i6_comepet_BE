@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: jdbc:mysql://${DEV_DB_HOSTNAME}:${DEV_DB_PORT}/${PROD_DB_DATABASE}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: update
+    open-in-view: false

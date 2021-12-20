@@ -1,13 +1,13 @@
-name: Java CD with Gradle
+name: Prod CD with Gradle
 
 on:
   push:
-    branches: [ develop ]
+    branches: [ main ]
 
 jobs:
   build:
+    name: production deploy
     runs-on: ubuntu-latest
-
     steps:
       # Gradle build
       - uses: actions/checkout@v2
@@ -36,8 +36,7 @@ jobs:
 
       # Deploy Shell 파일 복사
       - name: Dev Copy deploy shell
-        if: ${{ github.ref == 'refs/heads/develop' }}
-        run: cp ./deploy-dev.sh ./deploy/deploy.sh
+        run: cp ./deploy-prod.sh ./deploy/deploy.sh
 
       # 파일 압축
       - name: Make zip file
@@ -45,7 +44,6 @@ jobs:
 
       # AWS Credential
       - name: Dev AWS Credential
-        if: ${{ github.ref == 'refs/heads/develop' }}
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
