@@ -1,4 +1,4 @@
-package com.pet.domains.statistics.controller;
+package com.pet.domains.apitest;
 
 import static com.pet.domains.docs.utils.ApiDocumentUtils.getDocumentRequest;
 import static com.pet.domains.docs.utils.ApiDocumentUtils.getDocumentResponse;
@@ -15,17 +15,54 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pet.common.config.SecurityConfig;
+import com.pet.common.jwt.JwtAuthentication;
+import com.pet.common.property.JwtProperty;
+import com.pet.domains.account.service.AccountService;
+import com.pet.domains.account.service.NotificationService;
+import com.pet.domains.area.service.CityService;
 import com.pet.domains.docs.BaseDocumentationTest;
+import com.pet.domains.post.controller.MissingPostController;
+import com.pet.domains.statistics.controller.PostStatisticsController;
 import com.pet.domains.statistics.dto.response.PostStatisticsReadResult;
+import com.pet.domains.statistics.service.PostStatisticsService;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+@WebMvcTest(value = PostStatisticsController.class,
+    includeFilters = {
+        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class)
+})
+@AutoConfigureRestDocs
+@EnableConfigurationProperties(value = JwtProperty.class)
 @DisplayName("통계 컨트롤러 테스트")
-class PostStatisticsControllerTest extends BaseDocumentationTest {
+class PostStatisticsControllerTest {
+
+    @Autowired
+    protected MockMvc mockMvc;
+
+    @Autowired
+    protected ObjectMapper objectMapper;
+
+    @MockBean
+    protected AccountService accountService;
+
+    @MockBean
+    protected PostStatisticsService postStatisticsService;
 
     @Test
     @DisplayName("게시글 통계 데이터 조회 테스트")

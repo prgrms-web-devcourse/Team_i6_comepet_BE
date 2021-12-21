@@ -1,4 +1,4 @@
-package com.pet.domains.post.controller;
+package com.pet.domains.apitest;
 
 import static com.pet.domains.docs.utils.ApiDocumentUtils.getDocumentRequest;
 import static com.pet.domains.docs.utils.ApiDocumentUtils.getDocumentResponse;
@@ -30,13 +30,22 @@ import static org.springframework.restdocs.request.RequestDocumentation.requestP
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pet.common.config.SecurityConfig;
+import com.pet.common.jwt.JwtAuthentication;
+import com.pet.common.property.JwtProperty;
 import com.pet.domains.account.WithAccount;
 import com.pet.domains.account.domain.Account;
+import com.pet.domains.account.service.AccountService;
+import com.pet.domains.area.controller.CityController;
 import com.pet.domains.comment.dto.response.CommentPageResults;
 import com.pet.domains.comment.dto.response.CommentPageResults.Comment;
 import com.pet.domains.comment.dto.response.CommentPageResults.Comment.ChildComment;
+import com.pet.domains.comment.service.CommentService;
 import com.pet.domains.docs.BaseDocumentationTest;
 import com.pet.domains.image.domain.Image;
+import com.pet.domains.image.service.ImageService;
+import com.pet.domains.post.controller.MissingPostController;
 import com.pet.domains.post.domain.SexType;
 import com.pet.domains.post.domain.Status;
 import com.pet.domains.post.dto.request.MissingPostCreateParam;
@@ -46,6 +55,8 @@ import com.pet.domains.post.dto.response.MissingPostReadResult;
 import com.pet.domains.post.dto.response.MissingPostReadResults;
 import com.pet.domains.post.dto.response.MissingPostReadResults.MissingPost;
 import com.pet.domains.post.dto.serach.PostSearchParam;
+import com.pet.domains.post.service.MissingPostBookmarkService;
+import com.pet.domains.post.service.MissingPostService;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -54,14 +65,47 @@ import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+@WebMvcTest(value = MissingPostController.class,
+    includeFilters = {
+        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class)
+})
+@AutoConfigureRestDocs
+@EnableConfigurationProperties(value = JwtProperty.class)
 @DisplayName("실종/보호 게시물 컨트롤러 테스트")
-class MissingPostControllerTest extends BaseDocumentationTest {
+class MissingPostControllerTest {
+
+    @Autowired
+    protected MockMvc mockMvc;
+
+    @Autowired
+    protected ObjectMapper objectMapper;
+
+    @MockBean
+    protected AccountService accountService;
+
+    @MockBean
+    private MissingPostService missingPostService;
+
+    @MockBean
+    MissingPostBookmarkService missingPostBookmarkService;
+
+    @MockBean
+    ImageService imageService;
 
     @DisplayName("실종/보호 게시물 등록 테스트")
     @WithAccount
@@ -514,5 +558,12 @@ class MissingPostControllerTest extends BaseDocumentationTest {
                     fieldWithPath("serverDateTime").type(STRING).description("서버 응답 시간")))
             );
     }
+
+    protected JwtAuthentication getAuthenticationToken() {
+        return (JwtAuthentication)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
+
+    @MockBean
+    private CommentService commentService;
 
 }

@@ -1,4 +1,4 @@
-package com.pet.domains.post.controller;
+package com.pet.domains.apitest;
 
 import static com.pet.domains.docs.utils.ApiDocumentUtils.getDocumentRequest;
 import static com.pet.domains.docs.utils.ApiDocumentUtils.getDocumentResponse;
@@ -24,24 +24,69 @@ import static org.springframework.restdocs.request.RequestDocumentation.pathPara
 import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pet.common.config.SecurityConfig;
+import com.pet.common.jwt.JwtAuthentication;
+import com.pet.common.property.JwtProperty;
 import com.pet.domains.account.WithAccount;
 import com.pet.domains.account.domain.Account;
+import com.pet.domains.account.service.AccountService;
+import com.pet.domains.account.service.NotificationService;
+import com.pet.domains.area.service.CityService;
 import com.pet.domains.docs.BaseDocumentationTest;
+import com.pet.domains.post.controller.MissingPostController;
+import com.pet.domains.post.controller.ShelterPostController;
 import com.pet.domains.post.domain.SexType;
 import com.pet.domains.post.dto.response.ShelterPostPageResults;
 import com.pet.domains.post.dto.response.ShelterPostReadResult;
 import com.pet.domains.post.dto.serach.PostSearchParam;
+import com.pet.domains.post.service.ShelterPostBookmarkService;
+import com.pet.domains.post.service.ShelterPostService;
 import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+@WebMvcTest(value = ShelterPostController.class,
+    includeFilters = {
+        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class)
+})
+@AutoConfigureRestDocs
+@EnableConfigurationProperties(value = JwtProperty.class)
 @DisplayName("보호소 동물 게시글 컨트롤러 테스트")
-class ShelterPostControllerTest extends BaseDocumentationTest {
+class ShelterPostControllerTest {
+
+    @Autowired
+    protected MockMvc mockMvc;
+
+    @Autowired
+    protected ObjectMapper objectMapper;
+
+    @MockBean
+    protected AccountService accountService;
+
+    @MockBean
+    ShelterPostBookmarkService shelterPostBookmarkService;
+
+    @MockBean
+    protected ShelterPostService shelterPostService;
+
+    protected JwtAuthentication getAuthenticationToken() {
+        return (JwtAuthentication)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
 
     @Test
     @WithAccount

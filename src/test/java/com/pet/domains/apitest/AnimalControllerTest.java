@@ -1,4 +1,4 @@
-package com.pet.domains.animal.controller;
+package com.pet.domains.apitest;
 
 import static com.pet.domains.docs.utils.ApiDocumentUtils.getDocumentRequest;
 import static com.pet.domains.docs.utils.ApiDocumentUtils.getDocumentResponse;
@@ -16,21 +16,48 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pet.common.property.JwtProperty;
+import com.pet.domains.account.controller.AccountController;
+import com.pet.domains.account.service.AccountService;
+import com.pet.domains.animal.controller.AnimalController;
 import com.pet.domains.animal.dto.response.AnimalReadResults;
 import com.pet.domains.animal.dto.response.AnimalReadResults.Animal;
 import com.pet.domains.animal.dto.response.AnimalReadResults.Animal.AnimalKind;
+import com.pet.domains.animal.service.AnimalService;
 import com.pet.domains.docs.BaseDocumentationTest;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+@WebMvcTest(AnimalController.class)
+@AutoConfigureRestDocs
+@EnableConfigurationProperties(value = JwtProperty.class)
 @DisplayName("동물 컨트롤러 테스트")
-class AnimalControllerTest extends BaseDocumentationTest {
+class AnimalControllerTest {
+
+    @Autowired
+    protected MockMvc mockMvc;
+
+    @MockBean
+    protected AccountService accountService;
+
+    @Autowired
+    protected ObjectMapper objectMapper;
+
+    @MockBean
+    protected AnimalService animalService;
 
     @Test
     @DisplayName("동물/품종 조회 성공 테스트")

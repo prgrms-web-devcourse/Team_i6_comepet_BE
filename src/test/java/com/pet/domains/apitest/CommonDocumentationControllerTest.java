@@ -1,4 +1,4 @@
-package com.pet.domains.docs.controller;
+package com.pet.domains.apitest;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
@@ -11,23 +11,53 @@ import static org.springframework.restdocs.snippet.Attributes.attributes;
 import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pet.common.config.SecurityConfig;
+import com.pet.common.property.JwtProperty;
 import com.pet.common.response.ApiResponse;
+import com.pet.domains.account.service.AccountService;
+import com.pet.domains.area.controller.CityController;
 import com.pet.domains.docs.BaseDocumentationTest;
 import com.pet.domains.docs.CustomResponseFieldsSnippet;
+import com.pet.domains.docs.controller.CommonDocumentationController;
 import com.pet.domains.docs.dto.CommonDocumentationResults;
+import io.netty.util.internal.UnstableApi;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.PayloadSubsectionExtractor;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 
+@WebMvcTest(value = CommonDocumentationController.class,
+    includeFilters = {
+        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class)
+    })
+@AutoConfigureRestDocs
+@EnableConfigurationProperties(value = JwtProperty.class)
 @DisplayName("rest docs 테스트")
-class CommonDocumentationControllerTest extends BaseDocumentationTest {
+class CommonDocumentationControllerTest {
+
+    @Autowired
+    protected MockMvc mockMvc;
+
+    @Autowired
+    protected ObjectMapper objectMapper;
+
+    @MockBean
+    AccountService accountService;
 
     @Test
     @DisplayName("공통 응답 테스트")
