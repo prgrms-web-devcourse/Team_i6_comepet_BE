@@ -21,17 +21,22 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class MissingPostCustomRepositoryImpl extends QuerydslRepositorySupport implements MissingPostCustomRepository {
+
+    private static final String START_FILTER_FIELD_NAME = "createdAt";
+
+    private static final String IS_BOOK_MARK_AS = "isBookmark";
 
     private final JPAQueryFactory jpaQueryFactory;
 
@@ -42,6 +47,7 @@ public class MissingPostCustomRepositoryImpl extends QuerydslRepositorySupport i
 
     @Override
     public Page<MissingPost> findMissingPostAllWithFetch(Pageable pageable, PostSearchParam postSearchParam) {
+        boolean hasStartFilter = getHasStartFilter(postSearchParam.getStart());
         JPAQuery<MissingPost> query = jpaQueryFactory.select(missingPost)
             .from(missingPost)
             .innerJoin(missingPost.animalKind, animalKind).fetchJoin()
@@ -57,8 +63,10 @@ public class MissingPostCustomRepositoryImpl extends QuerydslRepositorySupport i
                 eqSexType(postSearchParam.getSex()),
                 goeCreateAt(postSearchParam.getStart()),
                 loeCreateAt(postSearchParam.getEnd()));
-        QueryResults<MissingPost> queryResults = Objects.requireNonNull(getQuerydsl()).applyPagination(pageable, query)
-            .fetchResults();
+        QueryResults<MissingPost> queryResults =
+            Objects.requireNonNull(getQuerydsl())
+                .applyPagination(getPageable(pageable, hasStartFilter), query)
+                .fetchResults();
 
         return new PageImpl<>(queryResults.getResults(), pageable, queryResults.getTotal());
     }
@@ -129,7 +137,7 @@ public class MissingPostCustomRepositoryImpl extends QuerydslRepositorySupport i
                 animalKind,
                 city,
                 town,
-                ExpressionUtils.as(missingPostBookmark.id.isNotNull(), "isBookmark")))
+                ExpressionUtils.as(missingPostBookmark.id.isNotNull(), IS_BOOK_MARK_AS)))
             .from(missingPost)
             .innerJoin(missingPost.animalKind, animalKind)
             .innerJoin(missingPost.animalKind.animal, animal)
@@ -138,6 +146,21 @@ public class MissingPostCustomRepositoryImpl extends QuerydslRepositorySupport i
             .leftJoin(missingPostBookmark)
             .on(missingPost.id.eq(missingPostBookmark.missingPost.id)
                 .and(missingPostBookmark.account.id.eq(account.getId())));
+    }
+
+    private boolean getHasStartFilter(LocalDate start) {
+        return !Objects.isNull(start);
+    }
+
+    private Pageable getPageable(Pageable pageable, boolean hasStartFilter) {
+        if (hasStartFilter) {
+            return PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by(START_FILTER_FIELD_NAME).ascending()
+            );
+        }
+        return pageable;
     }
 
     private BooleanExpression eqStatus(Status status) {
