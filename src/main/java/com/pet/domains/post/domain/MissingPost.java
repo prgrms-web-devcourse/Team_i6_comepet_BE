@@ -39,7 +39,7 @@ import org.hibernate.annotations.Where;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-//@DynamicUpdate
+@DynamicUpdate
 @SQLDelete(sql = "UPDATE missing_post SET deleted = true WHERE id=? and version = ?")
 @Where(clause = "deleted = false")
 @Entity
