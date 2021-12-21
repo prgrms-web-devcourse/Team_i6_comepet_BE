@@ -10,7 +10,8 @@ import lombok.RequiredArgsConstructor;
 public enum Provider {
     LOCAL("local"),
     GOOGLE("google"),
-    KAKAO("kakao");
+    KAKAO("kakao"),
+    NAVER("naver");
 
     private final String type;
 
