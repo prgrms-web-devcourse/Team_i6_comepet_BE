@@ -186,13 +186,13 @@ public class MissingPostCustomRepositoryImpl extends QuerydslRepositorySupport i
         if (Objects.isNull(start)) {
             return null;
         }
-        return missingPost.createdAt.goe(LocalDateTime.from(start));
+        return missingPost.createdAt.goe(start.atStartOfDay());
     }
 
     private BooleanExpression loeCreateAt(LocalDate end) {
         if (Objects.isNull(end)) {
             return null;
         }
-        return missingPost.createdAt.loe(LocalDateTime.from(end));
+        return missingPost.createdAt.loe(end.atTime(23, 59, 59));
     }
 }
