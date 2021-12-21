@@ -188,6 +188,8 @@ public class MissingPostController {
         Cookie newCookie = new Cookie(VIEW_COOKIE_NAME, formatViewCookieValue(postId));
         newCookie.setPath("/");
         newCookie.setMaxAge(VIEW_COOKIE_MAX_AGE);
+        newCookie.setSecure(true);
+        newCookie.setHttpOnly(true);
         return newCookie;
     }
 
