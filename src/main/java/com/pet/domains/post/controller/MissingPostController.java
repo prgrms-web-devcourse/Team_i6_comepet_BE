@@ -91,7 +91,7 @@ public class MissingPostController {
         HttpServletResponse response
     ) {
         boolean shouldIncreaseViewCount = false;
-        String cookieValue = formatByViewCookieValue(postId);
+        String cookieValue = formatViewCookieValue(postId);
 
         if (shouldCreateNewCookie(viewCookie)) {
             shouldIncreaseViewCount = true;
@@ -182,13 +182,13 @@ public class MissingPostController {
     }
 
     private Cookie getNewViewCookie(Long postId) {
-        Cookie newCookie = new Cookie(VIEW_COOKIE_NAME, formatByViewCookieValue(postId));
+        Cookie newCookie = new Cookie(VIEW_COOKIE_NAME, formatViewCookieValue(postId));
         newCookie.setPath("/");
         newCookie.setMaxAge(VIEW_COOKIE_MAX_AGE);
         return newCookie;
     }
 
-    private String formatByViewCookieValue(Long postId) {
+    private String formatViewCookieValue(Long postId) {
         return String.format("[%d]", postId);
     }
 
