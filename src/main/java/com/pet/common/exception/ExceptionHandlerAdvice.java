@@ -130,7 +130,7 @@ public class ExceptionHandlerAdvice {
 
     @ExceptionHandler({Exception.class, RuntimeException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleAuthenticationException(Exception exception) {
+    public ErrorResponse handleException(Exception exception) {
         log.error("Exception/RuntimeException {}", exception.getMessage(), exception);
         return ErrorResponse.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.getMessage());
     }
