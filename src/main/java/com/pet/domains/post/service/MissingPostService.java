@@ -239,8 +239,8 @@ public class MissingPostService {
 
         Town getTown =
             townRepository.findById(param.getTownId()).orElseThrow(ExceptionMessage.NOT_FOUND_TOWN::getException);
-        AnimalKind getAnimalKind = animalKindRepository.findByName(param.getAnimalKindName())
-            .orElseThrow(ExceptionMessage.NOT_FOUND_ANIMAL_KIND::getException);
+        AnimalKind getAnimalKind = animalKindService.getOrCreateAnimalKind(param.getAnimalId(),
+            param.getAnimalKindName());
         getMissingPost.changeInfo(param.getStatus(), param.getDate(), getTown, param.getDetailAddress(),
             param.getTelNumber(), getAnimalKind, param.getAge(), param.getSex(), param.getChipNumber(),
             param.getContent(), thumbnail);
