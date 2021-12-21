@@ -10,7 +10,9 @@ import com.pet.domains.account.domain.Account;
 import com.pet.domains.post.domain.SexType;
 import com.pet.domains.post.domain.ShelterPost;
 import com.pet.domains.post.dto.serach.PostSearchParam;
+import com.pet.domains.post.repository.projection.QShelterPostWithFetch;
 import com.pet.domains.post.repository.projection.QShelterPostWithIsBookmark;
+import com.pet.domains.post.repository.projection.ShelterPostWithFetch;
 import com.pet.domains.post.repository.projection.ShelterPostWithIsBookmark;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.ExpressionUtils;
@@ -59,9 +61,9 @@ public class ShelterPostCustomRepositoryImpl extends QuerydslRepositorySupport i
     }
 
     @Override
-    public Page<ShelterPostWithIsBookmark> findAllWithIsBookmark(Account account, Pageable pageable) {
-        JPAQuery<ShelterPostWithIsBookmark> query = getShelterPostWithIsBookmarkQuery(account);
-        QueryResults<ShelterPostWithIsBookmark> queryResults = Objects.requireNonNull(getQuerydsl())
+    public Page<ShelterPostWithFetch> findAllByAccountBookmarkWithFetch(Account account, Pageable pageable) {
+        JPAQuery<ShelterPostWithFetch> query = getShelterPostByAccountBookmarkWithFetchQuery(account);
+        QueryResults<ShelterPostWithFetch> queryResults = Objects.requireNonNull(getQuerydsl())
             .applyPagination(pageable, query)
             .fetchResults();
 
@@ -96,6 +98,23 @@ public class ShelterPostCustomRepositoryImpl extends QuerydslRepositorySupport i
         return Optional.ofNullable(result);
     }
 
+    private JPAQuery<ShelterPostWithFetch> getShelterPostByAccountBookmarkWithFetchQuery(Account account) {
+        return jpaQueryFactory.select(
+            new QShelterPostWithFetch(
+                shelterPost,
+                animal,
+                animalKind,
+                city,
+                town))
+            .from(shelterPost)
+            .innerJoin(shelterPost.animalKind, animalKind)
+            .innerJoin(shelterPost.animalKind.animal, animal)
+            .innerJoin(shelterPost.town, town)
+            .innerJoin(shelterPost.town.city, city)
+            .innerJoin(shelterPostBookmark)
+            .on(shelterPost.id.eq(shelterPostBookmark.shelterPost.id)
+                .and(shelterPostBookmark.account.id.eq(account.getId())));
+    }
 
     private JPAQuery<ShelterPostWithIsBookmark> getShelterPostWithIsBookmarkQuery(Account account) {
         return jpaQueryFactory.select(
