@@ -2,6 +2,7 @@ package com.pet.domains.post.controller;
 
 import com.pet.common.exception.ExceptionMessage;
 import com.pet.common.response.ApiResponse;
+import com.pet.common.s3.validator.ValidImageSize;
 import com.pet.common.util.OptimisticLockingHandlingUtils;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.account.domain.LoginAccount;
@@ -24,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,8 +36,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-@RestController
 @Slf4j
+@Validated
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/missing-posts")
 public class MissingPostController {
@@ -51,7 +54,7 @@ public class MissingPostController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ApiResponse<Map<String, Long>> createMissingPost(
-        @RequestPart(value = "images", required = false) List<MultipartFile> images,
+        @RequestPart(value = "images", required = false) @ValidImageSize List<MultipartFile> images,
         @RequestPart(value = "param") @Valid MissingPostCreateParam missingPostCreateParam,
         @LoginAccount Account account
     ) {
@@ -84,7 +87,7 @@ public class MissingPostController {
     @PostMapping(path = "/{postId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ApiResponse<Map<String, Long>> updateMissingPost(
         @PathVariable Long postId,
-        @RequestPart(value = "images", required = false) List<MultipartFile> images,
+        @RequestPart(value = "images", required = false) @ValidImageSize List<MultipartFile> images,
         @RequestPart(value = "param") @Valid MissingPostUpdateParam missingPostUpdateParam,
         @LoginAccount Account account
     ) {

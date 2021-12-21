@@ -8,11 +8,11 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 
 @Target(ElementType.PARAMETER)
+@Constraint(validatedBy = ImageSizeValidator.class)
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = {ImageContentTypeValidator.class})
-public @interface ValidImage {
+public @interface ValidImageSize {
 
-    String message() default "Invalid image file";
+    String message() default "The input files cannot contain more than 3 images.";
 
     Class<?>[] groups() default {};
 
