@@ -14,6 +14,7 @@ import com.pet.domains.post.dto.response.ShelterPostReadResult;
 import com.pet.domains.post.dto.serach.PostSearchParam;
 import com.pet.domains.post.mapper.ShelterPostMapper;
 import com.pet.domains.post.repository.ShelterPostRepository;
+import com.pet.domains.post.repository.projection.ShelterPostWithFetch;
 import com.pet.domains.post.repository.projection.ShelterPostWithIsBookmark;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -96,8 +97,8 @@ public class ShelterPostService {
     }
 
     public AccountBookmarkPostPageResults getBookmarksThumbnailsByAccount(Account account, Pageable pageable) {
-        Page<ShelterPostWithIsBookmark> shelterPostWithIsBookmarks =
-            shelterPostRepository.findAllWithIsBookmark(account, pageable);
+        Page<ShelterPostWithFetch> shelterPostWithIsBookmarks =
+            shelterPostRepository.findAllByAccountBookmarkWithFetch(account, pageable);
         return AccountBookmarkPostPageResults
             .of(shelterPostWithIsBookmarks.stream()
                     .map(this::toResults)
@@ -107,7 +108,7 @@ public class ShelterPostService {
                 shelterPostWithIsBookmarks.getSize());
     }
 
-    private AccountBookmarkPostPageResults.Post toResults(ShelterPostWithIsBookmark missingPostWithIsBookmark) {
-        return shelterPostMapper.toAccountBookmarkShelterPost(missingPostWithIsBookmark.getShelterPost());
+    private AccountBookmarkPostPageResults.Post toResults(ShelterPostWithFetch shelterPostWithFetch) {
+        return shelterPostMapper.toAccountBookmarkShelterPost(shelterPostWithFetch.getShelterPost());
     }
 }

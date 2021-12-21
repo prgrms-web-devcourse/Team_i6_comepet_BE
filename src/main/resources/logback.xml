@@ -6,7 +6,7 @@
     <timestamp key="timestamp" datePattern="yyyyMMddHHmmssSSS"/>
 
     <springProfile name="!(dev | prod)">
-        <root level="debug">
+        <root level="info">
             <appender name="CONSOLE_LOG" class="ch.qos.logback.core.ConsoleAppender">
                 <encoder>
                     <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %magenta([traceId=%X{traceId}]) %highlight(%-5level)

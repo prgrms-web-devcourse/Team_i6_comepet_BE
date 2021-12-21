@@ -11,7 +11,9 @@ import com.pet.domains.post.domain.MissingPost;
 import com.pet.domains.post.domain.SexType;
 import com.pet.domains.post.domain.Status;
 import com.pet.domains.post.dto.serach.PostSearchParam;
+import com.pet.domains.post.repository.projection.MissingPostWithFetch;
 import com.pet.domains.post.repository.projection.MissingPostWithIsBookmark;
+import com.pet.domains.post.repository.projection.QMissingPostWithFetch;
 import com.pet.domains.post.repository.projection.QMissingPostWithIsBookmark;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.ExpressionUtils;
@@ -61,6 +63,16 @@ public class MissingPostCustomRepositoryImpl extends QuerydslRepositorySupport i
     }
 
     @Override
+    public Page<MissingPostWithFetch> findMissingPostAllByAccountBookmarkWithFetch(Account account, Pageable pageable) {
+        JPAQuery<MissingPostWithFetch> query = getMissingPostByAccountBookmarkWithFetchQuery(account);
+        QueryResults<MissingPostWithFetch> queryResults =
+            Objects.requireNonNull(getQuerydsl()).applyPagination(pageable, query)
+                .fetchResults();
+
+        return new PageImpl<>(queryResults.getResults(), pageable, queryResults.getTotal());
+    }
+
+    @Override
     public Page<MissingPostWithIsBookmark> findMissingPostAllWithIsBookmark(Account account,
         Pageable pageable, PostSearchParam postSearchParam) {
         JPAQuery<MissingPostWithIsBookmark> query = getMissingPostWithIsBookmarkQuery(account)
@@ -80,15 +92,6 @@ public class MissingPostCustomRepositoryImpl extends QuerydslRepositorySupport i
         return new PageImpl<>(queryResults.getResults(), pageable, queryResults.getTotal());
     }
 
-    @Override
-    public Page<MissingPostWithIsBookmark> findMissingPostAllWithIsBookmark(Account account, Pageable pageable) {
-        JPAQuery<MissingPostWithIsBookmark> query = getMissingPostWithIsBookmarkQuery(account);
-        QueryResults<MissingPostWithIsBookmark> queryResults =
-            Objects.requireNonNull(getQuerydsl()).applyPagination(pageable, query)
-                .fetchResults();
-
-        return new PageImpl<>(queryResults.getResults(), pageable, queryResults.getTotal());
-    }
 
     @Override
     public Optional<MissingPostWithIsBookmark> findMissingPostByIdWithIsBookmark(Account account, Long postId) {
@@ -97,6 +100,24 @@ public class MissingPostCustomRepositoryImpl extends QuerydslRepositorySupport i
             .fetchOne();
 
         return Optional.ofNullable(result);
+    }
+
+    private JPAQuery<MissingPostWithFetch> getMissingPostByAccountBookmarkWithFetchQuery(Account account) {
+        return jpaQueryFactory.select(
+            new QMissingPostWithFetch(
+                missingPost,
+                animal,
+                animalKind,
+                city,
+                town))
+            .from(missingPost)
+            .innerJoin(missingPost.animalKind, animalKind)
+            .innerJoin(missingPost.animalKind.animal, animal)
+            .innerJoin(missingPost.town, town)
+            .innerJoin(missingPost.town.city, city)
+            .innerJoin(missingPostBookmark)
+            .on(missingPost.id.eq(missingPostBookmark.missingPost.id)
+                .and(missingPostBookmark.account.id.eq(account.getId())));
     }
 
     private JPAQuery<MissingPostWithIsBookmark> getMissingPostWithIsBookmarkQuery(Account account) {
