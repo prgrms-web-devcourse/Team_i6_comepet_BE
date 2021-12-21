@@ -55,8 +55,8 @@ public class MissingPostCustomRepositoryImpl extends QuerydslRepositorySupport i
                 eqAnimal(postSearchParam.getAnimal()),
                 eqAnimalKind(postSearchParam.getAnimalKind()),
                 eqSexType(postSearchParam.getSex()),
-                goeFoundDate(postSearchParam.getStart()),
-                loeFoundDate(postSearchParam.getEnd()));
+                goeCreateAt(postSearchParam.getStart()),
+                loeCreateAt(postSearchParam.getEnd()));
         QueryResults<MissingPost> queryResults = Objects.requireNonNull(getQuerydsl()).applyPagination(pageable, query)
             .fetchResults();
 
@@ -84,8 +84,8 @@ public class MissingPostCustomRepositoryImpl extends QuerydslRepositorySupport i
                 eqAnimal(postSearchParam.getAnimal()),
                 eqAnimalKind(postSearchParam.getAnimalKind()),
                 eqSexType(postSearchParam.getSex()),
-                goeFoundDate(postSearchParam.getStart()),
-                loeFoundDate(postSearchParam.getEnd()));
+                goeCreateAt(postSearchParam.getStart()),
+                loeCreateAt(postSearchParam.getEnd()));
         QueryResults<MissingPostWithIsBookmark> queryResults = Objects.requireNonNull(getQuerydsl())
             .applyPagination(pageable, query)
             .fetchResults();
@@ -182,14 +182,14 @@ public class MissingPostCustomRepositoryImpl extends QuerydslRepositorySupport i
         return missingPost.sexType.eq(sexType);
     }
 
-    private BooleanExpression goeFoundDate(LocalDate start) {
+    private BooleanExpression goeCreateAt(LocalDate start) {
         if (Objects.isNull(start)) {
             return null;
         }
         return missingPost.createdAt.goe(LocalDateTime.from(start));
     }
 
-    private BooleanExpression loeFoundDate(LocalDate end) {
+    private BooleanExpression loeCreateAt(LocalDate end) {
         if (Objects.isNull(end)) {
             return null;
         }
