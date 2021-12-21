@@ -49,10 +49,6 @@
 <img width="702" alt="스크린샷 2021-12-22 오전 2 02 55" src="https://user-images.githubusercontent.com/58363663/146969801-1faa9a10-9e61-4331-b3ef-40cbf3b820e0.png">
 
 
-<div>
-<a data-theme="dark" data-layers="1,2,3,4" data-stack-embed="true" href="https://embed.stackshare.io/stacks/embed/555867ab7da1e2728a5d9c4e125f7d"></a><script async src="https://cdn1.stackshare.io/javascripts/client-code.js" charset="utf-8"></script>
-</div>
-
 ## 🧩 Backend Architecture
 
 ---
