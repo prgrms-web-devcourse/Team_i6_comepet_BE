@@ -21,6 +21,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -54,8 +55,8 @@ public class MissingPostCustomRepositoryImpl extends QuerydslRepositorySupport i
                 eqAnimal(postSearchParam.getAnimal()),
                 eqAnimalKind(postSearchParam.getAnimalKind()),
                 eqSexType(postSearchParam.getSex()),
-                goeFoundDate(postSearchParam.getStart()),
-                loeFoundDate(postSearchParam.getEnd()));
+                goeCreateAt(postSearchParam.getStart()),
+                loeCreateAt(postSearchParam.getEnd()));
         QueryResults<MissingPost> queryResults = Objects.requireNonNull(getQuerydsl()).applyPagination(pageable, query)
             .fetchResults();
 
@@ -83,8 +84,8 @@ public class MissingPostCustomRepositoryImpl extends QuerydslRepositorySupport i
                 eqAnimal(postSearchParam.getAnimal()),
                 eqAnimalKind(postSearchParam.getAnimalKind()),
                 eqSexType(postSearchParam.getSex()),
-                goeFoundDate(postSearchParam.getStart()),
-                loeFoundDate(postSearchParam.getEnd()));
+                goeCreateAt(postSearchParam.getStart()),
+                loeCreateAt(postSearchParam.getEnd()));
         QueryResults<MissingPostWithIsBookmark> queryResults = Objects.requireNonNull(getQuerydsl())
             .applyPagination(pageable, query)
             .fetchResults();
@@ -181,17 +182,17 @@ public class MissingPostCustomRepositoryImpl extends QuerydslRepositorySupport i
         return missingPost.sexType.eq(sexType);
     }
 
-    private BooleanExpression goeFoundDate(LocalDate start) {
+    private BooleanExpression goeCreateAt(LocalDate start) {
         if (Objects.isNull(start)) {
             return null;
         }
-        return missingPost.date.goe(start);
+        return missingPost.createdAt.goe(LocalDateTime.from(start));
     }
 
-    private BooleanExpression loeFoundDate(LocalDate end) {
+    private BooleanExpression loeCreateAt(LocalDate end) {
         if (Objects.isNull(end)) {
             return null;
         }
-        return missingPost.date.loe(end);
+        return missingPost.createdAt.loe(LocalDateTime.from(end));
     }
 }
