@@ -23,6 +23,7 @@ import com.pet.domains.post.dto.serach.PostSearchParam;
 import com.pet.domains.post.mapper.MissingPostMapper;
 import com.pet.domains.post.mapper.MissingPostReadResultMapper;
 import com.pet.domains.post.repository.MissingPostRepository;
+import com.pet.domains.post.repository.projection.MissingPostWithFetch;
 import com.pet.domains.post.repository.projection.MissingPostWithIsBookmark;
 import com.pet.domains.tag.domain.PostTag;
 import com.pet.domains.tag.domain.Tag;
@@ -80,10 +81,7 @@ public class MissingPostService {
     @Transactional
     public Long createMissingPost(MissingPostCreateParam missingPostCreateParam, List<MultipartFile> multipartFiles,
         Account account) {
-        log.info("start create missing post");
-        if (Objects.nonNull(multipartFiles) && multipartFiles.size() > 3) {
-            throw ExceptionMessage.INVALID_IMAGE_COUNT.getException();
-        }
+        log.debug("start create missing post");
         checkImageSizeAndName(multipartFiles);
 
         AnimalKind animalKind = animalKindService.getOrCreateAnimalKind(missingPostCreateParam.getAnimalId(),
@@ -100,7 +98,7 @@ public class MissingPostService {
 
         MissingPost savedMissingPost = missingPostRepository.save(newMissingPost);
         notificationAsyncService.createNotifications(savedMissingPost);
-        log.info("complete create missing post");
+        log.debug("complete create missing post");
 
         return savedMissingPost.getId();
     }
@@ -109,9 +107,9 @@ public class MissingPostService {
         if (!CollectionUtils.isEmpty(multipartFiles)) {
             StringJoiner stringJoiner = new StringJoiner(",", "[", "]");
             multipartFiles.stream().map(MultipartFile::getName).forEach(stringJoiner::add);
-            log.info("post image size: {}, names: {} ", multipartFiles.size(), stringJoiner);
+            log.debug("post image size: {}, names: {} ", multipartFiles.size(), stringJoiner);
         } else {
-            log.info("post image size: 0");
+            log.debug("post image size is empty");
         }
     }
 
@@ -141,21 +139,25 @@ public class MissingPostService {
     }
 
     @Transactional
-    public MissingPostReadResult getMissingPostOne(Long postId) {
+    public MissingPostReadResult getMissingPostOne(Long postId, boolean shouldIncreaseViewCount) {
         MissingPost missingPost =
             missingPostRepository.findByMissingPostId(postId)
                 .orElseThrow(ExceptionMessage.NOT_FOUND_MISSING_POST::getException);
-        missingPost.increaseViewCount();
+        missingPost.increaseViewCount(shouldIncreaseViewCount);
         return missingPostMapper.toMissingPostDto(missingPost);
     }
 
     @Transactional
-    public MissingPostReadResult getMissingPostOneWithAccount(Account account, Long postId) {
+    public MissingPostReadResult getMissingPostOneWithAccount(
+        Account account,
+        Long postId,
+        boolean shouldIncreaseViewCount
+    ) {
         MissingPostWithIsBookmark missingPostWithIsBookmark =
             missingPostRepository.findMissingPostByIdWithIsBookmark(account, postId)
                 .orElseThrow(ExceptionMessage.NOT_FOUND_MISSING_POST::getException);
         MissingPost missingPost = missingPostWithIsBookmark.getMissingPost();
-        missingPost.increaseViewCount();
+        missingPost.increaseViewCount(shouldIncreaseViewCount);
 
         return missingPostReadResultMapper.toMissingPostReadResult(
             missingPost,
@@ -170,8 +172,8 @@ public class MissingPostService {
     }
 
     public AccountBookmarkPostPageResults getBookmarksThumbnailsByAccount(Account account, Pageable pageable) {
-        Page<MissingPostWithIsBookmark> missingPostWithIsBookmarks =
-            missingPostRepository.findMissingPostAllWithIsBookmark(account, pageable);
+        Page<MissingPostWithFetch> missingPostWithIsBookmarks =
+            missingPostRepository.findMissingPostAllByAccountBookmarkWithFetch(account, pageable);
         return AccountBookmarkPostPageResults
             .of(missingPostWithIsBookmarks.stream()
                     .map(missingPostWithIsBookmark -> missingPostMapper
@@ -185,13 +187,11 @@ public class MissingPostService {
     @Transactional
     public Long updateMissingPost(Account account, Long postId, MissingPostUpdateParam param,
         List<MultipartFile> multipartFiles) {
-        log.info("start update missing post");
+        log.debug("start update missing post");
         if (Objects.nonNull(param.getImages()) && Objects.nonNull(multipartFiles)
-            && (multipartFiles.size() + param.getImages().size()) > 3
-            || (Objects.nonNull(multipartFiles) && multipartFiles.size() > 3)) {
+            && (multipartFiles.size() + param.getImages().size()) > 3) {
             throw ExceptionMessage.INVALID_IMAGE_COUNT.getException();
         }
-
         checkImageSizeAndName(multipartFiles);
 
         MissingPost getMissingPost = checkPostAccount(postId, account);
@@ -239,13 +239,13 @@ public class MissingPostService {
 
         Town getTown =
             townRepository.findById(param.getTownId()).orElseThrow(ExceptionMessage.NOT_FOUND_TOWN::getException);
-        AnimalKind getAnimalKind = animalKindRepository.findByName(param.getAnimalKindName())
-            .orElseThrow(ExceptionMessage.NOT_FOUND_ANIMAL_KIND::getException);
+        AnimalKind getAnimalKind = animalKindService.getOrCreateAnimalKind(param.getAnimalId(),
+            param.getAnimalKindName());
         getMissingPost.changeInfo(param.getStatus(), param.getDate(), getTown, param.getDetailAddress(),
             param.getTelNumber(), getAnimalKind, param.getAge(), param.getSex(), param.getChipNumber(),
             param.getContent(), thumbnail);
 
-        log.info("complete update missing post");
+        log.debug("complete update missing post");
         return getMissingPost.getId();
     }
 

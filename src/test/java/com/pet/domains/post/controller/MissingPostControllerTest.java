@@ -3,6 +3,7 @@ package com.pet.domains.post.controller;
 import static com.pet.domains.docs.utils.ApiDocumentUtils.getDocumentRequest;
 import static com.pet.domains.docs.utils.ApiDocumentUtils.getDocumentResponse;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -235,7 +236,7 @@ class MissingPostControllerTest extends BaseDocumentationTest {
             ),
             "찾아주시면 반드시 사례하겠습니다. 연락주세요", 3, 1, true, 1, LocalDateTime.now()
         );
-        given(missingPostService.getMissingPostOneWithAccount(any(Account.class), anyLong())).willReturn(
+        given(missingPostService.getMissingPostOneWithAccount(any(Account.class), anyLong(), anyBoolean())).willReturn(
             missingPostReadResult);
 
         //when

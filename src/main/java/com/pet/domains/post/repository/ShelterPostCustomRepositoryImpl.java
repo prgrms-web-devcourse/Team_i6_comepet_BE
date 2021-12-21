@@ -10,7 +10,9 @@ import com.pet.domains.account.domain.Account;
 import com.pet.domains.post.domain.SexType;
 import com.pet.domains.post.domain.ShelterPost;
 import com.pet.domains.post.dto.serach.PostSearchParam;
+import com.pet.domains.post.repository.projection.QShelterPostWithFetch;
 import com.pet.domains.post.repository.projection.QShelterPostWithIsBookmark;
+import com.pet.domains.post.repository.projection.ShelterPostWithFetch;
 import com.pet.domains.post.repository.projection.ShelterPostWithIsBookmark;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.ExpressionUtils;
@@ -22,12 +24,18 @@ import java.util.Objects;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class ShelterPostCustomRepositoryImpl extends QuerydslRepositorySupport implements ShelterPostCustomRepository {
+
+    private static final String START_FILTER_FIELD_NAME = "foundDate";
+
+    private static final String IS_BOOK_MARK_AS = "isBookmark";
 
     private final JPAQueryFactory jpaQueryFactory;
 
@@ -37,6 +45,7 @@ public class ShelterPostCustomRepositoryImpl extends QuerydslRepositorySupport i
     }
 
     public Page<ShelterPost> findAllWithFetch(Pageable pageable, PostSearchParam postSearchParam) {
+        boolean hasStartFilter = getHasStartFilter(postSearchParam.getStart());
         JPAQuery<ShelterPost> query = jpaQueryFactory.select(shelterPost)
             .from(shelterPost)
             .innerJoin(shelterPost.animalKind, animalKind).fetchJoin()
@@ -52,16 +61,16 @@ public class ShelterPostCustomRepositoryImpl extends QuerydslRepositorySupport i
                 goeFoundDate(postSearchParam.getStart()),
                 loeFoundDate(postSearchParam.getEnd()));
         QueryResults<ShelterPost> queryResults = Objects.requireNonNull(getQuerydsl())
-            .applyPagination(pageable, query)
+            .applyPagination(getPageable(pageable, hasStartFilter), query)
             .fetchResults();
 
         return new PageImpl<>(queryResults.getResults(), pageable, queryResults.getTotal());
     }
 
     @Override
-    public Page<ShelterPostWithIsBookmark> findAllWithIsBookmark(Account account, Pageable pageable) {
-        JPAQuery<ShelterPostWithIsBookmark> query = getShelterPostWithIsBookmarkQuery(account);
-        QueryResults<ShelterPostWithIsBookmark> queryResults = Objects.requireNonNull(getQuerydsl())
+    public Page<ShelterPostWithFetch> findAllByAccountBookmarkWithFetch(Account account, Pageable pageable) {
+        JPAQuery<ShelterPostWithFetch> query = getShelterPostByAccountBookmarkWithFetchQuery(account);
+        QueryResults<ShelterPostWithFetch> queryResults = Objects.requireNonNull(getQuerydsl())
             .applyPagination(pageable, query)
             .fetchResults();
 
@@ -96,6 +105,38 @@ public class ShelterPostCustomRepositoryImpl extends QuerydslRepositorySupport i
         return Optional.ofNullable(result);
     }
 
+    private boolean getHasStartFilter(LocalDate start) {
+        return !Objects.isNull(start);
+    }
+
+    private Pageable getPageable(Pageable pageable, boolean hasStartFilter) {
+        if (hasStartFilter) {
+            return PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by(START_FILTER_FIELD_NAME).ascending()
+            );
+        }
+        return pageable;
+    }
+
+    private JPAQuery<ShelterPostWithFetch> getShelterPostByAccountBookmarkWithFetchQuery(Account account) {
+        return jpaQueryFactory.select(
+            new QShelterPostWithFetch(
+                shelterPost,
+                animal,
+                animalKind,
+                city,
+                town))
+            .from(shelterPost)
+            .innerJoin(shelterPost.animalKind, animalKind)
+            .innerJoin(shelterPost.animalKind.animal, animal)
+            .innerJoin(shelterPost.town, town)
+            .innerJoin(shelterPost.town.city, city)
+            .innerJoin(shelterPostBookmark)
+            .on(shelterPost.id.eq(shelterPostBookmark.shelterPost.id)
+                .and(shelterPostBookmark.account.id.eq(account.getId())));
+    }
 
     private JPAQuery<ShelterPostWithIsBookmark> getShelterPostWithIsBookmarkQuery(Account account) {
         return jpaQueryFactory.select(
@@ -105,7 +146,7 @@ public class ShelterPostCustomRepositoryImpl extends QuerydslRepositorySupport i
                 animalKind,
                 city,
                 town,
-                ExpressionUtils.as(shelterPostBookmark.id.isNotNull(), "isBookmark")))
+                ExpressionUtils.as(shelterPostBookmark.id.isNotNull(), IS_BOOK_MARK_AS)))
             .from(shelterPost)
             .innerJoin(shelterPost.animalKind, animalKind)
             .innerJoin(shelterPost.animalKind.animal, animal)

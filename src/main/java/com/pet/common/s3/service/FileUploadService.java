@@ -2,22 +2,26 @@ package com.pet.common.s3.service;
 
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.pet.common.exception.ExceptionMessage;
+import com.pet.common.s3.validator.ValidImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @RequiredArgsConstructor
 @Component
+@Validated
 public class FileUploadService {
 
     private final UploadService uploadService;
 
-    public String uploadImage(MultipartFile file) {
+    public String uploadImage(@ValidImage MultipartFile file) {
         String fileName = createFileName(file.getOriginalFilename());
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentLength(file.getSize());

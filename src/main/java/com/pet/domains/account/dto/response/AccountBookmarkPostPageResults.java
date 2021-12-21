@@ -40,7 +40,9 @@ public class AccountBookmarkPostPageResults {
 
         private final SexType sexType;
 
-        private final String place;
+        private final String city;
+
+        private final String town;
 
         private final LocalDate createdAt;
 
@@ -49,23 +51,24 @@ public class AccountBookmarkPostPageResults {
         private final int bookmarkCount;
 
         public Post(
-            Long id, String animalKind, SexType sexType, String place, LocalDate createdAt,
+            Long id, String animalKind, SexType sexType, String city, String town, LocalDate createdAt,
             String thumbnail, int bookmarkCount
         ) {
             this.id = id;
             this.animalKind = animalKind;
             this.sexType = sexType;
-            this.place = place;
+            this.city = city;
+            this.town = town;
             this.createdAt = createdAt;
             this.thumbnail = thumbnail;
             this.bookmarkCount = bookmarkCount;
         }
 
         public static Post of(
-            Long id, String animalKind, SexType sexType, String shelterPlace, LocalDate createdAt,
+            Long id, String animalKind, SexType sexType, String city, String town, LocalDate createdAt,
             String thumbnail, int bookmarkCount
         ) {
-            return new Post(id, animalKind, sexType, shelterPlace, createdAt, thumbnail, bookmarkCount);
+            return new Post(id, animalKind, sexType, city, town, createdAt, thumbnail, bookmarkCount);
         }
 
     }
