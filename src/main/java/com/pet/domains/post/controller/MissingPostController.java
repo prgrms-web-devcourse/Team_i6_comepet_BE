@@ -18,12 +18,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,6 +45,12 @@ import org.springframework.web.multipart.MultipartFile;
 public class MissingPostController {
 
     private static final String RETURN_KEY = "id";
+
+    private static final String VIEW_COOKIE_NAME = "view";
+
+    private static final String VIEW_COOKIE_PATH = "/";
+
+    private static final int VIEW_COOKIE_MAX_AGE = 60 * 30;
 
     private final MissingPostService missingPostService;
 
@@ -74,8 +84,29 @@ public class MissingPostController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(path = "/{postId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ApiResponse<MissingPostReadResult> getMissingPost(@LoginAccount Account account, @PathVariable Long postId) {
-        MissingPostReadResult result = getMissingPostOneResult(account, postId)
+    public ApiResponse<MissingPostReadResult> getMissingPost(
+        @LoginAccount Account account,
+        @PathVariable Long postId,
+        @CookieValue(value = VIEW_COOKIE_NAME, required = false) Cookie viewCookie,
+        HttpServletResponse response
+    ) {
+        boolean shouldIncreaseViewCount = false;
+        String cookieValue = formatByViewCookieValue(postId);
+
+        if (shouldCreateNewCookie(viewCookie)) {
+            shouldIncreaseViewCount = true;
+            Cookie newCookie = getNewViewCookie(postId);
+            response.addCookie(newCookie);
+            log.debug("새 쿠키 생성");
+        } else if (notContainsPostId(viewCookie, cookieValue)) {
+            shouldIncreaseViewCount = true;
+            addViewCookieValueInOriginCookie(viewCookie, response, cookieValue);
+            log.debug("기존 뷰 쿠키에 값 추가: {}", viewCookie.getValue());
+        } else {
+            log.debug("해당 게시글 쿠키 존재");
+        }
+
+        MissingPostReadResult result = getMissingPostOneResult(account, postId, shouldIncreaseViewCount)
             .orElseThrow(ExceptionMessage.SERVICE_UNAVAILABLE::getException);
         return ApiResponse.ok(result);
     }
@@ -116,18 +147,49 @@ public class MissingPostController {
         return ApiResponse.ok(commentService.getMissingPostComments(postId, pageable));
     }
 
-    private Optional<MissingPostReadResult> getMissingPostOneResult(Account account, Long postId) {
+    private Optional<MissingPostReadResult> getMissingPostOneResult(
+        Account account,
+        Long postId,
+        boolean shouldIncreaseViewCount
+    ) {
         if (Objects.nonNull(account)) {
             return OptimisticLockingHandlingUtils.handling(
-                () -> missingPostService.getMissingPostOneWithAccount(account, postId),
+                () -> missingPostService.getMissingPostOneWithAccount(account, postId, shouldIncreaseViewCount),
                 10,
                 "실종/보호 게시물 단건 조회 with jwt"
             );
         }
         return OptimisticLockingHandlingUtils.handling(
-            () -> missingPostService.getMissingPostOne(postId),
+            () -> missingPostService.getMissingPostOne(postId, shouldIncreaseViewCount),
             10,
             "실종/보호 게시물 단건 조회"
         );
     }
+
+    private void addViewCookieValueInOriginCookie(Cookie viewCookie, HttpServletResponse response, String cookieValue) {
+        viewCookie.setValue(String.format("%s%s", viewCookie.getValue(), cookieValue));
+        viewCookie.setMaxAge(VIEW_COOKIE_MAX_AGE);
+        viewCookie.setPath(VIEW_COOKIE_PATH);
+        response.addCookie(viewCookie);
+    }
+
+    private boolean shouldCreateNewCookie(Cookie viewCookie) {
+        return Objects.isNull(viewCookie);
+    }
+
+    private boolean notContainsPostId(Cookie viewCookie, String viewCookieFormat) {
+        return !StringUtils.contains(viewCookie.getValue(), viewCookieFormat);
+    }
+
+    private Cookie getNewViewCookie(Long postId) {
+        Cookie newCookie = new Cookie(VIEW_COOKIE_NAME, formatByViewCookieValue(postId));
+        newCookie.setPath("/");
+        newCookie.setMaxAge(VIEW_COOKIE_MAX_AGE);
+        return newCookie;
+    }
+
+    private String formatByViewCookieValue(Long postId) {
+        return String.format("[%d]", postId);
+    }
+
 }

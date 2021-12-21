@@ -141,21 +141,25 @@ public class MissingPostService {
     }
 
     @Transactional
-    public MissingPostReadResult getMissingPostOne(Long postId) {
+    public MissingPostReadResult getMissingPostOne(Long postId, boolean shouldIncreaseViewCount) {
         MissingPost missingPost =
             missingPostRepository.findByMissingPostId(postId)
                 .orElseThrow(ExceptionMessage.NOT_FOUND_MISSING_POST::getException);
-        missingPost.increaseViewCount();
+        missingPost.increaseViewCount(shouldIncreaseViewCount);
         return missingPostMapper.toMissingPostDto(missingPost);
     }
 
     @Transactional
-    public MissingPostReadResult getMissingPostOneWithAccount(Account account, Long postId) {
+    public MissingPostReadResult getMissingPostOneWithAccount(
+        Account account,
+        Long postId,
+        boolean shouldIncreaseViewCount
+    ) {
         MissingPostWithIsBookmark missingPostWithIsBookmark =
             missingPostRepository.findMissingPostByIdWithIsBookmark(account, postId)
                 .orElseThrow(ExceptionMessage.NOT_FOUND_MISSING_POST::getException);
         MissingPost missingPost = missingPostWithIsBookmark.getMissingPost();
-        missingPost.increaseViewCount();
+        missingPost.increaseViewCount(shouldIncreaseViewCount);
 
         return missingPostReadResultMapper.toMissingPostReadResult(
             missingPost,

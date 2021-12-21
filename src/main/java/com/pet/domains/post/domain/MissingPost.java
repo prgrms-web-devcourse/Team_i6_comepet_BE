@@ -155,8 +155,10 @@ public class MissingPost extends DeletableEntity {
         this.animalKind = animalKind;
     }
 
-    public void increaseViewCount() {
-        this.viewCount += 1;
+    public void increaseViewCount(boolean shouldIncreaseViewCount) {
+        if (shouldIncreaseViewCount) {
+            this.viewCount += 1;
+        }
     }
 
     public void changeInfo(Status status, LocalDate date, Town town, String detailAddress, String telNumber,
