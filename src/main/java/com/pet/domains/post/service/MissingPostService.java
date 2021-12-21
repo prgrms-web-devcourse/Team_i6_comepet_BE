@@ -81,9 +81,6 @@ public class MissingPostService {
     public Long createMissingPost(MissingPostCreateParam missingPostCreateParam, List<MultipartFile> multipartFiles,
         Account account) {
         log.debug("start create missing post");
-        if (Objects.nonNull(multipartFiles) && multipartFiles.size() > 3) {
-            throw ExceptionMessage.INVALID_IMAGE_COUNT.getException();
-        }
         checkImageSizeAndName(multipartFiles);
 
         AnimalKind animalKind = animalKindService.getOrCreateAnimalKind(missingPostCreateParam.getAnimalId(),
@@ -191,11 +188,9 @@ public class MissingPostService {
         List<MultipartFile> multipartFiles) {
         log.debug("start update missing post");
         if (Objects.nonNull(param.getImages()) && Objects.nonNull(multipartFiles)
-            && (multipartFiles.size() + param.getImages().size()) > 3
-            || (Objects.nonNull(multipartFiles) && multipartFiles.size() > 3)) {
+            && (multipartFiles.size() + param.getImages().size()) > 3) {
             throw ExceptionMessage.INVALID_IMAGE_COUNT.getException();
         }
-
         checkImageSizeAndName(multipartFiles);
 
         MissingPost getMissingPost = checkPostAccount(postId, account);
