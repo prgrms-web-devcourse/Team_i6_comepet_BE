@@ -81,3 +81,5 @@
 ### Team Notion
 - [팀 노션](https://www.notion.so/backend-devcourse/3-28f236d12c7843efb1a5662df6e93477)
 
+### ComePet API docs
+- [docs 링크](https://www.comepet.org/docs/index.html)
