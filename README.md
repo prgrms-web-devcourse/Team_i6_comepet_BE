@@ -35,7 +35,7 @@
 
 | 소셜 로그인 | 보호소 동물 조회 | 상세 조회 |
 |:---:|:---:|:---:|
-| <img src=https://user-images.githubusercontent.com/58363663/147059253-a17e3b2b-12e1-45f4-9aa5-ef7cccac85f7.gif> | <img src=https://user-images.githubusercontent.com/58363663/147059959-b6484452-6076-4cc3-9f00-edecd53b7fd5.gif> | <img src=https://user-images.githubusercontent.com/58363663/147060489-f9af2d16-cc37-4297-a337-cfe905211689.gif> |
+| <img src=https://user-images.githubusercontent.com/58363663/147059253-a17e3b2b-12e1-45f4-9aa5-ef7cccac85f7.gif> | <img src=https://user-images.githubusercontent.com/58363663/147083218-5c8fa62b-ca50-4c66-af09-cc324489df27.gif> | <img src=https://user-images.githubusercontent.com/58363663/147060489-f9af2d16-cc37-4297-a337-cfe905211689.gif> |
 | 관심 지역 등록 | 게시물 작성 | 알림 조회 |
 | <img src=https://user-images.githubusercontent.com/58363663/147061430-47666363-f034-45af-9c10-f90b8f0c47d1.gif> | <img src=https://user-images.githubusercontent.com/58363663/147062950-29d3d230-8c0c-48f6-9bc6-b4994a5b3624.gif> | <img src=https://user-images.githubusercontent.com/58363663/147063049-fed11782-d4c0-4cb6-ac40-7ce300fbdd7a.gif> |
 
