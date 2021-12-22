@@ -96,7 +96,8 @@ class AccountRepositoryTest {
         entityManager.clear();
 
         // when
-        List<Account> candidates = accountRepository.findAllByNotificationSubscribers(targetTown.getId());
+        List<Account> candidates =
+            accountRepository.findAllByNotificationSubscribers(targetTown.getId(), nonTargetAccount2.getId());
 
         // then
         SoftAssertions.assertSoftly(softAssertions -> {
