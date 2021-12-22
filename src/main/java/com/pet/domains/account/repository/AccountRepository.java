@@ -21,7 +21,7 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
     @Query("select a from Account a inner join InterestArea ia"
         + " on a.id = ia.account.id and ia.selected = true and ia.town.id = :townId"
-        + " where a.notification = true")
-    List<Account> findAllByNotificationSubscribers(Long townId);
+        + " where a.notification = true and a.id != :publisherAccountId")
+    List<Account> findAllByNotificationSubscribers(Long townId, Long publisherAccountId);
 
 }
