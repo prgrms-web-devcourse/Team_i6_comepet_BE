@@ -97,7 +97,7 @@ public class MissingPostService {
         createPostImage(imageFiles, newMissingPost);
 
         MissingPost savedMissingPost = missingPostRepository.save(newMissingPost);
-        notificationAsyncService.createNotifications(savedMissingPost);
+        notificationAsyncService.createNotifications(savedMissingPost, account.getId());
         log.debug("complete create missing post");
 
         return savedMissingPost.getId();

@@ -25,10 +25,12 @@ public class NotificationAsyncService {
 
     @Async
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void createNotifications(MissingPost triggerMissingPost) {
+    public void createNotifications(MissingPost triggerMissingPost, Long publisherAccountId) {
         log.info("start async createNotifications task");
-        List<Account> subscribers =
-            accountRepository.findAllByNotificationSubscribers(triggerMissingPost.getTown().getId());
+        List<Account> subscribers = accountRepository.findAllByNotificationSubscribers(
+            triggerMissingPost.getTown().getId(),
+            publisherAccountId
+        );
         List<Notification> notifications = subscribers.stream()
             .map(account -> Notification.builder()
                 .account(account)
