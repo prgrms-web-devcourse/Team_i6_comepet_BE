@@ -16,7 +16,7 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
     boolean existsByEmail(String email);
 
-    @Query("select a from Account a left join fetch a.image where a.id = :id")
+    @Query("select a from Account a join fetch a.image where a.id = :id")
     Optional<Account> findByIdAndImage(Long id);
 
     @Query("select a from Account a inner join InterestArea ia"
