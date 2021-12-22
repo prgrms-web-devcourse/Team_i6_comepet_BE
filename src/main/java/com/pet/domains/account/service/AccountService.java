@@ -113,7 +113,7 @@ public class AccountService {
     }
 
     public Account checkLoginAccountById(Long accountId) {
-        return accountRepository.findById(accountId).orElseThrow(
+        return accountRepository.findByIdAndImage(accountId).orElseThrow(
             ExceptionMessage.NOT_FOUND_ACCOUNT::getException
         );
     }
