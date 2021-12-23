@@ -31,9 +31,13 @@
 유기견 보호소에 있는 유기견들의 정보를 쉽게 볼 수 있는 서비스가 있으면 좋지 않을까?
 
 
-## 🐹 시연 자료
+## 🐹 ComePet
 
-준비중....
+| 소셜 로그인 | 보호소 동물 조회 | 상세 조회 |
+|:---:|:---:|:---:|
+| <img src=https://user-images.githubusercontent.com/58363663/147059253-a17e3b2b-12e1-45f4-9aa5-ef7cccac85f7.gif> | <img src=https://user-images.githubusercontent.com/58363663/147083218-5c8fa62b-ca50-4c66-af09-cc324489df27.gif> | <img src=https://user-images.githubusercontent.com/58363663/147060489-f9af2d16-cc37-4297-a337-cfe905211689.gif> |
+| 관심 지역 등록 | 게시물 작성 | 알림 조회 |
+| <img src=https://user-images.githubusercontent.com/58363663/147061430-47666363-f034-45af-9c10-f90b8f0c47d1.gif> | <img src=https://user-images.githubusercontent.com/58363663/147062950-29d3d230-8c0c-48f6-9bc6-b4994a5b3624.gif> | <img src=https://user-images.githubusercontent.com/58363663/147063049-fed11782-d4c0-4cb6-ac40-7ce300fbdd7a.gif> |
 
 
 ## ⚙ Stack
@@ -81,3 +85,5 @@
 ### Team Notion
 - [팀 노션](https://www.notion.so/backend-devcourse/3-28f236d12c7843efb1a5662df6e93477)
 
+### ComePet API docs
+- [docs 링크](https://www.comepet.org/docs/index.html)
