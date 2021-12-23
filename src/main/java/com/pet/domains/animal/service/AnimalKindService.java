@@ -42,7 +42,7 @@ public class AnimalKindService {
     @CacheEvict(cacheNames = "animals", allEntries = true)
     @Transactional
     public AnimalKind getOrCreateAnimalKind(Long animalId, String animalKindName) {
-        return animalKindRepository.findByName(animalKindName)
+        return animalKindRepository.findByNameAndAnimalId(animalKindName, animalId)
             .orElseGet(() -> animalKindRepository.save(
                 AnimalKind.builder()
                     .animal(getAnimalById(animalId))

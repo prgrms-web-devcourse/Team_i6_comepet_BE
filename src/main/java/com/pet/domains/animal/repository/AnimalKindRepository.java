@@ -8,4 +8,6 @@ public interface AnimalKindRepository extends JpaRepository<AnimalKind, Long> {
 
     Optional<AnimalKind> findByName(String name);
 
+    Optional<AnimalKind> findByNameAndAnimalId(String name, Long animalId);
+
 }
