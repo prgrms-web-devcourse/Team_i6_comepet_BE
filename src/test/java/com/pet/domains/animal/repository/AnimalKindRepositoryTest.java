@@ -45,7 +45,7 @@ class AnimalKindRepositoryTest {
         entityManager.persist(animalKind);
 
         // when
-        AnimalKind foundAnimalKind = animalKindRepository.findByName("animalKindName").get();
+        AnimalKind foundAnimalKind = animalKindRepository.findByNameAndAnimalId("animalKindName", animal.getId()).get();
 
         // then
         assertThat(foundAnimalKind.getId()).isEqualTo(animalKind.getId());
