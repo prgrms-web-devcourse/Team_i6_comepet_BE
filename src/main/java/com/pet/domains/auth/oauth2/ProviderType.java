@@ -9,8 +9,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum ProviderType {
     GOOGLE("google", new GoogleUser("sub", "email", "picture")),
-    NAVER("naver", new GoogleUser("nickname", "email", "profile_image")),
-    KAKAO("kakao", new GoogleUser("nickname", "email", "profile_image"));
+    NAVER("naver", new NaverUser("nickname", "email", "profile_image")),
+    KAKAO("kakao", new KakaoUser("nickname", "email", "profile_image"));
 
     private final String type;
 

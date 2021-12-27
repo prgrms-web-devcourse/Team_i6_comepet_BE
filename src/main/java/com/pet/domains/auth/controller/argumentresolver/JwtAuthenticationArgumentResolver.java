@@ -4,6 +4,7 @@ import com.pet.common.exception.ExceptionMessage;
 import com.pet.common.jwt.JwtAuthentication;
 import com.pet.domains.account.domain.LoginAccount;
 import com.pet.domains.account.service.AccountService;
+import com.pet.domains.account.service.LoginService;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
@@ -18,7 +19,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 @RequiredArgsConstructor
 public class JwtAuthenticationArgumentResolver implements HandlerMethodArgumentResolver {
 
-    private final AccountService accountService;
+    private final LoginService loginService;
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -37,7 +38,7 @@ public class JwtAuthenticationArgumentResolver implements HandlerMethodArgumentR
         if (isAnonymousAuthentication(authentication)) {
             return null;
         }
-        return accountService.checkLoginAccountById(getJwtAuthentication(authentication).getAccountId());
+        return loginService.checkLoginAccountById(getJwtAuthentication(authentication).getAccountId());
     }
 
     private JwtAuthentication getJwtAuthentication(Authentication authentication) {

@@ -4,6 +4,7 @@ import static org.apache.commons.lang3.ClassUtils.*;
 import com.pet.common.exception.ExceptionMessage;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.account.service.AccountService;
+import com.pet.domains.account.service.LoginService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -15,7 +16,8 @@ import org.springframework.security.core.GrantedAuthority;
 public class JwtAuthenticationProvider implements AuthenticationProvider {
 
     private final Jwt jwt;
-    private final AccountService accountService;
+
+    private final LoginService loginService;
 
     @Override
     public boolean supports(Class<?> authentication) {
@@ -35,7 +37,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
     }
 
     private Account login(String principal, String credentials) {
-        return accountService.login(principal, credentials);
+        return loginService.login(principal, credentials);
     }
 
     private JwtAuthenticationToken generateJwtAuthenticationToken(Account account) {

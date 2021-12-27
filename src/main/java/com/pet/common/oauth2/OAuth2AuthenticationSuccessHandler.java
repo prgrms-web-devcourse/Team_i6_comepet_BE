@@ -4,6 +4,7 @@ import com.pet.common.config.CookieUtil;
 import com.pet.common.jwt.Jwt;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.account.service.AccountService;
+import com.pet.domains.account.service.LoginService;
 import java.io.IOException;
 import java.util.Optional;
 import javax.servlet.ServletException;
@@ -22,7 +23,7 @@ public class OAuth2AuthenticationSuccessHandler extends SavedRequestAwareAuthent
 
     private final Jwt jwt;
 
-    private final AccountService accountService;
+    private final LoginService loginService;
 
     @Override
     public void onAuthenticationSuccess(
@@ -37,14 +38,6 @@ public class OAuth2AuthenticationSuccessHandler extends SavedRequestAwareAuthent
                 .fromUriString("https://comepet.netlify.app/oauth/redirect?").queryParam("token", token)
                 .build().toUriString();
             getRedirectStrategy().sendRedirect(request, response, targetUrl);
-            // String loginSuccessJson =  "{\"username\": \"" + account.getId() + "\", \"token\":\""
-            //     + token + "\"}";
-            // setResponse(response, loginSuccessJson);
-
-            // response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-            // response.setContentLength(loginSuccessJson.getBytes(StandardCharsets.UTF_8).length);
-            // response.getWriter().write(loginSuccessJson);
-            // response.sendRedirect("https://comepet.netlify.app/oauth/redirect?token=" + token);
             return;
         }
         super.onAuthenticationSuccess(request, response, authentication);
@@ -61,23 +54,11 @@ public class OAuth2AuthenticationSuccessHandler extends SavedRequestAwareAuthent
     private Account processUserOAuth2UserJoin(OAuth2AuthenticationToken authentication) {
         OAuth2User oAuth2User = authentication.getPrincipal();
         String registrationId = authentication.getAuthorizedClientRegistrationId();
-        return accountService.joinOath2User(oAuth2User, registrationId);
+        return loginService.joinOath2User(oAuth2User, registrationId);
     }
 
     private String generateToken(Account account) {
         return jwt.sign(Jwt.Claims.from(account.getId(), new String[] {"ROLE_USER"}));
     }
-
-    // protected void clearAuthenticationAttributes(HttpServletRequest request, HttpServletResponse response) {
-    //     super.clearAuthenticationAttributes(request);
-    //     authorizationRequestRepository.removeAuthorizationRequestCookies(request, response);
-    // }
-
-    // private void setResponse(HttpServletResponse response, String loginSuccessJson) throws IOException {
-    //     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-    //     response.setContentLength(loginSuccessJson.getBytes(StandardCharsets.UTF_8).length);
-    //     response.getWriter().write(loginSuccessJson);
-    //     response.sendRedirect("http://comepet.netlify.app/oauth/" + );
-    // }
 
 }
