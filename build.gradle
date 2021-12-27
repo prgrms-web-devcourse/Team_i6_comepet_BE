@@ -54,6 +54,9 @@ dependencies {
     implementation 'ca.pjer:logback-awslogs-appender:1.4.0'
     implementation 'com.github.maricn:logback-slack-appender:1.4.0'
 
+    implementation group: 'ch.qos.logback', name: 'logback-core', version: '1.2.9'
+    implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.9'
+
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
     annotationProcessor "org.mapstruct:mapstruct-processor:1.4.2.Final"
     annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
