@@ -1,6 +1,6 @@
 package com.pet.domains.auth;
 
-import com.pet.domains.account.service.AccountService;
+import com.pet.domains.account.service.LoginService;
 import com.pet.domains.auth.controller.argumentresolver.JwtAuthenticationArgumentResolver;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +13,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @RequiredArgsConstructor
 public class HandlerMethodResolverArgumentConfig implements WebMvcConfigurer {
 
-    private final AccountService accountService;
+    private final LoginService loginService;
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
@@ -22,7 +22,7 @@ public class HandlerMethodResolverArgumentConfig implements WebMvcConfigurer {
 
     @Bean
     public JwtAuthenticationArgumentResolver jwtAuthenticationArgumentResolver() {
-        return new JwtAuthenticationArgumentResolver(accountService);
+        return new JwtAuthenticationArgumentResolver(loginService);
     }
 
 }
