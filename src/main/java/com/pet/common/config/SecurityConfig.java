@@ -12,6 +12,7 @@ import com.pet.common.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
 import com.pet.common.oauth2.OAuth2AuthenticationSuccessHandler;
 import com.pet.common.property.JwtProperty;
 import com.pet.domains.account.service.AccountService;
+import com.pet.domains.account.service.LoginService;
 import java.io.IOException;
 import java.util.Objects;
 import javax.servlet.http.HttpServletResponse;
@@ -60,8 +61,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public JwtAuthenticationProvider jwtAuthenticationProvider(AccountService accountService, Jwt jwt) {
-        return new JwtAuthenticationProvider(jwt, accountService);
+    public JwtAuthenticationProvider jwtAuthenticationProvider(LoginService loginService, Jwt jwt) {
+        return new JwtAuthenticationProvider(jwt, loginService);
     }
 
     @Bean
@@ -88,9 +89,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public OAuth2AuthenticationSuccessHandler oauth2AuthenticationSuccessHandler(
-        Jwt jwt, AccountService accountService
+        Jwt jwt, LoginService loginService
     ) {
-        return new OAuth2AuthenticationSuccessHandler(jwt, accountService);
+        return new OAuth2AuthenticationSuccessHandler(jwt, loginService);
     }
 
     @Bean

@@ -8,6 +8,7 @@ import com.pet.common.jwt.JwtAuthenticationToken;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.account.domain.Provider;
 import com.pet.domains.account.service.AccountService;
+import com.pet.domains.account.service.LoginService;
 import com.pet.domains.auth.domain.Group;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +22,9 @@ public class WithAccountSecurityContextFactory implements WithSecurityContextFac
 
     private static final String ROLE_USER = "ROLE_USER";
 
-    private final AccountService accountService;
     private final JwtAuthenticationProvider provider;
+
+    private final LoginService loginService;
 
     @Override
     public SecurityContext createSecurityContext(WithAccount withAccount) {
@@ -32,8 +34,8 @@ public class WithAccountSecurityContextFactory implements WithSecurityContextFac
         Group group = mock(Group.class);
         Account account = givenAccount(email, nickname, group);
 
-        given(accountService.login(email, password)).willReturn(account);
-        given(accountService.checkLoginAccountById(anyLong())).willReturn(account);
+        given(loginService.login(email, password)).willReturn(account);
+        given(loginService.checkLoginAccountById(anyLong())).willReturn(account);
         given(group.getAuthorities()).willReturn(List.of((GrantedAuthority)() -> ROLE_USER));
 
         SecurityContext context = SecurityContextHolder.createEmptyContext();

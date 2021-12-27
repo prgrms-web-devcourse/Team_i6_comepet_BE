@@ -17,6 +17,7 @@ import com.pet.domains.account.dto.response.AccountLoginResult;
 import com.pet.domains.account.dto.response.AccountMissingPostPageResults;
 import com.pet.domains.account.dto.response.AccountReadResult;
 import com.pet.domains.account.service.AccountService;
+import com.pet.domains.account.service.LoginService;
 import com.pet.domains.auth.service.AuthenticationService;
 import com.pet.domains.post.service.MissingPostService;
 import com.pet.domains.post.service.ShelterPostService;
@@ -55,30 +56,32 @@ public class AccountController {
 
     private final ShelterPostService shelterPostService;
 
+    private final LoginService loginService;
+
     @PostMapping(path = "/send-email", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void sendEmail(@RequestBody @Valid AccountEmailParam accountEmailParam) {
-        accountService.sendEmail(accountEmailParam.getEmail());
+        loginService.sendEmail(accountEmailParam.getEmail());
     }
 
     @PatchMapping(path = "/send-password", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void sendPassword(@Valid @RequestBody AccountEmailParam param) {
-        accountService.sendPassword(param.getEmail());
+        loginService.sendPassword(param.getEmail());
     }
 
     @PostMapping(path = "/verify-email", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse<Map<String, Long>> verifyEmail(@RequestBody @Valid AccountEmailCheck accountEmailCheck) {
         return ApiResponse.ok(
-            Map.of("id", accountService.verifyEmail(accountEmailCheck.getEmail(), accountEmailCheck.getKey())));
+            Map.of("id", loginService.verifyEmail(accountEmailCheck.getEmail(), accountEmailCheck.getKey())));
     }
 
     @PostMapping(path = "/sign-up",
         consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse<AccountCreateResult> signUp(@RequestBody @Valid AccountSignUpParam accountSignUpParam) {
-        Long id = accountService.signUp(accountSignUpParam);
+        Long id = loginService.signUp(accountSignUpParam);
         return ApiResponse.ok(AccountCreateResult.of(id, authenticationService.authenticate(
             accountSignUpParam.getEmail(), accountSignUpParam.getPassword()).getToken()));
     }
