@@ -3,10 +3,12 @@ package com.pet.domains.account.service;
 import com.pet.common.util.Random;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.account.domain.AccountGroup;
+import com.pet.domains.account.domain.Email;
 import com.pet.domains.account.domain.Provider;
 import com.pet.domains.account.domain.SignEmail;
 import com.pet.domains.account.dto.request.AccountSignUpParam;
 import com.pet.domains.account.repository.AccountRepository;
+import com.pet.domains.account.repository.EmailRepository;
 import com.pet.domains.account.repository.SignEmailRepository;
 import com.pet.domains.auth.domain.Group;
 import com.pet.domains.auth.oauth2.Oauth2User;
@@ -42,12 +44,15 @@ public class LoginService {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final EmailRepository emailRepository;
+
     @Transactional
     public void sendEmail(String email) {
         assertThrow(accountRepository.existsByEmail(email), DUPLICATION_EMAIL.getException());
         String verifyKey = UUID.randomUUID().toString();
         mailSender.send(EmailMessage.crateVerifyEmailMessage(email, verifyKey));
-        signEmailRepository.save(new SignEmail(email, verifyKey));
+        // signEmailRepository.save(new SignEmail(email, verifyKey));
+        emailRepository.save(new Email(email, verifyKey));
     }
 
     @Transactional
@@ -58,13 +63,17 @@ public class LoginService {
         mailSender.send(EmailMessage.crateNewPasswordEmailMessage(account.getEmail(), temporaryPassword));
     }
 
-    @Transactional
     public Long verifyEmail(String email, String key) {
-        SignEmail signEmail = signEmailRepository.findByEmailAndVerifyKey(email, key)
-            .filter(findSignEmail -> findSignEmail.isVerifyTime(LocalDateTime.now()))
+        // SignEmail signEmail = signEmailRepository.findByEmailAndVerifyKey(email, key)
+        //     .filter(findSignEmail -> findSignEmail.isVerifyTime(LocalDateTime.now()))
+        //     .orElseThrow(INVALID_MAIL_KEY::getException);
+        Email findEmail = emailRepository.findById(email)
+            .filter(cacheEmail -> cacheEmail.verify(key))
+            .filter(cacheEmail -> cacheEmail.isVerifyTime(LocalDateTime.now()))
             .orElseThrow(INVALID_MAIL_KEY::getException);
-        signEmail.successVerified();
-        return signEmail.getId();
+        findEmail.successVerified();
+        emailRepository.save(findEmail);
+        return 1L;
     }
 
     public Account login(String email, String password) {
@@ -80,7 +89,7 @@ public class LoginService {
     @Transactional
     public Long signUp(AccountSignUpParam param) {
         compareWithPassword(param);
-        checkSignEmail(param);
+        assertThrow(checkSignEmail(param), INVALID_SIGN_UP.getException());
         return accountRepository.save(Account.builder()
             .email(param.getEmail())
             .password(passwordEncoder.encode(param.getPassword()))
@@ -91,9 +100,11 @@ public class LoginService {
             .build()).getId();
     }
 
-    private void checkSignEmail(AccountSignUpParam param) {
-        signEmailRepository.findById(param.getVerifiedId())
-            .orElseThrow(INVALID_SIGN_UP::getException)
+    private boolean checkSignEmail(AccountSignUpParam param) {
+        // signEmailRepository.findById(param.getVerifiedId())
+        //     .orElseThrow(INVALID_SIGN_UP::getException)
+        //     .isVerifyEmail(param.getEmail());
+        return emailRepository.findById(param.getEmail()).orElseThrow(INVALID_SIGN_UP::getException)
             .isVerifyEmail(param.getEmail());
     }
 
