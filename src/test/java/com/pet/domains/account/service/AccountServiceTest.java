@@ -20,7 +20,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import reactor.core.publisher.Mono;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
@@ -55,9 +54,16 @@ class AccountServiceTest {
         City city = City.builder().code("123").name("서울시").build();
 
         given(account.getId()).willReturn(1L);
-        given(townRepository.findById(1L)).willReturn(Optional.of(Town.builder().name("도봉구").city(city).build()));
-        given(townRepository.findById(2L)).willReturn(Optional.of(Town.builder().name("강북구").city(city).build()));
-        given(mapper.toEntity(any(), any(), any())).willReturn(InterestArea.builder().build());
+        Town town1 = Town.builder().name("도봉구").city(city).build();
+        Town town2 = Town.builder().name("강북구").city(city).build();
+
+        InterestArea defaultArea = InterestArea.builder().account(account).town(town1).build();
+        InterestArea secondArea = InterestArea.builder().account(account).town(town1).build();
+
+        given(townRepository.findById(1L)).willReturn(Optional.of(town1));
+        given(townRepository.findById(2L)).willReturn(Optional.of(town2));
+        given(mapper.toEntity(account, area1, town1)).willReturn(defaultArea);
+        given(mapper.toEntity(account, area2, town2)).willReturn(secondArea);
         given(accountRepository.save(account)).willReturn(account);
 
         accountService.updateArea(account, param);
@@ -74,10 +80,12 @@ class AccountServiceTest {
         AccountAreaUpdateParam param = new AccountAreaUpdateParam(List.of(area1), true);
 
         City city = City.builder().code("123").name("서울시").build();
+        Town town = Town.builder().name("도봉구").city(city).build();
+        InterestArea interestArea = InterestArea.builder().account(account).town(town).build();
 
         given(account.getId()).willReturn(1L);
-        given(townRepository.findById(1L)).willReturn(Optional.of(Town.builder().name("도봉구").city(city).build()));
-        given(mapper.toEntity(any(), any(), any())).willReturn(InterestArea.builder().build());
+        given(townRepository.findById(1L)).willReturn(Optional.of(town));
+        given(mapper.toEntity(any(), any(), any())).willReturn(interestArea);
         given(accountRepository.save(account)).willReturn(account);
 
         accountService.updateArea(account, param);
@@ -138,7 +146,7 @@ class AccountServiceTest {
 
         List<InterestArea> areas = new ArrayList<>();
         InterestArea defaultArea = mock(InterestArea.class);
-        areas.add(mock(InterestArea.class));
+        areas.add(defaultArea);
         areas.add(InterestArea.builder().account(account).town(town).selected(false).build());
 
         given(account.getId()).willReturn(1L);

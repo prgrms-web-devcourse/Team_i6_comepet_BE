@@ -18,6 +18,7 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.Validate;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -52,6 +53,9 @@ public class InterestArea extends BaseEntity {
 
     @Builder
     public InterestArea(boolean selected, Account account, Town town) {
+        Validate.notNull(account, "account must not be null");
+        Validate.notNull(town, "town must not be null");
+
         this.selected = selected;
         this.account = account;
         this.town = town;
