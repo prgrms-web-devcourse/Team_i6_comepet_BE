@@ -65,20 +65,4 @@ public class InterestArea extends BaseEntity {
         this.selected = true;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof InterestArea)) {
-            return false;
-        }
-        InterestArea that = (InterestArea)o;
-        return Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
 }
