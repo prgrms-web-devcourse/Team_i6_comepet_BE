@@ -152,7 +152,6 @@ public class AccountService {
             InterestArea interestArea = interestAreas.get(0);
             interestArea.checkSelect();
         }
-
     }
 
     public AccountMissingPostPageResults getAccountPosts(Long id, Pageable pageable) {

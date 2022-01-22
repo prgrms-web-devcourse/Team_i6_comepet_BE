@@ -10,6 +10,7 @@ import com.pet.domains.area.domain.Town;
 import com.pet.domains.area.mapper.InterestAreaMapper;
 import com.pet.domains.area.repository.InterestAreaRepository;
 import com.pet.domains.area.repository.TownRepository;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +20,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import reactor.core.publisher.Mono;
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.*;
@@ -124,5 +127,29 @@ class AccountServiceTest {
         AccountAreaUpdateParam param = new AccountAreaUpdateParam(List.of(area1, area2, area3), true);
 
         assertThrows(NotFoundException.class, () -> accountService.updateArea(account, param));
+    }
+
+    @Test
+    @DisplayName("관심 지역이 2개였을 때 디폴트 지역을 삭제한 경우 남은 관심지역이 디폴트 지역으로 변경되는지 테스트")
+    void deleteDefaultArea() {
+        Account account = mock(Account.class);
+        City city = City.builder().code("123").name("서울시").build();
+        Town town = Town.builder().name("강북구").city(city).build();
+
+        List<InterestArea> areas = new ArrayList<>();
+        InterestArea defaultArea = mock(InterestArea.class);
+        areas.add(mock(InterestArea.class));
+        areas.add(InterestArea.builder().account(account).town(town).selected(false).build());
+
+        given(account.getId()).willReturn(1L);
+        given(defaultArea.getId()).willReturn(1L);
+        given(interestAreaRepository.findByAccountId(account.getId())).willReturn(areas);
+
+        accountService.deleteArea(account, 1L);
+
+        verify(interestAreaRepository, times(1)).delete(defaultArea);
+
+        assertThat(areas.size()).isEqualTo(1);
+        assertThat(areas.get(0).isSelected()).isTrue();
     }
 }
