@@ -60,7 +60,7 @@ class AccountServiceTest {
         accountService.updateArea(account, param);
 
         verify(interestAreaRepository, times(1)).deleteAllByAccountId(account.getId());
-        verify(interestAreaRepository, times(1)).saveAll(any());
+        verify(interestAreaRepository, times(2)).save(any());
     }
 
     @Test
