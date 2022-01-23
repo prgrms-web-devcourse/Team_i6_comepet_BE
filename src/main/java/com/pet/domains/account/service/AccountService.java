@@ -20,8 +20,10 @@ import com.pet.domains.image.domain.Image;
 import com.pet.domains.image.service.ImageService;
 import com.pet.domains.post.domain.MissingPost;
 import com.pet.domains.post.repository.MissingPostRepository;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Queue;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +40,9 @@ import org.springframework.web.multipart.MultipartFile;
 @Transactional(readOnly = true)
 @Slf4j
 public class AccountService {
+    private static final int INTEREST_AREA_MAX_COUNT = 2;
+    private static final int DEFAULT_AREA_MAX_COUNT = 1;
+    private static final int DUPLICATE = 1;
 
     private final AccountRepository accountRepository;
 
@@ -61,50 +66,33 @@ public class AccountService {
 
         List<AccountAreaUpdateParam.Area> areas = accountAreaUpdateParam.getAreas();
         assertThrow(areas.isEmpty(), INVALID_INTEREST_AREA.getException());
-        assertThrow(areas.size() > 2, INVALID_INTEREST_AREA.getException());
+        assertThrow(areas.size() > INTEREST_AREA_MAX_COUNT, INVALID_INTEREST_AREA.getException());
 
-        checkInterestAreaIsOne(account, accountAreaUpdateParam, areas);
-        checkInterestAreaIsTwo(account, areas);
+        if (areas.size() == INTEREST_AREA_MAX_COUNT) {
+            validateArea(areas);
+        }
+
+        Queue<AccountAreaUpdateParam.Area> queue = new LinkedList<>(areas);
+        while (!queue.isEmpty()) {
+            AccountAreaUpdateParam.Area area = queue.poll();
+            InterestArea interestArea = interestAreaMapper.toEntity(account, area, findTownByArea(area));
+            interestAreaRepository.save(interestArea);
+        }
+
         account.updateNotification(accountAreaUpdateParam.isNotification());
         accountRepository.save(account);
     }
 
-    private void checkInterestAreaIsTwo(Account account, List<AccountAreaUpdateParam.Area> areas) {
-        if (areas.size() == 2) {
-            validateDefaultAreaCount(areas);
-            validateTownIdCount(areas);
-            interestAreaRepository.saveAll(
-                areas.stream()
-                    .map(area -> interestAreaMapper.toEntity(account, area, findTownByArea(area)))
-                    .collect(Collectors.toList()));
-        }
+    private void validateArea(List<AccountAreaUpdateParam.Area> areas) {
+        long defaultAreaCount = areas.stream().filter(AccountAreaUpdateParam.Area::isDefaultArea).count();
+        assertThrow(defaultAreaCount != DEFAULT_AREA_MAX_COUNT, INVALID_INTEREST_AREA.getException());
+        long townIdCount = areas.stream().map(AccountAreaUpdateParam.Area::getTownId).distinct().count();
+        assertThrow(townIdCount == DUPLICATE, INVALID_INTEREST_AREA.getException());
     }
 
     private Town findTownByArea(AccountAreaUpdateParam.Area area) {
         return townRepository.findById(area.getTownId())
             .orElseThrow(NOT_FOUND_TOWN::getException);
-    }
-
-    private void checkInterestAreaIsOne(
-        Account account, AccountAreaUpdateParam accountAreaUpdateParam, List<AccountAreaUpdateParam.Area> areas
-    ) {
-        if (areas.size() == 1) {
-            AccountAreaUpdateParam.Area defaultArea = accountAreaUpdateParam.getAreas().get(0);
-            InterestArea interestArea = interestAreaMapper.toEntity(account, defaultArea, findTownByArea(defaultArea));
-            interestArea.checkSelect();
-            interestAreaRepository.save(interestArea);
-        }
-    }
-
-    private void validateDefaultAreaCount(List<AccountAreaUpdateParam.Area> areas) {
-        long defaultAreaCount = areas.stream().filter(AccountAreaUpdateParam.Area::isDefaultArea).count();
-        assertThrow(defaultAreaCount == 2, INVALID_INTEREST_AREA.getException());
-        assertThrow(defaultAreaCount == 0, INVALID_INTEREST_AREA.getException());
-    }
-
-    private void validateTownIdCount(List<AccountAreaUpdateParam.Area> areas) {
-        long townIdCount = areas.stream().map(AccountAreaUpdateParam.Area::getTownId).distinct().count();
-        assertThrow(townIdCount == 1, INVALID_INTEREST_AREA.getException());
     }
 
     @Transactional
@@ -146,7 +134,7 @@ public class AccountService {
 
     public AccountReadResult getAccount(Account account) {
         return accountMapper.toReadResult(accountRepository.findByIdAndImage(account.getId())
-                .orElseThrow(NOT_FOUND_ACCOUNT::getException));
+            .orElseThrow(NOT_FOUND_ACCOUNT::getException));
     }
 
     @Transactional
@@ -164,7 +152,6 @@ public class AccountService {
             InterestArea interestArea = interestAreas.get(0);
             interestArea.checkSelect();
         }
-
     }
 
     public AccountMissingPostPageResults getAccountPosts(Long id, Pageable pageable) {
