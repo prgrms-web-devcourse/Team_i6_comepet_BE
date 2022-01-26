@@ -22,6 +22,8 @@ import com.pet.domains.auth.service.AuthenticationService;
 import com.pet.domains.post.service.MissingPostService;
 import com.pet.domains.post.service.ShelterPostService;
 import java.util.Map;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -80,8 +82,12 @@ public class AccountController {
     @PostMapping(path = "/sign-up",
         consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<AccountCreateResult> signUp(@RequestBody @Valid AccountSignUpParam accountSignUpParam) {
+    public ApiResponse<AccountCreateResult> signUp(
+        @RequestBody @Valid AccountSignUpParam accountSignUpParam, HttpServletResponse response
+    ) {
         Long id = loginService.signUp(accountSignUpParam);
+        String refreshToken = loginService.createRefreshToken(id, accountSignUpParam.getEmail());
+        response.addCookie(getCookie(refreshToken));
         return ApiResponse.ok(AccountCreateResult.of(id, authenticationService.authenticate(
             accountSignUpParam.getEmail(), accountSignUpParam.getPassword()).getToken()));
     }
@@ -89,9 +95,12 @@ public class AccountController {
     @PostMapping(path = "/login",
         consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<AccountLoginResult> login(@RequestBody AccountLonginParam accountLoginParam) {
+    public ApiResponse<AccountLoginResult> login(
+        @RequestBody AccountLonginParam accountLoginParam, HttpServletResponse response
+    ) {
         String email = accountLoginParam.getEmail();
         JwtAuthentication authentication = authenticationService.authenticate(email, accountLoginParam.getPassword());
+        response.addCookie(getCookie(loginService.createRefreshToken(authentication.getAccountId(), email)));
         log.debug("login account email : {}", email);
         return ApiResponse.ok(AccountLoginResult.of(authentication.getAccountId(), authentication.getToken()));
     }
@@ -164,4 +173,12 @@ public class AccountController {
         accountService.deleteAccount(account);
     }
 
+    private Cookie getCookie(String refreshToken) {
+        Cookie cookie = new Cookie("refreshToken", refreshToken);
+        cookie.setMaxAge(30 * 24 * 60 * 60);
+        cookie.setSecure(true);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        return cookie;
+    }
 }

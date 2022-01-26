@@ -11,7 +11,7 @@ import com.pet.common.jwt.JwtAuthenticationProvider;
 import com.pet.common.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
 import com.pet.common.oauth2.OAuth2AuthenticationSuccessHandler;
 import com.pet.common.property.JwtProperty;
-import com.pet.domains.account.service.AccountService;
+import com.pet.common.property.RefreshJwtProperty;
 import com.pet.domains.account.service.LoginService;
 import java.io.IOException;
 import java.util.Objects;
@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
@@ -50,12 +51,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String ROLE_ANONYMOUS = "ANONYMOUS";
 
     private final JwtProperty jwtProperty;
+    private final RefreshJwtProperty refreshJwtProperty;
 
     @Bean
     public Jwt jwt() {
         return new Jwt(
             jwtProperty.getIssuer(),
             jwtProperty.getClientSecret(),
+            jwtProperty.getExpirySeconds()
+        );
+    }
+
+    @Bean
+    @Qualifier("refresh")
+    public Jwt refreshJwt() {
+        return new Jwt(
+            refreshJwtProperty.getIssuer(),
+            refreshJwtProperty.getClientSecret(),
             jwtProperty.getExpirySeconds()
         );
     }
