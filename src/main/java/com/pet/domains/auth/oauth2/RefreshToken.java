@@ -2,10 +2,12 @@ package com.pet.domains.auth.oauth2;
 
 import java.time.LocalDateTime;
 import lombok.Builder;
+import lombok.Getter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
 @RedisHash("refreshToken")
+@Getter
 public class RefreshToken {
 
     @Id

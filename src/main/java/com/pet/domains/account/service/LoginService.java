@@ -8,6 +8,7 @@ import com.pet.domains.account.domain.Email;
 import com.pet.domains.account.domain.Provider;
 import com.pet.domains.account.domain.SignEmail;
 import com.pet.domains.account.dto.request.AccountSignUpParam;
+import com.pet.domains.account.dto.response.AccountLoginResult;
 import com.pet.domains.account.repository.AccountRepository;
 import com.pet.domains.account.repository.EmailRepository;
 import com.pet.domains.account.repository.SignEmailRepository;
@@ -22,6 +23,7 @@ import com.pet.infra.EmailMessage;
 import com.pet.infra.MailSender;
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
@@ -152,4 +154,9 @@ public class LoginService {
         return refreshToken;
     }
 
+    public Optional<Account> checkRefreshTokenAndGetAccessToken(String refreshToken) {
+        return refreshTokenRepository.findById(refreshToken)
+            .map(token -> accountRepository.findByEmail(token.getEmail()))
+            .orElseThrow(NullPointerException::new);
+    }
 }
