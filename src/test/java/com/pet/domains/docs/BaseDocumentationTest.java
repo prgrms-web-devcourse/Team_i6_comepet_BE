@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pet.common.config.SecurityConfig;
 import com.pet.common.jwt.JwtAuthentication;
 import com.pet.common.property.JwtProperty;
+import com.pet.common.property.RefreshJwtProperty;
 import com.pet.domains.account.controller.AccountController;
 import com.pet.domains.account.controller.NotificationController;
 import com.pet.domains.account.service.AccountService;
@@ -28,6 +29,7 @@ import com.pet.domains.statistics.controller.PostStatisticsController;
 import com.pet.domains.statistics.service.PostStatisticsService;
 import org.junit.jupiter.api.Disabled;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -49,9 +51,10 @@ import org.springframework.test.web.servlet.MockMvc;
     PostStatisticsController.class},
     includeFilters = {
         @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class)
-    })
+    }
+)
 @AutoConfigureRestDocs
-@EnableConfigurationProperties(value = JwtProperty.class)
+@EnableConfigurationProperties(value = {JwtProperty.class, RefreshJwtProperty.class})
 @Disabled
 public abstract class BaseDocumentationTest {
 

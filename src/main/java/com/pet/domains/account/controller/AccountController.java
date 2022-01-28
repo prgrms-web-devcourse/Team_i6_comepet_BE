@@ -1,7 +1,9 @@
 package com.pet.domains.account.controller;
 
+import com.pet.common.exception.ExceptionMessage;
 import com.pet.common.jwt.JwtAuthentication;
 import com.pet.common.response.ApiResponse;
+import com.pet.common.response.ErrorResponse;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.account.domain.LoginAccount;
 import com.pet.domains.account.dto.request.AccountAreaUpdateParam;
@@ -22,12 +24,16 @@ import com.pet.domains.auth.service.AuthenticationService;
 import com.pet.domains.post.service.MissingPostService;
 import com.pet.domains.post.service.ShelterPostService;
 import java.util.Map;
+import java.util.Optional;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -80,8 +86,12 @@ public class AccountController {
     @PostMapping(path = "/sign-up",
         consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<AccountCreateResult> signUp(@RequestBody @Valid AccountSignUpParam accountSignUpParam) {
+    public ApiResponse<AccountCreateResult> signUp(
+        @RequestBody @Valid AccountSignUpParam accountSignUpParam, HttpServletResponse response
+    ) {
         Long id = loginService.signUp(accountSignUpParam);
+        String refreshToken = loginService.createRefreshToken(id, accountSignUpParam.getEmail());
+        response.addCookie(getCookie(refreshToken));
         return ApiResponse.ok(AccountCreateResult.of(id, authenticationService.authenticate(
             accountSignUpParam.getEmail(), accountSignUpParam.getPassword()).getToken()));
     }
@@ -89,9 +99,12 @@ public class AccountController {
     @PostMapping(path = "/login",
         consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<AccountLoginResult> login(@RequestBody AccountLonginParam accountLoginParam) {
+    public ApiResponse<AccountLoginResult> login(
+        @RequestBody AccountLonginParam accountLoginParam, HttpServletResponse response
+    ) {
         String email = accountLoginParam.getEmail();
         JwtAuthentication authentication = authenticationService.authenticate(email, accountLoginParam.getPassword());
+        response.addCookie(getCookie(loginService.createRefreshToken(authentication.getAccountId(), email)));
         log.debug("login account email : {}", email);
         return ApiResponse.ok(AccountLoginResult.of(authentication.getAccountId(), authentication.getToken()));
     }
@@ -164,4 +177,21 @@ public class AccountController {
         accountService.deleteAccount(account);
     }
 
+    @PostMapping("/refresh-token")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse<AccountLoginResult> checkRefreshToken(String refreshToken) {
+        JwtAuthentication authentication = loginService.checkRefreshTokenAndGetAccessToken(refreshToken)
+            .map(account -> authenticationService.authenticate(account.getEmail(), account.getPassword()))
+            .orElseThrow(ExceptionMessage.INVALID_JWT::getException);
+        return ApiResponse.ok(AccountLoginResult.of(authentication.getAccountId(), authentication.getToken()));
+    }
+
+    private Cookie getCookie(String refreshToken) {
+        Cookie cookie = new Cookie("refreshToken", refreshToken);
+        cookie.setMaxAge(30 * 24 * 60 * 60);
+        cookie.setSecure(true);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        return cookie;
+    }
 }
