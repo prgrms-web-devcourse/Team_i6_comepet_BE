@@ -21,6 +21,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
+import static org.assertj.core.api.Assertions.*;
 
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DataJpaTest(includeFilters = @Filter(
@@ -40,9 +41,23 @@ class AccountRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        group = new GroupPermission(
-            new Group("USER_GROUP"), new Permission("ROLE_USER")
-        ).getGroup();
+        Permission permission = entityManager.persist(new Permission("ROLE_USER"));
+        Group group = entityManager.persist(new Group("USER_GROUP"));
+        this.group = entityManager.persist(new GroupPermission(group, permission)).getGroup();
+    }
+
+    @Test
+    @DisplayName("이메일로 회원 조회 테스트")
+    void findByEmailTest() {
+        String email = "tester@email.com";
+        Account account = givenAccount(email, "tester", group);
+        entityManager.persist(account);
+
+        entityManager.flush();
+        entityManager.clear();
+
+        Account savedAccount = accountRepository.findByEmail(email).get();
+        assertThat(savedAccount).usingRecursiveComparison().ignoringFields("id").isEqualTo(savedAccount);
     }
 
     @Test
