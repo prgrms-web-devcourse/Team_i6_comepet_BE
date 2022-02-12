@@ -64,8 +64,8 @@ public class LoginService {
         assertThrow(accountRepository.existsByEmail(email), DUPLICATION_EMAIL.getException());
         String verifyKey = UUID.randomUUID().toString();
         mailSender.send(EmailMessage.crateVerifyEmailMessage(email, verifyKey));
-        // signEmailRepository.save(new SignEmail(email, verifyKey));
-        emailRepository.save(new Email(email, verifyKey));
+        signEmailRepository.save(new SignEmail(email, verifyKey));
+        // emailRepository.save(new Email(email, verifyKey));
     }
 
     @Transactional
@@ -76,17 +76,13 @@ public class LoginService {
         mailSender.send(EmailMessage.crateNewPasswordEmailMessage(account.getEmail(), temporaryPassword));
     }
 
+    @Transactional
     public Long verifyEmail(String email, String key) {
-        // SignEmail signEmail = signEmailRepository.findByEmailAndVerifyKey(email, key)
-        //     .filter(findSignEmail -> findSignEmail.isVerifyTime(LocalDateTime.now()))
-        //     .orElseThrow(INVALID_MAIL_KEY::getException);
-        Email findEmail = emailRepository.findById(email)
-            .filter(cacheEmail -> cacheEmail.verify(key))
-            .filter(cacheEmail -> cacheEmail.isVerifyTime(LocalDateTime.now()))
+        SignEmail signEmail = signEmailRepository.findByEmailAndVerifyKey(email, key)
+            .filter(findSignEmail -> findSignEmail.isVerifyTime(LocalDateTime.now()))
             .orElseThrow(INVALID_MAIL_KEY::getException);
-        findEmail.successVerified();
-        emailRepository.save(findEmail);
-        return 1L;
+        signEmail.successVerified();
+        return signEmail.getId();
     }
 
     public Account login(String email, String password) {
