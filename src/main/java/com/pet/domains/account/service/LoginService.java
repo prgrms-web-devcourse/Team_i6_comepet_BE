@@ -1,14 +1,13 @@
 package com.pet.domains.account.service;
 
+import com.pet.common.exception.ExceptionMessage;
 import com.pet.common.jwt.Jwt;
 import com.pet.common.util.Random;
 import com.pet.domains.account.domain.Account;
 import com.pet.domains.account.domain.AccountGroup;
-import com.pet.domains.account.domain.Email;
 import com.pet.domains.account.domain.Provider;
 import com.pet.domains.account.domain.SignEmail;
 import com.pet.domains.account.dto.request.AccountSignUpParam;
-import com.pet.domains.account.dto.response.AccountLoginResult;
 import com.pet.domains.account.repository.AccountRepository;
 import com.pet.domains.account.repository.EmailRepository;
 import com.pet.domains.account.repository.SignEmailRepository;
@@ -25,8 +24,6 @@ import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -151,8 +148,13 @@ public class LoginService {
     }
 
     public Optional<Account> checkRefreshTokenAndGetAccessToken(String refreshToken) {
-        return refreshTokenRepository.findById(refreshToken)
-            .map(token -> accountRepository.findByEmail(token.getEmail()))
+        return refreshTokenRepository.findByToken(refreshToken)
+            .map(token -> {
+                if (!token.isVerifyTokenByBefore30Days()) {
+                    throw ExceptionMessage.INVALID_JWT_EXPIRY.getException();
+                }
+                return accountRepository.findByEmail(token.getEmail());
+            })
             .orElseThrow(NullPointerException::new);
     }
 }
