@@ -21,7 +21,9 @@ public class RefreshToken {
 
     private LocalDateTime createdAt;
 
-    public RefreshToken() {}
+    public RefreshToken() {
+
+    }
 
     @Builder
     public RefreshToken(String token, String email) {
