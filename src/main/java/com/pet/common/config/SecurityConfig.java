@@ -169,7 +169,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedOrigin("https://comepet.netlify.app");
-        configuration.addAllowedOrigin("http://localhost:3000");
 
         // configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
