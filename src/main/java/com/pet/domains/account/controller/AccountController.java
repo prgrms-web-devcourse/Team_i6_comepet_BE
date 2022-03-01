@@ -23,9 +23,11 @@ import com.pet.domains.account.service.LoginService;
 import com.pet.domains.auth.service.AuthenticationService;
 import com.pet.domains.post.service.MissingPostService;
 import com.pet.domains.post.service.ShelterPostService;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -179,10 +181,16 @@ public class AccountController {
 
     @PostMapping("/refresh-token")
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<AccountLoginResult> checkRefreshToken(String refreshToken) {
-        JwtAuthentication authentication = loginService.checkRefreshTokenAndGetAccessToken(refreshToken)
-            .map(account -> authenticationService.authenticate(account.getEmail(), account.getPassword()))
-            .orElseThrow(ExceptionMessage.INVALID_JWT::getException);
+    public ApiResponse<AccountLoginResult> checkRefreshToken(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        JwtAuthentication authentication = null;
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals("refreshToken")) {
+                authentication = loginService.checkRefreshTokenAndGetAccessToken(cookie.getName())
+                    .map(account -> authenticationService.authenticate(account.getEmail(), account.getPassword()))
+                    .orElseThrow(ExceptionMessage.INVALID_JWT::getException);
+            }
+        }
         return ApiResponse.ok(AccountLoginResult.of(authentication.getAccountId(), authentication.getToken()));
     }
 
